@@ -1,0 +1,16 @@
+# Python
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+
+# Raw UD clones: immutable + gitignored; only PROVENANCE.md committed (Spec §2.5, D28)
+data/raw/*
+!data/raw/PROVENANCE.md
+
+# Derived corpus data: substantial derivatives of CC BY-NC-SA treebank data (D28);
+# regenerable from the pipeline under fixed seeds (D26).
+# NOTE (G4/G5): add targeted re-include exceptions here for the derived STATISTICS
+# that D28 does publish (alphabet.json, scores/ tables, figures).
+data/interim/
+data/processed/

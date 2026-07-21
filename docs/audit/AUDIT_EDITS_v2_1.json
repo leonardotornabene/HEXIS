@@ -1,0 +1,777 @@
+{
+ "00": [
+  {
+   "label": "header versione",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "**Versione 2.0 — 6 luglio 2026.** Sostituisce integralmente la v1.0 (5 luglio 2026), conservata in `archive_v1/`.",
+   "new": "**Versione 2.1 — 21 luglio 2026.** Sostituisce la v2.0 (6 luglio 2026); la v1.0 (5 luglio 2026) resta conservata in `archive_v1/`."
+  },
+  {
+   "label": "nota storica JSD",
+   "tag": "A",
+   "decision": "D41",
+   "old": "La JSD sopravvive come appendice facoltativa.",
+   "new": "La JSD sopravvive come appendice facoltativa (v2.1: elevata a lettura descrittiva prevista, D41)."
+  },
+  {
+   "label": "sezione v2.1",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "## I cinque documenti",
+   "new": "## Che cosa è cambiato nella v2.1 (21 luglio 2026)\n\nSincronizzazione del pacchetto operativo con la **proposta finale** e chiusura dei nodi procedurali; tutte decisioni pre-dati (**D40–D51** nel Decision Log): crosswalk vincolante fra le ipotesi della proposta finale e le statistiche (H1 = P2, H2 = P1 + S1, H3 = L1; premessa distribuzionale = radice + R1; D40, verificato sul testo finale); la JSD (R1) diventa lettura distribuzionale descrittiva prevista, senza α né test, con caveat di dipendenza dalla taglia (D41); il piano di sensibilità è partizionato in robustezza parametrica e analisi di rappresentazione (D42); ogni soglia esatta dichiara la propria lateralità e il piano-autore diventa descrittivo senza α (D43); la validità del sign-flip di P1 è una **questione aperta e bloccante** (O7), da risolvere con uno studio di calibrazione su dati sintetici — per questo **il Gate G2 è riposizionato dopo G3** (D44(vii); ordine v2.1: G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7; invariante intatto: prima di G2 solo sintetici, primi fit reali a G4); G0 non richiede più la profilazione (O6 → G3) e l'acquisizione dei treebank può procedere in parallelo a G0 (D45); politica dei manifest chiarita — un manifest centrale per run più un sidecar minimo per artefatto (D46); `hexis_ctree` v0.1.0 in quarantena come candidato non canonico, con l'emendamento D18-A1 depositato come proposta (D47); la Master Spec è riemessa con il restauro documentato dei blocchi normativi danneggiati in fase di generazione PDF (D48; tabella completa prima/dopo in `RESTAURO_01_MASTER_SPEC.md`); nuova lettura descrittiva `G_own` per disambiguare la sede della firma (D49); regola GATE-A × C0: la configurazione primaria non si duplica (D50); ambito di T* ristretto al contrasto primario, con il costo di potenza della taglia uniforme dichiarato (D51). Tre nodi restano deliberatamente differiti (DN-1/2/3, determinanti a G2). Registro bibliografico: crosswalk con la numerazione finale e voce 26 (Greco et al. 2023) aggiunta e verificata su fonte primaria.\n\n## I cinque documenti"
+  },
+  {
+   "label": "riga Spec",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "| `01_MASTER_SPEC.md` | EN | **Il documento centrale (v2.0):**",
+   "new": "| `01_MASTER_SPEC.md` | EN | **Il documento centrale (v2.1, con tabella degli emendamenti in testa):**"
+  },
+  {
+   "label": "riga Spec gate",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "gate G0–G7 | Da allegare in ogni sessione AI |",
+   "new": "gate G0–G7 (ordine di esecuzione v2.1) | Da allegare in ogni sessione AI |"
+  },
+  {
+   "label": "riga Decision Log",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "| `02_DECISION_LOG.md` | EN | 39 decisioni: D01–D31 riportate con stato aggiornato (alcune superate da D32), le nuove D32–D39 per esteso, open items O1–O6 | Ogni volta che qualcosa deve cambiare: si emenda qui, mai in silenzio |",
+   "new": "| `02_DECISION_LOG.md` | EN | 51 decisioni: D01–D31 con stato aggiornato, D32–D39 (v2) per esteso, **D40–D51 (v2.1, sincronizzazione con la proposta finale)** per esteso; open items O1–O8 (**O7 bloccante per G2/G5**); nodi differiti DN-1–DN-3 | Ogni volta che qualcosa deve cambiare: si emenda qui, mai in silenzio |"
+  },
+  {
+   "label": "riga Roadmap",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "| `03_ROADMAP_OPERATIVA_IT.md` | IT | Roadmap v2.0: 13 settimane nominali dentro la tua finestra di 12–15, con il context tree **anticipato alla Fase 2** (il rischio maggiore si affronta subito); criteri di accettazione, checklist di comprensione, prompt-tipo; in appendice il **REGISTRO BIBLIOGRAFICO COMPLETO** (tutte le fonti: le 11 della proposta, Chomsky, Galves 2012, Chen 2024, i fondamenti VLMC, le risorse dati — con stato di verifica e ruolo nel preprint) | La tua guida quotidiana; il registro serve alla Fase 7 |",
+   "new": "| `03_ROADMAP_OPERATIVA_IT.md` | IT | Roadmap v2.1: 13 settimane nominali dentro la tua finestra di 12–15, con il context tree **anticipato alla Fase 2** e la Fase 1 divisa in **1a** (pipeline non-tree → G0) e **1b** (audit → G1; acquisizione in parallelo a G0, D45); criteri di accettazione allineati all'ordine v2.1 dei gate; checklist di comprensione, prompt-tipo; in appendice il **REGISTRO BIBLIOGRAFICO COMPLETO** (le fonti della proposta con crosswalk alla numerazione finale, Chomsky, Galves 2012, Chen 2024, i fondamenti VLMC, le risorse dati, e Greco et al. 2023 aggiunta in v2.1 — con stato di verifica e ruolo nel preprint) | La tua guida quotidiana; il registro serve alla Fase 7 |"
+  },
+  {
+   "label": "riga Handoff",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "| `04_AI_HANDOFF_PROMPT.md` | EN | Bootstrap prompt v2.0 (con le regole del disegno a strumento unico), template `CLAUDE.md`, template di sessione, checklist di revisione | All'avvio di ogni sessione AI |",
+   "new": "| `04_AI_HANDOFF_PROMPT.md` | EN | Bootstrap prompt v2.1 (regole del disegno a strumento unico + disciplina O7/D44), template `CLAUDE.md`, template di sessione, checklist di revisione | All'avvio di ogni sessione AI |"
+  },
+  {
+   "label": "ordine lettura",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "4. `02_DECISION_LOG.md`: leggi per esteso D32–D39; scorri le altre.",
+   "new": "4. `02_DECISION_LOG.md`: leggi per esteso D32–D51; scorri le altre."
+  },
+  {
+   "label": "verifiche fondanti",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "Novità di verifica della v2.0 (6 luglio 2026): citazioni **Galves et al. 2012** e **Chen et al. 2024** verificate su fonte primaria e inserite nel registro con obbligo di differenziazione nel related work.",
+   "new": "Novità di verifica della v2.0 (6 luglio 2026): citazioni **Galves et al. 2012** e **Chen et al. 2024** verificate su fonte primaria e inserite nel registro con obbligo di differenziazione nel related work. Novità di verifica della v2.1 (21 luglio 2026): **Greco et al. 2023** verificata su fonte primaria nei materiali di progetto e aggiunta al registro (voce 26); corrispondenza completa fra registro e bibliografia della proposta finale verificata sul testo."
+  },
+  {
+   "label": "stato v2.1",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "- [x] **Ristrutturazione a strumento unico + pacchetto v2.0 (6 lug 2026, questo)**",
+   "new": "- [x] Ristrutturazione a strumento unico + pacchetto v2.0 (6 lug 2026)\n\n- [x] **Sincronizzazione con la proposta finale + riallineamento v2.1 (21 lug 2026, questo)**"
+  },
+  {
+   "label": "blocco gate v2.1",
+   "tag": "A",
+   "decision": "D44(vii)+D45+D42",
+   "old": "- [ ] Gate G0: ambiente + test non-tree verdi + profiling costo fit\n\n- [ ] Gate G1: audit → registro, alfabeto e T* CONGELATI\n\n- [ ] Gate G2: piano confermativo congelato (OSF opzionale)\n\n- [ ] Gate G3: context tree validato sui quattro processi analitici\n\n- [ ] Gate G4: modelli di riferimento + letture descrittive\n\n- [ ] Gate G5: inferenza confermativa (P1, P2; S1)\n\n- [ ] Gate G6: latino + sottocampioni appaiati\n\n- [ ] Gate G7: piano di sensibilità (13 celle) → scrittura",
+   "new": "**Ordine di esecuzione v2.1 (D44(vii)): G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7.**\n\n- [ ] Gate G0: ambiente + test non-tree verdi (asserzioni reali) + infrastruttura deterministica (profilazione → G3; D45)\n\n- [ ] Gate G1: audit → registro, alfabeto e T* CONGELATI (con O2/O8 risolti)\n\n- [ ] Gate G3: context tree validato sui quattro processi analitici + profilazione O6 + studio di calibrazione del null O7\n\n- [ ] Gate G2: piano confermativo congelato (OSF opzionale; richiede O7 risolto)\n\n- [ ] Gate G4: modelli di riferimento + letture descrittive\n\n- [ ] Gate G5: inferenza confermativa (P1, P2; S1) — richiede O7 risolto\n\n- [ ] Gate G6: latino + sottocampioni appaiati\n\n- [ ] Gate G7: piano di sensibilità (13 celle, partizione D42) → scrittura"
+  }
+ ],
+ "01_spans": [
+  {
+   "label": "B1 §4.1 node fields",
+   "tag": "R",
+   "decision": "D48",
+   "old": "```text\ncounts: dict[symbol -> int]   # n_s(a): times context s was followed by a (so far)\ntotal:  int                   # N_s\nL_self: float                 # accumulated sequential code length of symbols emitted under\n```\n\n```text\ns\nL_par:  float                 # code length the PARENT's predictor assigned to those same\nsymbols\nchildren: dict[symbol -> Node]\n```",
+   "new": "```text\ncounts: dict[symbol -> int]   # n_s(a): times context s was followed by a (so far)\ntotal:  int                   # N_s\nL_self: float                 # accumulated sequential code length of symbols emitted under s\nL_par:  float                 # code length the PARENT's predictor assigned to those same symbols\nchildren: dict[symbol -> Node]\n```"
+  },
+  {
+   "label": "B2 §4.1 training pass",
+   "tag": "R",
+   "decision": "D48",
+   "old": "```text\npath = [root]; node = root\nfor depth in 1 .. min(available_past, d_max):\n```\n\n```text\n    σ = symbol at distance depth in the past\n    node = node.children.setdefault(σ, new Node)     # grow on first visit\n    path.append(node)\np_prev = None\n```\n\n```text\nfor depth, node in enumerate(path):                   # predict-then-update, PRE-update\ncounts\n    p = P_node(x); node.L_self += −log2(p)\n    if depth > 0: node.L_par += −log2(p_prev)\n```\n\n```text\n    p_prev = p\nfor node in path: node.counts[x] += 1; node.total += 1\n```",
+   "new": "```text\npath = [root]; node = root\nfor depth in 1 .. min(available_past, d_max):\n    σ = symbol at distance depth in the past\n    node = node.children.setdefault(σ, new Node)     # grow on first visit\n    path.append(node)\np_prev = None\nfor depth, node in enumerate(path):                  # predict-then-update, PRE-update counts\n    p = P_node(x); node.L_self += −log2(p)\n    if depth > 0: node.L_par += −log2(p_prev)\n    p_prev = p\nfor node in path: node.counts[x] += 1; node.total += 1\n```"
+  },
+  {
+   "label": "B3 §6.1 repository tree",
+   "tag": "RA",
+   "decision": "D48+D44+D47",
+   "old": "```text\nhexis/\n├── pyproject.toml  uv.lock  README.md  CLAUDE.md\n```\n\n```text\n├── config/\n│   ├── default.yaml                 # §6.3 — single source of parameters\n│   └── registry_overrides.yaml      # human-verified doc_id → (author, work, regime, …)\n(G1)\n```\n\n```text\n├── data/\n│   ├── raw/        # immutable UD clones; gitignored; PROVENANCE.md committed\n│   ├── interim/    # tokens.parquet\n│   └── processed/  # sequences.parquet, alphabet.json, scores/*.parquet\n├── src/hexis/\n```\n\n```text\n│   ├── config.py  conllu_reader.py  registry.py  alphabet.py  sequences.py  blocks.py\n│   ├── model/\n│   │   ├── context_tree.py   # ContextTree, TreeParams, EvalResult  (§4.1–4.3)\n│   │   ├── diagnostics.py    # slice identities (§4.6)\n```\n\n```text\n│   │   └── lexicon.py        # context-importance extraction (§4.5)\n│   ├── protocols/\n│   │   ├── sampling.py       # whole-sentence subsampling to T*, seed derivation\n│   │   └── scores.py         # ΔCE, gain, depth scores; LODO orchestration; learning\n```\n\n```text\ncurves (§4.2/4.4)\n│   ├── stats/\n│   │   ├── permutation.py    # exact label permutation, exact sign-flip\n│   │   ├── bootstrap.py      # hierarchical document bootstrap\n```\n\n```text\n│   │   └── holm.py\n│   ├── viz/plots.py          # F1–F10 (§8)\n│   ├── manifest.py\n│   └── pipeline/             # CLI entry points, one per stage\n│       ├── run_audit.py  run_encode.py  run_tree_validation.py\n```\n\n```text\n│       ├── run_reference.py  run_confirmatory.py  run_latin.py  run_sensitivity.py\n├── tests/                    # §7\n├── results/tables|figures|logs      # artifacts named {stage}_{config-hash}_{date}\n└── notebooks/                # exploration only; nothing canonical\n```",
+   "new": "```text\nhexis/\n├── pyproject.toml  uv.lock  README.md  CLAUDE.md\n├── config/\n│   ├── default.yaml                 # §6.3 — single source of parameters\n│   └── registry_overrides.yaml      # human-verified doc_id → (author, work, regime, …) (G1)\n├── data/\n│   ├── raw/        # immutable UD clones; gitignored; PROVENANCE.md committed\n│   ├── interim/    # tokens.parquet\n│   └── processed/  # sequences.parquet, alphabet.json, scores/*.parquet\n├── src/hexis/\n│   ├── config.py  conllu_reader.py  registry.py  alphabet.py  sequences.py  blocks.py\n│   ├── model/\n│   │   ├── context_tree.py   # ContextTree, TreeParams, EvalResult  (§4.1–4.3)\n│   │   ├── diagnostics.py    # slice identities (§4.6)\n│   │   └── lexicon.py        # context-importance extraction (§4.5)\n│   ├── protocols/\n│   │   ├── sampling.py       # whole-sentence subsampling to T*, seed derivation\n│   │   └── scores.py         # ΔCE, gain, depth scores; LODO orchestration; learning curves (§4.2/4.4)\n│   ├── stats/\n│   │   ├── permutation.py    # exact label permutation, exact sign-flip\n│   │   ├── bootstrap.py      # hierarchical document bootstrap\n│   │   └── holm.py\n│   ├── viz/plots.py          # F1–F10 (§8)\n│   ├── manifest.py\n│   └── pipeline/             # CLI entry points, one per stage\n│       ├── run_audit.py  run_encode.py  run_tree_validation.py\n│       ├── run_reference.py  run_confirmatory.py  run_latin.py  run_sensitivity.py\n│       └── run_null_calibration.py   # O7/D44 synthetic null-calibration study (G3)\n├── candidates/               # quarantined non-canonical implementations (D47); never imported by src/hexis\n├── tests/                    # §7\n├── results/tables|figures|logs      # artifacts named {stage}_{config-hash}_{date}\n└── notebooks/                # exploration only; nothing canonical\n```"
+  },
+  {
+   "label": "B4 §6.2 interfaces",
+   "tag": "RA",
+   "decision": "D48+D44",
+   "old": "```text\n# model/context_tree.py\n@dataclass\nclass TreeParams: d_max: int = 8; beta: float = 0.5; k_min: int = 2; gamma: float = 0.0;\n```\n\n```text\nselect: str = \"monotone\"\nclass ContextTree:\n    def __init__(self, n_symbols: int, params: TreeParams): ...\n    def fit(self, sent_seqs: Iterable[Sequence[int]]) -> None      # single prequential\npass; sets self.h_online\n```\n\n```text\n    def evaluate(self, sent_seqs) -> EvalResult                    # frozen; per-position\nrecords (§4.3)\n    def root_distribution(self) -> np.ndarray                      # smoothed (add-β)\n    def node_table(self, depth: int) -> pd.DataFrame               # diagnostics/lexicon\n```\n\n```text\nsupport\n    def top_contexts(self, k: int = 20) -> pd.DataFrame            # by Δ(s) (lexicon,\n§4.5)\n@dataclass\n```\n\n```text\nclass EvalResult:\n    ce: float; n: int\n    depth_selected: np.ndarray; depth_matched: np.ndarray; available_past: np.ndarray\n    codelen_root: np.ndarray; codelen_selected: np.ndarray\n    unseen_context_rate: float\n```\n\n```text\n# protocols/scores.py\ndef delta_ce_scores(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame\n    # rows: doc_id, regime, ce_own(mean,sd), ce_other(mean,sd), dce, n_positions\n```\n\n```text\n[protocol (b)]\ndef pooled_scores(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame\n    # rows: doc_id, regime, gain_mean(mean,sd), depth_mean(mean,sd), frac_restricted,\ncoverage  [protocol (c); LABEL-FREE]\n```\n\n```text\ndef learning_curves(...) -> pd.DataFrame                            # CE vs T grid\n(descriptive)\n```\n\n`# stats/permutation.py`\n\n```text\ndef exact_label_permutation(scores: np.ndarray, labels: np.ndarray, sided: str) ->\nPermResult   # enumerates C(n,k)\ndef exact_sign_flip(values: np.ndarray, sided: str) -> PermResult\n# enumerates 2^n\n# PermResult(p_exact, observed, null_distribution, n_enumerated)\n```",
+   "new": "```text\n# model/context_tree.py\n@dataclass\nclass TreeParams: d_max: int = 8; beta: float = 0.5; k_min: int = 2; gamma: float = 0.0; select: str = \"monotone\"\n\nclass ContextTree:\n    def __init__(self, n_symbols: int, params: TreeParams): ...\n    def fit(self, sent_seqs: Iterable[Sequence[int]]) -> None      # single prequential pass; sets self.h_online\n    def evaluate(self, sent_seqs) -> EvalResult                    # frozen; per-position records (§4.3)\n    def root_distribution(self) -> np.ndarray                      # smoothed (add-β)\n    def node_table(self, depth: int) -> pd.DataFrame               # diagnostics/lexicon support\n    def top_contexts(self, k: int = 20) -> pd.DataFrame            # by Δ(s) (lexicon, §4.5)\n\n@dataclass\nclass EvalResult:\n    ce: float; n: int\n    depth_selected: np.ndarray; depth_matched: np.ndarray; available_past: np.ndarray\n    codelen_root: np.ndarray; codelen_selected: np.ndarray\n    unseen_context_rate: float\n\n# protocols/scores.py\ndef delta_ce_scores(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame\n    # rows: doc_id, regime, ce_own(mean,sd), ce_other(mean,sd), dce, n_positions   [protocol (b)]\ndef pooled_scores(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame\n    # rows: doc_id, regime, gain_mean(mean,sd), depth_mean(mean,sd), frac_restricted,\n    #       own_regime_pool_fraction (D44), coverage   [protocol (c); LABEL-FREE]\ndef learning_curves(...) -> pd.DataFrame                           # CE vs T grid (descriptive)\n\n# stats/permutation.py\ndef exact_label_permutation(scores: np.ndarray, labels: np.ndarray, sided: str) -> PermResult   # enumerates C(n,k)\ndef exact_sign_flip(values: np.ndarray, sided: str) -> PermResult                               # enumerates 2^n\n# PermResult(p_exact, observed, null_distribution, n_enumerated)\n```"
+  },
+  {
+   "label": "B5 §6.3 YAML",
+   "tag": "R",
+   "decision": "D48",
+   "old": "```text\nseeds: {global: 20260706}            # per-analysis seed = global XOR crc32(analysis_id)\ncorpus:\n  ud_release: \"r2.18\"\n```\n\n```text\n  languages: [grc, la]\n  primary_contrast: {grc: [HEX, PROSE_CLASS], la: [HEX, PROSE_ALL]}\nalphabet:\n  variant: ud23                      # ud23 | ud23_oth | upos_only\n  upos_keep: [ADJ, ADP, ADV, AUX, CCONJ, DET, NOUN, NUM, PART, PRON, SCONJ, VERB]\n```\n\n```text\n  upos_drop: [PUNCT, X, INTJ, SYM]\n  upos_map:  {PROPN: NOUN}\n  deprel_keep: [root, nsubj, csubj, obj, iobj, ccomp, xcomp, obl, advcl, advmod, acl,\n                amod, appos, det, nummod, nmod, case, mark, aux, cop, cc, conj, parataxis]\n```\n\n```text\n  excluded_deprel_policy: drop       # drop | oth\n  gate_a_threshold: 0.02\nsequence: {boundary: reset}          # reset | bound\ncontext_tree: {d_max: 8, beta: 0.5, k_min: 2, gamma: 0.0, select: monotone}\n```\n\n```text\nscores:\n  t_star: null                       # fixed at G1 per language; recorded here\n  n_seeds: 20\n  min_available_past: 4              # D35 position restriction for gain/depth\n  learning_curve_T: [5000, 10000, 20000]\n```\n\n```text\nstats: {alpha: 0.05, family: [P1, P2], boot_B: 2000}\nlatin: {d_max: 6, matched_subsamples_B: 100}\nblocks: {n_block: 1000, min_frac: 0.5}   # descriptive F7 only (D34)\n```",
+   "new": "```text\nseeds: {global: 20260706}            # per-analysis seed = global XOR crc32(analysis_id)\ncorpus:\n  ud_release: \"r2.18\"\n  languages: [grc, la]\n  primary_contrast: {grc: [HEX, PROSE_CLASS], la: [HEX, PROSE_ALL]}\nalphabet:\n  variant: ud23                      # ud23 | ud23_oth | upos_only\n  upos_keep: [ADJ, ADP, ADV, AUX, CCONJ, DET, NOUN, NUM, PART, PRON, SCONJ, VERB]\n  upos_drop: [PUNCT, X, INTJ, SYM]\n  upos_map:  {PROPN: NOUN}\n  deprel_keep: [root, nsubj, csubj, obj, iobj, ccomp, xcomp, obl, advcl, advmod, acl,\n                amod, appos, det, nummod, nmod, case, mark, aux, cop, cc, conj, parataxis]\n  excluded_deprel_policy: drop       # drop | oth\n  gate_a_threshold: 0.02\nsequence: {boundary: reset}          # reset | bound\ncontext_tree: {d_max: 8, beta: 0.5, k_min: 2, gamma: 0.0, select: monotone}\nscores:\n  t_star: null                       # fixed at G1 per language; recorded here\n  n_seeds: 20\n  min_available_past: 4              # D35 position restriction for gain/depth\n  learning_curve_T: [5000, 10000, 20000]\nstats: {alpha: 0.05, family: [P1, P2], boot_B: 2000}\nlatin: {d_max: 6, matched_subsamples_B: 100}\nblocks: {n_block: 1000, min_frac: 0.5}   # descriptive F7 only (D34)\n```"
+  },
+  {
+   "label": "B6 §9 DAG",
+   "tag": "RA",
+   "decision": "D48+D44+D45",
+   "old": "```text\nG0 environment + non-tree tests green, fit-cost profiled\nG1 corpus audit → registry + alphabet + T* FROZEN     (real data: counts only)\nG2 analysis-plan freeze (§4.4/§5; optional OSF)       (before ANY model fit on real data)\n```\n\n```text\nG3 context tree validated: four analytic processes + slice + label-free + score tests\nG4 reference models fitted; diagnostics pass; descriptive readings produced (T6, F1, F5–F7,\nh_online)\nG5 confirmatory inference complete (P1, P2, S1; T3, T5, F2–F4)\n```\n\n```text\nG6 Latin replication + matched Greek subsampling (L1)\nG7 sensitivity plan complete (T4, F10) → writing\n```",
+   "new": "```text\nG0  environment + non-tree tests green (real assertions; zero skipped in the G0 set)\n    + deterministic infrastructure verified (seed, config, manifest, overwrite protection)\n    — fit-cost profiling moved to G3 (O6/D45)\nG1  corpus audit → registry + alphabet + T* FROZEN     (real data: counts only)\nG3  context tree validated: four analytic processes + slice + label-free + score tests\n    + O6 fit-cost profiling + O7 null-calibration study (D44/D45)\nG2  analysis-plan freeze (§4.4/§5; optional OSF)       (REQUIRES O7 resolved — D44;\n    before ANY model fit on real data)\nG4  reference models fitted; diagnostics pass; descriptive readings produced (T6, F1, F5–F7, h_online)\nG5  confirmatory inference complete (P1, P2, S1; T3, T5, F2–F4)   (REQUIRES O7 resolved — D44)\nG6  Latin replication + matched Greek subsampling (L1)\nG7  sensitivity plan complete (T4, F10) → writing\n```"
+  }
+ ],
+ "01_pairs": [
+  {
+   "label": "header version",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "Version 2.0 — 2026-07-06 — Language: English (AI-facing). Supersedes v1.0 (2026-07-05, archived in `archive_v1/`). Companion documents: `02_DECISION_LOG.md` (binding decisions D01–D39),",
+   "new": "Version 2.1 — 2026-07-21 — Language: English (AI-facing). Supersedes v2.0 (2026-07-06); v1.0 archived in `archive_v1/`. Companion documents: `02_DECISION_LOG.md` (binding decisions D01–D51),"
+  },
+  {
+   "label": "v2.1 summary + amendment table",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "**No confirmatory analysis had been run on real data at the time of this change** — the consolidation is a pre-data design decision, which must be stated in the preprint (no forking-paths concern).",
+   "new": "**No confirmatory analysis had been run on real data at the time of this change** — the consolidation is a pre-data design decision, which must be stated in the preprint (no forking-paths concern).\n\n**What changed in v2.1 (2026-07-21; synchronization with the final proposal — decisions D40–D51; still pre-data).** This re-issue (i) restores the normative fixed-width blocks damaged at PDF generation (D48; deterministic, fully tabled in `RESTAURO_01_MASTER_SPEC.md`), and (ii) applies the v2.1 amendments. Amendment table:\n\n| Section(s) | Change | Decision |\n| --- | --- | --- |\n| §0.6, §3.7, §4.2 | ghost references \"§6.5\" corrected to §6.4 | D46 |\n| §1.1, §1.2, §4.4 | R1 = mandatory descriptive distributional reading, no test, no α; size-dependence caveat | D41 |\n| §1.2, §4.4, §5.8, §8, App. B | P2 estimand note; descriptive own-regime gain `G_own` added | D49 |\n| §1.3, App. C | hypothesis crosswalk to the final proposal (H1=P2, H2=P1+S1, H3=L1; premise=root+R1) | D40 |\n| §3.7, §6.4 | manifest policy: one central run manifest + minimal per-artifact sidecar | D46 |\n| §4.1, §5.6, §9 | fit-cost profiling moved to G3; G0 criterion reformulated | D45 (O6) |\n| §4.2 | T* scope (primary contrast only) + uniform-T* argument with declared P2-power cost | D51 |\n| §5.1 | sidedness-declared floors; Tier-2 descriptive without α; Lysias-merged status; author-block aggregation | D43 |\n| §5.2 | P1 sign-flip validity OPEN (O7, blocking G2/G5); composition-shift relabeled directional; refit-cost corrected | D44 |\n| §5.3 | confidence-interval semantics declared (between-document, conditional) | realignment ⑤ |\n| §4.5, §8 | context-lexicon Δ(s) cross-regime comparability caveat | realignment ⑥ |\n| §5.5, §9 | G2 repositioned after G3; execution order G0→G1→G3→G2→G4→G5→G6→G7 | D44(vii) |\n| §5.6 | 13-cell partition (parametric robustness vs representation analysis); GATE-A × C0 rule | D42, D50 |\n| §5.7 | Latin sidedness note; d_max = 6 declared as configuration difference | D43 |\n| §6.1, §6.2, §7 | `candidates/` quarantine; `run_null_calibration.py`; `own_regime_pool_fraction`; `test_null_calibration.py` | D47, D44 |\n| §10 | Tier-2 limitation reworded | D43 |"
+  },
+  {
+   "label": "§0.2 label dates",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "**[VERIFIED 2026-07-05]** / **[VERIFIED 2026-07-06]** = checked against the cited primary source on that date;",
+   "new": "**[VERIFIED 2026-07-05]** / **[VERIFIED 2026-07-06]** / **[VERIFIED 2026-07-21]** = checked against the cited primary source on that date;"
+  },
+  {
+   "label": "§0.6 ghost ref",
+   "tag": "A",
+   "decision": "D46",
+   "old": "Every computed number traces to data version + config hash + code commit + seed (§6.5).",
+   "new": "Every computed number traces to data version + config hash + code commit + seed (§6.4)."
+  },
+  {
+   "label": "§1.1 R1 + emphasis",
+   "tag": "RA",
+   "decision": "D48+D41",
+   "old": "read at three depths of the same instrument: - **root (order 0):** symbol distribution — descriptive reading; optional JSD appendix (R1); -**context gain (order ≥ 1):**",
+   "new": "read at three depths of the same instrument: - **root (order 0):** symbol distribution — descriptive distributional reading incl. R1 (D41); - **context gain (order ≥ 1):**"
+  },
+  {
+   "label": "§1.2 R1 row",
+   "tag": "A",
+   "decision": "D41",
+   "old": "| R1 | JSD between the two regimes' root distributions | Document permutation | One-sided | Optional appendix (no α) |",
+   "new": "| R1 | JSD between the two regimes' root distributions (reference models: smoothed, size-unmatched — D41) | None (reported value) | — | Descriptive distributional reading (no α, no test) |"
+  },
+  {
+   "label": "§1.2 rationale",
+   "tag": "A",
+   "decision": "D49+D43+D44",
+   "old": "Rationale for the two-statistic family: P1 and P2 target the two distinct claims (transferability of structure; amount of sequential information), are the most robust readings (bits; document-level; position-controlled), and a small family maximizes power — the binding constraint of this corpus. Depth (S1) is demoted because it is the reading most sensitive to parameterization (`d_max`, `k_min`).",
+   "new": "Rationale for the two-statistic family: P1 and P2 are the two headline readings of the instrument (bits; document-level; position-controlled) — transfer of regime-specific structure, and pooled-model context gain — and a small family maximizes power, the binding constraint of this corpus. Note (D49): the pooled-model gain does not by itself separate \"flatter conditional structure\" from \"greater distance from the pooled mixture\" (the latter overlapping with P1); the descriptive own-regime gain `G_own` (§4.4) is the disambiguating reading, and locus claims require the joint reading (§5.8). Depth (S1) is demoted because it is the reading most sensitive to parameterization (`d_max`, `k_min`). Floors and sidedness for every exact scheme: D43 (§5.1). The confirmatory application of the sign-flip to P1 is gated by O7 (D44)."
+  },
+  {
+   "label": "§1.3 crosswalk",
+   "tag": "A",
+   "decision": "D40",
+   "old": "H1 (distributional) → root-level descriptive reading + optional R1. H2 (sequential) → **P2** (re-operationalized: context gain *is* the sequential-organization question, order-adaptive instead of order-1). H3 (predictive) → **P1** + S1. H4 (cross-linguistic) → **L1**. The proposal's questions are preserved; their operationalization is consolidated into one instrument. The preprint states this evolution explicitly (§10).",
+   "new": "**Final-proposal crosswalk (D40; verified against the final proposal §§3.2–3.6 on 2026-07-21):** final **H1** (lettura sequenziale / context gain) → **P2**; final **H2** (lettura predittiva / transfer) → **P1**, with **S1** as its secondary depth reading; final **H3** (replica latina) → **L1**; the proposal's **premessa distribuzionale** (§3.2) → root-level descriptive reading + **R1** (D41). The identifiers P1/P2/S1/R1/L1 never appear in the proposal. Historical note: the pre-final proposal used H1 = distributional, H2 = sequential, H3 = predictive, H4 = Latin (archived mapping in App. C); the questions are unchanged — their presentation was renumbered and their operationalization consolidated into one instrument. The preprint states this evolution explicitly (§10)."
+  },
+  {
+   "label": "§2.5 wrapped comment",
+   "tag": "R",
+   "decision": "D48",
+   "old": "git checkout r2.18     # confirm tag; else the tagged release matching the\npinned version",
+   "new": "git checkout r2.18     # confirm tag; else the tagged release matching the pinned version"
+  },
+  {
+   "label": "§3.7 sidecar",
+   "tag": "A",
+   "decision": "D46",
+   "old": "`scores/*.parquet`: per-document score tables produced by §4.4 protocols (schema in §6.2). Every derived file carries a `manifest.json` sidecar (§6.5).",
+   "new": "`scores/*.parquet`: per-document score tables produced by §4.4 protocols (schema in §6.2). Every run writes one central manifest (§6.4); every derived file carries or is accompanied by a minimal sidecar `{run_id, sha256, entry_point}` (D46)."
+  },
+  {
+   "label": "§4.1 emphasis",
+   "tag": "R",
+   "decision": "D48",
+   "old": "Scientific claims rest on *a well-**defined MDL context model applied uniformly to all regimes*, not on numerical replication",
+   "new": "Scientific claims rest on **a well-defined MDL context model applied uniformly to all regimes**, not on numerical replication"
+  },
+  {
+   "label": "§4.1 selection s*",
+   "tag": "R",
+   "decision": "D48",
+   "old": "**Selection at a position** with matching path s₀ ⊂ … ⊂ s_k: s *= deepest s_j with, for every i = 1…j,* `total(s_i)` `≥ k_min` *and* `Δ(s_i) > γ` *(monotone-stop**). Variant `argmax`",
+   "new": "**Selection at a position** with matching path s₀ ⊂ … ⊂ s_k: `s*` = deepest s_j with, for every i = 1…j, `total(s_i) ≥ k_min` and `Δ(s_i) > γ` (monotone-stop). Variant `argmax`"
+  },
+  {
+   "label": "§4.1 profiling gate",
+   "tag": "A",
+   "decision": "D45",
+   "old": "costs ≈ 1–3 s [ASSUMPTION, profiled at G0]; vectorize only if profiling demands.",
+   "new": "costs ≈ 1–3 s [ASSUMPTION → profiled at G3 (O6/D45)]; vectorize only if profiling demands."
+  },
+  {
+   "label": "§4.2 full paragraph",
+   "tag": "RA",
+   "decision": "D48+D46+D51",
+   "old": "Let the primary-contrast document set be 𝔻 = HEX ∪ PROSE (Greek: 5 + 6 = 11 docs). All training subsamples draw **whole sentences uniformly without replacement until ≥ T* retained tokens**; S = 20 seeds per condition (seed derivation §6.5); seed-mean reported with sd. - **(a) Reference models** (descriptive only): one per regime, fit on ALL its documents, full data, no LODO. Used for §4.5 readings and R1. Never used for confirmatory statistics. - **(b) Regime LODO models** (for P1): for evaluation document d and training regime R_tr ∈ {HEX, PROSE}: pool = docs of R_tr minus d (if R_d = R_tr); subsample to T*; fit; evaluate d. - (c) Pooled LODO models (for P2/S1; label-free by construction): for evaluation document d: pool =* 𝔻 *\\ {d} —* no regime information used anywhere*; subsample to T*; fit; evaluate d. **T* (GATED:G1):** T* = min over ALL training conditions in (b) and (c) of available retained tokens (the binding condition is expected to be \"HEX minus Iliad\"). One T* per language, used uniformly across (b) and (c) so that gain and CE are size-comparable. Contingency (pre-registered): if T* < 15k retained tokens, record D-amendment and add learning-curve emphasis (below). **Learning curves (descriptive):** CE(d|R_tr) vs training size T ∈ {5k, 10k, 20k, T*} for representative documents — makes the size-dependence of every conclusion visible (F8).",
+   "new": "Let the primary-contrast document set be 𝔻 = HEX ∪ PROSE (Greek: 5 + 6 = 11 docs). All training subsamples draw **whole sentences uniformly without replacement until ≥ T* retained tokens**; S = 20 seeds per condition (seed derivation §6.4); seed-mean reported with sd. - **(a) Reference models** (descriptive only): one per regime, fit on ALL its documents, full data, no LODO. Used for §4.5 readings and R1. Never used for confirmatory statistics. - **(b) Regime LODO models** (for P1): for evaluation document d and training regime R_tr ∈ {HEX, PROSE}: pool = docs of R_tr minus d (if R_d = R_tr); subsample to T*; fit; evaluate d. - **(c) Pooled LODO models** (for P2/S1; label-free by construction): for evaluation document d: pool = 𝔻 ∖ {d} — **no regime information used anywhere**; subsample to T*; fit; evaluate d. **T* (GATED:G1; scope per D51):** T* = min over the training conditions of protocols (b) and (c) **on the primary contrast only** of available retained tokens (binding condition expected: \"HEX minus Iliad\" from (b); for (c) it is 𝔻 minus its largest document). Exploratory arms (tragedy, PROSE_POST) run at their own binding sizes, documented separately and labeled non-comparable with primary readings (D51). One T* per language, used uniformly across (b) and (c): this purchases cross-reading comparability (root/gain/transfer at one common training size — the locus narrative) at a **declared cost of P2 power**, since the protocol-(c) pool could support a larger training size; the cost is made visible descriptively by the learning curves, whose protocol-(c) curves extend beyond T* where the pool permits (D51). Contingency (pre-registered): if T* < 15k retained tokens, record D-amendment and add learning-curve emphasis (below). **Learning curves (descriptive):** CE(d|R_tr) vs training size T ∈ {5k, 10k, 20k, T*} for representative documents — makes the size-dependence of every conclusion visible (F8)."
+  },
+  {
+   "label": "§4.3 emphasis + s*",
+   "tag": "R",
+   "decision": "D48",
+   "old": "Walk the matching path; select s *by the frozen rule;* `codelen(t) = −log2 P_{s*}(x_t)` *. Fallbacks:**",
+   "new": "Walk the matching path; select `s*` by the frozen rule; `codelen(t) = −log2 P_{s*}(x_t)`. **Fallbacks:**"
+  },
+  {
+   "label": "§4.4 full paragraph + G_own",
+   "tag": "RA",
+   "decision": "D48+D41+D49",
+   "old": "For evaluation document d with N_d evaluated positions: - **CE(d | R_tr)** = seed-mean of (1/N_d) Σ_t codelen_selected(t) under protocol (b). **ΔCE(d) = CE(d | other) − CE(d | own)**; > 0 ⇒ own-regime advantage. **P1 = mean_d ΔCE(d)** over all 11 evaluation documents. No position restriction: ΔCE is a within-document difference, so position/sentence-length effects cancel between the two models. - **Context gain** at position t under a pooled LODO model (protocol c): `g(t) = codelen_root(t) − codelen_selected(t)` ≥ 0-ish (can be negative at k_min/γ boundaries; keep signed), where codelen_root uses the SAME fitted model's root predictor. **Position restriction (D35):** the primary gain statistic uses only positions with `available_past ≥ 4` (i.e., at least the 5th retained token of its sentence). Rationale: under P-RESET, early positions mechanically lack context; if regimes differ in sentence length (editorial segmentation!), unrestricted means would confound gain with sentence length. The unrestricted variant is a sensitivity cell; the fraction of qualifying positions per regime is reported (audit + T3). **G(d)** = seed-mean of mean_t∈restricted g(t). **P2 = mean_{d**∈**HEX} G(d) − mean_{d**∈**PROSE} G(d)**. - **Depth score:** D̄ (d) = seed-mean of mean_t∈restricted depth_selected(t), same protocol/restriction. **S1 = mean_{d**∈**HEX} D̄ (d) − mean_{d**∈**PROSE} D̄ (d)**. - **R1 (optional appendix):** JSD(P_root^HEX, P_root^PROSE) between reference-model root distributions; JSD(P,Q) = ½Σ P log(P/M) + ½Σ Q log(Q/M), M = (P+Q)/2, ∈ [0,1] bits. Labeled: computed on **smoothed** (add-β) distributions.",
+   "new": "For evaluation document d with N_d evaluated positions: - **CE(d | R_tr)** = seed-mean of (1/N_d) Σ_t codelen_selected(t) under protocol (b). **ΔCE(d) = CE(d | other) − CE(d | own)**; > 0 ⇒ own-regime advantage. **P1 = mean_d ΔCE(d)** over all 11 evaluation documents. No position restriction: ΔCE is a within-document difference, so position/sentence-length effects cancel between the two models. - **Context gain** at position t under a pooled LODO model (protocol c): `g(t) = codelen_root(t) − codelen_selected(t)` ≥ 0-ish (can be negative at k_min/γ boundaries; keep signed), where codelen_root uses the SAME fitted model's root predictor. **Position restriction (D35):** the primary gain statistic uses only positions with `available_past ≥ 4` (i.e., at least the 5th retained token of its sentence). Rationale: under P-RESET, early positions mechanically lack context; if regimes differ in sentence length (editorial segmentation!), unrestricted means would confound gain with sentence length. The unrestricted variant is a sensitivity cell; the fraction of qualifying positions per regime is reported (audit + T3). **G(d)** = seed-mean of mean_t∈restricted g(t). **P2 = mean_{d∈HEX} G(d) − mean_{d∈PROSE} G(d)**. Estimand note (D49): G(d) is the gain **of the pooled model**; a group difference in G admits two readings — flatter conditional structure in a regime, or greater distance of that regime from the pooled mixture (the latter overlapping with what P1 measures) — which P2 alone does not separate; see the descriptive `G_own` below and the claim wording in §5.8. - **Depth score:** D̄(d) = seed-mean of mean_t∈restricted depth_selected(t), same protocol/restriction. **S1 = mean_{d∈HEX} D̄(d) − mean_{d∈PROSE} D̄(d)**. - **R1 (descriptive distributional reading; D41):** JSD(P_root^HEX, P_root^PROSE) between reference-model root distributions; JSD(P,Q) = ½Σ P log(P/M) + ½Σ Q log(Q/M), M = (P+Q)/2, ∈ [0,1] bits. **No test, no α.** Labeled: computed on **smoothed** (add-β), **size-unmatched** reference models (not T*-matched), hence weakly size-dependent; displayed with this label wherever it appears. A T*-matched variant is deferred (DN-1).\n\n**Descriptive own-regime gain (D49; no α).** `G_own(d)` = seed-mean over positions with `available_past ≥ 4` of `codelen_root − codelen_selected` under the **protocol-(b) own-regime LODO model** for d — zero additional fits (protocol-(b) evaluations already record `codelen_root`). It depends on regime labels by construction, so it is **descriptive only, never permuted, outside the Holm family** (compatible with D36/D21). Reported alongside P2 (T3 descriptive columns) and in F5; it licenses or blocks the wording \"hexameter shows lower gain also under its own model\" versus \"only under the pooled model\" (§5.8)."
+  },
+  {
+   "label": "§4.5 emphasis",
+   "tag": "R",
+   "decision": "D48",
+   "old": "Reported once per regime for SG96 comparability; never inferential** (D19/D32).",
+   "new": "Reported once per regime for SG96 comparability; **never inferential** (D19/D32)."
+  },
+  {
+   "label": "§4.5 F5 curves",
+   "tag": "A",
+   "decision": "D49",
+   "old": "per regime, on held-out material via the LODO protocols — these are the v2 replacements",
+   "new": "per regime, on held-out material via the LODO protocols (computed under both the pooled protocol-(c) model and the own-regime protocol-(b) models, labeled; D49) — these are the v2 replacements"
+  },
+  {
+   "label": "§4.5 lexicon caveat",
+   "tag": "A",
+   "decision": "realignment ⑥",
+   "old": "This is the linguistics-facing interpretability output (\"which morphosyntactic contexts carry the memory\"). In-sample and descriptive; so labeled (T6, F9).",
+   "new": "This is the linguistics-facing interpretability output (\"which morphosyntactic contexts carry the memory\"). In-sample and descriptive; so labeled (T6, F9). Caveat (declared): Δ(s) is a **total** (bits saved over all occurrences), so it grows with training size, and reference models are not size-matched across regimes (protocol (a)); lexicon rankings are therefore read **within** regime and never compared across regimes — so labeled in T6/F9."
+  },
+  {
+   "label": "§5.1 full rewrite",
+   "tag": "RA",
+   "decision": "D43",
+   "old": "Tokens nest in sentences, sentences in documents, documents in authors; document-mates share author, dialect, topic, annotation habits. **Randomization unit = document.** - **Tier 1 (primary): exact document-level schemes.** Greek primary contrast: 11 documents → P2/S1/R1 label permutation exact over C(11,5) = 462 assignments (min attainable p = 1/462 ≈ 0.0022); P1 sign-flip exact over 2^11 = 2048 (min one-sided p ≈ 0.00049). Both minima < 0.025, so Holm-family significance is attainable — stated explicitly. - **Tier 2 (ultra-conservative): exact author-level permutation.** {Homer, Hesiod, Hymn-anon} vs {Herodotus, Thucydides, Lysias}: C(6,3) = 20 → min p = 0.05 exactly. Reported openly: author-level significance below 0.05 is structurally unattainable with this corpus; hence effect sizes, CIs and the cross-validated transfer design carry much of the evidential weight. Robustness rerun with Lysias' four orations merged into one author-level pseudo-document. - The v1 Tier-3 chunk-level benchmark is **removed** (chunks no longer exist in inference; D34). p-value convention: `p = (1 + #{perm stat` `≥ observed}) / (1 + #perms)` for Monte Carlo; exact enumeration where listed (no add-one needed but reported both ways for transparency).",
+   "new": "Tokens nest in sentences, sentences in documents, documents in authors; document-mates share author, dialect, topic, annotation habits. **Randomization unit = document.** **Sidedness rule (D43, binding):** every declared floor states its sidedness; the two-sided floor doubles the one-sided floor only when the randomization orbit contains the sign-mirror of the observed configuration — always for sign-flips, for label permutations only with equal group sizes; with unequal groups the floors coincide. - **Tier 1 (primary): exact document-level schemes.** Greek primary contrast: 11 documents → P2/S1 label permutation exact over C(11,5) = 462 assignments (unequal 5/6 → one- and two-sided floors coincide at 1/462 ≈ 0.0022); P1 sign-flip exact over 2^11 = 2048 (one-sided floor 1/2048 ≈ 0.00049; two-sided 2/2048 ≈ 0.00098). All Tier-1 floors < 0.025, so Holm-family significance is attainable — stated explicitly. - **Tier 2 (author-level): descriptive robustness without α (D43).** {Homer, Hesiod, Hymn-anon} vs {Herodotus, Thucydides, Lysias} (partition verified at G1 → O8, coupled to O2): label permutation C(6,3) = 20 (equal 3/3 → one-sided floor 1/20 = 0.05; **operative two-sided floor 2/20 = 0.10**, P2 being two-sided); sign-flip 2^6 = 64 (one-sided floor 1/64 ≈ 0.0156). Correct statement: the author-level plan cannot attain joint family significance (P2's floor 0.10 > 0.05); P1 alone could formally cross Holm-1 (0.0156 < 0.025); to avoid an incoherent partial-α family, **no α is spent at Tier 2** (revisitable at G2: DN-2). Declared cost, stated openly: Tier 2 was the design's only inferential answer to intra-author dependence; withdrawing α is a real cost. Its role: verify that sign and magnitude persist when intra-author dependence is removed by construction; sign, magnitude, and exact p values (labeled descriptive) are reported. **Author-block score (D43(v)):** unweighted mean of the per-document scores within the block — the document remains the measurement unit; the block is the randomization unit. **Lysias-merged rerun (D20/D43(iv)):** the four orations merged into one pseudo-document → 8 documents (5/3, unequal): label permutation C(8,3) = 56 (floors coincide at 1/56 ≈ 0.018), sign-flip 2^8 = 256. Declared **robustness analysis without α**; its P2 floor lies below Holm-1, so its outcome is reported but never substitutes the primary Tier-1 result. - The v1 Tier-3 chunk-level benchmark is **removed** (chunks no longer exist in inference; D34). p-value convention: `p = (1 + #{perm stat ≥ observed}) / (1 + #perms)` for Monte Carlo; exact enumeration where listed (no add-one needed but reported both ways for transparency)."
+  },
+  {
+   "label": "§5.2 full rewrite",
+   "tag": "RA",
+   "decision": "D48+D44",
+   "old": "**P2/S1 (exact permutation on label-free scores).** G(d) and D̄ (d) are computed under protocol (c), a score function of (d, 𝔻{d}) that never consults regime labels. Under H0 (\"all documents generated by one process; labels arbitrary\"), the score vector is exchangeable across label assignments, so permuting labels over the FIXED score vector is an exact randomization test. This **fixes a flaw in v1's H3b**, where regime-specific held- out profiles were permuted at document level although the scores themselves depended on the labels — subtly invalid; corrected here by construction.\n\n**LODO composition note.** Removing d from the pooled training pool shifts pool composition slightly against d's own regime. Under H0 this is irrelevant (one process). Under H1 it *dilutes* G-differences conservatively (each doc is scored against a background under-representing its regime). Stated as a conservative bias, not corrected.\n\n**P1 (exact sign-flip).** Under H0, \"own\" and \"other\" training pools are equally sized (T*-matched) samples of documents from the same process, so CE(d|own) and CE(d|other) are identically distributed and ΔCE(d) is symmetric about 0; sign-flip over documents is the exact test. Seed-averaging before flipping is legitimate (seeds are internal replicates).\n\n**Why no refit-per-permutation:** a fully refit permutation (462 × all fits) is unnecessary given the label-free construction, and would cost ≈ 10² laptop-hours for no additional validity.",
+   "new": "**P2/S1 (exact permutation on label-free scores).** G(d) and D̄(d) are computed under protocol (c), a score function of (d, 𝔻 ∖ {d}) that never consults regime labels. Under H0 (\"all documents generated by one process; labels arbitrary\"), the score vector is exchangeable across label assignments, so permuting labels over the FIXED score vector is an exact randomization test. This **fixes a flaw in v1's H3b**, where regime-specific held-out profiles were permuted at document level although the scores themselves depended on the labels — subtly invalid; corrected here by construction. Requirement: joint exchangeability of the label-free score vector — guaranteed by the construction (D36(i) stands).\n\n**LODO composition note (relabeled by D44(iv)).** Removing d from the pooled training pool shifts pool composition against d's own regime, and the shift is **asymmetric between regimes**: a HEX document is scored against a 4+6 pool, a PROSE document against a 5+5 pool, and in tokens the disparity is larger because the Iliad dominates the HEX side. Under H0 this is irrelevant (one process; exchangeability holds → test validity unaffected). Under H1, to the extent that gain increases with own-regime representation in the training pool, it is a **directional displacement of the group difference, not a symmetric shrinkage**: it exaggerates G_HEX < G_PROSE and compresses the opposite — P2 is two-sided (D33) precisely because direction is never assumed. The earlier label \"conservative dilution\" is withdrawn; effect-size interpretation carries this caveat. Mitigation (binding, D44(iv)): `pooled_scores` reports per document the own-regime token fraction of its training subsample (seed-mean), audited and displayed alongside T3.\n\n**P1 (exact sign-flip) — validity status: OPEN (D44/O7; blocking G2/G5).** Under H0, T*-matched \"own\" and \"other\" pools are samples from the same process, so ΔCE(d) is **marginally** symmetric about 0 (D36(ii), which stands). Exactness of the sign-flip, however, requires invariance of the **joint** law of {ΔCE(d)} under coordinatewise sign changes — not implied by the construction: for each seed, the eleven documents' training material is drawn from heavily overlapping pools, so a sampling fluctuation that makes one pool more \"typical\" induces a common-mode component, coherent in sign within regime and opposite across regimes; with n = 11 it does not average out and cannot be generated by independent flips → risk of an **anti-conservative null**. Seed-averaging reduces subsampling variance but not pool-composition variance, increasing the common mode's relative weight. Resolution before G2 (O7): a null-calibration study on synthetic data runs the full chain under a true H0 and measures the empirical type-I error at nominal levels, with P2's permutation as positive control; named remedies if inflation is found: document-level refit randomization at reduced S, or an alternative pre-specified scheme validated on synthetics (D44(v)). The generic sign-flip utility is still implemented and tested at G0 (D44(vi)).\n\n**Refit-per-permutation (corrected by D44(iii)).** The \"no refit needed\" argument holds for P2 — the scores are label-free, so refitting under relabeling is genuinely unnecessary. For P1 it is **inverted**: ΔCE depends on labels by definition, and refit-under-relabeling is precisely what would purchase exactness. Corrected cost: ≈ 13 fits per relabeling per seed → 462 × 13 × S; at S = 20 ≈ 1.2 × 10⁵ fits (≈ 33–100 laptop-hours at 1–3 s/fit [ASSUMPTION → O6 at G3]); a reduced-S null lowers this by an order at a declared, conservative cost. Whether a refit scheme is adopted is decided by the O7 calibration outcome."
+  },
+  {
+   "label": "§5.3 CI semantics",
+   "tag": "A",
+   "decision": "realignment ⑤",
+   "old": "Per-document dot displays (11 points, F3–F4) are the primary honest visualization.",
+   "new": "Per-document dot displays (11 points, F3–F4) are the primary honest visualization. Interval semantics (declared): these CIs express **between-document variability conditional on the fixed score tables**; they do not propagate seed/subsampling or model-fitting variance, whose seed-sd is reported separately (T3/T5) and never combined into the interval; labeled \"between-document interval\" wherever displayed."
+  },
+  {
+   "label": "§5.5 freeze reposition",
+   "tag": "A",
+   "decision": "D44(vii)",
+   "old": "Gate **G2** freezes this section and §4.4 **after** G1 (audit; which may adjust only what its pre-registered gates allow: excluded-deprel escalation, registry, T*) and **before** any model is fitted to real data — including the descriptive reference models, whose readings could otherwise steer analyst choices. Optional OSF deposit recommended. Pre-G2 exploration: synthetic data only.",
+   "new": "Gate **G2** freezes this section and §4.4 **after** G1 (audit; which may adjust only what its pre-registered gates allow: excluded-deprel escalation, registry, T*) **and after G3** (v2.1 repositioning, D44(vii): the freeze follows instrument validation and the O7 null-calibration study, both synthetic-only; **O7 must be resolved before G2**), and **before** any model is fitted to real data — including the descriptive reference models, whose readings could otherwise steer analyst choices (first real-data fits at G4). v2.1 execution order: **G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7**. Optional OSF deposit recommended. Pre-G2 exploration: synthetic data only."
+  },
+  {
+   "label": "§5.6 partition + GATE-A",
+   "tag": "A",
+   "decision": "D42+D50+D45",
+   "old": "Primary configuration **C0** = (alphabet ud23, excluded-deprel drop, boundary P-RESET, β 0.5, d_max 8, select monotone, gain restriction available_past ≥ 4). - **Factorial block** (full recompute of P1 and P2 point estimates + exact inference, S = 10 seeds): alphabet-policy ∈ {(ud23, drop), (ud23, oth), upos_only} × boundary ∈ {P-RESET, P-BOUND} = **6 cells** (C0 among them at S = 20). - **One-at-a-time block** around C0 (point estimates only, S = 10): β ∈ {1/|A|, 0.25, 1.0} (3 cells), d_max ∈ {6, 12} (2), select = argmax (1), gain restriction ≥ 0 i.e. unrestricted (1) = **7 cells**. - Compute estimate: per cell ≈ 11 docs × (2 regime fits + 1 pooled fit) × 10 seeds = 330 fits ≈ 10–20 laptop-minutes → total ≈ 3–5 hours [ASSUMPTION, verified at G0 profiling]. Stability table T4: per cell, sign, magnitude, and (factorial block) exact p of P1 and P2. A conclusion is claimed only if sign-stable across all 13 cells; instability is reported as a finding.",
+   "new": "Primary configuration **C0** = (alphabet ud23, excluded-deprel drop, boundary P-RESET, β 0.5, d_max 8, select monotone, gain restriction available_past ≥ 4). - **Factorial block** (full recompute of P1 and P2 point estimates + exact inference, S = 10 seeds): alphabet-policy ∈ {(ud23, drop), (ud23, oth), upos_only} × boundary ∈ {P-RESET, P-BOUND} = **6 cells** (C0 among them at S = 20). - **One-at-a-time block** around C0 (point estimates only, S = 10): β ∈ {1/|A|, 0.25, 1.0} (3 cells), d_max ∈ {6, 12} (2), select = argmax (1), gain restriction ≥ 0 i.e. unrestricted (1) = **7 cells**. - Compute estimate: per cell ≈ 11 docs × (2 regime fits + 1 pooled fit) × 10 seeds = 330 fits ≈ 10–20 laptop-minutes → total ≈ 3–5 hours [ASSUMPTION → verified at G3 profiling (O6/D45)]. Stability table T4: per cell, sign, magnitude, and (factorial block) exact p of P1 and P2. **Claim discipline (D42):** the 13 cells are partitioned. (i) **Parametric-robustness block** = C0 + the 7 OAT cells: sign-stability across this block is **required** for any substantive conclusion; instability inside it is itself a reported finding. Placement note (declared): the unrestricted-gain cell changes the evaluated position set — strictly an estimand change — and is kept in this stricter block by deliberate conservative placement. (ii) **Representation-analysis block** = the 5 non-C0 factorial cells (alphabet policy × boundary): these change the observed object; outcomes are **reported and interpreted, never used as automatic validity conditions** (e.g., an effect present under ud23 and absent under upos_only localizes the signature in the dependency information — a finding, not a robustness failure). Every primary conclusion refers explicitly to the primary representation. **GATE-A interaction (D50):** if GATE-A fires at G1, C0 remains the unique primary and the Holm family stays {P1, P2} on C0; the (ud23, oth) cells acquire mandatory-interpretation status, the affected category's per-regime imbalance is reported, and a declared caveat accompanies every primary conclusion if the drop-vs-oth cells diverge in sign; no cells are added beyond the 13."
+  },
+  {
+   "label": "§5.7 sidedness + d_max",
+   "tag": "A",
+   "decision": "D43",
+   "old": "answers \"are Greek–Latin differences beyond what corpus size alone produces?\" (proposal §8.1).",
+   "new": "answers \"are Greek–Latin differences beyond what corpus size alone produces?\" (proposal §8.1). Sidedness note (D43): with unequal groups (2/6) the one- and two-sided permutation floors coincide at 1/28 ≈ 0.036 — the Holm exclusion holds under either sidedness. Configuration note (declared): L1 runs at `d_max = 6` versus C0's 8, a deliberate size-driven configuration difference; L1 is a replication under the Latin-adapted configuration and is so stated in Results."
+  },
+  {
+   "label": "§5.8 confound pointer",
+   "tag": "A",
+   "decision": "D44(iv)",
+   "old": "training-set composition under LODO (→ §5.2 note).",
+   "new": "training-set composition under LODO (asymmetric between regimes → §5.2 note, D44(iv); per-document own-regime pool fractions reported)."
+  },
+  {
+   "label": "§5.8 claim template",
+   "tag": "A",
+   "decision": "D49",
+   "old": "causal attribution to meter is never asserted; no claim that language is a finite-memory source (§0.5).",
+   "new": "causal attribution to meter is never asserted; pooled-gain conclusions are worded \"under the pooled model\", and locus claims require the joint reading of P2 with the descriptive `G_own` (D49); no claim that language is a finite-memory source (§0.5)."
+  },
+  {
+   "label": "§6.4 manifest policy",
+   "tag": "A",
+   "decision": "D46",
+   "old": "All randomness via `np.random.default_rng(derived_seed)`. Every stage writes `results/logs/{run_id}/manifest.json` (git commit, dirty flag, resolved-config sha256, input hashes, package versions, timestamps, seed). `logging` only (no prints in library code). No silent overwrites (`--force` required). Raw data immutable.",
+   "new": "All randomness via `np.random.default_rng(derived_seed)`. **Manifest policy (D46):** every run writes ONE central `results/logs/{run_id}/manifest.json` (git commit, dirty flag, resolved-config sha256, input hashes, package versions, timestamps, seed, **and the list + SHA-256 of every artifact produced by the run**); every artifact carries or is accompanied by a minimal sidecar `{run_id, sha256, entry_point}` — no duplication of the full metadata. `logging` only (no prints in library code). No silent overwrites (`--force` required). Raw data immutable."
+  },
+  {
+   "label": "§7 permutation + calibration rows",
+   "tag": "A",
+   "decision": "D44",
+   "old": "| `test_permutation.py` | Exact enumeration counts = `C(n,k)` and `2^n`; null synthetic → `p ~ Uniform` (KS over repetitions); planted effect → small p; one/two-sided consistency | G0 |",
+   "new": "| `test_permutation.py` | Exact enumeration counts = `C(n,k)` and `2^n`; null synthetic → `p ~ Uniform` (KS over repetitions); planted effect → small p; one/two-sided consistency. Generic utilities only — the confirmatory application of the sign-flip to P1 is gated by O7 (D44) | G0 |\n| `test_null_calibration.py` | Empirical type-I calibration of the full P1 chain on synthetic H0 (single process → 11 pseudo-documents → LODO → T*-matching → seed-averaging → sign-flip) at nominal levels over replications; P2 permutation as positive control (O7/D44) | G3 |"
+  },
+  {
+   "label": "§8 T3",
+   "tag": "A",
+   "decision": "D43+D44+D49+⑤",
+   "old": "T3 confirmatory results (P1, P2 observed; exact p Tier-1 and Tier-2; Holm-adjusted; effects in bits; bootstrap CIs; S1 alongside, labeled secondary).",
+   "new": "T3 confirmatory results (P1, P2 observed; exact p Tier-1, plus Tier-2 descriptive p per D43; Holm-adjusted; effects in bits; bootstrap CIs labeled \"between-document\" per §5.3; S1 alongside, labeled secondary; descriptive `G_own` columns and per-document own-regime pool fractions, D44/D49)."
+  },
+  {
+   "label": "§8 T6",
+   "tag": "A",
+   "decision": "⑥",
+   "old": "T6 context lexicon (top-20 contexts per regime: context string, depth, N_s, Δ(s) bits; labeled descriptive/in-sample).",
+   "new": "T6 context lexicon (top-20 contexts per regime: context string, depth, N_s, Δ(s) bits; labeled descriptive/in-sample; within-regime ranking only — Δ(s) totals are size-dependent and reference models are not size-matched)."
+  },
+  {
+   "label": "§8 F5",
+   "tag": "A",
+   "decision": "D49",
+   "old": "F5 gain-vs-available-context curves per regime (held-out).",
+   "new": "F5 gain-vs-available-context curves per regime (held-out; pooled and own-regime models, labeled — D49)."
+  },
+  {
+   "label": "§8 R1 figure",
+   "tag": "A",
+   "decision": "D41",
+   "old": "Optional appendix figure: R1 JSD display.",
+   "new": "R1 JSD display with the D41 size-dependence label (descriptive)."
+  },
+  {
+   "label": "§9 order note + criteria",
+   "tag": "A",
+   "decision": "D44(vii)+D45",
+   "old": "Gate criteria: G0 tests + profiling recorded; G1 no unassigned sentences, GATE-A/B resolved, alphabet.json + registry + T* frozen; G2 plan hash recorded; G3 all listed tests green; G4–G7 artifacts + manifests archived.",
+   "new": "v2.1 execution order (D44(vii)): **G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7** — G2 repositioned after G3; the D30 invariant is preserved (pre-G2: synthetic data only; first real-data model fits at G4). Acquisition note (D45): treebank cloning and `PROVENANCE.md` compilation may proceed in parallel with G0; the G1 audit remains strictly after G0.\n\nGate criteria: G0 non-tree tests green with real assertions + deterministic infrastructure recorded (profiling → G3; D45); G1 no unassigned sentences, GATE-A/B resolved, O2/O8 resolved, alphabet.json + registry + T* frozen; G3 all listed tests green + O6 profiling recorded + O7 calibration report delivered; G2 plan hash recorded (requires O7 resolved); G4–G7 artifacts + manifests archived."
+  },
+  {
+   "label": "§10 emphasis",
+   "tag": "R",
+   "decision": "D48",
+   "old": "before any real-data computation. *Results**",
+   "new": "before any real-data computation.* **Results**"
+  },
+  {
+   "label": "§10 Tier-2 limitation",
+   "tag": "A",
+   "decision": "D43",
+   "old": "**Limitations** — Tier-2 granularity (min p = 0.05), §5.8 confounds,",
+   "new": "**Limitations** — Tier-2 replication is descriptive without α (P2's operative two-sided floor 0.10; D43), §5.8 confounds,"
+  },
+  {
+   "label": "App B glossary",
+   "tag": "RA",
+   "decision": "D48+D49+D44",
+   "old": "`ΔCE(d)` own-regime advantage; `g(t)` code-length gain vs root; `G(d)` restricted document-mean gain; `D̄ (d)` restricted document-mean depth;",
+   "new": "`ΔCE(d)` own-regime advantage; `g(t)` code-length gain vs root; `G(d)` restricted document-mean gain (pooled model); `G_own(d)` descriptive own-regime restricted gain (D49); `own_regime_pool_fraction` per-document own-regime token share of the protocol-(c) training subsample (D44); `D̄(d)` restricted document-mean depth;"
+  },
+  {
+   "label": "App C crosswalk",
+   "tag": "A",
+   "decision": "D40",
+   "old": "H1 → root reading (descriptive) + R1 (optional). H2 → P2 (context gain: adaptive-order sequential organization). H3 → P1 (transfer) + S1 (depth). H4 → L1.",
+   "new": "**v2.1 crosswalk (D40; final proposal):** final H1 → P2 (context gain); final H2 → P1 + S1 (transfer + depth); final H3 → L1; premessa distribuzionale → root reading + R1 (descriptive, D41). **Archived pre-final mapping (historical):** H1 → root reading + R1; H2 → P2 (context gain: adaptive-order sequential organization); H3 → P1 (transfer) + S1 (depth); H4 → L1."
+  },
+  {
+   "label": "footer",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "*End of specification v2.0. Amendments only via the Decision Log.*",
+   "new": "*End of specification v2.1. Amendments only via the Decision Log.*"
+  },
+  {
+   "label": "v2.0 summary historical note",
+   "tag": "A",
+   "decision": "D41",
+   "old": "and appear only as diagnostics or optional appendix material.",
+   "new": "and appear only as diagnostics or optional appendix material (v2.1: the JSD root reading R1 is elevated to a mandatory descriptive distributional reading — D41)."
+  }
+ ],
+ "02": [
+  {
+   "n": 1,
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "Version 2.0 — 2026-07-06. Binding companion to `01_MASTER_SPEC.md` v2.0. Supersedes v1.0 (2026-07-05, archived in `archive_v1/`).",
+   "new": "Version 2.1 — 2026-07-21. Binding companion to `01_MASTER_SPEC.md` v2.1. Supersedes v2.0 (2026-07-06); v1.0 archived in `archive_v1/`."
+  },
+  {
+   "n": 2,
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "Reading guide: §I carries v1 decisions with updated status (self-contained one-paragraph form); §II contains the v2 architecture decisions D32–D39 in full; §III open items.",
+   "new": "Reading guide: §I carries v1 decisions with updated status (self-contained one-paragraph form); §II contains the v2 architecture decisions D32–D39 in full; §II-bis contains the v2.1 synchronization decisions D40–D51 in full; §III open items (O7 is blocking); §IV deferred decision nodes."
+  },
+  {
+   "n": 3,
+   "tag": "A",
+   "decision": "D50",
+   "old": "Status: FROZEN policy, GATED:G1 escalation.",
+   "new": "Status: FROZEN policy, GATED:G1 escalation; escalation semantics sharpened by D50 (C0 stays the unique primary; the oth cells acquire mandatory-interpretation status)."
+  },
+  {
+   "n": 4,
+   "tag": "A",
+   "decision": "D47",
+   "old": "Status: FROZEN (T5.1 rescheduled to roadmap Phase 2 — the tree is now front-loaded).",
+   "new": "Status: FROZEN (T5.1 rescheduled to roadmap Phase 2 — the tree is now front-loaded); amendment D18-A1 PROPOSED via D47 (growth policy), decision at the Phase-2 mathematical-supervisor touchpoint."
+  },
+  {
+   "n": 5,
+   "tag": "A",
+   "decision": "D43",
+   "old": "Status: FROZEN; **extended by D36** (pooled label-free LODO protocol added) and by the learning-curve display (Spec §4.2).",
+   "new": "Status: FROZEN; **extended by D36** (pooled label-free LODO protocol added) and by the learning-curve display (Spec §4.2); Lysias-merged rerun status specified by D43(iv) (robustness analysis without α; floors declared)."
+  },
+  {
+   "n": 6,
+   "tag": "A",
+   "decision": "D43",
+   "old": "This remains the project's most important statistical correction. Status: FROZEN.",
+   "new": "This remains the project's most important statistical correction. Status: FROZEN; floor statement AMENDED by D43 (sidedness declared: 0.05 is the one-sided permutation floor; the operative two-sided floor for P2 at Tier 2 is 2/20 = 0.10)."
+  },
+  {
+   "n": 7,
+   "tag": "A",
+   "decision": "D43",
+   "old": "Latin d_max default 6. Status: FROZEN (assignments GATED:G1).",
+   "new": "Latin d_max default 6. Status: FROZEN (assignments GATED:G1); sidedness declaration added by D43 (floors numerically unchanged: 1/28 for both sidednesses, unequal groups)."
+  },
+  {
+   "n": 8,
+   "tag": "A",
+   "decision": "D46",
+   "old": "no impact). Status: FROZEN.",
+   "new": "no impact). Status: FROZEN; manifest granularity AMENDED by D46 (one central run manifest + minimal per-artifact sidecar)."
+  },
+  {
+   "n": 9,
+   "tag": "A",
+   "decision": "D44",
+   "old": "Amendments discovered during synthetic validation (G3) pass through this log. Status: FROZEN (repositioned).",
+   "new": "Amendments discovered during synthetic validation (G3) pass through this log. Status: FROZEN (repositioned; G2 further repositioned after G3 by D44(vii) — invariant preserved: pre-G2 synthetic only, first real-data fits at G4)."
+  },
+  {
+   "n": 10,
+   "tag": "A",
+   "decision": "D41",
+   "old": "**Supersedes:** D13, D14, D15, D16, D17, D23 (→ D33). **Amends:** D12 (→ D34), D22. Status: FROZEN.",
+   "new": "**Supersedes:** D13, D14, D15, D16, D17, D23 (→ D33). **Amends:** D12 (→ D34), D22. Status: FROZEN; JSD clause AMENDED by D41 (R1 = mandatory descriptive reading, no α, no test)."
+  },
+  {
+   "n": 11,
+   "tag": "A",
+   "decision": "D40",
+   "old": "the Tier-2 author-level floor of 0.05 remains and is declared (D21). Status: FROZEN.",
+   "new": "the Tier-2 author-level floor of 0.05 remains and is declared (D21). Status: FROZEN; mapping clause AMENDED by D40 (final-proposal crosswalk); floor/attainability wording AMENDED by D43 (sidedness)."
+  },
+  {
+   "n": 12,
+   "tag": "A",
+   "decision": "D44",
+   "old": "Status: FROZEN. (Corrects v1; recorded openly.)",
+   "new": "Status: FROZEN as historical record; clauses (ii)(iii)(iv) AMENDED by D44 (sign-flip validity for P1 → OPEN, tracked as O7; composition-shift label corrected to directional displacement; refit-cost argument corrected). Clause (i) stands."
+  },
+  {
+   "n": 13,
+   "tag": "A",
+   "decision": "D42",
+   "old": "instability is itself a reported finding (T4/F10). Status: FROZEN.",
+   "new": "instability is itself a reported finding (T4/F10). Status: FROZEN; claim discipline AMENDED by D42 (partition: parametric-robustness block vs representation-analysis block); GATE-A interaction specified by D50."
+  },
+  {
+   "n": 14,
+   "tag": "A",
+   "decision": "D44",
+   "old": "## §III — OPEN ITEMS (tracked, not blocking)",
+   "new": "\n---\n\n## §II-bis — v2.1 SYNCHRONIZATION DECISIONS (2026-07-21, in full)\n\nContext: after v2.0, the final research proposal reached its consolidated form; an external congruence review, a repository-state report, and two internal design-coherence audits identified divergences and under-specified branches. D40–D51 synchronize the operational package with the final proposal and close the procedural nodes. All decided pre-data: no model has been fitted to real data. Matters explicitly deferred by the owner are in §IV; data-gated matters remain in §III.\n\n**D40 ★ — Hypothesis crosswalk (final proposal ↔ statistics).** **Q:** The final proposal renumbered the hypotheses (H1 sequential reading / context gain; H2 predictive reading / transfer; H3 Latin replication; the distributional level demoted to a descriptive \"premessa distribuzionale\", §3.2), while D33 / Spec §1.3 / App. C still recorded the pre-final mapping (H1 distributional … H4 Latin). **Decision:** binding crosswalk — **final H1 = P2** (pooled-model context gain; two-sided); **final H2 = P1** (transfer asymmetry; one-sided > 0, two-sided also reported), with **S1** as its pre-registered secondary depth reading; **final H3 = L1** (Latin, qualitative); **distributional premise = root reading + R1** (descriptive; D41). Verified against the final proposal text (§§3.2–3.6) on 2026-07-21. The identifiers P1/P2/S1/R1/L1 remain confined to the technical documentation and never appear in the proposal. Spec §1.3 and App. C updated; the superseded mapping preserved there as a historical note. **Rationale:** the proposal is the scientific presentation document; the operational package adapts to it. Amends: D33 (mapping clause). Status: FROZEN.\n\n**D41 — R1/JSD status.** **Q:** the final proposal computes and reports the JSD between root distributions inside the distributional premise (§§3.2, 6.8); the package still listed R1 as \"optional appendix\", and Spec §1.2 assigned it a test (document permutation, one-sided) despite \"no α\". **Decision:** R1 = **mandatory descriptive distributional reading**: computed and reported, **no α, no test** (the §1.2 test assignment is removed; no permutation distribution is produced for R1). **Binding caveat wherever R1 is displayed:** R1 is computed on reference-model root distributions (protocol (a)), which are **not T\\*-matched**; add-β smoothing acts differently at different N, so the value is weakly size-dependent — labeled \"computed on smoothed, size-unmatched reference models\". A T\\*-matched variant is deferred (DN-1, §IV). **Rationale:** aligns with the executed-JSD decision of the proposal; removes a vestigial test with undefined status. Amends: D32 (JSD clause). Status: FROZEN.\n\n**D42 — Sensitivity-plan partition (parametric robustness vs representation analysis).** **Q:** D37 required sign-stability \"across all 13 cells\" for any conclusion, treating representation changes as robustness conditions. **Decision:** the 13 cells are partitioned. **(i) Parametric-robustness block** = C0 + the 7 OAT cells (β ∈ {1/|A|, 0.25, 1.0}; d_max ∈ {6, 12}; select = argmax; unrestricted gain): sign-stability across this block is **required** for any substantive conclusion; instability inside it is itself a reported finding. **(ii) Representation-analysis block** = the 5 non-C0 factorial cells (alphabet policy × boundary): these change the observed object; their outcomes are **reported and interpreted, never used as automatic validity conditions** (e.g., an effect present under ud23 and absent under upos_only localizes the signature in the dependency information — a finding, not a robustness failure). Placement note (declared): removing the position restriction changes the evaluated position set — strictly an estimand change — but stays in the stricter OAT block by deliberate conservative placement. Every primary conclusion refers explicitly to the primary representation. Amends: D37 (claim discipline). Status: FROZEN.\n\n**D43 ★ — Sidedness declared for every exact floor; Tier-2 status; Lysias-merged status; author-block aggregation.** **Q:** attainable minima were declared without sidedness; D21's Tier-2 floor (0.05) is the one-sided permutation floor while P2 is two-sided (D33); the Lysias-merged rerun and the author-level statistic were procedurally under-specified. **Decision:** **(i) General rule (binding):** every declared floor states its sidedness. The two-sided floor equals **twice** the one-sided floor **only when the randomization orbit contains the sign-mirror of the observed configuration**: always for sign-flips; for label permutations **only with equal group sizes**. With unequal groups no mirror is guaranteed and the two-sided floor coincides with the one-sided floor (attained when the observed assignment uniquely maximizes |T|). **(ii) Declared floors:**\n\n| Scheme | Enumeration | One-sided floor | Two-sided floor |\n|---|---|---|---|\n| Greek P1 sign-flip | 2^11 = 2048 | 1/2048 ≈ 0.00049 (primary) | 2/2048 ≈ 0.00098 |\n| Greek P2 label perm. (5/6, unequal) | C(11,5) = 462 | 1/462 ≈ 0.0022 | 1/462 ≈ 0.0022 (coincides) |\n| Latin P1 sign-flip | 2^8 = 256 | 1/256 ≈ 0.0039 | 2/256 ≈ 0.0078 |\n| Latin P2 label perm. (2/6, unequal) | C(8,2) = 28 | 1/28 ≈ 0.036 | 1/28 ≈ 0.036 (coincides) |\n| Author P1 sign-flip | 2^6 = 64 | 1/64 ≈ 0.0156 | 2/64 ≈ 0.031 |\n| Author P2 label perm. (3/3, equal) | C(6,3) = 20 | 1/20 = 0.05 | **2/20 = 0.10 (operative)** |\n| Lysias-merged P2 label perm. (5/3, unequal) | C(8,3) = 56 | 1/56 ≈ 0.018 | 1/56 ≈ 0.018 (coincides) |\n| Lysias-merged P1 sign-flip | 2^8 = 256 | 1/256 ≈ 0.0039 | 2/256 ≈ 0.0078 |\n\nTier-1 Holm attainability is intact (all Tier-1 floors < 0.025); the final proposal's declared minima (§6.11: 1/2048, 1/462, 0.10, ≈0.016) are consistent with this table. **(iii) Tier-2 status: descriptive robustness without α.** Correct statement (replaces earlier wordings): the author-level plan **cannot attain joint family significance** (P2's operative two-sided floor 0.10 > 0.05); P1 alone could formally cross the first Holm threshold (0.0156 < 0.025); to avoid an incoherent partial-α family, **no α is spent at Tier 2** (revisitable: DN-2). Declared cost, stated openly: Tier 2 was the design's only inferential answer to intra-author dependence; withdrawing α is a real cost. Compensating statement: Tier 1 is the inferential plan **under document exchangeability**; Tier 2 verifies persistence of sign and magnitude at the author level, where blocks are too few for joint inference. Sign, magnitude, and exact p values (labeled descriptive) are reported. **(iv) Lysias-merged rerun** (D20): declared **robustness analysis without α**; floors as tabled; noted that its P2 floor (≈ 0.018) lies below Holm-1, so its outcome is reported but **never substitutes** the primary Tier-1 result. **(v) Author-block aggregation (binding):** block score = **unweighted mean of the per-document scores of its documents** (the document remains the measurement unit; the block is the randomization unit); author-level statistics are the corresponding means/differences over block scores. Rationale: consistency with unweighted document means at Tier 1; token-weighting would re-introduce size dependence. **(vi) O2 coupling (→ O8):** the 3/3 partition {Homer, Hesiod, Hymn-anon} vs {Herodotus, Thucydides, Lysias} underlies C(6,3) = 20 and 2^6 = 64. If the Hymn is merged into Homer at G1 (O2), HEX blocks fall to 2: C(5,2) = 10 (floor 1/10 = 0.10, both sidednesses — unequal 2/3) and 2^5 = 32 (one-sided ≈ 0.031). The O2 decision is therefore inferentially consequential and is resolved at G1 with this consequence on record. Amends: D21 (floor statement), D24 (sidedness declaration; minima unchanged), D33 (attainability wording). Status: FROZEN.\n\n**D44 ★ — Sign-flip validity for P1: OPEN question, blocking G2/G5; amendments to D36 (ii)–(iv); Gate G2 repositioned.** **Q:** D36(ii) argued the exact sign-flip from the marginal symmetry of ΔCE(d) under H0. **Decision:** **(i) Gap identified:** exactness of the sign-flip requires invariance of the **joint** law of {ΔCE(d)} under coordinatewise sign changes (sufficient condition: independent, individually symmetric components). The construction yields **marginal** symmetry only. Mechanism: for each seed, the \"own\"/\"other\" training material of the eleven documents is drawn from two heavily overlapping document pools; a sampling fluctuation that makes one pool more \"typical\" induces a **common-mode component**, coherent in sign within regime and opposite across regimes; with n = 11 it does not average out and cannot be generated by independent flips → risk: **anti-conservative null**. Seed-averaging reduces subsampling variance but not pool-composition variance (the documents are fixed), so it *increases* the relative weight of the common mode. **(ii) P1/P2 asymmetry (declared):** P2's permutation requires only joint exchangeability of the label-free score vector — guaranteed by construction (D36(i) stands). P1's sign-flip requires a strictly stronger condition **not implied** by the construction; the final proposal itself flags the assumption and assigns it to statistical supervision (§§6.6, 6.11 → 11.1). **(iii) D36(iv) corrected:** the \"no refit-per-permutation\" cost argument holds for P2 (scores label-free) and is **inverted** for P1 (ΔCE depends on labels by definition; refit-under-relabeling is precisely what would purchase exactness). Corrected cost: ≈ 13 fits per relabeling per seed (11 own-LODO + 2 group models) → 462 × 13 × S; at S = 20 ≈ 1.2 × 10⁵ fits (≈ 33–100 laptop-hours at 1–3 s/fit [ASSUMPTION → O6 at G3]); a reduced-S null lowers this by an order at a declared, conservative cost. **(iv) D36(iii) relabeled:** the LODO composition shift is **asymmetric between regimes** (a HEX document is scored against a 4+6 pool, a PROSE document against a 5+5 pool; in tokens the disparity is larger because the Iliad dominates the HEX side). To the extent that gain increases with own-regime representation in the training pool, the shift is a **directional displacement of the group difference, not a symmetric shrinkage**: it exaggerates G_HEX < G_PROSE and compresses the opposite — and P2 is two-sided (D33) precisely because direction is never assumed. The label \"conservative dilution\" is **withdrawn**. Validity is unaffected (under H0 exchangeability holds); effect-size interpretation is affected. **Mitigation (binding):** `pooled_scores` reports, per document, the own-regime token fraction of its training subsample (seed-mean); audited and displayed alongside T3. **(v) Resolution path (O7, blocking):** pre-G2 **null-calibration study on synthetic data only**: generate from a single process (H0 true); split into 11 pseudo-documents matching the corpus size profile (available after G1); assign the observed labels; run the **full chain** (LODO, T\\*-matching, seed-averaging, sign-flip); estimate the empirical type-I error at nominal levels over replications; P2's permutation as positive control (must calibrate; failure = implementation bug, not theory). Deliverables: calibration report + mathematical-supervisor touchpoint with numbers. Named remedies if inflation is found: (a) document-level refit randomization for P1 at reduced S (declared, conservative); (b) an alternative pre-specified scheme validated on synthetics before G2. **(vi) Freeze rule:** the generic `exact_sign_flip` utility **is** implemented and tested at G0 on synthetic symmetric inputs; D44 blocks only the **confirmatory application to P1** (its freezing at G2 and its execution at G5). **(vii) Gate repositioning (structural consequence):** since O7 requires the implemented tree (Phase 2) and G2 is blocked on O7, **G2 moves after G3**: v2.1 execution order **G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7**. The D30 invariant is preserved: pre-G2 work remains synthetic-only; the first real-data model fits remain at G4, after the freeze. Amends: D36 (ii)(iii)(iv), D30 (freeze position). Status: **OPEN — BLOCKING for G2 and G5** (tracked as O7); clauses (iv), (vi), (vii) FROZEN.\n\n**D45 — G0 criterion reformulated; O6 profiling moved to G3; acquisition may parallel G0.** **Q:** G0 required fit-cost profiling while the tree is scheduled for Phase 2: with no tree, profiling is not meaningful. **Decision:** **G0** = environment locked + **all non-tree tests green with real assertions (zero skipped in the G0 set)** + deterministic infrastructure verified (seed derivation, config resolution, manifest writing, overwrite protection). **O6** (full fit-cost profiling confirming the D37 budget) moves to **G3**; an indicative synthetic microbenchmark MAY be recorded earlier if a conformant candidate tree exists (D47), labeled indicative. **Phase split:** Roadmap Phase 1 splits into **1a** (non-tree pipeline + tests → G0) and **1b** (corpus acquisition + audit → G1). **Parallel-acquisition clause:** treebank cloning and `PROVENANCE.md` compilation are acquisition, not audit, and touch no models: they may proceed in parallel with G0; the G1 **audit** remains strictly after G0. Amends: Spec §9 (G0), Roadmap Fasi 0–1, O6. Status: FROZEN.\n\n**D46 — Manifest policy (central run manifest + minimal sidecar).** **Q:** three inconsistent prescriptions coexisted: D26 (\"manifests for every artifact\"), Spec §3.7 (full sidecar per derived file, citing a nonexistent §6.5), Spec §6.4 (one run manifest per stage). **Decision:** **one central run manifest per run** — `results/logs/{run_id}/manifest.json` with git commit, dirty flag, resolved-config SHA-256, input hashes, package versions, timestamps, seed, **and the list + SHA-256 of every artifact produced by the run**; **every artifact carries or is accompanied by a minimal sidecar** `{run_id, sha256, entry_point}` (no duplication of the full metadata). The ghost references to \"§6.5\" (three occurrences: §0.6, §3.7, §4.2) are corrected to **§6.4**. Amends: D26; Spec §§3.7, 6.4; Handoff rule 10. Status: FROZEN.\n\n**D47 — `hexis_ctree` v0.1.0 quarantined; D18-A1 filed as a proposal.** **Q:** a pure-Python candidate implementation (`hexis_ctree` v0.1.0, validated on synthetic sources) exists outside the canonical path, with a declared deviation from §4.1 (ASSUMPTIONS.md §B3: one-node-per-position growth vs grow-all-along-path). **Decision:** `hexis_ctree` = **non-canonical candidate in quarantine** (kept under `candidates/`, never imported by `src/hexis`), not promoted to `model/context_tree.py` until it (a) conforms to §4.1–4.3 or to a ratified amendment, and (b) passes the four analytic targets at G3. **D18-A1 is hereby FILED AS A PROPOSAL** (not ratified): growth policy — §4.1 grows every node along the matched path on first visit; the candidate grows one node per position; full question/rationale to be completed from ASSUMPTIONS.md §B3; decision at the Phase-2 mathematical-supervisor touchpoint; no canonical implementation may adopt the deviation before ratification. If conformant, the candidate may supply the indicative microbenchmark of D45. Status: FROZEN (D18-A1: PROPOSED).\n\n**D48 — Restoration of the Master Spec's normative blocks (deterministic, documented).** **Q:** the v2.0 documents existed only as PDFs whose **generation** (not conversion) damaged fixed-width blocks: long lines inside code fences wrapped into real line breaks; some glyphs were lost. Evidence of generation-stage damage: parallel occurrences within the same PDF, one intact and one broken (`𝔻 ∖ {d}` intact on p. 9, broken on p. 11; `s*` intact inside `P_{s*}`, lost standalone). **Decision:** the `.md` conversions (2026-07-21) are the **canonical baseline** (they preserve indentation the PDF text layer lost) and are committed as-is with declared damage; the restoration is a **separate commit**. 33 sites in 4 categories (A: 15 wrapped comment/code fragments rejoined; B: 6 fence-fragmented blocks reunified, no token lost; C: 7 glyph restorations from parallel occurrences; D: 5 broken emphasis markers). Every site is determined by a parallel occurrence or immediate context; none required discretionary reconstruction; italic emphasis is irrecoverable and non-normative. Full before/after table: `RESTAURO_01_MASTER_SPEC.md`. Status: EXECUTED (v2.1 re-issue).\n\n**D49 — P2 estimand clarified; descriptive own-regime gain `G_own`; locus-claim wording.** **Q:** G(d) is the gain of the **pooled** model. A lower hexameter gain admits two readings — flatter conditional structure in the regime, or greater distance of the regime from the pooled mixture (the latter overlapping with what P1 measures). P2 alone does not separate them; §1.2's claim that P1 and P2 \"target the two distinct claims\" overstated separation; the locus thesis (root/gain/transfer) is affected. **Decision:** (i) §1.2/§4.4 reworded: P2 is the **pooled-model** context-gain differential; the confound is stated where P2 is defined. (ii) **New descriptive reading (no α): `G_own(d)`** = seed-mean over positions with `available_past ≥ 4` of `codelen_root − codelen_selected` under the **protocol-(b) own-regime LODO model** — **zero additional fits** (protocol-(b) evaluations already record `codelen_root`). It depends on regime labels by construction → **descriptive only, never permuted, outside the Holm family** (fully compatible with D36/D21). Reported alongside P2 (T3 descriptive columns) and in F5 (curves under both pooled and own-regime models, labeled). (iii) **Claim wording (extends D25):** pooled-gain conclusions are stated \"under the pooled model\"; any locus claim about sequential organization requires the joint reading of P2 **and** descriptive `G_own` (e.g., \"hexameter shows lower gain also under its own model\" vs \"only under the pooled model\"). Status: FROZEN.\n\n**D50 — GATE-A × C0 reconciliation.** **Q:** D06 escalates to \"both policies co-primary\" if any excluded category exceeds 2% of raw tokens in a regime; D37/D42 presuppose a single primary configuration; the interaction was unspecified — and vocatives (epic invocations) are the plausible trigger. **Decision:** if GATE-A fires, **C0 remains the unique primary** (ud23, drop); the Holm family remains {P1, P2} on C0 only; **no cells are added** beyond the 13. \"Co-primary\" is sharpened to: the `(ud23_oth, ·)` factorial cells acquire **mandatory-interpretation status** — their outcomes MUST be discussed in Results, with the affected category's per-regime imbalance reported; if the drop-vs-oth cells diverge in sign, every primary conclusion carries a declared caveat naming the category. Rationale: duplicating primaries would double the family or open undeclared forking paths; the factorial block already contains exactly the needed contrast; D42 supplies the interpretive frame. Amends: D06 (escalation semantics). Status: FROZEN (trigger GATED:G1).\n\n**D51 — T\\* scope and the uniform-size argument.** **Q:** §4.2 defined T\\* as the minimum over \"ALL training conditions in (b) and (c)\" without stating whether exploratory arms enter, and adopted one T\\* across (b) and (c) without argument — although protocol (c)'s ten-document pool could support a larger size, i.e., the uniform choice costs P2 power, while §1.2 declares power the binding constraint. **Decision:** (i) **Scope:** T\\* is computed over the training conditions of the **primary contrast only** (Greek: HEX ∪ PROSE_CLASS; Latin: HEX ∪ PROSE_ALL), protocols (b) and (c). Exploratory arms (tragedy, PROSE_POST) run at their own binding sizes, documented separately and labeled non-comparable with primary readings. (ii) **Uniform T\\* across (b) and (c): retained, now argued** — it purchases cross-reading comparability (root/gain/transfer at one common training size: the locus narrative) at a **declared cost of P2 power**; the cost is made visible descriptively by the learning curves (F8), whose protocol-(c) curves extend beyond T\\* where the pool permits. (iii) Binding condition: protocol (b) → \"HEX minus Iliad\" (expected); protocol (c) → 𝔻 minus its largest document; the overall minimum is expected from (b). The §4.2 contingency (T\\* < 15k → logged amendment + learning-curve emphasis) stands. Status: FROZEN (value GATED:G1).\n\n---\n\n## §III — OPEN ITEMS (O7 is blocking for G2/G5; the others are tracked, not blocking)"
+  },
+  {
+   "n": 15,
+   "tag": "A",
+   "decision": "D45",
+   "old": "**O6:** fit-cost profiling to confirm the D37 compute budget — G0.",
+   "new": "**O6:** fit-cost profiling to confirm the D37 compute budget — moved to G3 (D45); an indicative synthetic microbenchmark may be recorded earlier via the D47 candidate, labeled indicative.\n\n**O7 ★:** validity of the exact sign-flip for P1 (D44) — null-calibration study on synthetic data + mathematical-supervisor touchpoint; **BLOCKING for G2 and G5**. Software home: `tests/test_null_calibration.py` + `pipeline/run_null_calibration.py` (G3).\n\n**O8:** author-block composition — verify the 3/3 partition at G1; coupled to O2 with the inferential consequences declared in D43(vi).\n---\n\n## §IV — DEFERRED DECISION NODES (owner-mandated postponement, 2026-07-21)\n\nThese nodes are deliberately left open by the project owner; each becomes determinant at the stated gate. If not revisited, the stated fallback stands.\n\n- **DN-1 — T\\*-matched variant of R1/JSD** (in addition to the D41 baseline). Determinant at: **G2** (inclusion in the frozen descriptive plan). Fallback: D41 baseline (reference-model JSD with size-dependence caveat).\n- **DN-2 — Whether Tier 2 spends α on P1 alone** (one-sided floor 0.0156 < 0.025) instead of the no-α status of D43(iii). Determinant at: **G2**. Fallback: D43(iii) (no α at Tier 2).\n- **DN-3 — Whether the factorial block runs full exact inference (S = 10) or point estimates only**, now that D42 removed its validity-condition role. Determinant at: **G2** (plan freeze; execution at G7). Fallback: D37 as written (full inference).\n"
+  }
+ ],
+ "03": [
+  {
+   "label": "header",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "Versione 2.0 — 6 luglio 2026. Sostituisce la v1.0 (archiviata in `archive_v1/`). Destinatario: te. Lingua: italiano. Documento tecnico vincolante: `01_MASTER_SPEC.md` v2.0 (citato come §N); decisioni: `02_DECISION_LOG.md` v2.0 (D01–D39).",
+   "new": "Versione 2.1 — 21 luglio 2026. Sostituisce la v2.0 (6 luglio 2026); la v1.0 resta archiviata in `archive_v1/`. Destinatario: te. Lingua: italiano. Documento tecnico vincolante: `01_MASTER_SPEC.md` v2.1 (citato come §N); decisioni: `02_DECISION_LOG.md` v2.1 (D01–D51; O7 bloccante per G2/G5). Ordine di esecuzione v2.1 dei gate (D44(vii)): **G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7**."
+  },
+  {
+   "label": "Fase 0 chiusura",
+   "tag": "A",
+   "decision": "D45",
+   "old": "**Chiusura fase:** profilazione preliminare del costo di un fit sintetico (per l'item O6) → **Gate G0** insieme ai test non-tree della Fase 1.",
+   "new": "**Chiusura fase:** nessuna profilazione richiesta a G0 (O6 è spostato a G3; D45; un microbenchmark sintetico indicativo è ammesso solo via il candidato in quarantena D47, etichettato come indicativo). **Gate G0** si chiude in Fase 1a con i test non-tree reali e l'infrastruttura deterministica verificata."
+  },
+  {
+   "label": "Fase 1 -> 1a/1b",
+   "tag": "A",
+   "decision": "D45+D44(vii)+D50+D43+D51",
+   "old": "## FASE 1 — Pipeline dati + audit del corpus → Gate G1 (settimane 2–3, ~18–20 h)\n\n**Obiettivo:** scaricare i treebank (v2.18, §2.5, con SHA-256 e commit in PROVENANCE.md), leggerli, produrre l'audit che **congela alfabeto, registro e T***. **Cosa impari:** il formato CoNLL-U; i multiword token latini (que/ue) e perché si espandono; l'alfabeto UPOS+DEPREL come funzione totale (§3.4); le GATE-A/GATE-B; cosa è T* e perché serve (§4.2). **Cosa fa l'AI:** `conllu_reader`, `registry`, `alphabet`, `sequences`, `blocks` + test (§7);\n\n`run_audit` → `audit_report.md`. **Decisioni umane:** compili `config/registry_overrides.yaml` mappando ogni prefisso `sent_id` a (autore, opera, regime) contro le tabelle verificate di §2.3; risolvi il duplicato *Inno a Demetra* (O2); controlli GATE-A (es. vocativi > 2%?) e GATE-B; verifichi gli inserti in versi di Petronio (O4); prendi nota di T* calcolato (atteso vincolante: \"HEX meno Iliade\"). **Criterio di accettazione (G1):** nessuna frase non assegnata; gates risolti; `alphabet.json`, registro e T* congelati; tutti i test non-tree verdi (G0 incluso). **Touchpoint supervisore linguistico. Subito dopo G1: Gate G2** — congelamento del piano confermativo (§4.4/§5; hash del piano registrato; deposito OSF opzionale). Da qui in poi, prima di toccare dati reali con un modello, il piano è chiuso; ogni modifica passa dal Decision Log. **Prompt-tipo (EN):**\n\nImplement `conllu_reader.py` per §3.2 and `alphabet.py` per §3.4 (TOTAL function; order of operations normative), tests first (§7, incl. a synthetic CoNLL-U fixture with one MWT range and one empty node). Then `run_audit.py` producing `audit_report.md` with the contingency tables, GATE-A/B evaluations, per-regime restricted-position fractions (D35), and the T* computation per §4.2. Do not freeze anything — I review before G1.",
+   "new": "## FASE 1a — Pipeline non-tree → chiusura Gate G0 (settimana 2, ~8–10 h)\n\n**Obiettivo:** implementare e testare tutto ciò che non è l'albero: `conllu_reader`, `registry`, `alphabet`, `sequences`, `blocks` + test (§7) con asserzioni reali (zero skip nel set G0), più l'infrastruttura deterministica (derivazione dei seed, risoluzione della config, scrittura del manifest per run con sidecar minimo — §6.4/D46, protezione da sovrascrittura). **Cosa impari:** il formato CoNLL-U; i multiword token latini (que/ue) e perché si espandono; l'alfabeto UPOS+DEPREL come funzione totale (§3.4). **Criterio di accettazione (G0, riformulato da D45):** ambiente bloccato; tutti i test non-tree verdi con asserzioni reali; infrastruttura deterministica verificata. Nessuna profilazione qui: O6 → G3 (D45). **Clausola di acquisizione parallela (D45):** il clone dei treebank e la compilazione di `PROVENANCE.md` (v2.18, §2.5, con SHA-256 e commit) sono acquisizione, non audit, non toccano modelli e possono procedere in parallelo a G0; l'audit di G1 resta rigorosamente dopo G0. **Prompt-tipo (EN):**\n\nImplement `conllu_reader.py` per §3.2 and `alphabet.py` per §3.4 (TOTAL function; order of operations normative), tests first (§7, incl. a synthetic CoNLL-U fixture with one MWT range and one empty node). Real assertions only — no skipped tests in the G0 set. Also implement the deterministic infrastructure: seed derivation, config resolution, run-manifest writing with minimal sidecars (§6.4/D46), overwrite protection.\n\n## FASE 1b — Audit del corpus → Gate G1 (settimana 3, ~10 h)\n\n**Obiettivo:** con i treebank acquisiti (`PROVENANCE.md` compilato), produrre l'audit che **congela alfabeto, registro e T\\***. **Cosa impari:** le GATE-A/GATE-B; cosa è T* e perché serve (§4.2; ambito del contrasto primario, D51). **Cosa fa l'AI:** `run_audit` → `audit_report.md`. **Decisioni umane:** compili `config/registry_overrides.yaml` mappando ogni prefisso `sent_id` a (autore, opera, regime) contro le tabelle verificate di §2.3; risolvi il duplicato *Inno a Demetra* (O2 — nota D43(vi): la decisione ha conseguenze inferenziali dichiarate sul piano-autore, tracciate come O8); verifichi la partizione autoriale 3/3 (O8); controlli GATE-A (es. vocativi > 2%? — in caso di attivazione vale D50: C0 resta l'unica primaria e le celle `oth` diventano a interpretazione obbligatoria) e GATE-B; verifichi gli inserti in versi di Petronio (O4); prendi nota di T* calcolato (atteso vincolante: \"HEX meno Iliade\"; ambito: solo contrasto primario, D51). **Criterio di accettazione (G1):** nessuna frase non assegnata; gates risolti; O2/O8 risolti; `alphabet.json`, registro e T* congelati; tutti i test non-tree verdi (G0 incluso). **Touchpoint supervisore linguistico.** **Nota v2.1 (D44(vii)): il Gate G2 non segue più immediatamente G1** — è riposizionato dopo G3, perché il congelamento del piano richiede la risoluzione di O7 (validità del sign-flip), che a sua volta richiede l'albero implementato. L'invariante di D30 resta intatto: prima di G2 solo dati sintetici; i primi fit su dati reali restano a G4, dopo il congelamento. **Prompt-tipo (EN):**\n\nImplement `run_audit.py` producing `audit_report.md` with the contingency tables, GATE-A/B evaluations, per-regime restricted-position fractions (D35), and the T* computation per §4.2 (primary-contrast scope, D51). Do not freeze anything — I review before G1."
+  },
+  {
+   "label": "Fase 2 G3+G2",
+   "tag": "A",
+   "decision": "D44+D45+D47",
+   "old": "**Criterio di accettazione (G3):** tutti i test elencati in §7 per G3 verdi; T5.1 completato e loggato. **Touchpoint supervisore matematico.** Nessun dato reale è ancora stato toccato da un modello.",
+   "new": "**In più nella v2.1 (D44/D45):** (a) **profilazione O6** del costo di fit (conferma del budget D37) — qui, non a G0; (b) **studio di calibrazione del null (O7, bloccante per G2/G5):** su soli dati sintetici, generazione da un unico processo (H0 vera), partizione in 11 pseudo-documenti con il profilo di taglie del corpus (disponibile dopo G1), esecuzione della catena completa (LODO, T*-matching, media sui seed, sign-flip) e misura dell'errore di tipo I empirico ai livelli nominali, con la permutazione di P2 come controllo positivo; software: `pipeline/run_null_calibration.py` + `tests/test_null_calibration.py`; consegna: report di calibrazione. **Criterio di accettazione (G3):** tutti i test elencati in §7 per G3 verdi (incluso `test_null_calibration`); T5.1 completato e loggato; profilazione O6 registrata; report di calibrazione O7 consegnato. **Touchpoint supervisore matematico** (in agenda anche D18-A1, la proposta di emendamento sulla politica di crescita depositata via D47). Nessun dato reale è ancora stato toccato da un modello. **Al termine di G3: Gate G2** — congelamento del piano confermativo (§4.4/§5; hash del piano registrato; deposito OSF opzionale; **richiede O7 risolto**). Da qui in poi, prima di toccare dati reali con un modello, il piano è chiuso; ogni modifica passa dal Decision Log."
+  },
+  {
+   "label": "Fase 3 nota",
+   "tag": "A",
+   "decision": "realignment ⑦",
+   "old": "**Criterio (G4):** diagnostiche verdi; figure/tabelle con manifest; niente statistiche confermative ancora.",
+   "new": "**Criterio (G4):** diagnostiche verdi; figure/tabelle con manifest; niente statistiche confermative ancora. **Nota (dichiarata):** la precedenza delle letture descrittive (G4) sull'inferenza (G5) è presentazionale, non epistemica: il piano confermativo è già congelato a G2, quindi vedere le descrittive non apre gradi di libertà analitici."
+  },
+  {
+   "label": "Fase 4 minimi",
+   "tag": "A",
+   "decision": "D43",
+   "old": "Holm su famiglia {P1, P2} (soglie 0.025/0.05; minimi raggiungibili 1/2048 e 1/462 — dichiarati).",
+   "new": "Holm su famiglia {P1, P2} (soglie 0.025/0.05; minimi raggiungibili 1/2048 e 1/462, con lateralità dichiarata accanto a ogni soglia — D43: per la permutazione a gruppi disuguali le soglie uni- e bilaterale coincidono)."
+  },
+  {
+   "label": "Fase 4 criterio",
+   "tag": "A",
+   "decision": "D43+D44+D49",
+   "old": "**Criterio (G5):** test §7 verdi (incluso label-free byte-identico); risultati con p esatti Tier-1 e Tier-2 (piano autore: minimo 0.05, dichiarato), effetti in bit, CI bootstrap; dot plot per documento come display primario.",
+   "new": "**Criterio (G5):** test §7 verdi (incluso label-free byte-identico); risultati con p esatti Tier-1, più il piano-autore **descrittivo senza α** (D43: soglie strutturali dichiarate — permutazione bilaterale 2/20 = 0,10; sign-flip unilaterale 1/64 ≈ 0,016; punteggio di blocco = media non pesata dei suoi documenti; rerun Lisia-fusa anch'esso senza α), effetti in bit, CI bootstrap (etichettate \"tra documenti\", §5.3); colonne descrittive `G_own` e frazioni di pool own-regime (D44/D49); dot plot per documento come display primario. **Prerequisito (D44): O7 risolto** — nessuna inferenza confermativa su P1 prima della validazione del sign-flip."
+  },
+  {
+   "label": "Fase 5 sidedness",
+   "tag": "A",
+   "decision": "D43",
+   "old": "P2-latino (permutazione esatta C(8,2) = 28 → qualitativa per costruzione, niente α)",
+   "new": "P2-latino (permutazione esatta C(8,2) = 28, soglie coincidenti per entrambe le lateralità — D43 → qualitativa per costruzione, niente α)"
+  },
+  {
+   "label": "Fase 6 partizione",
+   "tag": "A",
+   "decision": "D42+D50+D45",
+   "old": "Budget ≈ 3–5 ore macchina (confermato dal profiling di G0, O6). **Disciplina di claim:** una conclusione si dichiara solo se stabile in segno su tutte le 13 celle; l'instabilità è essa stessa un risultato (T4/F10).",
+   "new": "Budget ≈ 3–5 ore macchina (confermato dal profiling di G3, O6/D45). **Disciplina di claim (D42):** le 13 celle sono partizionate — (i) blocco di **robustezza parametrica** (C0 + le 7 celle OAT): stabilità di segno **richiesta** per qualunque conclusione sostanziale; (ii) blocco di **analisi di rappresentazione** (le 5 celle fattoriali non-C0: alfabeto × confine): cambiano l'oggetto osservato, quindi gli esiti si **riportano e interpretano**, mai come condizioni automatiche di validità (un effetto presente su ud23 e assente su solo-UPOS localizza la firma nell'informazione di dipendenza: è un risultato, non un fallimento di robustezza); ogni conclusione primaria si riferisce esplicitamente alla rappresentazione primaria; l'instabilità nel blocco (i) è essa stessa un risultato (T4/F10). **Se GATE-A si è attivata a G1 (D50):** C0 resta l'unica primaria; le celle `(ud23, oth)` sono a interpretazione obbligatoria nei Risultati."
+  },
+  {
+   "label": "Fase 7 limiti",
+   "tag": "A",
+   "decision": "D43",
+   "old": "Limiti (piano-autore 0.05; confondenti;",
+   "new": "Limiti (piano-autore descrittivo senza α, soglia strutturale bilaterale 0,10 — D43; confondenti;"
+  },
+  {
+   "label": "checklist piano-autore",
+   "tag": "A",
+   "decision": "D43",
+   "old": "- [ ] perché la permutazione si fa a documento (exchangeability) e perché il piano-autore ha minimo 0.05;",
+   "new": "- [ ] perché la permutazione si fa a documento (exchangeability), perché ogni soglia dichiara la propria lateralità (D43) e perché il piano-autore è descrittivo senza α (soglia strutturale bilaterale di P2 = 0,10);"
+  },
+  {
+   "label": "checklist nuovi item",
+   "tag": "A",
+   "decision": "D44+D49",
+   "old": "- [ ] cosa i risultati NON dimostrano:",
+   "new": "- [ ] perché il sign-flip di P1 richiede la simmetria congiunta dei segni e non solo quella marginale, perché resta una questione aperta (D44/O7) e come lo studio di calibrazione su sintetici la verifica; - [ ] perché il guadagno pooled (P2) non distingue da solo \"meno struttura condizionale\" da \"maggiore distanza dalla miscela\" e a cosa serve la lettura descrittiva G_own (D49); - [ ] cosa i risultati NON dimostrano:"
+  },
+  {
+   "label": "decisioni item 1",
+   "tag": "A",
+   "decision": "D41",
+   "old": "le misure di ordine basso sono sue troncature lisciate: diagnostiche, non risultati; la JSD resta come appendice facoltativa.",
+   "new": "le misure di ordine basso sono sue troncature lisciate: diagnostiche, non risultati; la JSD è una lettura distribuzionale descrittiva prevista, senza α né test (D41; era \"appendice facoltativa\" fino alla v2.0)."
+  },
+  {
+   "label": "decisioni item 9-11",
+   "tag": "A",
+   "decision": "D42+D44+D43+D49+D50+D51",
+   "old": "8. **D06/GATE-A, D18/T5.1.** Soglia d'allerta sugli scarti di annotazione; audit riga-per-riga della corrispondenza con Schürmann & Grassberger.",
+   "new": "8. **D06/GATE-A, D18/T5.1.** Soglia d'allerta sugli scarti di annotazione; audit riga-per-riga della corrispondenza con Schürmann & Grassberger.\n\n9. **D42 — Robustezza parametrica vs analisi di rappresentazione.** Le 13 celle di sensibilità non sono tutte uguali: le perturbazioni dei parametri devono confermare il segno; i cambi di rappresentazione (alfabeto, confini) cambiano l'oggetto osservato e si interpretano, non si usano come veto automatico.\n\n10. **D44/O7 — Validità del sign-flip di P1: questione aperta, bloccante.** La costruzione garantisce la simmetria marginale di ΔCE sotto H0, non l'invarianza congiunta richiesta dal sign-flip esatto (i pool di addestramento si sovrappongono → componente di modo comune). Si risolve con uno studio di calibrazione su dati sintetici prima del congelamento del piano; per questo G2 è riposizionato dopo G3 (D44(vii)). Conseguenza pratica: nessuna inferenza confermativa su P1 prima di O7.\n\n11. **D43 + D49–D51 — Sincronizzazione v2.1.** Lateralità dichiarata accanto a ogni soglia e piano-autore descrittivo senza α (D43); lettura descrittiva G_own per la sede della firma (D49); GATE-A non duplica la configurazione primaria (D50); T* calcolato sul solo contrasto primario, con il costo di potenza della taglia uniforme dichiarato (D51)."
+  },
+  {
+   "label": "nota strumenti",
+   "tag": "A",
+   "decision": "D45",
+   "old": "fit singolo ≈ 1–3 s (da profilare a G0), piano di sensibilità completo ≈ 3–5 ore.",
+   "new": "fit singolo ≈ 1–3 s (da profilare a G3; O6/D45), piano di sensibilità completo ≈ 3–5 ore."
+  },
+  {
+   "label": "registro crosswalk",
+   "tag": "A",
+   "decision": "D40",
+   "old": "## A. Fonti della proposta (numerazione originale)",
+   "new": "**Nota v2.1 (2026-07-21; D40).** La numerazione della Sezione A è quella della proposta PRE-finale. La proposta finale ha rinumerato la bibliografia in [1]–[22]; corrispondenza verificata sul testo finale il 2026-07-21: registro 1→[1], 2→[6], 3→[18]/[19], 4→[2], 5→[4], 6→[5], 7→[22], 8→[7], 9→[20], 10→[15], 11→[3], 12→[16], 13→[11], 14→[14], 15→[8], 16→[9], 18→[12], 20→[10], 22→[17], 25→[13]. Le voci 17, 19 e 21 del registro non sono citate nella proposta finale (il registro resta il superinsieme delle fonti del preprint). La voce [21] della proposta (Greco et al. 2023) era assente dal registro ed è stata aggiunta come voce 26. La regola resta invariata: nulla si cita nel preprint se non è in questo registro; la passata O5 riverifica anche questa corrispondenza.\n\n## A. Fonti della proposta (numerazione originale della proposta PRE-finale)"
+  },
+  {
+   "label": "registro #2",
+   "tag": "A",
+   "decision": "D40/O5",
+   "old": "2. **Mansilla, R. & Bush, E.** \"Increase of Complexity from Classical Greek to Latin Poetry\". *Complex Systems* (volume/pagine da completare) [P/T].",
+   "new": "2. **Mansilla, R. & Bush, E. (2003).** \"Increase of Complexity from Classical Greek to Latin Poetry\". *Complex Systems* 14(3): 201–213. [P — dettagli dalla bibliografia della proposta finale, 2026-07-21; verifica su fonte primaria in O5]"
+  },
+  {
+   "label": "registro #8",
+   "tag": "A",
+   "decision": "D40/O5",
+   "old": "8. **Šeļa, A. & Gronas, M.** \"Measuring Rhythm Regularity in Verse: Entropy of Inter-Stress Intervals\". *CEUR* *Workshop Proceedings* Vol-3290 (venue del volume da verificare, probabile CHR 2022) [P/T].",
+   "new": "8. **Šeļa, A. & Gronas, M. (2022).** \"Measuring Rhythm Regularity in Verse: Entropy of Inter-Stress Intervals\". In *CHR 2022: Computational Humanities Research Conference*, CEUR Workshop Proceedings Vol-3290, Anversa, pp. 231–242. [P — dalla proposta finale, 2026-07-21; O5]"
+  },
+  {
+   "label": "registro #9",
+   "tag": "A",
+   "decision": "D40/O5",
+   "old": "9. **Cover, T. M. & Thomas, J. A.* Elements of Information Theory*, 2ª ed., Wiley (la proposta indica 2008; l'edizione standard è 2006 — verificare l'edizione effettivamente citata) [S/T].",
+   "new": "9. **Cover, T. M. & Thomas, J. A. (2006).** *Elements of Information Theory*, 2ª ed., Wiley-Interscience. [S — la proposta finale cita l'edizione 2006; conferma editoriale in O5]"
+  },
+  {
+   "label": "registro #10",
+   "tag": "A",
+   "decision": "D40/O5",
+   "old": "10. **Herrera, S., Silai, I.-M., Guillaume, B., Kahane, S. (2025).** \"Extraction of Contrastive Rules from Syntactic Treebanks. A Case Study in Romance Languages\". ACL Anthology 2025.quasy-1.5 (dettagli venue QUASY da completare) [P/T].",
+   "new": "10. **Herrera, S., Silai, I.-M., Guillaume, B., Kahane, S. (2025).** \"Extraction of Contrastive Rules from Syntactic Treebanks: A Case Study in Romance Languages\". In *Proceedings of the Third Workshop on Quantitative Syntax (QUASY, SyntaxFest 2025)*, ACL, pp. 26–38; ACL Anthology 2025.quasy-1.5. [P — dalla proposta finale, 2026-07-21; O5]"
+  },
+  {
+   "label": "registro #25 + #26",
+   "tag": "A",
+   "decision": "D40/O5",
+   "old": "25. **AGLDT 2.1** (Ancient Greek and Latin Dependency Treebank, Perseus) — la risorsa sorgente va accreditata; riferimento canonico candidato: **Bamman & Crane 2011** (l'esistenza del riferimento è confermata dalla bibliografia di [14]; titolo e venue esatti da verificare) [T]. *Fine del registro. Ogni nuova fonte introdotta nel corso del progetto va aggiunta qui con stato e ruolo, prima di essere citata altrove.*",
+   "new": "25. **AGLDT 2.1** (Ancient Greek and Latin Dependency Treebank, Perseus) — la risorsa sorgente va accreditata; riferimento canonico: **Bamman, D. & Crane, G. (2011).** \"The Ancient Greek and Latin Dependency Treebanks\". In C. Sporleder, A. van den Bosch, K. Zervanou (a cura di), *Language Technology for Cultural Heritage*, Springer, Berlino–Heidelberg, pp. 79–98. [P — dettagli dalla bibliografia della proposta finale, 2026-07-21; verifica su fonte primaria in O5]\n\n## E. Aggiunte v2.1 (2026-07-21)\n\n26. **Greco, M., Cometa, A., Artoni, F., Frank, R., Moro, A. (2023).** \"False perspectives on human language: Why statistics needs linguistics\". *Frontiers in Language Sciences* 2: 1178932. DOI: 10.3389/flang.2023.1178932. [V 2026-07-21 — verificata su fonte primaria presente nei materiali di progetto] — Ruolo: principio di dipendenza-dalla-rappresentazione delle misure statistiche (citata nella proposta finale §2.4: il surprisal acquista contenuto linguistico solo rispetto al modello che definisce eventi e probabilità); pertinente in Metodi (la coppia UPOS+DEPREL come proiezione lineare con perdita) e Limiti. Aggiunta in v2.1 perché citata dalla proposta finale ma assente dal registro.\n\n*Fine del registro. Ogni nuova fonte introdotta nel corso del progetto va aggiunta qui con stato e ruolo, prima di essere citata altrove.*"
+  }
+ ],
+ "04": [
+  {
+   "label": "header",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "Version 2.0 — 2026-07-06. Supersedes v1.0 (archived). Paste the bootstrap prompt at the start of every AI session; place `CLAUDE.md` at the repository root.",
+   "new": "Version 2.1 — 2026-07-21. Supersedes v2.0 (2026-07-06); v1.0 archived. Paste the bootstrap prompt at the start of every AI session; place `CLAUDE.md` at the repository root."
+  },
+  {
+   "label": "bootstrap design tag",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "The design is **single-instrument (v2.0)**:",
+   "new": "The design is **single-instrument (v2 architecture; documents at v2.1)**:"
+  },
+  {
+   "label": "bootstrap authoritative docs",
+   "tag": "A",
+   "decision": "v2.1+D44",
+   "old": "**Authoritative documents (attached):** `01_MASTER_SPEC.md` v2.0 (binding; cited as §N) and `02_DECISION_LOG.md` v2.0 (binding; D01–D39). If they conflict with your memory or intuition, they win. If they conflict with each other, stop and ask.",
+   "new": "**Authoritative documents (attached):** `01_MASTER_SPEC.md` v2.1 (binding; cited as §N) and `02_DECISION_LOG.md` v2.1 (binding; D01–D51; open item **O7 is blocking for G2/G5**; v2.1 gate order **G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7**, D44(vii)). If they conflict with your memory or intuition, they win. If they conflict with each other, stop and ask."
+  },
+  {
+   "label": "rule 2 JSD",
+   "tag": "A",
+   "decision": "D41",
+   "old": "Low-order quantities exist only as **diagnostics** (slice identities, §4.6) or, if the owner asks, as clearly-labeled smoothed slices. JSD = optional appendix R1 only.",
+   "new": "Low-order quantities exist only as **diagnostics** (slice identities, §4.6) or, if the owner asks, as clearly-labeled smoothed slices. JSD = R1, a **mandatory descriptive distributional reading** — no α, no test, size-dependence caveat displayed wherever shown (D41)."
+  },
+  {
+   "label": "rule 3 sign-flip",
+   "tag": "A",
+   "decision": "D44",
+   "old": "3. **Label-free score discipline (D36).** `pooled_scores` (P2/S1 protocol) must never consult regime labels; the byte-identical label-invariance test (§7) is mandatory and must never be weakened. P1 uses the exact sign-flip on ΔCE.",
+   "new": "3. **Label-free score discipline (D36).** `pooled_scores` (P2/S1 protocol) must never consult regime labels; the byte-identical label-invariance test (§7) is mandatory and must never be weakened. P1 uses the exact sign-flip on ΔCE — **but its confirmatory application is OPEN (D44/O7):** implement and test the generic utility; never freeze or execute P1 confirmatory inference before O7 is resolved (null-calibration study at G3)."
+  },
+  {
+   "label": "rule 7 freeze",
+   "tag": "A",
+   "decision": "D44(vii)",
+   "old": "7. **Freeze discipline (D30).** The confirmatory plan freezes at G2, before ANY model is fitted to real data (reference models included). Pre-G2: synthetic data only.",
+   "new": "7. **Freeze discipline (D30).** The confirmatory plan freezes at G2, before ANY model is fitted to real data (reference models included). Pre-G2: synthetic data only. v2.1: G2 sits **after G3** (D44(vii)); O7 must be resolved before G2."
+  },
+  {
+   "label": "rule 10 manifest",
+   "tag": "A",
+   "decision": "D46",
+   "old": "10. **Determinism, provenance, safety.** `np.random.default_rng(derived_seed)` only; a manifest per artifact (§6.4); no silent overwrites (`--force`);",
+   "new": "10. **Determinism, provenance, safety.** `np.random.default_rng(derived_seed)` only; one central run manifest per run + a minimal sidecar per artifact (§6.4, D46); no silent overwrites (`--force`);"
+  },
+  {
+   "label": "CLAUDE.md title",
+   "tag": "A",
+   "decision": "v2.1",
+   "old": "# Project HEXIS — standing instructions for Claude Code (design v2.0, single-instrument)",
+   "new": "# Project HEXIS — standing instructions for Claude Code (design v2.1, single-instrument)"
+  },
+  {
+   "label": "CLAUDE.md authoritative",
+   "tag": "A",
+   "decision": "v2.1+D44",
+   "old": "Authoritative: docs/01_MASTER_SPEC.md (§N) + docs/02_DECISION_LOG.md (D01–D39). Binding. No\nsilent deviations.",
+   "new": "Authoritative: docs/01_MASTER_SPEC.md (§N) + docs/02_DECISION_LOG.md (D01–D51). Binding. No\nsilent deviations. O7 blocks G2/G5; gate order G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7 (D44(vii))."
+  },
+  {
+   "label": "CLAUDE.md freeze",
+   "tag": "A",
+   "decision": "D44(vii)",
+   "old": "- Freeze: no real-data model fits before gate G2 (synthetic only). Reference models are\n  real-data → post-G2.",
+   "new": "- Freeze: no real-data model fits before gate G2 (synthetic only). Reference models are\n  real-data → post-G2. v2.1: G2 follows G3; O7 (sign-flip calibration) must be resolved first."
+  },
+  {
+   "label": "CLAUDE.md determinism",
+   "tag": "A",
+   "decision": "D46",
+   "old": "- Determinism: np.random.default_rng(derived_seed); manifest per artifact (§6.4); no silent\n  overwrites (--force).",
+   "new": "- Determinism: np.random.default_rng(derived_seed); one run manifest + minimal sidecar per\n  artifact (§6.4, D46); no silent overwrites (--force)."
+  },
+  {
+   "label": "CLAUDE.md JSD",
+   "tag": "A",
+   "decision": "D41",
+   "old": "  PERMANOVA, LZ (D32). Slices = diagnostics only (§4.6). JSD = optional appendix R1 only.",
+   "new": "  PERMANOVA, LZ (D32). Slices = diagnostics only (§4.6). JSD = R1, mandatory descriptive\n  distributional reading, no α, no test (D41)."
+  },
+  {
+   "label": "CLAUDE.md schemes + new do-nots",
+   "tag": "A",
+   "decision": "D43+D44+D47+D42",
+   "old": "- Do not permute labels at chunk level (D21): document level, exact schemes (462 / 2048 /\n  28 / 256 / 20).",
+   "new": "- Do not permute labels at chunk level (D21): document level, exact schemes (Greek 462 /\n  2048; Latin 28 / 256; author 20 / 64; Lysias-merged 56 / 256) — sidedness declared per D43.\n- Do not run confirmatory P1 inference or freeze G2 before O7 is resolved (D44).\n- Do not import from candidates/ (quarantined non-canonical implementations; D47).\n- Do not treat the representation-analysis cells (alphabet/boundary) as automatic validity\n  conditions (D42): report and interpret; sign-stability is required only on C0 + OAT."
+  },
+  {
+   "label": "checklist method",
+   "tag": "A",
+   "decision": "D43+D44+D49",
+   "old": "Claim wording within D25 (no causal meter claims; no finite-memory claims about language, §0.5)? Nothing retired by D32 resurfacing as a result?",
+   "new": "Claim wording within D25 (no causal meter claims; no finite-memory claims about language, §0.5; pooled-gain claims worded \"under the pooled model\" with descriptive G_own alongside, D49)? Sidedness declared next to every exact floor (D43)? No confirmatory P1 step or G2 freeze before O7 (D44)? Nothing retired by D32 resurfacing as a result?"
+  },
+  {
+   "label": "checklist text",
+   "tag": "A",
+   "decision": "D43+v2.1",
+   "old": "limitations present (Tier-2 floor 0.05; §5.8 confounds; Chomsky-anchored misspecification statement); no inflated complex-systems language.",
+   "new": "limitations present (Tier-2 descriptive without α, P2 two-sided structural floor 0.10 — D43; §5.8 confounds; Chomsky-anchored misspecification statement); design-evolution paragraph covers both the pre-data consolidation (D32–D36) and the pre-data v2.1 synchronization (D40–D51); no inflated complex-systems language."
+  }
+ ]
+}

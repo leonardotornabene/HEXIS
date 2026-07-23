@@ -26,4 +26,7 @@ packages = ["src/hexis"]
 # non-canonical implementations (D47) whose test basenames collide with the
 # canonical suite; they must never enter the G0 or G3 test sets.
 testpaths = ["tests"]
+markers = [
+    "g0: Gate G0 acceptance tests (D52); incomplete until all mandatory coverage is implemented",
+]
 norecursedirs = ["candidates", ".venv", "data", "results", "notebooks"]

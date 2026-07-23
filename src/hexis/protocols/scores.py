@@ -1,7 +1,8 @@
-"""Score functions and LODO orchestration (Spec §4.2, §4.4; D35, D36).
+"""Score functions and LODO orchestration (Spec §4.2, §4.4; D35, D36, D52).
 
-pooled_scores must never consult regime labels (D36); the byte-identical
-label-invariance test (Spec §7) guards this and must never be weakened.
+pooled_score_core is the label-free protocol-(c) boundary. Registry-derived
+fields enter only through annotate_scores; pooled_scores remains the public
+composition. The G3 byte-identity tests must never be weakened.
 """
 
 import pandas as pd
@@ -17,23 +18,31 @@ def delta_ce_scores(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame:
     raise NotImplementedError
 
 
+def pooled_score_core(
+    sequences, alphabet, cfg, rng, doc_ids
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Protocol-(c) label-free core returning scores and sampling ledger (D52).
+
+    Model-derived score columns, in order: doc_id, gain_mean, gain_sd,
+    depth_mean, depth_sd, frac_restricted, coverage. Ledger columns, in order:
+    evaluation_doc_id, seed, training_doc_id, sampled_token_count.
+    """
+    raise NotImplementedError
+
+
+def annotate_scores(scores, ledger, registry) -> pd.DataFrame:
+    """Attach registry fields and own-regime pool fraction to fixed scores (D52).
+
+    This label-aware stage is outside the byte-identity guarantee.
+    """
+    raise NotImplementedError
+
+
 def pooled_scores(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame:
-    """Gain/depth scores under protocol (c), pooled LODO — LABEL-FREE (D36).
+    """Public protocol-(c) scoring contract: label-free core plus annotation.
 
-    Rows: doc_id, regime, gain_mean(mean,sd), depth_mean(mean,sd),
-    frac_restricted, own_regime_pool_fraction (D44), coverage. Primary
-    gain/depth restricted to positions with available_past ≥ 4 (D35). The
-    scores themselves must never be computed from regime labels (D36).
-
-    own_regime_pool_fraction (D44): per-document own-regime token share of
-    the protocol-(c) training subsample, seed-mean; reported so that the
-    directional displacement of the group difference stays visible in T3.
-
-    NOTE (open, -> D52): §6.2 lists both `regime` and
-    `own_regime_pool_fraction` as columns, yet §7 requires this function's
-    output to be byte-identical under permuted registry labels. Read
-    literally on the whole frame the two are incompatible; the scope of the
-    byte-identity test must be ratified before that test is written at G3.
+    The eventual implementation is the thin composition required by D52(v).
+    Scoring behavior remains unimplemented in this scaffold.
     """
     raise NotImplementedError
 

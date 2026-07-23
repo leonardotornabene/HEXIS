@@ -1,13 +1,47 @@
-"""Score-function tests (Spec §7, gate G3; §4.4; D35, D36).
+"""Score-function tests (Spec §7; G0 boundary contract, G3 scoring behavior).
 
-Fase 0 placeholders: cases enumerated per Spec §7, no assertions yet.
-Never delete or weaken a test to make it pass — the label-invariance test in
-particular is mandatory and must never be weakened (D36).
+The D52 scoring-boundary signatures are real G0 assertions. The analytic,
+restriction, and byte-identity cases remain Phase-0 placeholders for G3 and
+must never be deleted or weakened.
 """
 
+import inspect
+
+import pandas as pd
 import pytest
 
+from hexis.protocols import scores
+
 SKIP = pytest.mark.skip(reason="Fase 0 scaffold — implement at gate G3 per Spec §7")
+
+
+@pytest.mark.g0
+def test_pooled_score_core_has_label_free_signature():
+    core = getattr(scores, "pooled_score_core", None)
+    assert core is not None
+
+    signature = inspect.signature(core)
+    assert tuple(signature.parameters) == (
+        "sequences",
+        "alphabet",
+        "cfg",
+        "rng",
+        "doc_ids",
+    )
+    assert set(signature.parameters).isdisjoint(
+        {"registry", "regime", "author", "work"}
+    )
+    assert signature.return_annotation == tuple[pd.DataFrame, pd.DataFrame]
+
+
+@pytest.mark.g0
+def test_annotate_scores_has_d52_signature():
+    annotate = getattr(scores, "annotate_scores", None)
+    assert annotate is not None
+
+    signature = inspect.signature(annotate)
+    assert tuple(signature.parameters) == ("scores", "ledger", "registry")
+    assert signature.return_annotation is pd.DataFrame
 
 
 @SKIP

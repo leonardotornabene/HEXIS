@@ -1,7 +1,9 @@
 # PROPOSTA — Spec amendments mandated by D52
 
-**Status: PROPOSAL. Do NOT apply. Do NOT commit.** This file is a draft only; it does
-not edit `docs/01_MASTER_SPEC.md`. D52 *Amends: Spec §§6.2, 7*; two sites, nothing else.
+**Status: EXECUTED / ARCHIVED.** The two replacements below were applied to
+`docs/01_MASTER_SPEC.md` in commit `97c1ce9` (2026-07-23). This file is preserved as
+the pre-application audit record; do not reapply it. The same commit also documented
+the D52(vi) sampling-ledger format in §3.7.
 
 **How to read.** Each site is a three-column table — **anchor** (exact current text),
 **proposed replacement**, **D52 clause that mandates it**. Where the anchor or the
@@ -117,5 +119,6 @@ enforcement must not depend on reading the pytest summary by eye.
 
 ---
 
-*End of proposal. Two sites (§6.2 `pooled_scores` contract; §7 test table) — nothing else.
-Mandated by D52(v)–(x). Not applied; not committed.*
+*End of archived proposal. The two reviewed replacements (§6.2 `pooled_scores`
+contract; §7 test table) were applied in commit `97c1ce9`; that commit also documented
+the D52(vi) sampling-ledger format in §3.7. Do not reapply.*

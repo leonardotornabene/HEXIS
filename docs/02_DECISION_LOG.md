@@ -132,6 +132,94 @@ Tier-1 Holm attainability is intact (all Tier-1 floors < 0.025); the final propo
 
 **D51 — T\* scope and the uniform-size argument.** **Q:** §4.2 defined T\* as the minimum over "ALL training conditions in (b) and (c)" without stating whether exploratory arms enter, and adopted one T\* across (b) and (c) without argument — although protocol (c)'s ten-document pool could support a larger size, i.e., the uniform choice costs P2 power, while §1.2 declares power the binding constraint. **Decision:** (i) **Scope:** T\* is computed over the training conditions of the **primary contrast only** (Greek: HEX ∪ PROSE_CLASS; Latin: HEX ∪ PROSE_ALL), protocols (b) and (c). Exploratory arms (tragedy, PROSE_POST) run at their own binding sizes, documented separately and labeled non-comparable with primary readings. (ii) **Uniform T\* across (b) and (c): retained, now argued** — it purchases cross-reading comparability (root/gain/transfer at one common training size: the locus narrative) at a **declared cost of P2 power**; the cost is made visible descriptively by the learning curves (F8), whose protocol-(c) curves extend beyond T\* where the pool permits. (iii) Binding condition: protocol (b) → "HEX minus Iliad" (expected); protocol (c) → 𝔻 minus its largest document; the overall minimum is expected from (b). The §4.2 contingency (T\* < 15k → logged amendment + learning-curve emphasis) stands. Status: FROZEN (value GATED:G1).
 
+**D52 — Explicit G0 acceptance set; label-free scoring boundary; sampling ledger.**
+
+**Q:** D45 defines G0 as environment locked + all non-tree tests green with real assertions + deterministic infrastructure verified. Spec §7 tags no test file covering `registry`, `sequences`, seed derivation, resolved-config hashing, manifest/sidecar generation, or overwrite protection: the criterion is not falsifiable as written. Separately, §6.2 lists label-derived columns in the output contract of `pooled_scores` while D36 and §7 require that output to be byte-identical under permuted registry labels — read literally on the whole frame, the two are incompatible. Third, D44 requires reporting each document's own-regime token share **of its training subsample**; since T*-matching subsamples whole sentences, realized shares differ from nominal pool membership, and no artifact currently records realized composition.
+
+**Decision:**
+
+**(i) G0 acceptance criterion.** G0 closes when all three hold: environment lock per D45 verified; every test in the G0 set passes with real assertions; the deterministic infrastructure of D45/D46 verified. The §7 catalogue states minimum requirements and does not restrict additional tests.
+
+**(ii) The G0 set.** The G0 set is every test carrying `@pytest.mark.g0`. Minimum mandatory coverage: `conllu_reader`; total alphabet mapping (§3.4); registry construction and validation; sequence construction under **both P-RESET and P-BOUND** (§3.5, per clause (x)); sentence-aligned document-safe blocks; exact document-label permutation; exact sign-flip utilities (generic only — confirmatory application to P1 gated by O7/D44); bootstrap reproducibility; Holm correction; seed derivation (`global XOR crc32(analysis_id)`, §6.3); resolved-config canonicalization and SHA-256; central run-manifest generation (§6.4/D46); minimal per-artifact sidecars; overwrite refusal absent `--force`. Expected minimum file organization: `test_alphabet.py`, `test_conllu_reader.py`, `test_registry.py`, `test_sequences.py`, `test_blocks.py`, `test_permutation.py`, `test_bootstrap_holm.py`, `test_determinism.py`. Tests may be split, merged or parametrized differently provided the mandatory coverage stays explicit and traceable.
+
+**(iii) No skipped or expected-failure cases at G0.** Canonical command: `uv run pytest -m g0 --strict-markers`. The repository enforces a non-zero exit if any selected G0 test is skipped, `xfail`, `xpass`, or collected without an effective assertion. Enforcement is a repository-local pytest hook or a dedicated gate runner; it must not depend on reading the pytest summary by eye.
+
+**(iv) Quarantined candidates.** Outside the canonical set; never collected. Collection is confined to `tests/`, `candidates/` excluded (already enforced, `[tool.pytest.ini_options]`, commit dfaa4e0). Implements D47's quarantine; does not authorize imports from `candidates/` into `src/hexis`.
+
+**(v) Label-free scoring core.** Pooled scoring splits into a label-free core and an annotation stage. §6.2's public name is retained as their composition:
+
+```text
+def pooled_score_core(sequences, alphabet, cfg, rng, doc_ids)
+        -> tuple[pd.DataFrame, pd.DataFrame]      # (scores, sampling ledger)
+def annotate_scores(scores, ledger, registry) -> pd.DataFrame
+def pooled_scores(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame
+        # thin composition; §6.2 contract preserved
+```
+
+The core takes no registry, has no access to regime/author/work labels by any route, fits and evaluates the protocol-(c) pooled LODO models, and returns only model-derived quantities plus the ledger. Canonical score columns, in this order: `doc_id, gain_mean, gain_sd, depth_mean, depth_sd, frac_restricted, coverage`. Additional model-derived columns are permitted only if independent of registry labels and governed by the Spec.
+
+**(vi) Sampling ledger.** For every evaluation document and seed, the core records the realized composition of the T*-matched training sample. Minimum contract, in this column order: `evaluation_doc_id, seed, training_doc_id, sampled_token_count` — **actual sampled token counts**, never nominal membership or expected proportions. **Byte-identity convention (binding):** the guarantee is asserted on a canonical serialization — declared column order, rows sorted by `(evaluation_doc_id, seed, training_doc_id)` for the ledger and by `doc_id` for the score table, fixed float formatting — and tested as equality of the artifact SHA-256. In-memory frame equality is not an acceptable substitute.
+
+**(vii) Annotation and `own_regime_pool_fraction`.** A separate function receives the score table, the ledger and the registry, and may attach `regime`, `author`, `work`, `own_regime_pool_fraction`. For evaluation document d and seed s:
+
+```text
+own_regime_pool_fraction(d, s) =
+    Σ sampled_token_count over training docs whose regime == regime(d)
+    ─────────────────────────────────────────────────────────────────
+    Σ sampled_token_count over all training docs for (d, s)
+```
+
+The reported document-level value is the **arithmetic mean over seeds of the seed-level fractions** (seed-mean, D44) — not the ratio of summed totals; the two differ and only the former is what D44 specifies. Computed from the ledger, never reconstructed from document counts or unsampled totals. The annotated output is expected to change under permuted labels and is outside the byte-identity guarantee.
+
+**(viii) Boundary of the guarantee.** Byte-identity under permuted registry labels covers: all model-derived pooled scores; the sampling ledger; every intermediate object used to construct P2 and S1 before annotation. The permutation procedure receives the fixed model-derived score vector and the labels, the latter used solely to form the document-level group contrast. Labels must not trigger refitting, resampling, score recomputation, or any modification of fixed model-derived quantities. Neither `regime` nor `own_regime_pool_fraction` may enter `gain_mean`, `depth_mean`, `frac_restricted` or `coverage`.
+
+**(ix) Mandatory tests, with gates.** Spec §7 is amended to include, in `test_scores.py` unless noted:
+
+1. the core has no registry argument and cannot reach labels through another object (static/signature check) — **G0**;
+2. score table byte-identical under registry-label permutation — **G3**;
+3. sampling ledger byte-identical under registry-label permutation — **G3**;
+4. annotated output changes as expected under permutation — **G3**;
+5. `own_regime_pool_fraction` exact on a synthetic ledger with analytically known sampled-token counts — **G3**;
+6. P2 and S1 computed from fixed model-derived scores, labels forming only the permuted contrast — **G3**.
+
+**(x) Boundary symbol (P-BOUND).** The frozen alphabet of §3.4 is unchanged. P-BOUND arms operate on the deterministic extension A⁺ = A ∪ {`#`}, with `#` assigned id |A| (appended; all existing ids stable). `alphabet.json` is not modified; the extension is produced at run time by a documented function and recorded in the run manifest. |A⁺| = |A| + 1 is used wherever |A| enters, including the β = 1/|A| sensitivity cell (§5.6). Does not amend §3.4's freeze semantics; makes §3.5/D10 executable after the G1 freeze.
+
+**Rationale:** (i)–(iv) make a gate criterion mechanically falsifiable; (v)–(viii) resolve a literal incompatibility between §6.2 and §7 in the direction that strengthens the guard on P2's validity, making label independence a structural property of the call graph rather than a convention a later edit could erode; (vi)–(vii) make `own_regime_pool_fraction` the quantity D44 actually specifies; (x) removes a latent conflict between the G1 freeze and the G7 sensitivity arms. All clauses are pre-data; no parameter, statistic, hypothesis, inferential family or gate order changes. **Amends:** D45 (G0 set explicit); Spec §§6.2, 7. **Clarifies:** D36, D44, D46, §3.5. **Does not amend:** D47. Status: **FROZEN**.
+
+**D53 — Canonical context-tree implementation conventions.**
+
+**Q:** The implementation-level readings recorded in the quarantined candidate's `ASSUMPTIONS.md` (§B; PDF only, ingested at commit 85ef590, sha256 2fa2a7cf7960e34cfaef03a6a4d7dc896d487565bf3f89fb3a8a8f08fbecdbb5, written against Spec v2.0/D01–D39) are operational details left open by the quantifiers of Spec §4 or by S&G. They govern working code but carry no Decision-Log number and would otherwise become undeclared conventions.
+
+**Disposition of `ASSUMPTIONS.md` (complete crosswalk):**
+
+| Source | Disposition |
+| --- | --- |
+| §A1–A8, §B6 | already-frozen decisions; traceability only, no ratification |
+| §B1 | → D53(i) |
+| §B2 | → D53(ii) |
+| §B4 | → D53(iii) |
+| §B5 | → D53(iv) |
+| §B7 | → D53(v) |
+| **§B3 (growth policy)** | **NOT resolved here** — remains D18-A1, PROPOSED |
+| §C (C.1–C.7) | unverified claims about a primary source; feeder for Task T5.1, adoptable only after owner verification against arXiv:cond-mat/0203436 |
+| §D (D-a…D-h) | tracked work items, not decisions; D-e is a D47 condition-(b) shortfall |
+
+**Decision:**
+
+**(i) Monotone selection descent.** For matching contexts s₁…s_k ordered shallowest to deepest, step from the current node to matching child s_i iff `total(s_i) ≥ k_min` AND `Δ_spec(s_i) > γ`, where `Δ_spec(s) = L_par(s) − L_self(s)`. Descent stops at the first failure; no deeper descendant may be selected thereafter. Equivalently: the selected context is the deepest matching context every prefix of which satisfies both conditions. Any `Δ_spec(s_i) ≤ γ` resolves at the parent, including the tie `Δ_spec = 0` under C0 (γ = 0). Binding operational restatement of the quantifier already in §4.1; not a new rule. **Scope note:** γ is not varied in any of the 13 sensitivity cells (§5.6), so the tie convention is inert under the frozen plan.
+
+**(ii) Online and frozen selection timing.** At position t, selection uses only state accumulated through positions strictly earlier than t. Order: (1) build the matching path from the available past; (2) select using pre-update totals and pre-update Δ_spec; (3) assign a probability to x_t with the selected predictor; (4) update L_self and L_par from that probability; (5) update counts and totals with x_t. **The current symbol must not influence the context selected to predict itself.** Under C0 (k_min = 2) a node with pre-update total 1 is not selectable online. For frozen held-out evaluation: eligibility uses final training totals and final Δ_spec; the tree is never updated with held-out symbols; evaluation symbols never alter selection, counts, code lengths or structure. Affects `h_online`, descriptive and non-inferential (D19/D32), but implemented consistently regardless.
+
+**(iii) Binding sign convention.** Project convention: `Δ_spec(s) = L_par(s) − L_self(s)`; positive means the node's own predictor saved bits over its parent. An implementation may compute `delta_cost(s) = L_self(s) − L_par(s)` internally, with `Δ_spec = −delta_cost` and the selection conditions exactly equivalent (`Δ_spec > γ` ⟺ `delta_cost < −γ`). Every public or persisted output uses the Spec convention under an unambiguous name (`delta_spec`); **a public field named merely `delta` is prohibited.** The context lexicon (D38; T6/F9) ranks by `Δ_spec` descending — largest positive saving first. Dedicated tests verify: the identity; the equivalence of the two inequalities; the descending ranking; correct treatment of zero and negative savings. A sign error is a correctness failure: it would silently reverse both selection and interpretation.
+
+**(iv) Unseen symbols vs. symbols outside the alphabet.** The frozen alphabet is part of the fitted-model contract. A symbol **in** the frozen alphabet but never observed in the current context, at a node, or in a model's training data receives positive probability through the add-β estimator (§§4.1, 4.3). A symbol **not in** the frozen alphabet is not an unseen event but an incompatibility between encoded data and fitted model: raise, fail-loud, identifying where available the offending symbol, `document_id`, `sentence_id`, token/sequence position, and the alphabet artifact id or hash. The implementation must never silently enlarge the alphabet, remap the symbol, create an `UNK`, ignore the observation, or renormalize over a modified alphabet.
+
+**(v) Diagnostic transfer displays vs. confirmatory P1.** Any pooled, token-weighted or aggregate transfer matrix is **diagnostic only**: outside the confirmatory specification, not automatically a required output, never named P1, never produced by the function that computes P1, never sharing P1's table identifier, and labeled descriptive wherever retained. Confirmatory P1 is exclusively the **unweighted** mean over evaluation documents of `ΔCE(d) = CE(d | other-regime model) − CE(d | own-regime model)` under protocol (b), with document-level LODO, T*-matched training pools and S = 20 deterministic seeds. No token-weighted pooled CE matrix may substitute for, be averaged into, or be interpreted as P1. Confirmatory execution and inference of P1 remain blocked by O7/D44 until the synthetic null-calibration study is delivered and accepted.
+
+**(vi) Supervisor review; what this does not settle.** The Phase-2 mathematical-supervisor touchpoint remains mandatory as a correctness review of the canonical implementation, but is **not** a condition for this decision to hold FROZEN status: a substantive objection is recorded as amendment **D53-A1**; no clause may change silently in code. **This decision does not resolve the growth policy** (ASSUMPTIONS §B3): whether §4.1's chain growth or one-node-per-position governs remains **D18-A1, PROPOSED**, for that same touchpoint. Nothing here may be read as ratifying it.
+
+**Rationale:** the clauses make explicit the conventions required to preserve the mathematical meaning of §4, and close five high-risk silent divergences: non-monotone selection; leakage of the current symbol into online selection; reversal of the MDL-saving sign; silent alphabet expansion; substitution of the document-level P1 estimand by an aggregate token-weighted diagnostic. All clauses are pre-data; no parameter, statistic, hypothesis, inferential family or gate order changes. **Clarifies:** D18, D19, D32, D38, D44; Spec §§4.1–4.5. **Does not amend:** D47. Status: **FROZEN**.
+
 ---
 
 ## §III — OPEN ITEMS (O7 is blocking for G2/G5; the others are tracked, not blocking)

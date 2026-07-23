@@ -226,6 +226,39 @@ The reported document-level value is the **arithmetic mean over seeds of the see
 
 **Rationale:** the clauses make explicit the conventions required to preserve the mathematical meaning of §4, and close five high-risk silent divergences: non-monotone selection; leakage of the current symbol into online selection; reversal of the MDL-saving sign; silent alphabet expansion; substitution of the document-level P1 estimand by an aggregate token-weighted diagnostic. All clauses are pre-data; no parameter, statistic, hypothesis, inferential family or gate order changes. **Clarifies:** D18, D19, D32, D38, D44; Spec §§4.1–4.5. **Does not amend:** D47. Status: **FROZEN**.
 
+**D18-A1 — Growth policy of the context tree (PROPOSED; decision at the Phase-2 mathematical-supervisor touchpoint).**
+
+**Q:** §4.1's normative pseudocode grows the matched-extension chain at every position (`node.children.setdefault(σ, new Node)` inside the depth loop), creating up to `d_max` new nodes per position. The quarantined candidate (D47) instead extends the matched path by exactly one node per position — a deviation it declares in `ASSUMPTIONS.md` §B3. The two are not selection-equivalent under `k_min = 2`. Which policy governs the canonical implementation?
+
+**Two independent axes.** The choice is usually posed as "Spec versus S&G"; it is not. Timing (when a node is created) and breadth (how many are created per position) are separable, and the three reference points do not coincide:
+
+| | whole matched chain | one node per position |
+| --- | --- | --- |
+| **create on first visit** ("eager") | **Spec §4.1** (normative pseudocode) | **candidate C0** |
+| **create on second occurrence** ("rissanen") | — | **S&G, end of §IV** |
+
+The Spec's policy is therefore not S&G's, and the candidate's is neither. [The S&G attribution rests on `ASSUMPTIONS.md` §C.3, which is unverified against the primary source; Task T5.1 must confirm it against arXiv:cond-mat/0203436 before this row is relied upon.]
+
+**Non-equivalence.** Under chain growth, a length-*d* context occurring twice reaches `total = 2` at full depth on its second occurrence and becomes selectable (given `Δ_spec > γ`). Under one-node-per-position, building the path to depth *d* requires on the order of *d* occurrences of that context. Frequent contexts converge to the same tree under both policies; the two differ only on the tail. Consequences: the one-node policy is strictly more conservative for rare deep contexts (fewer weakly-supported deep selections), and it bounds the node budget by *N* rather than *N*·`d_max`.
+
+**Why this may not be orthogonal to the estimand [INFERENCE, for the supervisor to assess — not a demonstrated effect].** P2 measures the differential of held-out context gain and S1 the selected depth. A growth policy that acts selectively on the tail of rare deep contexts is therefore not obviously neutral with respect to what is being measured: if the two regimes differ in the repetition profile of deep contexts — which is close to what H1 postulates — the policy penalizes the regime with the heavier tail of rare deep contexts more than the other. The magnitude is unknown and the direction is not established a priori. Stated here as a hypothesis about the instrument, so that it is either dismissed with an argument or tested, but not overlooked.
+
+**Coverage gap.** The growth policy appears neither among the `context_tree:` parameters of §6.3 nor among the 13 sensitivity cells of §5.6 (the OAT block varies β, `d_max`, `select`, and the gain restriction; the factorial block varies alphabet policy and boundary). Whichever policy is ratified is therefore, as things stand, untested for robustness.
+
+**Options.**
+
+- **(a) Ratify §4.1 literally** (chain growth, first visit). Roughly a five-line change; the candidate would have to be adapted; no amendment to the sensitivity plan.
+- **(b) Ratify one-node-per-position**, declaring its greater conservatism and its provenance, with no new cell.
+- **(c) Ratify one-node-per-position and add the policy as a 14th cell** of the OAT block (point estimates only, S = 10; ≈ 330 fits ≈ 10–20 laptop-minutes on D37's own budget). Requires an amendment to D37/D42, taken at G2 — favourable in the v2.1 gate order, where G2 follows G3 and the instrument therefore already exists.
+
+**Deposited recommendation (not a ratification):** (c), with (a) fully defensible. (b) is the weakest of the three: it adopts a declared deviation from the normative pseudocode and then leaves it unverified.
+
+**Decision deadline.** Before the canonical `model/context_tree.py` is written in Phase 2, hence before G3. The four analytic targets of §4.7 are expected to pass under either policy — they concern frequent contexts — and so do not discriminate between them.
+
+**Impact on already-computed results:** none. No model has been fitted to real data; the choice is pre-data and must be reported as such in the preprint.
+
+**Status: PROPOSED.** Deposited 2026-07-23; decision at the Phase-2 mathematical-supervisor touchpoint, per D47. The ratification of D53 does not resolve it (see D53(vi)).
+
 ---
 
 ## §III — OPEN ITEMS (O7 is blocking for G2/G5; the others are tracked, not blocking)

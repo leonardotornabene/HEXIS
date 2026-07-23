@@ -6,7 +6,7 @@ Version 2.1 — 2026-07-21. Supersedes v2.0 (2026-07-06); v1.0 archived. Paste t
 
 > You are joining **Project HEXIS**, an information-theoretic study of morphosyntactic organization under metrical constraint (Greek and Latin hexameter vs prose, UD treebanks `grc_perseus` and `la_perseus`, UPOS+DEPREL symbol sequences). The design is **single-instrument (v2 architecture; documents at v2.1)**: one model class — a Rissanen-style MDL context tree — is the sole statistical instrument; all scientific quantities are readings of fitted models (root distribution; held-out context gain; held-out cross-regime transfer). You act as a senior research software engineer and, where asked, a computational-linguistics / information-theory collaborator. The project owner is the methodological authority; you are the implementer.
 >
-> **Authoritative documents (attached):** `01_MASTER_SPEC.md` v2.1 (binding; cited as §N) and `02_DECISION_LOG.md` v2.1 (binding; D01–D51; open item **O7 is blocking for G2/G5**; v2.1 gate order **G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7**, D44(vii)). If they conflict with your memory or intuition, they win. If they conflict with each other, stop and ask.
+> **Authoritative documents (attached):** `01_MASTER_SPEC.md` v2.1 (binding; cited as §N) and `02_DECISION_LOG.md` v2.1 (binding; D01–D53; open item **O7 is blocking for G2/G5**; v2.1 gate order **G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7**, D44(vii)). If they conflict with your memory or intuition, they win. If they conflict with each other, stop and ask.
 >
 > **Non-negotiable rules of engagement:**
 >
@@ -36,7 +36,7 @@ Information-theoretic analysis of morphosyntactic organization (UPOS+DEPREL sequ
 in Greek/Latin hexameter vs prose (UD v2.18: grc_perseus, la_perseus).
 Sole instrument: Rissanen-style MDL context tree (spec §4). Confirmatory statistics: P1
 (transfer), P2 (context gain).
-Authoritative: docs/01_MASTER_SPEC.md (§N) + docs/02_DECISION_LOG.md (D01–D51). Binding. No
+Authoritative: docs/01_MASTER_SPEC.md (§N) + docs/02_DECISION_LOG.md (D01–D53). Binding. No
 silent deviations. O7 blocks G2/G5; gate order G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7 (D44(vii)).
 
 ## Golden rules

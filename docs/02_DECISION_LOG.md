@@ -2,7 +2,7 @@
 
 Version 2.1 — 2026-07-21. Binding companion to `01_MASTER_SPEC.md` v2.1. Supersedes v2.0 (2026-07-06); v1.0 archived in `archive_v1/`. Format: **Q** question · **D** decision · **R** rationale · **Status** (FROZEN | GATED:G1 | SUPERSEDED by Dnn | AMENDED by Dnn) · ★ = declared deviation from / extension of the research proposal. Amendment protocol: changing a FROZEN entry requires a new `D{n}-A1` entry recording old value, new value, reason, date, and impact on already-computed results (re-run or retired). **No silent changes.**
 
-Reading guide: §I carries v1 decisions with updated status (self-contained one-paragraph form); §II contains the v2 architecture decisions D32–D39 in full; §II-bis contains the v2.1 synchronization decisions D40–D51 in full; §III open items (O7 is blocking); §IV deferred decision nodes.
+Reading guide: §I carries v1 decisions with updated status (self-contained one-paragraph form); §II contains the v2 architecture decisions D32–D39 in full; §II-bis contains the v2.1 synchronization decisions D40–D51 in full; §II-ter contains D52–D53 in full; §III open items (O7 is blocking); §IV deferred decision nodes.
 
 ## §I — CARRIED DECISIONS (v1 → v2 status)
 
@@ -131,6 +131,12 @@ Tier-1 Holm attainability is intact (all Tier-1 floors < 0.025); the final propo
 **D50 — GATE-A × C0 reconciliation.** **Q:** D06 escalates to "both policies co-primary" if any excluded category exceeds 2% of raw tokens in a regime; D37/D42 presuppose a single primary configuration; the interaction was unspecified — and vocatives (epic invocations) are the plausible trigger. **Decision:** if GATE-A fires, **C0 remains the unique primary** (ud23, drop); the Holm family remains {P1, P2} on C0 only; **no cells are added** beyond the 13. "Co-primary" is sharpened to: the `(ud23_oth, ·)` factorial cells acquire **mandatory-interpretation status** — their outcomes MUST be discussed in Results, with the affected category's per-regime imbalance reported; if the drop-vs-oth cells diverge in sign, every primary conclusion carries a declared caveat naming the category. Rationale: duplicating primaries would double the family or open undeclared forking paths; the factorial block already contains exactly the needed contrast; D42 supplies the interpretive frame. Amends: D06 (escalation semantics). Status: FROZEN (trigger GATED:G1).
 
 **D51 — T\* scope and the uniform-size argument.** **Q:** §4.2 defined T\* as the minimum over "ALL training conditions in (b) and (c)" without stating whether exploratory arms enter, and adopted one T\* across (b) and (c) without argument — although protocol (c)'s ten-document pool could support a larger size, i.e., the uniform choice costs P2 power, while §1.2 declares power the binding constraint. **Decision:** (i) **Scope:** T\* is computed over the training conditions of the **primary contrast only** (Greek: HEX ∪ PROSE_CLASS; Latin: HEX ∪ PROSE_ALL), protocols (b) and (c). Exploratory arms (tragedy, PROSE_POST) run at their own binding sizes, documented separately and labeled non-comparable with primary readings. (ii) **Uniform T\* across (b) and (c): retained, now argued** — it purchases cross-reading comparability (root/gain/transfer at one common training size: the locus narrative) at a **declared cost of P2 power**; the cost is made visible descriptively by the learning curves (F8), whose protocol-(c) curves extend beyond T\* where the pool permits. (iii) Binding condition: protocol (b) → "HEX minus Iliad" (expected); protocol (c) → 𝔻 minus its largest document; the overall minimum is expected from (b). The §4.2 contingency (T\* < 15k → logged amendment + learning-curve emphasis) stands. Status: FROZEN (value GATED:G1).
+
+---
+
+## §II-ter — POST-RATIFICATION DECISIONS (2026-07-23, in full)
+
+Context: implementation-level readings surfaced by the ingestion of the quarantined candidate (D47) and by making the G0 criterion falsifiable. All decided pre-data: no model has been fitted to real data.
 
 **D52 — Explicit G0 acceptance set; label-free scoring boundary; sampling ledger.**
 

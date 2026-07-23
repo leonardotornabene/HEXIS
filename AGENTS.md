@@ -5,7 +5,7 @@ Information-theoretic analysis of morphosyntactic organization (UPOS+DEPREL sequ
 in Greek/Latin hexameter vs prose (UD v2.18: grc_perseus, la_perseus).
 Sole instrument: Rissanen-style MDL context tree (spec §4). Confirmatory statistics: P1
 (transfer), P2 (context gain).
-Authoritative: docs/01_MASTER_SPEC.md (§N) + docs/02_DECISION_LOG.md (D01–D51). Binding. No
+Authoritative: docs/01_MASTER_SPEC.md (§N) + docs/02_DECISION_LOG.md (D01–D53). Binding. No
 silent deviations. O7 blocks G2/G5; gate order G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7 (D44(vii)).
 
 ## Golden rules

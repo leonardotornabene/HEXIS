@@ -24,6 +24,9 @@
 | §5.7 | Latin sidedness note; d_max = 6 declared as configuration difference | D43 |
 | §6.1, §6.2, §7 | `candidates/` quarantine; `run_null_calibration.py`; `own_regime_pool_fraction`; `test_null_calibration.py` | D47, D44 |
 | §10 | Tier-2 limitation reworded | D43 |
+| §3.7 | `sampling_ledger_*.parquet` output: realized T*-matched training composition, label-free | D52 (2026-07-23) |
+| §6.2 | `pooled_scores` split into label-free `pooled_score_core` + `annotate_scores`; sampling ledger; canonical score column order | D52 (2026-07-23) |
+| §7 | explicit G0 set (`test_registry`, `test_sequences`, `test_determinism`); scoring-boundary cases; `@pytest.mark.g0` convention | D52 (2026-07-23) |
 
 ## 0. HOW TO USE THIS DOCUMENT (instructions to AI assistants)
 
@@ -179,6 +182,8 @@ The v1 chunk layer is **removed from all inference** (chunk-level statistics no 
 `alphabet.json`: `{symbol: id}` + variant tag (`ud23`, `ud23_oth`, `upos_only`), creation date, config hash.
 
 `scores/*.parquet`: per-document score tables produced by §4.4 protocols (schema in §6.2). Every run writes one central manifest (§6.4); every derived file carries or is accompanied by a minimal sidecar `{run_id, sha256, entry_point}` (D46).
+
+`scores/sampling_ledger_*.parquet`: `evaluation_doc_id, seed, training_doc_id,` `sampled_token_count` — realized composition of each T*-matched training subsample (D52 vi); label-free; carries the minimal sidecar of §6.4/D46.
 
 ## 4. THE INSTRUMENT AND ITS READINGS (all logarithms base 2; all quantities in bits)
 
@@ -358,9 +363,17 @@ class EvalResult:
 # protocols/scores.py
 def delta_ce_scores(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame
     # rows: doc_id, regime, ce_own(mean,sd), ce_other(mean,sd), dce, n_positions   [protocol (b)]
+def pooled_score_core(sequences, alphabet, cfg, rng, doc_ids) -> tuple[pd.DataFrame, pd.DataFrame]
+    # LABEL-FREE core (D52 v): takes NO registry; no regime/author/work access by any route.
+    # returns (scores, ledger). scores columns, in this order: doc_id, gain_mean, gain_sd,
+    #       depth_mean, depth_sd, frac_restricted, coverage   [protocol (c)]
+    # ledger columns, in this order: evaluation_doc_id, seed, training_doc_id,
+    #       sampled_token_count — ACTUAL sampled counts, never nominal membership (D52 vi)
+def annotate_scores(scores, ledger, registry) -> pd.DataFrame
+    # attaches regime, author, work, own_regime_pool_fraction (seed-mean of the seed-level
+    #       fractions, computed from the ledger; D44/D52 vii) — outside the byte-identity guarantee
 def pooled_scores(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame
-    # rows: doc_id, regime, gain_mean(mean,sd), depth_mean(mean,sd), frac_restricted,
-    #       own_regime_pool_fraction (D44), coverage   [protocol (c); LABEL-FREE]
+    # thin composition: annotate_scores(*pooled_score_core(...), registry) — §6.2 contract preserved
 def learning_curves(...) -> pd.DataFrame                           # CE vs T grid (descriptive)
 
 # stats/permutation.py
@@ -410,15 +423,36 @@ All randomness via `np.random.default_rng(derived_seed)`. **Manifest policy (D46
 | --- | --- | --- |
 | `test_alphabet.py` | Subtype stripping incl. multi-colon; PROPN→NOUN; drop rules; `oth` arm; totality on any UD label; synthetic CoNLL-U with MWT range + empty node | G0 |
 | `test_conllu_reader.py` | Malformed row → `ParseError` with location; `sent_id` required; ID order preserved | G0 |
+| `test_registry.py` | `build_registry` over synthetic `sent_id`s: document identity from `sent_id` (D03); regime/taxonomy assignment per §2.3 (HEX, PROSE_CLASS, PROSE_POST, OTHER_VERSE, EXCLUDED); fail-loud validation on unknown or missing document | G0 |
+| `test_sequences.py` | Sentence sequence construction under **both** boundary policies (§3.5). P-RESET: context reset at each sentence boundary (no cross-sentence past). P-BOUND: deterministic extension A⁺ = A ∪ {`#`} with `#` appended at id = \|A\| (all existing ids stable), \|A⁺\| = \|A\| + 1 used wherever \|A\| enters; `alphabet.json` unmodified; extension built at run time by a documented function and recorded in the run manifest (D52(x)) | G0 |
 | `test_blocks.py` | Sentence-aligned fill; tail ≥/< `min_frac`; never spans documents | G0 |
 | `test_context_tree.py` | The four analytic processes of §4.7 with stated tolerances; `d_max` honored; `k_min`/γ behavior; fallback to deepest ancestor; unseen symbol never `p = 0` | G3 |
 | `test_tree_slices.py` | Root = add-β unigram (max dev < `1e−12`); depth-1 nodes = smoothed bigram tables; evaluate-on-train consistency (§4.6) | G3 |
-| `test_scores.py` | `ΔCE` on two analytic Markov chains matches analytic `CE(B‖A)`; gain restriction respects `available_past`; label-free test: `pooled_scores` output byte-identical under permuted registry labels | G3 |
+| `test_scores.py` | `ΔCE` on two analytic Markov chains matches analytic `CE(B‖A)`; gain restriction respects `available_past`; label-free test: `pooled_scores` output byte-identical under permuted registry labels | G3 (case 1: G0) |
 | `test_permutation.py` | Exact enumeration counts = `C(n,k)` and `2^n`; null synthetic → `p ~ Uniform` (KS over repetitions); planted effect → small p; one/two-sided consistency. Generic utilities only — the confirmatory application of the sign-flip to P1 is gated by O7 (D44) | G0 |
 | `test_null_calibration.py` | Empirical type-I calibration of the full P1 chain on synthetic H0 (single process → 11 pseudo-documents → LODO → T*-matching → seed-averaging → sign-flip) at nominal levels over replications; P2 permutation as positive control (O7/D44) | G3 |
 | `test_bootstrap_holm.py` | Holm ordering on fixed p-vector (family of 2: 0.025/0.05); bootstrap reproducibility under fixed seed | G0 |
+| `test_determinism.py` | Seed derivation `global XOR crc32(analysis_id)` (§6.3); resolved-config canonicalization + SHA-256; central run-manifest generation (§6.4/D46); minimal per-artifact sidecar `{run_id, sha256, entry_point}`; overwrite refusal absent `--force` | G0 |
+
+**Scoring-boundary cases (D52(ix)); in `test_scores.py` unless noted; per-case gate:**
+
+| # | Case (ground truth) | Gate |
+| --- | --- | --- |
+| 1 | The core has no `registry` argument and cannot reach labels through another object (static/signature check) | **G0** |
+| 2 | Score table byte-identical under registry-label permutation | **G3** |
+| 3 | Sampling ledger byte-identical under registry-label permutation | **G3** |
+| 4 | Annotated output changes as expected under permutation | **G3** |
+| 5 | `own_regime_pool_fraction` exact on a synthetic ledger with analytically known sampled-token counts | **G3** |
+| 6 | P2 and S1 computed from fixed model-derived scores, labels forming only the permuted contrast | **G3** |
 
 Edge cases throughout: empty sequences, single-symbol alphabet, sentences shorter than restriction, all-dropped sentences.
+
+**G0 selection (D52(ii)–(iii)).** The G0 set is every test carrying `@pytest.mark.g0`; the
+table above states the *minimum* mandatory coverage and does not restrict additional tests.
+Canonical command: `uv run pytest -m g0 --strict-markers`. No test in the G0 selection may be
+skipped, `xfail`, `xpass`, or collected without an effective assertion; a repository-local
+pytest hook (or a dedicated gate runner) enforces a non-zero exit on any such case, and this
+enforcement must not depend on reading the pytest summary by eye.
 
 ## 8. OUTPUTS
 

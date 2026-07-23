@@ -1,7 +1,7 @@
 # Phase 1a Contract Bootstrap Design
 
-**Status:** draft for owner review  
-**Authoritative sources:** Master Spec §§6.2, 7; Decision Log D46, D52  
+**Status:** approved by owner — 2026-07-23
+**Authoritative sources:** Master Spec §§6.2, 7; Decision Log D46, D52
 **Goal:** align the Phase-0 scaffold with the frozen D46/D52 contracts and leave
 an executable G0 guard on the label-free scoring boundary, without implementing
 scoring or manifest behavior.

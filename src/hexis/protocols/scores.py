@@ -21,8 +21,19 @@ def pooled_scores(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame:
     """Gain/depth scores under protocol (c), pooled LODO — LABEL-FREE (D36).
 
     Rows: doc_id, regime, gain_mean(mean,sd), depth_mean(mean,sd),
-    frac_restricted, coverage. Primary gain/depth restricted to positions with
-    available_past ≥ 4 (D35). Regime labels must never be consulted (D36).
+    frac_restricted, own_regime_pool_fraction (D44), coverage. Primary
+    gain/depth restricted to positions with available_past ≥ 4 (D35). The
+    scores themselves must never be computed from regime labels (D36).
+
+    own_regime_pool_fraction (D44): per-document own-regime token share of
+    the protocol-(c) training subsample, seed-mean; reported so that the
+    directional displacement of the group difference stays visible in T3.
+
+    NOTE (open, -> D52): §6.2 lists both `regime` and
+    `own_regime_pool_fraction` as columns, yet §7 requires this function's
+    output to be byte-identical under permuted registry labels. Read
+    literally on the whole frame the two are incompatible; the scope of the
+    byte-identity test must be ratified before that test is written at G3.
     """
     raise NotImplementedError
 

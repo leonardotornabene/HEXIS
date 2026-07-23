@@ -1,7 +1,7 @@
 [project]
 name = "hexis"
 version = "0.1.0"
-description = "HEXIS: morphosyntactic organization under metrical constraint, measured by a single Rissanen-style MDL context-tree instrument (Spec v2.0)"
+description = "HEXIS: morphosyntactic organization under metrical constraint, measured by a single Rissanen-style MDL context-tree instrument (Spec v2.1)"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "numpy",

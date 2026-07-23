@@ -20,3 +20,10 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/hexis"]
+
+[tool.pytest.ini_options]
+# Collection is confined to tests/ (Spec §7). candidates/ holds quarantined
+# non-canonical implementations (D47) whose test basenames collide with the
+# canonical suite; they must never enter the G0 or G3 test sets.
+testpaths = ["tests"]
+norecursedirs = ["candidates", ".venv", "data", "results", "notebooks"]

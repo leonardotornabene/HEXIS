@@ -226,6 +226,27 @@ The reported document-level value is the **arithmetic mean over seeds of the see
 
 **Rationale:** the clauses make explicit the conventions required to preserve the mathematical meaning of §4, and close five high-risk silent divergences: non-monotone selection; leakage of the current symbol into online selection; reversal of the MDL-saving sign; silent alphabet expansion; substitution of the document-level P1 estimand by an aggregate token-weighted diagnostic. All clauses are pre-data; no parameter, statistic, hypothesis, inferential family or gate order changes. **Clarifies:** D18, D19, D32, D38, D44; Spec §§4.1–4.5. **Does not amend:** D47. Status: **FROZEN**.
 
+**D54 — CoNLL-U reader contract, ParseError, and the "carried unchanged from v1" erratum. Q:** Spec §6.2 lists `conllu_reader.iter_sentences` (and `alphabet.strip_subtype / map_token / run_audit / freeze_alphabet`, `registry.build_registry`) as "carried unchanged from v1"; Phase 1a read this as an instruction to port existing code, which does not exist. Independently, §7 requires the G0 case "Malformed row → `ParseError` with location", but no section of the Spec defines `ParseError`, the return type of `iter_sentences`, or the sentence/token structure it yields. Implementation stopped per the uncertainty rule. **D:**
+
+(i) *Erratum.* "v1" in §6.2 denotes Master Spec v1.0 (2026-07-05), not a code artifact. Verified on the repository 2026-07-25: no implementation of `iter_sentences` exists in the working tree or in any commit — `git log --all -S 'def iter_sentences' -- src/` returns only the Phase-0 scaffold `b179ea5`, whose body is `raise NotImplementedError` — and no v1 code artifact is available to the project. The phrase records that the *specifications* of the listed components survived the D32 pivot unchanged. All listed components — reader, alphabet functions, `registry.build_registry` — are implemented from the Spec, tests-first. This clause is general and disposes of the same ambiguity for the remaining Phase-1a modules.
+
+(ii) *Reader return contract (binding).* `iter_sentences(path: Path) -> Iterator[conllu.TokenList]`, streaming (`conllu.parse_incr`, one sentence at a time). The contract is on the following invariants, not on the library type; substituting an equivalent validated parser (§3.2 permits it) is a D-amendment only if an invariant changes.
+  a. `sent_id` present in element metadata; absent → `ParseError` (§3.2);
+  b. `newdoc id` preserved in metadata when present in the source;
+  c. elements contain only integer-ID tokens: MWT range rows `i-j` and empty nodes `i.1` are removed (§3.2); keeping the syntactic-word rows *is* the Latin clitic expansion — no further expansion is performed;
+  d. each token exposes at least `ID, FORM, UPOS, HEAD, DEPREL`;
+  e. token order = CoNLL-U ID order (§3.2, surface order);
+  f. the yielded object is derived and filtered — it is not a faithful, re-serializable image of the source sentence, and must not be treated as one.
+The metadata key under which `newdoc id` is stored, and the runtime type of `token["id"]` for range and empty-node rows, are pinned by the synthetic fixture test against the locked `conllu` version; they are not assumed.
+
+(iii) *Representation blindness (binding).* The reader validates UPOS membership in the 17 UD tags and DEPREL non-empty (§3.2), and nothing else. It performs no subtype stripping, no `PROPN → NOUN`, no category-based retention: tokens with UPOS in {PUNCT, X, INTJ, SYM} and tokens carrying excluded DEPREL labels are yielded unchanged. All retention and exclusion belongs to `alphabet.map_token` (§3.4). Rationale: the G1 audit (T2) requires the raw UPOS×DEPREL contingency over all syntactic-word rows; filtering in the reader would silently corrupt the drop-rate tables and GATE-A.
+
+(iv) *`ParseError`.* `class ParseError(ValueError)` with attributes `path: Path`, `sent_id: str | None`, `token_id: int | None`, `reason: str`, and a `__str__` rendering all four on one line for logging. `sent_id` and `token_id` are nullable because a violation may precede their availability (missing `sent_id`). *Declared limitation:* no source line number — `conllu.parse_incr` does not expose it and writing a parser to recover it is out of scope. No exception hierarchy is introduced; a future common base remains compatible with this contract provided `ParseError` continues to subclass `ValueError`.
+
+(v) *Explicitly out of scope of this entry.* G0 enforcement mechanics (engineering under the already-ratified D45 criterion "real assertions"; no decision required). The Python return shape of `alphabet.map_token`: §3.4 fixes its semantics entirely (normative operation order, `symbol = f"{UPOS}:{deprel_base}"`, `drop_reason` values), leaving only the return shape free — an implementation-level reading for `ASSUMPTIONS.md`, ratified separately, and not a blocker for the reader.
+
+Status: FROZEN. Gate: G0.
+
 **D18-A1 — Growth policy of the context tree (PROPOSED; decision at the Phase-2 mathematical-supervisor touchpoint).**
 
 **Q:** §4.1's normative pseudocode grows the matched-extension chain at every position (`node.children.setdefault(σ, new Node)` inside the depth loop), creating up to `d_max` new nodes per position. The quarantined candidate (D47) instead extends the matched path by exactly one node per position — a deviation it declares in `ASSUMPTIONS.md` §B3. The two are not selection-equivalent under `k_min = 2`. Which policy governs the canonical implementation?
@@ -278,6 +299,8 @@ The Spec's policy is therefore not S&G's, and the candidate's is neither. [The S
 **O7 ★:** validity of the exact sign-flip for P1 (D44) — null-calibration study on synthetic data + mathematical-supervisor touchpoint; **BLOCKING for G2 and G5**. Software home: `tests/test_null_calibration.py` + `pipeline/run_null_calibration.py` (G3).
 
 **O8:** author-block composition — verify the 3/3 partition at G1; coupled to O2 with the inferential consequences declared in D43(vi).
+
+**O9 — `archive_v1/` referenced but absent.** The headers of `00_LEGGIMI_INDICE.md`, `02_DECISION_LOG.md` and `03_ROADMAP_OPERATIVA_IT.md` state that v1.0 (2026-07-05) is archived in `archive_v1/`. Verified 2026-07-25: the directory exists neither in the working tree nor in any commit of the repository (only `docs/archive_v2_0_pdf/` is present). The claim is therefore currently false as a statement about the repository. Resolution (owner's choice): either deposit the v1.0 documents in `docs/archive_v1/`, or amend the three headers to state their actual location. Documentation integrity only; blocks no gate. Status: OPEN.
 ---
 
 ## §IV — DEFERRED DECISION NODES (owner-mandated postponement, 2026-07-21)

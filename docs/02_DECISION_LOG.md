@@ -2,7 +2,7 @@
 
 Version 2.1 — 2026-07-21. Binding companion to `01_MASTER_SPEC.md` v2.1. Supersedes v2.0 (2026-07-06); v1.0 archived in `archive_v1/`. Format: **Q** question · **D** decision · **R** rationale · **Status** (FROZEN | GATED:G1 | SUPERSEDED by Dnn | AMENDED by Dnn) · ★ = declared deviation from / extension of the research proposal. Amendment protocol: changing a FROZEN entry requires a new `D{n}-A1` entry recording old value, new value, reason, date, and impact on already-computed results (re-run or retired). **No silent changes.**
 
-Reading guide: §I carries v1 decisions with updated status (self-contained one-paragraph form); §II contains the v2 architecture decisions D32–D39 in full; §II-bis contains the v2.1 synchronization decisions D40–D51 in full; §II-ter contains D52–D53 in full; §III open items (O7 is blocking); §IV deferred decision nodes.
+Reading guide: §I carries v1 decisions with updated status (self-contained one-paragraph form); §II contains the v2 architecture decisions D32–D39 in full; §II-bis contains the v2.1 synchronization decisions D40–D51 in full; §II-ter contains D52–D54 in full; §III open items (O7 is blocking); §IV deferred decision nodes.
 
 ## §I — CARRIED DECISIONS (v1 → v2 status)
 
@@ -134,7 +134,7 @@ Tier-1 Holm attainability is intact (all Tier-1 floors < 0.025); the final propo
 
 ---
 
-## §II-ter — POST-RATIFICATION DECISIONS (2026-07-23, in full)
+## §II-ter — POST-RATIFICATION DECISIONS (2026-07-23–2026-07-25, in full)
 
 Context: implementation-level readings surfaced by the ingestion of the quarantined candidate (D47) and by making the G0 criterion falsifiable. All decided pre-data: no model has been fitted to real data.
 
@@ -245,7 +245,9 @@ The metadata key under which `newdoc id` is stored, and the runtime type of `tok
 
 (v) *Explicitly out of scope of this entry.* G0 enforcement mechanics (engineering under the already-ratified D45 criterion "real assertions"; no decision required). The Python return shape of `alphabet.map_token`: §3.4 fixes its semantics entirely (normative operation order, `symbol = f"{UPOS}:{deprel_base}"`, `drop_reason` values), leaving only the return shape free — an implementation-level reading for `ASSUMPTIONS.md`, ratified separately, and not a blocker for the reader.
 
-Status: FROZEN. Gate: G0.
+Status: FROZEN; AMENDED by D54-A1. Gate: G0.
+
+**D54-A1 — Public reader return type clarified (2026-07-25).** **Old value:** D54(ii) bound `iter_sentences(path: Path) -> Iterator[conllu.TokenList]` but then described the contract as resting on invariants “not on the library type,” leaving parser substitution and public return-type substitution insufficiently distinguished. **New value:** for v2.1, `Iterator[conllu.TokenList]` is the binding public return type. An equivalent validated parser may replace `conllu.parse_incr` without an amendment only if the public function still yields `conllu.TokenList` objects and preserves every D54(ii–iii) invariant. Changing the public yielded type requires a further D54 amendment. **Reason:** remove an internal ambiguity while preserving the already-ratified API and §3.2’s allowance for equivalent parsing internals. **Impact on already-computed results:** none; documentation only, no implementation or results exist. Status: **FROZEN**.
 
 **D18-A1 — Growth policy of the context tree (PROPOSED; decision at the Phase-2 mathematical-supervisor touchpoint).**
 
@@ -300,7 +302,7 @@ The Spec's policy is therefore not S&G's, and the candidate's is neither. [The S
 
 **O8:** author-block composition — verify the 3/3 partition at G1; coupled to O2 with the inferential consequences declared in D43(vi).
 
-**O9 — `archive_v1/` referenced but absent.** The headers of `00_LEGGIMI_INDICE.md`, `02_DECISION_LOG.md` and `03_ROADMAP_OPERATIVA_IT.md` state that v1.0 (2026-07-05) is archived in `archive_v1/`. Verified 2026-07-25: the directory exists neither in the working tree nor in any commit of the repository (only `docs/archive_v2_0_pdf/` is present). The claim is therefore currently false as a statement about the repository. Resolution (owner's choice): either deposit the v1.0 documents in `docs/archive_v1/`, or amend the three headers to state their actual location. Documentation integrity only; blocks no gate. Status: OPEN.
+**O9 — `archive_v1/` referenced but absent.** The headers of `00_LEGGIMI_INDICE.md`, `01_MASTER_SPEC.md`, `02_DECISION_LOG.md` and `03_ROADMAP_OPERATIVA_IT.md` state that v1.0 (2026-07-05) is archived in `archive_v1/`. Verified 2026-07-25: the directory exists neither in the working tree nor in any commit of the repository (only `docs/archive_v2_0_pdf/` is present). The claim is therefore currently false as a statement about the repository. Resolution (owner's choice): either deposit the v1.0 documents in `docs/archive_v1/`, or amend the four headers to state their actual location. Documentation integrity only; blocks no gate. Status: OPEN.
 ---
 
 ## §IV — DEFERRED DECISION NODES (owner-mandated postponement, 2026-07-21)
@@ -310,4 +312,3 @@ These nodes are deliberately left open by the project owner; each becomes determ
 - **DN-1 — T\*-matched variant of R1/JSD** (in addition to the D41 baseline). Determinant at: **G2** (inclusion in the frozen descriptive plan). Fallback: D41 baseline (reference-model JSD with size-dependence caveat).
 - **DN-2 — Whether Tier 2 spends α on P1 alone** (one-sided floor 0.0156 < 0.025) instead of the no-α status of D43(iii). Determinant at: **G2**. Fallback: D43(iii) (no α at Tier 2).
 - **DN-3 — Whether the factorial block runs full exact inference (S = 10) or point estimates only**, now that D42 removed its validity-condition role. Determinant at: **G2** (plan freeze; execution at G7). Fallback: D37 as written (full inference).
-

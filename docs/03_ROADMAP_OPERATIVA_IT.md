@@ -1,6 +1,6 @@
 # PROGETTO HEXIS — ROADMAP OPERATIVA
 
-Dal giorno zero al preprint, architettura v2.0 a strumento unico (context tree alla Rissanen). Versione 2.1 — 21 luglio 2026. Sostituisce la v2.0 (6 luglio 2026); la v1.0 resta archiviata in `archive_v1/`. Destinatario: te. Lingua: italiano. Documento tecnico vincolante: `01_MASTER_SPEC.md` v2.1 (citato come §N); decisioni: `02_DECISION_LOG.md` v2.1 (D01–D53; O7 bloccante per G2/G5). Ordine di esecuzione v2.1 dei gate (D44(vii)): **G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7**.
+Dal giorno zero al preprint, architettura v2.0 a strumento unico (context tree alla Rissanen). Versione 2.1 — 21 luglio 2026. Sostituisce la v2.0 (6 luglio 2026); la v1.0 resta archiviata in `archive_v1/`. Destinatario: te. Lingua: italiano. Documento tecnico vincolante: `01_MASTER_SPEC.md` v2.1 (citato come §N); decisioni: `02_DECISION_LOG.md` v2.1 (D01–D54; O7 bloccante per G2/G5). Ordine di esecuzione v2.1 dei gate (D44(vii)): **G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7**.
 
 ## Premessa 1: il modello di lavoro "ibrido guidato" (invariato)
 

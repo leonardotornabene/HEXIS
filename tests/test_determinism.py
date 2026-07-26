@@ -11,6 +11,7 @@ import json
 import pytest
 
 from hexis.config import config_hash, derive_seed, load_config, resolve_config
+from hexis.manifest import build_manifest, sha256_file, write_manifest, write_sidecar
 
 
 @pytest.mark.g0
@@ -51,3 +52,55 @@ def test_resolve_config_deep_merges_without_mutating_base():
     merged = resolve_config({"nested": {"q": 9}, "b": 3}, base=base)
     assert merged == {"a": 1, "b": 3, "nested": {"p": 1, "q": 9}}
     assert base == {"a": 1, "nested": {"p": 1, "q": 2}}  # base untouched
+
+
+@pytest.mark.g0
+def test_sha256_file_matches_hashlib(tmp_path):
+    p = tmp_path / "a.bin"
+    p.write_bytes(b"hello")
+    assert sha256_file(p) == hashlib.sha256(b"hello").hexdigest()
+
+
+@pytest.mark.g0
+def test_build_manifest_carries_d46_fields_and_artifact_hashes(tmp_path):
+    art = tmp_path / "scores.parquet"
+    art.write_bytes(b"DATA")
+    m = build_manifest("run-1", "cfg-sha", 2877909235, [art], "hexis.pipeline.run_x")
+    for key in (
+        "run_id", "entry_point", "seed", "config_sha256",
+        "git", "package_versions", "created_utc", "artifacts",
+    ):
+        assert key in m
+    assert m["git"].keys() >= {"commit", "dirty"}  # D46 git commit + dirty flag
+    assert m["package_versions"]["conllu"] == "6.0.0"  # pinned env cross-check
+    assert m["artifacts"] == [
+        {"path": "scores.parquet", "sha256": hashlib.sha256(b"DATA").hexdigest()}
+    ]
+
+
+@pytest.mark.g0
+def test_write_manifest_central_path_and_refuses_overwrite(tmp_path):
+    m = build_manifest("run-1", "cfg-sha", 1, [], "hexis.pipeline.run_x")
+    dest = write_manifest(m, tmp_path)
+    assert dest == tmp_path / "logs" / "run-1" / "manifest.json"  # results/logs/{run_id}/ (§6.4)
+    assert json.loads(dest.read_text())["run_id"] == "run-1"
+    with pytest.raises(FileExistsError):
+        write_manifest(m, tmp_path)  # no silent overwrite without --force
+    assert write_manifest(m, tmp_path, force=True) == dest  # force allowed
+
+
+@pytest.mark.g0
+def test_write_sidecar_is_minimal_and_refuses_overwrite(tmp_path):
+    art = tmp_path / "scores.parquet"
+    art.write_bytes(b"DATA")
+    side = write_sidecar(art, "run-1", "hexis.pipeline.run_x")
+    assert side == tmp_path / "scores.parquet.sidecar.json"
+    payload = json.loads(side.read_text())
+    assert payload == {
+        "run_id": "run-1",
+        "sha256": hashlib.sha256(b"DATA").hexdigest(),
+        "entry_point": "hexis.pipeline.run_x",
+    }
+    assert set(payload) == {"run_id", "sha256", "entry_point"}  # minimal, no metadata dup (D46)
+    with pytest.raises(FileExistsError):
+        write_sidecar(art, "run-1", "hexis.pipeline.run_x")

@@ -56,6 +56,24 @@ def test_holm_adjusted_is_monotone_nondecreasing():
     assert all(0.0 <= p <= 1.0 for p in ordered)
 
 
+@pytest.mark.g0
+def test_holm_rejects_invalid_probability_domain():
+    invalid_cases = (
+        ({"P1": -0.1, "P2": 0.2}, 0.05),
+        ({"P1": 0.1, "P2": 1.1}, 0.05),
+        ({"P1": np.nan, "P2": 0.2}, 0.05),
+        ({}, 0.05),
+        ({"P1": 0.1, "P2": 0.2}, 0.0),
+        ({"P1": 0.1, "P2": 0.2}, 1.1),
+    )
+    errors = []
+    for pvalues, alpha in invalid_cases:
+        with pytest.raises(ValueError) as exc:
+            holm_bonferroni(pvalues, alpha=alpha)
+        errors.append(exc.value)
+    assert all(error.args for error in errors)
+
+
 # --- Hierarchical document bootstrap (§5.3; D22) --------------------------------
 
 
@@ -89,5 +107,40 @@ def test_bootstrap_resamples_within_groups_only():
 
 @pytest.mark.g0
 def test_bootstrap_fails_loud_on_wrong_group_count():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as exc:
         document_bootstrap(np.array([1.0, 2.0, 3.0]), np.array(["A", "B", "C"]), B=10, seed=0)
+    assert exc.value.args
+
+
+@pytest.mark.g0
+def test_bootstrap_rejects_invalid_input_domain():
+    cases = (
+        ([1.0, 2.0, 3.0], ["A", "B"], 10, 0.05),
+        ([], [], 10, 0.05),
+        ([1.0, np.nan], ["A", "B"], 10, 0.05),
+        ([[1.0, 2.0]], [["A", "B"]], 10, 0.05),
+        ([1.0, 2.0], ["A", "B"], 0, 0.05),
+        ([1.0, 2.0], ["A", "B"], 10, 0.0),
+        ([1.0, 2.0], ["A", "B"], 10, 1.0),
+    )
+    errors = []
+    for values, labels, B, alpha in cases:
+        with pytest.raises(ValueError) as exc:
+            document_bootstrap(values, labels, B=B, seed=0, alpha=alpha)
+        errors.append(exc.value)
+    assert all(error.args for error in errors)
+
+
+@pytest.mark.g0
+def test_bootstrap_supports_unweighted_p1_mean_with_unequal_groups():
+    values = np.arange(11, dtype=float)
+    labels = np.array(["HEX"] * 5 + ["PROSE"] * 6)
+
+    def p1_mean(sample, sample_labels):
+        assert sample.shape == sample_labels.shape
+        return float(sample.mean())
+
+    result = document_bootstrap(values, labels, B=20, seed=19, statistic=p1_mean)
+    assert result.observed == pytest.approx(values.mean())
+    assert result.replicates.shape == (20,)
+    assert np.isfinite(result.replicates).all()

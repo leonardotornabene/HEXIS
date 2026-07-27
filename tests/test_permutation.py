@@ -86,7 +86,37 @@ def test_one_two_sided_consistency():
 
 @pytest.mark.g0
 def test_invalid_inputs_fail_loud():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as wrong_groups:
         exact_label_permutation(_SCORES5, ["A", "B", "C", "A", "B"], "greater")  # 3 groups
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as wrong_side:
         exact_sign_flip([1.0, 2.0], "sideways")  # bad sidedness
+    with pytest.raises(ValueError) as mismatched:
+        exact_label_permutation([1.0, 2.0, 3.0], ["A", "B"], "two-sided")
+    with pytest.raises(ValueError) as empty:
+        exact_sign_flip([], "greater")
+    with pytest.raises(ValueError) as nonfinite:
+        exact_sign_flip([1.0, np.nan], "greater")
+    with pytest.raises(ValueError) as nonvector:
+        exact_label_permutation([[1.0, 2.0]], [["A", "B"]], "two-sided")
+    assert all(
+        exc.value.args
+        for exc in (wrong_groups, wrong_side, mismatched, empty, nonfinite, nonvector)
+    )
+
+
+@pytest.mark.g0
+def test_d43_two_sided_floors_for_equal_and_unequal_groups():
+    unequal = exact_label_permutation(
+        [10.0] * 5 + [0.0] * 6,
+        ["HEX"] * 5 + ["PROSE"] * 6,
+        "two-sided",
+    )
+    equal = exact_label_permutation(
+        [10.0] * 3 + [0.0] * 3,
+        ["HEX"] * 3 + ["PROSE"] * 3,
+        "two-sided",
+    )
+    sign_flip = exact_sign_flip([1.0] * 6, "two-sided")
+    assert unequal.p_exact == pytest.approx(1 / math.comb(11, 5))
+    assert equal.p_exact == pytest.approx(2 / math.comb(6, 3))
+    assert sign_flip.p_exact == pytest.approx(2 / 2**6)

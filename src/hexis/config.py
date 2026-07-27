@@ -1,9 +1,10 @@
 """Configuration loading: config/default.yaml, single source of parameters (Spec §6.3).
 
-Signatures chosen under the P4 authorization (not fixed in §6.2); recorded in
-docs/HANDOFF.md as PROPOSED. ``config/default.yaml`` is not packaged into the
-wheel, so it is located by walking up from the working directory (the pipeline
-and the test suite both run from the repository root).
+Signatures chosen under the P4 authorization (not fixed in §6.2) and ratified
+by the owner on 2026-07-27, as recorded in docs/HANDOFF.md.
+``config/default.yaml`` is not packaged into the wheel, so it is located by
+walking up from the working directory (the pipeline and the test suite both run
+from the repository root).
 """
 
 import copy

@@ -1,8 +1,22 @@
 # Overnight handoff — branch `phase1a/overnight-2026-07-25`
 
+> **Post-review remediation prepared and owner-ratified 2026-07-27.**
+> The historical overnight snapshot remains below. The remediation replaces the
+> static assertion scan with runtime G0 enforcement, adds the missing D43/input
+> domain tests, completes D46 input hashing and atomic overwrite refusal, expands
+> the reader contract to 11 intentionally RED cases, and corrects this handoff.
+> No Decision Log edit and no reader implementation.
+
+**Pre-commit remediation verification:**
+`uv run pytest -m g0 --strict-markers -p no:cacheprovider
+--ignore=tests/test_conllu_reader.py` → `46 passed, 23 deselected`;
+full suite → `11 failed, 46 passed, 23 skipped`. All 11 failures are confined
+to the deliberately unimplemented reader contract. G0 remains open.
+
 Autonomous Phase-1a run (authorized 2026-07-25, executed into 2026-07-26).
 Scope P1–P6, reader RED-only. No master edit, no Decision Log edit, no merge,
-no force-push. Branch tip: **`db1dbda`**. This file is the final commit.
+no force-push. Pre-handoff implementation tip: **`db1dbda`**; historical
+handoff commit: **`d82357b`**.
 
 **Suite at handoff:** `6 failed, 38 passed, 23 skipped`. The 6 failures are the
 **intended reader RED** (P5); nothing was skipped/weakened to go green.
@@ -10,7 +24,7 @@ no force-push. Branch tip: **`db1dbda`**. This file is the final commit.
 
 ---
 
-## Per-unit log
+## Historical per-unit log at handoff
 
 | Unit | Commit | Outcome |
 |---|---|---|
@@ -38,14 +52,15 @@ no force-push. Branch tip: **`db1dbda`**. This file is the final commit.
 | test_alphabet.py | 6 skipped (G0 coverage NOT yet implemented — see below) |
 | test_context_tree.py / test_tree_slices.py / test_null_calibration.py | 14 skipped (G3, out of scope) |
 
-### P1 detail — DEVIATIONS (flagged)
+### P1 detail — historical implementation (superseded by 2026-07-27 remediation)
 - Enforcement lives in **`./conftest.py` (repo root)**, not `tests/conftest.py`:
   `pytest_plugins` (needed to expose the `pytester` fixture) is honoured only in
   the root conftest. Runtime hooks work identically from either location. See Q1.
-- Assertion-free enforcement is a **static AST** check (predicate + meta-test),
-  proven by direct/meta unit tests; **skip and xpass** (session-runtime) are
-  proven via `pytester` subprocess. A pytester run of the whole meta-test file
-  would recurse, so the assertion-free case is not re-proven in a subprocess. See Q5.
+- The original assertion-free enforcement was a static AST check. Review found
+  bypasses for dead assertions, module/class markers, non-strict XPASS and
+  collection-time skips. It is replaced in the remediation by runtime
+  `pytest_assertion_pass` accounting plus subprocess regressions, including a
+  warm-`.pyc` case.
 - `tests/conftest.py` DOES exist now — it holds the P5 synthetic reader fixtures
   (fixtures are allowed in a non-root conftest; only `pytest_plugins` is not).
 
@@ -56,7 +71,7 @@ no force-push. Branch tip: **`db1dbda`**. This file is the final commit.
 fields) while a **bad `id` raises** `conllu.exceptions.ParseException` (reader
 must wrap). **No finding contradicts a D54(ii)–(iii) invariant.**
 
-### P5 detail — reader RED (verbatim failures)
+### P5 detail — historical reader RED (verbatim failures)
 All six fail because `iter_sentences` raises `NotImplementedError` and
 `ParseError` is undefined (feature missing):
 ```
@@ -75,24 +90,25 @@ reader must itself check ID/FORM/UPOS/HEAD/DEPREL presence AND wrap
 
 ## Questions requiring your ruling (numbered)
 
-1. **Conftest location.** Enforcement is in `./conftest.py` (root), not
-   `tests/conftest.py`, forced by the `pytester` `pytest_plugins` root rule. OK
-   as-is, or split (pytest_plugins at root, hooks in `tests/conftest.py`)?
+1. **RESOLVED — conftest location.** Enforcement remains in `./conftest.py`:
+   it is repository-wide and `pytest_plugins` for `pytester` must be declared at
+   the root. `tests/conftest.py` remains fixture-only.
 
-2. **Ratify the PROPOSED signatures** below (config, manifest, holm, bootstrap,
-   blocks). These modules carried "Interface not specified in §6.2 … no invented
-   contracts"; I implemented them under the P3/P4 authorization and chose the
-   signatures. Nothing is on master; ratify or adjust before any merge.
+2. **RESOLVED — implementation readings ratified.** On 2026-07-27 the owner
+   ratified the config, manifest, Holm, bootstrap and blocks signatures below,
+   including the manifest's keyword-only `inputs=()`, non-collapsing
+   caller-supplied path strings, and fail-loud behavior when Git state is
+   unavailable.
 
-3. **D54-A1 (awareness + confirm).** The branch base includes master commit
+3. **RESOLVED — D54-A1 alignment.** The branch base includes master commit
    `5aabc05` ("docs: align D54 governance and handoff references", 2026-07-25),
    added *after* my D54 commit, which deposited **D54-A1** and updated the reader
    docstring. D54-A1 makes `Iterator[conllu.TokenList]` the **binding public
-   return type**. My P5 tests conform (they use the `TokenList` API: `.metadata`,
-   `tok['id']`, iteration). Confirm this reading; no action was taken on it.
+   return type**. The expanded P5 tests now assert `TokenList` explicitly and
+   preserve all D54(ii)–(iv) responsibilities. No Decision Log action is needed.
 
-4. **Enforcement proof scope (minor).** Accept the static-AST proof of the
-   assertion-free case (Q5/P1 deviation), or require a pytester subprocess too?
+4. **RESOLVED — enforcement proof scope.** Static proof removed. Ten `pytester`
+   subprocess cases exercise the canonical `-m g0 --strict-markers` path.
 
 5. **KS uniformity (minor).** `test_null_synthetic_p_uniform` label-permutation
    arm has a fixed-seed KS p-value of 0.10 (> 0.05, deterministic). Acceptable, or
@@ -100,16 +116,17 @@ reader must itself check ID/FORM/UPOS/HEAD/DEPREL presence AND wrap
 
 ---
 
-## PROPOSED readings (implemented under P3/P4 authorization, unapplied to master)
+## RATIFIED implementation readings (unapplied to master)
 
 - **config.py**: `load_config(path=None)->dict`; `resolve_config(overrides=None,
   base=None)->dict` (non-mutating deep merge); `config_hash(cfg)->str` (SHA-256 of
   canonical sorted-key JSON); `derive_seed(analysis_id, global_seed)->int`
   (`global ^ crc32(id.utf-8)`, §6.3). Default config located by walking up from CWD.
 - **manifest.py**: `sha256_file(path)->str`; `build_manifest(run_id,
-  config_sha256, seed, artifacts, entry_point)->dict` (D46 fields + per-artifact
-  sha256); `write_manifest(manifest, results_root, force=False)->Path`
-  (`{root}/logs/{run_id}/manifest.json`, FileExistsError without force);
+  config_sha256, seed, artifacts, entry_point, *, inputs=())->dict` (D46 fields
+  + SHA-256 for every input and artifact, with non-collapsing paths);
+  `write_manifest(manifest, results_root, force=False)->Path`
+  (`{root}/logs/{run_id}/manifest.json`, atomic FileExistsError without force);
   `sidecar(run_id, sha256, entry_point)->dict`;
   `write_sidecar(artifact_path, run_id, entry_point, force=False)->Path`.
 - **holm.py**: `holm_bonferroni(pvalues: Mapping[str,float], alpha=0.05)
@@ -126,7 +143,8 @@ reader must itself check ID/FORM/UPOS/HEAD/DEPREL presence AND wrap
   over C(n,k); sign-flip = mean(sign·values) over 2^n; two-sided p is centered at
   the null mean (= 0 for both here). No confirmatory P1 wiring (O7/D44).
 
-No `ASSUMPTIONS.md` ratification and no Decision Log edit were made.
+The owner ratification is recorded here. No `ASSUMPTIONS.md` or Decision Log
+edit was made.
 
 ---
 
@@ -161,10 +179,13 @@ description ("incomplete until all mandatory coverage is implemented") anticipat
 
 ## Reproduce
 
+At the historical handoff:
+
 ```
-git log --oneline master..HEAD      # 9 commits, listed below
+git log --oneline master..d82357b      # 10 commits, listed below
 ```
 ```
+d82357b docs(handoff): overnight Phase-1a run report (P1-P6)
 db1dbda data(provenance): record UD grc/la Perseus r2.18 acquisition (P6)
 4505c34 test(reader): RED-only G0 contract for iter_sentences/ParseError (D54/D54-A1)
 7794d76 feat(manifest): central run manifest, minimal sidecar, overwrite refusal (G0)
@@ -175,4 +196,5 @@ e9e4489 feat(stats): exact label-permutation and sign-flip utilities (G0)
 b5ced54 docs(probe): pin conllu 6.0.0 runtime facts for the reader contract
 7559f66 chore(g0): mechanize the D45/D52(iii) G0 enforcement criterion
 ```
-Branch tip `db1dbda` (+ this HANDOFF commit). Nothing merged to master.
+Historical branch tip `d82357b`. The owner ratified the implementation readings
+and authorized the remediation commit on 2026-07-27. Nothing merged to master.

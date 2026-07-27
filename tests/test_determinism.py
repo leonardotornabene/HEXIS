@@ -2,11 +2,14 @@
 
 Config/manifest signatures were not fixed in §6.2 ("proposed before
 implementation"); chosen here under the P4 authorization and recorded in
-docs/HANDOFF.md as PROPOSED interfaces awaiting ratification.
+docs/HANDOFF.md as owner-ratified implementation readings (2026-07-27).
 """
 
 import hashlib
 import json
+import threading
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 import pytest
 
@@ -63,19 +66,45 @@ def test_sha256_file_matches_hashlib(tmp_path):
 
 @pytest.mark.g0
 def test_build_manifest_carries_d46_fields_and_artifact_hashes(tmp_path):
-    art = tmp_path / "scores.parquet"
-    art.write_bytes(b"DATA")
-    m = build_manifest("run-1", "cfg-sha", 2877909235, [art], "hexis.pipeline.run_x")
+    source = tmp_path / "inputs" / "tokens.parquet"
+    source.parent.mkdir()
+    source.write_bytes(b"INPUT")
+    table = tmp_path / "tables" / "scores.parquet"
+    figure = tmp_path / "figures" / "scores.parquet"
+    table.parent.mkdir()
+    figure.parent.mkdir()
+    table.write_bytes(b"TABLE")
+    figure.write_bytes(b"FIGURE")
+    m = build_manifest(
+        "run-1",
+        "cfg-sha",
+        2877909235,
+        [table, figure],
+        "hexis.pipeline.run_x",
+        inputs=[source],
+    )
     for key in (
         "run_id", "entry_point", "seed", "config_sha256",
-        "git", "package_versions", "created_utc", "artifacts",
+        "git", "package_versions", "created_utc", "inputs", "artifacts",
     ):
         assert key in m
     assert m["git"].keys() >= {"commit", "dirty"}  # D46 git commit + dirty flag
     assert m["package_versions"]["conllu"] == "6.0.0"  # pinned env cross-check
-    assert m["artifacts"] == [
-        {"path": "scores.parquet", "sha256": hashlib.sha256(b"DATA").hexdigest()}
+    assert m["inputs"] == [
+        {"path": str(source), "sha256": hashlib.sha256(b"INPUT").hexdigest()}
     ]
+    assert m["artifacts"] == [
+        {"path": str(table), "sha256": hashlib.sha256(b"TABLE").hexdigest()},
+        {"path": str(figure), "sha256": hashlib.sha256(b"FIGURE").hexdigest()},
+    ]
+
+
+@pytest.mark.g0
+def test_build_manifest_fails_if_git_state_is_unavailable(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    with pytest.raises(RuntimeError, match="git") as exc:
+        build_manifest("run-1", "cfg-sha", 1, [], "hexis.pipeline.run_x")
+    assert exc.value.__cause__ is not None
 
 
 @pytest.mark.g0
@@ -87,6 +116,28 @@ def test_write_manifest_central_path_and_refuses_overwrite(tmp_path):
     with pytest.raises(FileExistsError):
         write_manifest(m, tmp_path)  # no silent overwrite without --force
     assert write_manifest(m, tmp_path, force=True) == dest  # force allowed
+
+
+@pytest.mark.g0
+def test_write_manifest_refusal_is_atomic(tmp_path, monkeypatch):
+    m = build_manifest("run-race", "cfg-sha", 1, [], "hexis.pipeline.run_x")
+    dest = tmp_path / "logs" / "run-race" / "manifest.json"
+    barrier = threading.Barrier(2)
+    original_exists = Path.exists
+
+    def synchronized_exists(path):
+        exists = original_exists(path)
+        if path == dest:
+            barrier.wait(timeout=5)
+        return exists
+
+    monkeypatch.setattr(Path, "exists", synchronized_exists)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        futures = [pool.submit(write_manifest, m, tmp_path) for _ in range(2)]
+    errors = [future.exception() for future in futures]
+    assert sum(error is None for error in errors) == 1
+    assert sum(isinstance(error, FileExistsError) for error in errors) == 1
+    assert json.loads(dest.read_text(encoding="utf-8"))["run_id"] == "run-race"
 
 
 @pytest.mark.g0

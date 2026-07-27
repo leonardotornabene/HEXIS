@@ -56,6 +56,52 @@ _MALFORMED = "\n".join(
     ]
 )
 
+_INVALID_UPOS = "\n".join(
+    [
+        "# sent_id = delta@1",
+        _row("1", "arma", "arma", "NOTATAG", "_", "_", "0", "root", "_", "_"),
+        "",
+    ]
+)
+
+_EMPTY_DEPREL = "\n".join(
+    [
+        "# sent_id = epsilon@1",
+        _row("1", "arma", "arma", "NOUN", "_", "_", "0", "", "_", "_"),
+        "",
+    ]
+)
+
+_INVALID_ID = "\n".join(
+    [
+        "# sent_id = zeta@1",
+        _row("x", "arma", "arma", "NOUN", "_", "_", "0", "root", "_", "_"),
+        "",
+    ]
+)
+
+_REPRESENTATION_BLIND = "\n".join(
+    [
+        "# sent_id = eta@1",
+        _row("1", ".", ".", "PUNCT", "_", "_", "4", "punct", "_", "_"),
+        _row("2", "ignotum", "ignotum", "X", "_", "_", "4", "discourse", "_", "_"),
+        _row("3", "heu", "heu", "INTJ", "_", "_", "4", "vocative", "_", "_"),
+        _row("4", "+", "+", "SYM", "_", "_", "0", "dep", "_", "_"),
+        "",
+    ]
+)
+
+_LAZY = "\n".join(
+    [
+        "# sent_id = theta@1",
+        _row("1", "arma", "arma", "NOUN", "_", "_", "0", "root", "_", "_"),
+        "",
+        "# sent_id = theta@2",
+        _row("1", "virum", "virum", "NOUN"),
+        "",
+    ]
+)
+
 
 @pytest.fixture
 def conllu_samples(tmp_path):
@@ -68,4 +114,11 @@ def conllu_samples(tmp_path):
         "valid": _write("valid.conllu", _VALID),
         "missing_sent_id": _write("missing_sent_id.conllu", _MISSING_SENT_ID),
         "malformed": _write("malformed.conllu", _MALFORMED),
+        "invalid_upos": _write("invalid_upos.conllu", _INVALID_UPOS),
+        "empty_deprel": _write("empty_deprel.conllu", _EMPTY_DEPREL),
+        "invalid_id": _write("invalid_id.conllu", _INVALID_ID),
+        "representation_blind": _write(
+            "representation_blind.conllu", _REPRESENTATION_BLIND
+        ),
+        "lazy": _write("lazy.conllu", _LAZY),
     }

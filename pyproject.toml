@@ -27,8 +27,9 @@ packages = ["src/hexis"]
 # canonical suite; they must never enter the G0 or G3 test sets.
 testpaths = ["tests"]
 # G0 gate mechanics (D52(iii)/D45): reject unregistered markers and turn an xpass
-# into a failure; the root conftest fails the session on any skipped/xfail g0 test.
+# into a failure; the root conftest also requires an executed Python assert.
 addopts = "--strict-markers"
+enable_assertion_pass_hook = true
 xfail_strict = true
 markers = [
     "g0: Gate G0 acceptance tests (D52); incomplete until all mandatory coverage is implemented",

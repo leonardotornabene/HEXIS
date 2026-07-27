@@ -7,6 +7,8 @@ trailing partial block is kept iff its token count >= min_frac * n_block. Blocks
 never span documents because the pipeline calls make_blocks per document.
 """
 
+import math
+
 import pytest
 
 from hexis.blocks import make_blocks
@@ -59,3 +61,26 @@ def test_never_spans_documents():
 def test_oversized_sentence_is_its_own_block():
     blocks = make_blocks([_sent(1500), _sent(600)], n_block=1000, min_frac=0.5)
     assert [_tokens(b) for b in blocks] == [1500, 600]  # sentences are never split
+
+
+@pytest.mark.g0
+def test_empty_and_all_dropped_documents_produce_no_blocks():
+    assert make_blocks([], n_block=1000, min_frac=0.5) == []
+    assert make_blocks([[], []], n_block=1000, min_frac=0.5) == []
+
+
+@pytest.mark.g0
+def test_invalid_block_parameters_fail_loud():
+    errors = []
+    invalid = (
+        (0, 0.5),
+        (-1, 0.5),
+        (1000, -0.1),
+        (1000, 1.1),
+        (1000, math.nan),
+    )
+    for n_block, min_frac in invalid:
+        with pytest.raises(ValueError) as exc:
+            make_blocks([_sent(1)], n_block=n_block, min_frac=min_frac)
+        errors.append(exc.value)
+    assert all(error.args for error in errors)

@@ -6,8 +6,8 @@ every produced artifact with its SHA-256. Each artifact carries or is
 accompanied by the minimal sidecar {run_id, sha256, entry_point}.
 
 Interface not fixed in Spec §6.2; the signatures below are chosen under the P4
-authorization and recorded in docs/HANDOFF.md as PROPOSED, awaiting ratification
-before any merge to master.
+authorization and were ratified by the owner on 2026-07-27, as recorded in
+docs/HANDOFF.md.
 """
 
 import datetime
@@ -38,8 +38,10 @@ def _git_state() -> dict:
             ["git", "status", "--porcelain"], capture_output=True, text=True, check=True
         ).stdout
         return {"commit": commit, "dirty": bool(status.strip())}
-    except (subprocess.CalledProcessError, OSError):
-        return {"commit": None, "dirty": None}
+    except (subprocess.CalledProcessError, OSError) as exc:
+        raise RuntimeError(
+            "git state unavailable; run from a Git worktree with git on PATH"
+        ) from exc
 
 
 def _package_versions() -> dict:
@@ -52,9 +54,23 @@ def _package_versions() -> dict:
     return out
 
 
-def build_manifest(run_id: str, config_sha256: str, seed: int, artifacts, entry_point: str) -> dict:
+def _file_records(paths) -> list[dict[str, str]]:
+    return [
+        {"path": str(path), "sha256": sha256_file(path)}
+        for path in map(Path, paths)
+    ]
+
+
+def build_manifest(
+    run_id: str,
+    config_sha256: str,
+    seed: int,
+    artifacts,
+    entry_point: str,
+    *,
+    inputs=(),
+) -> dict:
     """Assemble the central run manifest (D46): provenance + artifact hashes."""
-    artifacts = [Path(a) for a in artifacts]
     return {
         "run_id": run_id,
         "entry_point": entry_point,
@@ -63,18 +79,25 @@ def build_manifest(run_id: str, config_sha256: str, seed: int, artifacts, entry_
         "git": _git_state(),
         "package_versions": _package_versions(),
         "created_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "artifacts": [{"path": a.name, "sha256": sha256_file(a)} for a in artifacts],
+        "inputs": _file_records(inputs),
+        "artifacts": _file_records(artifacts),
     }
 
 
 def _write_json_no_overwrite(dest: Path, payload: dict, force: bool) -> Path:
     dest = Path(dest)
-    if dest.exists() and not force:
-        raise FileExistsError(f"refusing to overwrite {dest} without force=True (§6.4)")
     dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_text(
-        json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True), encoding="utf-8"
-    )
+    content = json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True)
+    if force:
+        dest.write_text(content, encoding="utf-8")
+        return dest
+    try:
+        with dest.open("x", encoding="utf-8") as stream:
+            stream.write(content)
+    except FileExistsError:
+        raise FileExistsError(
+            f"refusing to overwrite {dest} without force=True (§6.4)"
+        ) from None
     return dest
 
 

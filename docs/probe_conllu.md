@@ -5,8 +5,7 @@ pins the runtime facts D54(ii)–(iv) deferred to "the synthetic fixture test
 against the locked `conllu` version". None of the findings contradicts an
 invariant of D54(ii)–(iii).
 
-Probe script: `scratchpad/probe_conllu.py` (not committed; reproducible from the
-snippet below).
+The complete probe is reproducible from the snippet below.
 
 ## Environment
 
@@ -39,10 +38,14 @@ conllu does **not** uniformly fail loud, so the reader (D54(iv)) must handle bot
 No line number is exposed on the raised `ParseException` — consistent with the
 D54(iv) declared limitation (no source line number).
 
-## Reproduction (essential snippet)
+## Reproduction
 
 ```python
-import io; import conllu
+import io
+
+import conllu
+from conllu.exceptions import ParseException
+
 doc = (
     "# newdoc id = doc-alpha\n# sent_id = doc-alpha@1\n"
     "1-2\tquoque\t_\t_\t_\t_\t_\t_\t_\t_\n"
@@ -53,4 +56,24 @@ doc = (
 tl, = conllu.parse_incr(io.StringIO(doc))
 assert tl.metadata["newdoc id"] == "doc-alpha"
 assert [type(t["id"]).__name__ for t in tl] == ["tuple", "int", "int", "tuple"]
+
+missing_sent_id = "1\tx\tx\tNOUN\t_\t_\t0\troot\t_\t_\n\n"
+missing, = conllu.parse_incr(io.StringIO(missing_sent_id))
+assert "sent_id" not in missing.metadata
+
+short_row = "# sent_id = short@1\n1\tx\tx\tNOUN\n\n"
+short, = conllu.parse_incr(io.StringIO(short_row))
+assert "head" not in short[0] and "deprel" not in short[0]
+
+invalid_upos = "# sent_id = upos@1\n1\tx\tx\tNOTATAG\t_\t_\t0\troot\t_\t_\n\n"
+upos, = conllu.parse_incr(io.StringIO(invalid_upos))
+assert upos[0]["upos"] == "NOTATAG"
+
+bad_id = "# sent_id = bad@1\nx\tx\tx\tNOUN\t_\t_\t0\troot\t_\t_\n\n"
+try:
+    next(conllu.parse_incr(io.StringIO(bad_id)))
+except ParseException as exc:
+    assert "Failed parsing field 'id'" in str(exc)
+else:
+    raise AssertionError("bad ID unexpectedly accepted")
 ```

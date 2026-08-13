@@ -48,6 +48,16 @@ def test_id_order_preserved(conllu_samples):
     assert [tok["id"] for tok in first] == [1, 2, 3, 4]  # surface CoNLL-U ID order
 
 
+@pytest.mark.g0
+def test_out_of_order_integer_ids_raise_parse_error(conllu_samples):
+    """Removing MWT/empty rows must not let malformed word order pass silently."""
+    with pytest.raises(conllu_reader.ParseError) as exc:
+        list(conllu_reader.iter_sentences(conllu_samples["out_of_order"]))
+    assert exc.value.sent_id == "iota@1"
+    assert exc.value.token_id == 1
+    assert "order" in exc.value.reason.lower()
+
+
 # --- declared additions (edge cases) --------------------------------------------
 
 

@@ -78,8 +78,17 @@ def _validated(path: Path, sentence: conllu.TokenList) -> conllu.TokenList:
         raise ParseError(path, None, None, "sent_id is mandatory (Spec §3.2)")
 
     tokens = sentence.filter(id=lambda value: isinstance(value, int))
+    previous_id = None
     for token in tokens:
         token_id = token.get("id")
+        if previous_id is not None and token_id <= previous_id:
+            raise ParseError(
+                path,
+                sent_id,
+                token_id,
+                f"integer token IDs are not in CoNLL-U order after {previous_id}",
+            )
+        previous_id = token_id
         missing = [field for field in REQUIRED_FIELDS if field not in token]
         if missing:
             raise ParseError(

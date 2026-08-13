@@ -102,6 +102,15 @@ _LAZY = "\n".join(
     ]
 )
 
+_OUT_OF_ORDER = "\n".join(
+    [
+        "# sent_id = iota@1",
+        _row("2", "virum", "vir", "NOUN", "_", "_", "0", "root", "_", "_"),
+        _row("1", "arma", "arma", "NOUN", "_", "_", "2", "obj", "_", "_"),
+        "",
+    ]
+)
+
 
 @pytest.fixture
 def conllu_samples(tmp_path):
@@ -121,4 +130,5 @@ def conllu_samples(tmp_path):
             "representation_blind.conllu", _REPRESENTATION_BLIND
         ),
         "lazy": _write("lazy.conllu", _LAZY),
+        "out_of_order": _write("out_of_order.conllu", _OUT_OF_ORDER),
     }

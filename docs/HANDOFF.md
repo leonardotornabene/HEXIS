@@ -148,7 +148,35 @@ edit was made.
 
 ---
 
-## G0 status — NOT closed; what remains
+## G0 status — CLOSED 2026-08-13
+
+> The overnight snapshot below is historical. The four areas it lists as open
+> were completed on 2026-08-13 (branch tip `be42c54`), under the API contract
+> ratified that day (`docs/implementation/specs/2026-08-13-g0-api-contract.md`).
+>
+> ```
+> uv run pytest -m g0 --strict-markers -q  →  110 passed, 17 deselected  (exit 0)
+> uv run pytest -q                         →  110 passed, 17 skipped     (exit 0)
+> ```
+>
+> The 17 are G3 scaffolds (`context_tree`, `tree_slices`, `null_calibration`,
+> the G3 scoring-boundary cases); none carries the `g0` marker. D52(i)'s three
+> conditions hold: environment locked (Python 3.12.13, `uv lock --check` clean,
+> 23 packages); every G0 test passes with an executed assertion; the D45/D46
+> deterministic infrastructure is verified.
+>
+> One gap in the enforcement was closed in the process: `-m g0` selects only
+> marked tests, so an incomplete marker set exited 0 — the gate command reported
+> a green G0 the moment the reader went green, with three mandatory areas at
+> zero coverage. `tests/test_g0_enforcement.py` now also asserts the D52(ii)
+> inventory, so a green gate implies both that every mandatory area is
+> represented and that its tests really assert.
+>
+> Still open, tracked, blocking no gate: `n_tokens_raw` definition, `sent_ord`
+> derivation and Greek prefix granularity (all G1); the KS-headroom question
+> below (Q5).
+
+### Historical: what remained at the overnight handoff
 
 Tonight delivered the enforcement mechanics + these mandatory-coverage areas
 (D52(ii)): permutation, sign-flip, Holm, bootstrap, blocks, seed derivation,

@@ -1,6 +1,6 @@
 # PROGETTO HEXIS — ROADMAP OPERATIVA
 
-Dal giorno zero al preprint, architettura v2.0 a strumento unico (context tree alla Rissanen). Versione 2.1 — 21 luglio 2026. Sostituisce la v2.0 (6 luglio 2026); la v1.0 resta archiviata in `archive_v1/`. Destinatario: te. Lingua: italiano. Documento tecnico vincolante: `01_MASTER_SPEC.md` v2.1 (citato come §N); decisioni: `02_DECISION_LOG.md` v2.1 (D01–D54; O7 bloccante per G2/G5). Ordine di esecuzione v2.1 dei gate (D44(vii)): **G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7**.
+Dal giorno zero al preprint, architettura v2.0 a strumento unico (context tree alla Rissanen). Versione 2.1 — 21 luglio 2026. Sostituisce la v2.0 (6 luglio 2026); la v1.0 (5 luglio 2026) è superata e non è depositata in questo repository (O9, risolto 13 agosto 2026). Destinatario: te. Lingua: italiano. Documento tecnico vincolante: `01_MASTER_SPEC.md` v2.1 (citato come §N); decisioni: `02_DECISION_LOG.md` v2.1 (D01–D54; O7 bloccante per G2/G5). Ordine di esecuzione v2.1 dei gate (D44(vii)): **G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7**.
 
 ## Premessa 1: il modello di lavoro "ibrido guidato" (invariato)
 
@@ -28,7 +28,16 @@ Read `01_MASTER_SPEC.md` §3.1 and §6.1. Initialize the `hexis` skeleton exactl
 
 **Chiusura fase:** nessuna profilazione richiesta a G0 (O6 è spostato a G3; D45; un microbenchmark sintetico indicativo è ammesso solo via il candidato in quarantena D47, etichettato come indicativo). **Gate G0** si chiude in Fase 1a con i test non-tree reali e l'infrastruttura deterministica verificata.
 
-## FASE 1a — Pipeline non-tree → chiusura Gate G0 (settimana 2, ~8–10 h)
+## FASE 1a — Pipeline non-tree → chiusura Gate G0 (settimana 2, ~8–10 h) — **CHIUSA 13 agosto 2026**
+
+> **Gate G0 chiuso il 13 agosto 2026.** `uv run pytest -m g0 --strict-markers` →
+> 110 passed, 17 deselected, uscita 0; suite completa 110 passed, 17 skipped
+> (tutti scaffold G3, nessuno con marker `g0`). Le tre condizioni di D52(i) sono
+> verificate. Firme di `alphabet`/`registry`/`sequences` ratificate in
+> `docs/implementation/specs/2026-08-13-g0-api-contract.md`. Voci lasciate
+> aperte e tracciate per G1: definizione di `n_tokens_raw`, derivazione di
+> `sent_ord`, granularità del prefisso greco (accoppiata a O2/O8). Il prossimo
+> gate è **G1**, che richiede decisioni umane e nessun modello.
 
 **Obiettivo:** implementare e testare tutto ciò che non è l'albero: `conllu_reader`, `registry`, `alphabet`, `sequences`, `blocks` + test (§7) con asserzioni reali (zero skip nel set G0), più l'infrastruttura deterministica (derivazione dei seed, risoluzione della config, scrittura del manifest per run con sidecar minimo — §6.4/D46, protezione da sovrascrittura). **Cosa impari:** il formato CoNLL-U; i multiword token latini (que/ue) e perché si espandono; l'alfabeto UPOS+DEPREL come funzione totale (§3.4). **Criterio di accettazione (G0, riformulato da D45):** ambiente bloccato; tutti i test non-tree verdi con asserzioni reali; infrastruttura deterministica verificata. Nessuna profilazione qui: O6 → G3 (D45). **Clausola di acquisizione parallela (D45):** il clone dei treebank e la compilazione di `PROVENANCE.md` (v2.18, §2.5, con SHA-256 e commit) sono acquisizione, non audit, non toccano modelli e possono procedere in parallelo a G0; l'audit di G1 resta rigorosamente dopo G0. **Prompt-tipo (EN):**
 

@@ -1,6 +1,6 @@
 # PROJECT HEXIS — DECISION LOG
 
-Version 2.1 — 2026-07-21. Binding companion to `01_MASTER_SPEC.md` v2.1. Supersedes v2.0 (2026-07-06); v1.0 archived in `archive_v1/`. Format: **Q** question · **D** decision · **R** rationale · **Status** (FROZEN | GATED:G1 | SUPERSEDED by Dnn | AMENDED by Dnn) · ★ = declared deviation from / extension of the research proposal. Amendment protocol: changing a FROZEN entry requires a new `D{n}-A1` entry recording old value, new value, reason, date, and impact on already-computed results (re-run or retired). **No silent changes.**
+Version 2.1 — 2026-07-21. Binding companion to `01_MASTER_SPEC.md` v2.1. Supersedes v2.0 (2026-07-06); v1.0 (2026-07-05) is superseded and is not deposited in this repository (O9, resolved 2026-08-13). Format: **Q** question · **D** decision · **R** rationale · **Status** (FROZEN | GATED:G1 | SUPERSEDED by Dnn | AMENDED by Dnn) · ★ = declared deviation from / extension of the research proposal. Amendment protocol: changing a FROZEN entry requires a new `D{n}-A1` entry recording old value, new value, reason, date, and impact on already-computed results (re-run or retired). **No silent changes.**
 
 Reading guide: §I carries v1 decisions with updated status (self-contained one-paragraph form); §II contains the v2 architecture decisions D32–D39 in full; §II-bis contains the v2.1 synchronization decisions D40–D51 in full; §II-ter contains D52–D54 in full; §III open items (O7 is blocking); §IV deferred decision nodes.
 
@@ -302,7 +302,7 @@ The Spec's policy is therefore not S&G's, and the candidate's is neither. [The S
 
 **O8:** author-block composition — verify the 3/3 partition at G1; coupled to O2 with the inferential consequences declared in D43(vi).
 
-**O9 — `archive_v1/` referenced but absent.** The headers of `00_LEGGIMI_INDICE.md`, `01_MASTER_SPEC.md`, `02_DECISION_LOG.md` and `03_ROADMAP_OPERATIVA_IT.md` state that v1.0 (2026-07-05) is archived in `archive_v1/`. Verified 2026-07-25: the directory exists neither in the working tree nor in any commit of the repository (only `docs/archive_v2_0_pdf/` is present). The claim is therefore currently false as a statement about the repository. Resolution (owner's choice): either deposit the v1.0 documents in `docs/archive_v1/`, or amend the four headers to state their actual location. Documentation integrity only; blocks no gate. Status: OPEN.
+**O9 — `archive_v1/` referenced but absent.** The headers of `00_LEGGIMI_INDICE.md`, `01_MASTER_SPEC.md`, `02_DECISION_LOG.md` and `03_ROADMAP_OPERATIVA_IT.md` state that v1.0 (2026-07-05) is archived in `archive_v1/`. Verified 2026-07-25: the directory exists neither in the working tree nor in any commit of the repository (only `docs/archive_v2_0_pdf/` is present). The claim is therefore currently false as a statement about the repository. Resolution (owner's choice): either deposit the v1.0 documents in `docs/archive_v1/`, or amend the four headers to state their actual location. Documentation integrity only; blocks no gate. **Resolved 2026-08-13** by the second option, on the owner's instruction: the four headers now state that v1.0 is superseded and is not deposited in this repository. No v1.0 document was reconstructed. Status: RESOLVED.
 ---
 
 ## §IV — DEFERRED DECISION NODES (owner-mandated postponement, 2026-07-21)

@@ -1,6 +1,6 @@
 # PROGETTO HEXIS — INDICE DEL PACCHETTO OPERATIVO
 
-**Hexameter Information Signature** — Organizzazione morfosintattica sotto vincolo metrico, misurata con un unico strumento: il context tree MDL alla Rissanen. **Versione 2.1 — 21 luglio 2026.** Sostituisce la v2.0 (6 luglio 2026); la v1.0 (5 luglio 2026) resta conservata in `archive_v1/`.
+**Hexameter Information Signature** — Organizzazione morfosintattica sotto vincolo metrico, misurata con un unico strumento: il context tree MDL alla Rissanen. **Versione 2.1 — 21 luglio 2026.** Sostituisce la v2.0 (6 luglio 2026); la v1.0 (5 luglio 2026) è superata e non è depositata in questo repository (O9, risolto 13 agosto 2026).
 
 ## Che cosa è cambiato nella v2.0 (in una frase)
 

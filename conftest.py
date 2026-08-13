@@ -69,6 +69,10 @@ def pytest_runtest_logreport(report):
 
 
 def pytest_sessionfinish(session, exitstatus):
+    # --collect-only runs no test, so every G0 item would look assertion-free.
+    # Introspecting the selection is not a gate run; only the real one enforces.
+    if session.config.getoption("collectonly", False):
+        return
     selected = {
         item.nodeid for item in session.items if item.get_closest_marker("g0") is not None
     }

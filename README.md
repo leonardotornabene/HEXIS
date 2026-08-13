@@ -74,13 +74,17 @@ to fifty-four entries, and a choice is revised by adding an entry, never by
 editing one. The plan is not yet sealed, however. Sealing it is a deliberate
 step, and it is held up by the open question described below.
 
-What exists today is that written design, and an interface. Every part of the
-software is declared — its inputs, its outputs, and the section of the
-specification it answers to — and not one of those declarations has a working
-body behind it yet. The tests describe the intended behaviour ahead of the code,
-and all of them are currently skipped; each is switched on as the component it
-describes is written. **No model has been fitted to anything, real or synthetic,
-and no results exist.**
+What exists today is that written design, and the first stage of the software
+beneath it. Everything that does not involve the model is written and tested:
+reading the treebanks, mapping raw annotation to symbols, deriving documents,
+assembling sequences under both boundary policies, the exact randomization
+tests, and the machinery that makes a run reproducible and refuses to overwrite
+its own output. The model itself — the context tree on which every reported
+quantity depends — remains a declared interface with no body, as do the score
+functions that read it. The tests describe intended behaviour ahead of the code;
+those belonging to the first stage now pass, and the rest are switched on as
+their component is written. **No model has been fitted to anything, real or
+synthetic, and no results exist.**
 
 This ordering is deliberate rather than incidental. The rule that governs it is
 that nothing is fitted to real data until the plan is sealed: until then the work
@@ -154,15 +158,17 @@ it answers the question it was built to answer.
 **Code** (`src/hexis/`) — the declared interface of the software: reading the
 treebanks, building the symbol sequences, fitting the context tree, computing
 the statistics, running the randomization tests. Every signature is fixed
-against the specification; no function body is implemented yet. Written
-test-first, and incomplete by design rather than by neglect.
+against the specification. The parts that do not touch the model have working
+bodies; the context tree and the score functions that read it are still
+signatures alone. Written test-first, and incomplete by design rather than by
+neglect.
 
-**Tests** (`tests/`) — the test suite. Every test is currently skipped: each
-describes behaviour that has been specified but not yet implemented, and is
-switched on as its component is written. When the first stage of work is
-declared complete, the suite must run with nothing skipped and nothing asserted
-only in name — a condition enforced by the test configuration rather than
-checked by eye.
+**Tests** (`tests/`) — the test suite. The tests belonging to the first stage
+run and pass; those describing the model remain skipped, and are switched on as
+their component is written. That first stage counts as complete only when its
+selection runs with nothing skipped and nothing asserted only in name, and with
+every area the specification requires actually represented in it — conditions
+enforced by the test configuration rather than checked by eye.
 
 **Configuration** (`config/`) — the parameters of the analysis, kept separate
 from the code so that no parameter can be changed silently. Two of them are

@@ -34,7 +34,7 @@
 
 2. Epistemic labels: **[VERIFIED 2026-07-05]** / **[VERIFIED 2026-07-06]** / **[VERIFIED 2026-07-21]** = checked against the cited primary source on that date; **[FROM PROPOSAL]** = asserted in the original research proposal, re-verify where flagged; **[ASSUMPTION]** = explicitly labeled working assumption; **[GATED:G1]** = finalized at gate G1 (corpus audit) by a pre-registered rule.
 
-3. Notation: `log` = log base 2 everywhere; entropies and code lengths in **bits**. Alphabet `A`, symbols `a ∈ A`, sequence `x_1 … x_N`, document `d`, regime `R`, model `M`. Confirmatory statistics `P1, P2`; secondary `S1`; optional `R1`; Latin replication `L1`.
+3. Notation: `log` = log base 2 everywhere; entropies and code lengths in **bits**. Alphabet `A`, symbols `a ∈ A`, sequence `x_1 … x_N`, document `d`, regime `R`, model `M`. Confirmatory statistics `P1, P2`; secondary `S1`; mandatory descriptive `R1` (no α, no test — D41); Latin replication `L1`.
 
 4. **Claim discipline.** Nothing here claims physical emergence, phase transitions, or symmetry breaking. Licensed framing: *poetry and prose as different regimes of symbolic organization; the poetic regime is subject to a strong formal constraint; the project tests whether that qualitative distinction leaves a measurable signature in the predictive organization of morphosyntactic sequences.* Complex-systems references are conceptual, not operational.
 
@@ -493,7 +493,7 @@ UPOS retained (12): ADJ ADP ADV AUX CCONJ DET NOUN NUM PART PRON SCONJ VERB. Dro
 
 `A` frozen alphabet; `H_b(p)` binary entropy; `Δ(s)` node MDL efficiency (bits); `s*` selected context; `d*(t)` selected depth; `available_past` within-sentence context length; `CE` held-out cross-entropy (bits/symbol);
 
-`ΔCE(d)` own-regime advantage; `g(t)` code-length gain vs root; `G(d)` restricted document-mean gain (pooled model); `G_own(d)` descriptive own-regime restricted gain (D49); `own_regime_pool_fraction` per-document own-regime token share of the protocol-(c) training subsample (D44); `D̄(d)` restricted document-mean depth; `h_online` in-sample sequential estimate (descriptive); `T*` matched training size; `C0` primary configuration; statistics P1/P2 (confirmatory), S1 (secondary), R1 (optional), L1 (Latin, qualitative); regimes HEX / PROSE_CLASS / PROSE_POST / OTHER_VERSE / EXCLUDED; gates G0–G7; tiers 1–2.
+`ΔCE(d)` own-regime advantage; `g(t)` code-length gain vs root; `G(d)` restricted document-mean gain (pooled model); `G_own(d)` descriptive own-regime restricted gain (D49); `own_regime_pool_fraction` per-document own-regime token share of the protocol-(c) training subsample (D44); `D̄(d)` restricted document-mean depth; `h_online` in-sample sequential estimate (descriptive); `T*` matched training size; `C0` primary configuration; statistics P1/P2 (confirmatory), S1 (secondary), R1 (mandatory descriptive, no α — D41), L1 (Latin, qualitative); regimes HEX / PROSE_CLASS / PROSE_POST / OTHER_VERSE / EXCLUDED; gates G0–G7; tiers 1–2.
 
 ## APPENDIX C — Proposal-to-v2 hypothesis map
 

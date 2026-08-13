@@ -69,9 +69,15 @@ def build_manifest(
     entry_point: str,
     *,
     inputs=(),
+    alphabet_extension=None,
 ) -> dict:
-    """Assemble the central run manifest (D46): provenance + artifact hashes."""
-    return {
+    """Assemble the central run manifest (D46): provenance + artifact hashes.
+
+    `alphabet_extension` records the run-time alphabet extension A⁺ that D52(x)
+    requires the manifest to carry (P-BOUND arms). `None` omits the key, so
+    P-RESET manifests are unchanged.
+    """
+    record = {
         "run_id": run_id,
         "entry_point": entry_point,
         "seed": seed,
@@ -82,6 +88,9 @@ def build_manifest(
         "inputs": _file_records(inputs),
         "artifacts": _file_records(artifacts),
     }
+    if alphabet_extension is not None:
+        record["alphabet_extension"] = alphabet_extension
+    return record
 
 
 def _write_json_no_overwrite(dest: Path, payload: dict, force: bool) -> Path:

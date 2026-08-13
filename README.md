@@ -74,17 +74,18 @@ to fifty-four entries, and a choice is revised by adding an entry, never by
 editing one. The plan is not yet sealed, however. Sealing it is a deliberate
 step, and it is held up by the open question described below.
 
-What exists today is that written design, and the first stage of the software
-beneath it. Everything that does not involve the model is written and tested:
-reading the treebanks, mapping raw annotation to symbols, deriving documents,
-assembling sequences under both boundary policies, the exact randomization
-tests, and the machinery that makes a run reproducible and refuses to overwrite
-its own output. The model itself — the context tree on which every reported
-quantity depends — remains a declared interface with no body, as do the score
-functions that read it. The tests describe intended behaviour ahead of the code;
-those belonging to the first stage now pass, and the rest are switched on as
-their component is written. **No model has been fitted to anything, real or
-synthetic, and no results exist.**
+What exists today is that written design and the G0 foundation of the software
+beneath it. The reader, raw-annotation mapping, prefix-level registry
+construction, sequence assembly under both boundary policies, exact
+randomization utilities, and reproducibility and overwrite safeguards are
+written and tested. The G1 audit and encoding stages that turn those pieces into
+a frozen registry, alphabet, and T*, as well as the context tree and the score
+functions that read it, remain declared interfaces without bodies. The tests
+describe intended behaviour ahead of the code; the current G0 selection passes,
+but formal closure remains pending until the registry implementation matches its
+ratified contract. The rest are switched on as their component is written. **No
+canonical context-tree fit has been run and no project results exist; synthetic
+work in the quarantined candidate is not a canonical fit or result (D47).**
 
 This ordering is deliberate rather than incidental. The rule that governs it is
 that nothing is fitted to real data until the plan is sealed: until then the work
@@ -104,7 +105,7 @@ timestamp. It is offered as a record, not as proof.
 
 ### The open question
 
-Nine questions are tracked as open. Eight are ordinary: checks postponed until
+Eight questions remain open. Seven are ordinary: checks postponed until
 the corpus is examined, or references to be completed before submission. One is
 not.
 
@@ -130,8 +131,10 @@ be sealed. It is to be settled by a calibration study on artificial data —
 running the whole procedure in a world where the null hypothesis is true by
 construction, and counting how often it is wrongly rejected, with the context
 gain test's randomization as a positive control — and by a mathematician's
-reading. The machinery itself is written and tested; what is in doubt is whether
-it answers the question it was built to answer.
+reading. The generic exact-randomization machinery is written and tested; the
+end-to-end null-calibration study waits for the canonical context tree at G3.
+What remains in doubt is whether independent sign flips answer the confirmatory
+question they were intended to answer.
 
 ## What is in this repository
 
@@ -158,10 +161,10 @@ it answers the question it was built to answer.
 **Code** (`src/hexis/`) — the declared interface of the software: reading the
 treebanks, building the symbol sequences, fitting the context tree, computing
 the statistics, running the randomization tests. Every signature is fixed
-against the specification. The parts that do not touch the model have working
-bodies; the context tree and the score functions that read it are still
-signatures alone. Written test-first, and incomplete by design rather than by
-neglect.
+against the specification. The G0 foundations have working bodies; the G1 audit
+and encoding pipeline, the context tree, and the score functions that read it
+are still signatures alone. Written test-first, and incomplete by design rather
+than by neglect.
 
 **Tests** (`tests/`) — the test suite. The tests belonging to the first stage
 run and pass; those describing the model remain skipped, and are switched on as
@@ -201,8 +204,10 @@ uv sync         # install the locked environment
 uv run pytest   # run the test suite
 ```
 
-Every test is currently skipped, so the suite passes without asserting anything.
-That is the expected state at this stage, not a sign that something works.
+The G0 tests execute real assertions; later-stage scaffold tests remain skipped
+until their components are implemented. A green selection is necessary but is
+not by itself a gate closure: the implementation must also match every binding
+contract. The current gate status is recorded in `docs/00_LEGGIMI_INDICE.md`.
 
 The analysis pipeline is not yet runnable.
 

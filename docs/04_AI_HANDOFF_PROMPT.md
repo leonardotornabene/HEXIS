@@ -1,6 +1,6 @@
 # PROJECT HEXIS — AI HANDOFF KIT
 
-Version 2.1 — 2026-07-21. Supersedes v2.0 (2026-07-06); v1.0 archived. Paste the bootstrap prompt at the start of every AI session; place `CLAUDE.md` at the repository root.
+Version 2.1 — 2026-07-21. Supersedes v2.0 (2026-07-06); v1.0 is superseded and was not deposited in this repository (O9, resolved 2026-08-13). Paste the bootstrap prompt at the start of every AI session; place `CLAUDE.md` at the repository root.
 
 ## A. BOOTSTRAP PROMPT (paste at the start of a new AI session)
 
@@ -12,7 +12,7 @@ Version 2.1 — 2026-07-21. Supersedes v2.0 (2026-07-06); v1.0 archived. Paste t
 >
 > 1. **No silent deviations.** Any change to methodology, alphabet, parameters, statistics, or file contracts requires a proposed Decision-Log amendment (question → proposal → rationale → consequences) and owner approval. Do not "improve" the method inside code.
 > 2. **Single-instrument discipline (D32).** Never reintroduce the retired standalone estimators as results: per-chunk entropy/Miller–Madow/redundancy, standalone conditional entropy, mutual information (+ decay, shuffle baselines), higher-order tables, chunk-level JSD machinery, PERMANOVA, Lempel–Ziv checks. Low-order quantities exist only as **diagnostics** (slice identities, §4.6) or, if the owner asks, as clearly-labeled smoothed slices. JSD = R1, a **mandatory descriptive distributional reading** — no α, no test, size-dependence caveat displayed wherever shown (D41).
-> 3. **Label-free score discipline (D36).** `pooled_scores` (P2/S1 protocol) must never consult regime labels; the byte-identical label-invariance test (§7) is mandatory and must never be weakened. P1 uses the exact sign-flip on ΔCE — **but its confirmatory application is OPEN (D44/O7):** implement and test the generic utility; never freeze or execute P1 confirmatory inference before O7 is resolved (null-calibration study at G3).
+> 3. **Label-free score discipline (D36/D52(v)).** `pooled_score_core` (P2/S1 protocol) must never consult regime labels; `annotate_scores` is the only label-aware boundary. The byte-identical label-invariance test (§7) is mandatory and must never be weakened. P1 uses the exact sign-flip on ΔCE — **but its confirmatory application is OPEN (D44/O7):** implement and test the generic utility; never freeze or execute P1 confirmatory inference before O7 is resolved (null-calibration study at G3).
 > 4. **Position restriction (D35).** Primary gain/depth scores use only positions with `available_past ≥ 4`; the unrestricted variant is a sensitivity cell, nothing more.
 > 5. **No chunk-level inference (D34).** Blocks exist only for the descriptive F7 figure.
 > 6. **Tests first (§7).** Write the analytic ground-truth tests (2.000 bits; CE < 0.02; 0.7219; 0.4690 vs ≈ 1.0) and slice tests before or alongside the implementation. Never delete or weaken a test to make it pass.
@@ -55,8 +55,8 @@ silent deviations. O7 blocks G2/G5; gate order G0 → G1 → G3 → G2 → G4 �
   standalone conditional entropy, MI (+decay/shuffle), higher-order tables, chunk JSD,
   PERMANOVA, LZ (D32). Slices = diagnostics only (§4.6). JSD = R1, mandatory descriptive
   distributional reading, no α, no test (D41).
-- Do not consult regime labels inside pooled_scores (D36); keep the label-invariance test
-  intact.
+- Do not consult regime labels inside pooled_score_core (D36/D52(v)); labels enter only
+  through annotate_scores. Keep the label-invariance test intact.
 - Do not compute unrestricted gain as primary (D35: available_past ≥ 4).
 - Do not do chunk-level inference (D34); blocks serve figure F7 only.
 - Do not use UD train/dev/test splits (D03); documents from sent_id.
@@ -105,6 +105,6 @@ Owner check before merge:
 
 **Code:** correctness vs the cited formula (§4); pre-/post-update ordering; edge cases (empty sequence, single symbol, sentence shorter than the restriction, unseen context/symbol, all-dropped sentences); reproducibility (seed, manifest); file safety; test coverage on analytic ground truth (not just "runs"); dependency hygiene; label-invariance test intact.
 
-**Method:** does the change touch a FROZEN decision? If yes: is there a `D{n}-A1` amendment with rationale and impact on prior results? Confirmatory/secondary/optional labeling intact (P1/P2 vs S1/R1/L1)? Claim wording within D25 (no causal meter claims; no finite-memory claims about language, §0.5; pooled-gain claims worded "under the pooled model" with descriptive G_own alongside, D49)? Sidedness declared next to every exact floor (D43)? No confirmatory P1 step or G2 freeze before O7 (D44)? Nothing retired by D32 resurfacing as a result?
+**Method:** does the change touch a FROZEN decision? If yes: is there a `D{n}-A1` amendment with rationale and impact on prior results? Confirmatory, secondary, descriptive, and qualitative roles intact (P1/P2, S1, R1, L1)? Claim wording within D25 (no causal meter claims; no finite-memory claims about language, §0.5; pooled-gain claims worded "under the pooled model" with descriptive G_own alongside, D49)? Sidedness declared next to every exact floor (D43)? No confirmatory P1 step or G2 freeze before O7 (D44)? Nothing retired by D32 resurfacing as a result?
 
 **Text (preprint phase):** every claim backed by this project's design or a registry source (D39); Galves 2012 and Chen 2024 cited and differentiated; design-evolution paragraph present (pre-data consolidation, D32–D36); confirmatory vs exploratory separation preserved; limitations present (Tier-2 descriptive without α, P2 two-sided structural floor 0.10 — D43; §5.8 confounds; Chomsky-anchored misspecification statement); design-evolution paragraph covers both the pre-data consolidation (D32–D36) and the pre-data v2.1 synchronization (D40–D51); no inflated complex-systems language.

@@ -148,11 +148,17 @@ edit was made.
 
 ---
 
-## G0 status — CLOSED 2026-08-13
+## G0 status — PRE-MERGE REVIEW REOPENED 2026-08-13
 
-> The overnight snapshot below is historical. The four areas it lists as open
-> were completed on 2026-08-13 (branch tip `be42c54`), under the API contract
-> ratified that day (`docs/implementation/specs/2026-08-13-g0-api-contract.md`).
+> The overnight snapshot below is historical. Its four implementation areas
+> were completed on 2026-08-13 (branch tip `be42c54`), and the test commands are
+> green. An independent pre-merge review nevertheless found that the registry
+> body does not yet implement the prefix merge assigned to overrides by the API
+> contract ratified that day
+> (`docs/implementation/specs/2026-08-13-g0-api-contract.md`), and that the
+> `n_tokens_raw` denominator remains unspecified. Formal G0 closure is therefore
+> suspended until both readings are ratified, implemented tests-first, and the
+> complete verification is rerun.
 >
 > ```
 > uv run pytest -m g0 --strict-markers -q  →  110 passed, 17 deselected  (exit 0)
@@ -172,9 +178,10 @@ edit was made.
 > inventory, so a green gate implies both that every mandatory area is
 > represented and that its tests really assert.
 >
-> Still open, tracked, blocking no gate: `n_tokens_raw` definition, `sent_ord`
-> derivation and Greek prefix granularity (all G1); the KS-headroom question
-> below (Q5).
+> Still open and now blocking G0 closure: the `n_tokens_raw` definition and the
+> override merge contract. Still assigned to G1: `sent_ord`, the empirical Greek
+> prefix granularity and the O2/O8 decision about which prefixes to merge. The
+> KS-headroom question below (Q5) also remains open.
 
 ### Historical: what remained at the overnight handoff
 

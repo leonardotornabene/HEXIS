@@ -28,16 +28,17 @@ Read `01_MASTER_SPEC.md` §3.1 and §6.1. Initialize the `hexis` skeleton exactl
 
 **Chiusura fase:** nessuna profilazione richiesta a G0 (O6 è spostato a G3; D45; un microbenchmark sintetico indicativo è ammesso solo via il candidato in quarantena D47, etichettato come indicativo). **Gate G0** si chiude in Fase 1a con i test non-tree reali e l'infrastruttura deterministica verificata.
 
-## FASE 1a — Pipeline non-tree → chiusura Gate G0 (settimana 2, ~8–10 h) — **CHIUSA 13 agosto 2026**
+## FASE 1a — Pipeline non-tree → chiusura Gate G0 (settimana 2, ~8–10 h) — **REVIEW PRE-MERGE APERTA**
 
-> **Gate G0 chiuso il 13 agosto 2026.** `uv run pytest -m g0 --strict-markers` →
-> 110 passed, 17 deselected, uscita 0; suite completa 110 passed, 17 skipped
-> (tutti scaffold G3, nessuno con marker `g0`). Le tre condizioni di D52(i) sono
-> verificate. Firme di `alphabet`/`registry`/`sequences` ratificate in
-> `docs/implementation/specs/2026-08-13-g0-api-contract.md`. Voci lasciate
-> aperte e tracciate per G1: definizione di `n_tokens_raw`, derivazione di
-> `sent_ord`, granularità del prefisso greco (accoppiata a O2/O8). Il prossimo
-> gate è **G1**, che richiede decisioni umane e nessun modello.
+> Il comando canonico e la suite completa sono verdi sul ramo della PR, ma la
+> review pre-merge del 13 agosto 2026 ha sospeso la chiusura formale: il contratto
+> ratificato assegna agli override l'eventuale merge di più prefissi, mentre
+> `build_registry` non sa ancora aggregarli; inoltre la semantica di
+> `n_tokens_raw`, rilevante per i denominatori di GATE-A/B, è ancora da ratificare.
+> G0 si chiude solo dopo il riallineamento tests-first di questi due punti e una
+> nuova verifica completa. Restano a G1 l'enumerazione reale, le assegnazioni
+> umane, O2/O8, `sent_ord` e la decisione su quali prefissi vadano effettivamente
+> uniti.
 
 **Obiettivo:** implementare e testare tutto ciò che non è l'albero: `conllu_reader`, `registry`, `alphabet`, `sequences`, `blocks` + test (§7) con asserzioni reali (zero skip nel set G0), più l'infrastruttura deterministica (derivazione dei seed, risoluzione della config, scrittura del manifest per run con sidecar minimo — §6.4/D46, protezione da sovrascrittura). **Cosa impari:** il formato CoNLL-U; i multiword token latini (que/ue) e perché si espandono; l'alfabeto UPOS+DEPREL come funzione totale (§3.4). **Criterio di accettazione (G0, riformulato da D45):** ambiente bloccato; tutti i test non-tree verdi con asserzioni reali; infrastruttura deterministica verificata. Nessuna profilazione qui: O6 → G3 (D45). **Clausola di acquisizione parallela (D45):** il clone dei treebank e la compilazione di `PROVENANCE.md` (v2.18, §2.5, con SHA-256 e commit) sono acquisizione, non audit, non toccano modelli e possono procedere in parallelo a G0; l'audit di G1 resta rigorosamente dopo G0. **Prompt-tipo (EN):**
 

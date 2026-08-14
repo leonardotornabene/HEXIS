@@ -10,13 +10,14 @@ import pandas as pd
 import pytest
 from conllu import TokenList
 
-from hexis import registry
+from hexis import conllu_reader, registry
 
 pytestmark = pytest.mark.g0
 
 REGIME_LABELS = {"HEX", "PROSE_CLASS", "PROSE_POST", "OTHER_VERSE", "EXCLUDED"}
 
 ILIAD = "tlg0012.tlg001.perseus-grc1.tb.xml"
+ILIAD_PART = "tlg0012.tlg001.perseus-grc1.1.tb.xml"
 THUC = "tlg0003.tlg001.perseus-grc1.1.tb.xml"
 
 
@@ -78,6 +79,16 @@ def test_counts_aggregate_over_gappy_ordinals_and_split_files():
     assert counts.set_index("doc_id").loc[THUC, "n_sentences"] == 1
 
 
+def test_n_tokens_raw_counts_integer_id_words_before_alphabet(conllu_samples):
+    counts = registry.enumerate_prefixes(
+        conllu_reader.iter_sentences(conllu_samples["valid"]), language="lat"
+    )
+
+    row = counts.set_index("doc_id").loc["alpha"]
+    assert row["n_sentences"] == 2
+    assert row["n_tokens_raw"] == 6
+
+
 def test_newdoc_id_disagreement_raises():
     """`newdoc id` is present in both treebanks; when it contradicts the derived
     prefix the document identity is ambiguous and must fail loud (§3.3)."""
@@ -110,6 +121,27 @@ def counts_fixture():
     )
 
 
+def merge_fixture():
+    counts = registry.enumerate_prefixes(
+        [
+            sentence(f"{ILIAD}@1", 5),
+            sentence(f"{ILIAD_PART}@1", 7),
+            sentence(f"{ILIAD_PART}@2", 3),
+        ],
+        language="grc",
+    )
+    source_urn = "urn:cts:greekLit:tlg0012.tlg001"
+    overrides = {
+        ILIAD: dict(OVERRIDES[ILIAD], source_urn=source_urn),
+        ILIAD_PART: dict(
+            OVERRIDES[ILIAD],
+            canonical_doc_id=ILIAD,
+            source_urn=source_urn,
+        ),
+    }
+    return counts, overrides
+
+
 def test_build_registry_assigns_taxonomy_and_schema():
     reg = registry.build_registry(counts_fixture(), OVERRIDES)
     assert list(reg.columns) == list(registry.REGISTRY_COLUMNS)
@@ -127,6 +159,57 @@ def test_build_registry_assigns_taxonomy_and_schema():
 def test_source_urn_defaults_to_doc_id():
     reg = registry.build_registry(counts_fixture(), OVERRIDES)
     assert reg.set_index("doc_id").loc[THUC, "source_urn"] == THUC
+
+
+def test_overrides_merge_raw_prefixes_into_canonical_document():
+    counts, overrides = merge_fixture()
+
+    reg = registry.build_registry(counts, overrides)
+
+    assert list(reg["doc_id"]) == [ILIAD]
+    row = reg.iloc[0]
+    assert row["source_urn"] == "urn:cts:greekLit:tlg0012.tlg001"
+    assert row["n_sentences"] == 3
+    assert row["n_tokens_raw"] == 15
+
+
+@pytest.mark.parametrize(
+    ("field", "conflicting_value"),
+    [
+        ("language", "lat"),
+        ("source_urn", "urn:cts:greekLit:tlg0012.tlg999"),
+        ("author", "Pseudo-Homer"),
+        ("work", "Iliad subdivision"),
+        ("regime", "OTHER_VERSE"),
+        ("meter", "mixed"),
+        ("period", "classical"),
+        ("flags", ["duplicate_source"]),
+    ],
+)
+def test_merge_rejects_inconsistent_metadata(field, conflicting_value):
+    counts, overrides = merge_fixture()
+    if field == "language":
+        counts.loc[counts["doc_id"] == ILIAD_PART, field] = conflicting_value
+    else:
+        overrides[ILIAD_PART][field] = conflicting_value
+
+    with pytest.raises(ValueError) as exc:
+        registry.build_registry(counts, overrides)
+
+    assert field in str(exc.value)
+    assert ILIAD in str(exc.value)
+
+
+@pytest.mark.parametrize("invalid_target", [None, "", 7])
+def test_canonical_doc_id_must_be_a_nonempty_string(invalid_target):
+    counts, overrides = merge_fixture()
+    overrides[ILIAD_PART]["canonical_doc_id"] = invalid_target
+
+    with pytest.raises(ValueError) as exc:
+        registry.build_registry(counts, overrides)
+
+    assert "canonical_doc_id" in str(exc.value)
+    assert ILIAD_PART in str(exc.value)
 
 
 def test_n_tokens_retained_is_nullable_until_the_alphabet_is_frozen():

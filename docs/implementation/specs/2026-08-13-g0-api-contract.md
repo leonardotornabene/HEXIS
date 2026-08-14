@@ -4,7 +4,9 @@ Ratified by the owner 2026-08-13, following the precedent of the 2026-07-27
 ratification recorded in `docs/HANDOFF.md`. These are **implementation-level
 readings**, not Decision-Log changes: they fix signatures and return shapes left
 free by the Spec. No parameter, statistic, hypothesis, inferential family or gate
-order changes. All pre-data.
+order changes. All pre-data. The registry merge mechanism and the meaning of
+`n_tokens_raw` were clarified and ratified by the owner on 2026-08-14 after the
+PR #1 pre-merge review.
 
 Authority for each: D54(v) explicitly defers the return shape of
 `alphabet.map_token` to separate ratification; `registry.build_registry` and the
@@ -84,8 +86,27 @@ prefix; disagreement raises.
 assignments in `config/registry_overrides.yaml`, and O2/O8. In particular the
 probe shows Greek prefixes of the form `…perseus-grc1.1.tb.xml`, whose `.1.`
 may be an internal subdivision rather than the work; if so, distinct prefixes
-must be merged. That merge is exactly what the overrides file is for and is not
-decided here.
+must be merged. Which real prefixes resolve to one document is decided only at
+G1; the mechanism is fixed here.
+
+**Override merge mechanism (owner-ratified 2026-08-14).** The overrides mapping
+remains keyed by the raw prefix emitted by `enumerate_prefixes`. Each assignment
+may carry `canonical_doc_id`, a nonempty string defaulting to that raw prefix.
+`build_registry` groups assignments by this target and sums `n_sentences` and
+`n_tokens_raw`. Every prefix in a merged group must agree on `language`,
+`source_urn`, `author`, `work`, `regime`, `meter`, `period`, and `flags`; a
+conflict raises with the field, raw prefix, and canonical target. Because
+`source_urn` defaults to the raw prefix, a real multi-prefix merge normally sets
+the same explicit `source_urn` on every contributing assignment. This preserves
+the raw-prefix-to-document trace in the overrides while keeping one row per
+observed document in the §2.3 registry.
+
+**`n_tokens_raw` (owner-ratified 2026-08-14).** Count the integer-ID syntactic
+word rows yielded by the D54 reader, before alphabet mapping or retention. MWT
+range rows and empty nodes are excluded; their integer-ID word components —
+including split Latin clitics — are counted separately. PUNCT and every other
+representation category are still included. This is the raw population used by
+the G1 audit and the GATE-A/GATE-B denominators.
 
 `n_tokens_retained` (§2.3) is nullable `Int64` during G0 — it depends on the
 frozen alphabet — and must be complete before the G1 freeze.

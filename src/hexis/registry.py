@@ -95,6 +95,60 @@ def enumerate_prefixes(sentences: Iterable, *, language: str) -> pd.DataFrame:
     )
 
 
+def _canonical_targets(prefix_counts: pd.DataFrame, overrides: Mapping) -> dict:
+    """Resolve and validate every raw prefix's merge target.
+
+    A wrong merge is silent: all sentences stay assigned, so §3.3's "the audit
+    fails on any unassigned sentence" never fires, while the resulting document
+    count fixes the exact enumeration sizes of D43 and therefore the attainable
+    p floors. Two rules reject unshared mistyped targets:
+
+    1. a target may differ from its raw prefix only if **at least two** prefixes
+       share it — an unshared target means no merge is happening, so it can only
+       be an error (this also rejects unshared invented targets and visually
+       identical homoglyphs when they split a group instead of joining it);
+    2. a merge target must be a stable root: if A → B then B → B, so no chain or
+       cycle can make the intended document ambiguous.
+
+    The target is deliberately *not* required to be an existing raw prefix:
+    merging subdivisions `X.1`/`X.2` into `X` must stay legal when a bare `X`
+    never occurs, and forcing one subdivision to stand for the whole document
+    would be arbitrary.
+    """
+    canonical_of = {}
+    for raw_doc_id in prefix_counts["doc_id"]:
+        target = overrides[raw_doc_id].get("canonical_doc_id", raw_doc_id)
+        if not isinstance(target, str) or not target.strip():
+            raise ValueError(
+                f"canonical_doc_id for raw prefix {raw_doc_id!r} must be a "
+                "nonempty string"
+            )
+        canonical_of[raw_doc_id] = target
+
+    group_sizes = Counter(canonical_of.values())
+    violations = []
+    for raw_doc_id in sorted(canonical_of):
+        target = canonical_of[raw_doc_id]
+        if target == raw_doc_id:
+            continue
+        target_of_target = canonical_of.get(target)
+        if target_of_target is not None and target_of_target != target:
+            violations.append(
+                f"{raw_doc_id!r} -> {target!r}, but {target!r} -> "
+                f"{target_of_target!r} (chain)"
+            )
+        elif group_sizes[target] < 2:
+            violations.append(f"{raw_doc_id!r} -> {target!r} (no other prefix shares it)")
+    if violations:
+        raise ValueError(
+            "invalid canonical_doc_id target(s): "
+            + "; ".join(violations)
+            + " — a target may differ from its raw prefix only if at least two "
+            "prefixes share it, and a merge target must be a stable root"
+        )
+    return canonical_of
+
+
 def build_registry(prefix_counts: pd.DataFrame, overrides: Mapping) -> pd.DataFrame:
     """Build the document registry from enumerated prefixes + human-verified overrides.
 
@@ -122,6 +176,27 @@ def build_registry(prefix_counts: pd.DataFrame, overrides: Mapping) -> pd.DataFr
             f"registry overrides name documents absent from the corpus: {unknown}"
         )
 
+    canonical_of = _canonical_targets(prefix_counts, overrides)
+
+    group_sizes = Counter(canonical_of.values())
+    missing_merge_sources = []
+    for target in sorted(group_sizes):
+        if group_sizes[target] < 2:
+            continue
+        members = sorted(
+            raw for raw, canonical in canonical_of.items() if canonical == target
+        )
+        missing = [raw for raw in members if "source_urn" not in overrides[raw]]
+        if missing:
+            missing_merge_sources.append(
+                f"{target!r} <- {members!r} (missing for {missing!r})"
+            )
+    if missing_merge_sources:
+        raise ValueError(
+            "every raw prefix in a multi-prefix merge must define the same "
+            "explicit source_urn: " + "; ".join(missing_merge_sources)
+        )
+
     rows_by_doc_id = {}
     first_raw_prefix_by_doc_id = {}
     for record in prefix_counts.to_dict("records"):
@@ -135,12 +210,7 @@ def build_registry(prefix_counts: pd.DataFrame, overrides: Mapping) -> pd.DataFr
                 f"regime {assignment['regime']!r} for {raw_doc_id} is not one of the five "
                 f"labels of D04: {sorted(REGIME_LABELS)}"
             )
-        canonical_doc_id = assignment.get("canonical_doc_id", raw_doc_id)
-        if not isinstance(canonical_doc_id, str) or not canonical_doc_id.strip():
-            raise ValueError(
-                f"canonical_doc_id for raw prefix {raw_doc_id!r} must be a "
-                "nonempty string"
-            )
+        canonical_doc_id = canonical_of[raw_doc_id]
         metadata = {
             "language": record["language"],
             "source_urn": assignment.get("source_urn", raw_doc_id),

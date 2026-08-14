@@ -219,6 +219,113 @@ def test_canonical_doc_id_must_be_a_nonempty_string(invalid_target):
     assert ILIAD_PART in str(exc.value)
 
 
+# --- canonical target validation -------------------------------------------------
+#
+# A merge target that nothing else shares is indistinguishable from a typo, and a
+# wrong merge is silent: every sentence stays assigned, so the §3.3 "fails on any
+# unassigned sentence" rule never fires. Since the document count fixes the exact
+# enumeration sizes of D43, a silent split or merge changes the attainable p
+# floors. The rule: a target may differ from its raw prefix ONLY if at least two
+# raw prefixes share it.
+
+
+def merged_counts(*doc_ids):
+    return registry.enumerate_prefixes(
+        [sentence(f"{doc_id}@1", 5) for doc_id in doc_ids], language="grc"
+    )
+
+
+def assignment(canonical=None, urn="urn:cts:greekLit:tlg0012.tlg001"):
+    extra = {"source_urn": urn}
+    if canonical is not None:
+        extra["canonical_doc_id"] = canonical
+    return dict(OVERRIDES[ILIAD], **extra)
+
+
+def test_merge_into_a_canonical_that_is_not_itself_a_raw_prefix():
+    """Legitimate and must stay legal: subdivisions `X.1`/`X.2` merge into `X`
+    even though a bare `X` prefix never occurs in the corpus. Requiring the target
+    to be an existing raw prefix would force an arbitrary choice between them."""
+    reg = registry.build_registry(
+        merged_counts("X.1", "X.2"),
+        {"X.1": assignment("X"), "X.2": assignment("X")},
+    )
+    assert list(reg["doc_id"]) == ["X"]
+    assert reg.iloc[0]["n_sentences"] == 2
+
+
+def test_merge_requires_explicit_source_urn_on_every_contributor():
+    """A root prefix's default can equal another prefix's explicit value; that
+    must not satisfy the explicit traceability contract for a real merge."""
+    root = assignment("X")
+    del root["source_urn"]
+
+    with pytest.raises(ValueError) as exc:
+        registry.build_registry(
+            merged_counts("X", "X.1"),
+            {"X": root, "X.1": assignment("X", urn="X")},
+        )
+
+    message = str(exc.value)
+    assert "source_urn" in message and "X" in message and "X.1" in message
+
+
+def test_unshared_canonical_target_is_rejected():
+    """A single prefix pointing at an invented target: no merge is happening, so
+    the target can only be a mistake."""
+    with pytest.raises(ValueError) as exc:
+        registry.build_registry(
+            merged_counts("X.1"), {"X.1": assignment("COMPLETELY_INVENTED")}
+        )
+    assert "COMPLETELY_INVENTED" in str(exc.value) and "X.1" in str(exc.value)
+
+
+def test_typo_in_a_merge_target_splits_the_group_and_is_rejected():
+    """`X.1 -> X` and `X.2 -> Xx` used to yield two documents where one was meant."""
+    with pytest.raises(ValueError) as exc:
+        registry.build_registry(
+            merged_counts("X.1", "X.2"),
+            {"X.1": assignment("X"), "X.2": assignment("Xx")},
+        )
+    assert "Xx" in str(exc.value)
+
+
+def test_unicode_homoglyph_target_is_rejected():
+    """`HYMN` and `HYMN` differ only in the final character (Latin N vs Greek Nu):
+    visually identical, and previously two silent documents."""
+    latin_n, greek_nu = "HYMN", "HYMΝ"
+    assert latin_n != greek_nu
+    with pytest.raises(ValueError) as exc:
+        registry.build_registry(
+            merged_counts("H.1", "H.2"),
+            {"H.1": assignment(latin_n), "H.2": assignment(greek_nu)},
+        )
+    assert "H.2" in str(exc.value)
+
+
+def test_canonical_target_chain_is_rejected():
+    """A -> B while B -> C: the intended document is ambiguous."""
+    with pytest.raises(ValueError) as exc:
+        registry.build_registry(
+            merged_counts("A", "B", "C"),
+            {
+                "A": assignment("B"),
+                "B": assignment("C"),
+                "C": assignment("C"),
+            },
+        )
+    message = str(exc.value)
+    assert "B" in message and "C" in message
+
+
+def test_self_targeting_prefix_without_merge_is_allowed():
+    """Writing `canonical_doc_id` equal to the raw prefix is redundant, not wrong."""
+    reg = registry.build_registry(
+        merged_counts("X.1"), {"X.1": assignment("X.1")}
+    )
+    assert list(reg["doc_id"]) == ["X.1"]
+
+
 def test_n_tokens_retained_is_nullable_until_the_alphabet_is_frozen():
     """It depends on the frozen alphabet (§3.4), which is a G1 outcome; the column
     exists and is null, and must be complete before the G1 freeze."""

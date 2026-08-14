@@ -158,11 +158,12 @@ edit was made.
 > review found no Critical or Important issue and confirmed that every previous
 > blocker was resolved.
 >
-> **Attestation of record — commit `0427c06`, working tree clean:**
+> **Attestation of record — commit
+> `15e2ed838db9419a60f6acb3f506715239fcbcdf`, working tree clean:**
 >
 > ```
-> uv run pytest -m g0 --strict-markers -q  →  139 passed, 17 deselected  (exit 0)
-> uv run pytest -q                         →  139 passed, 17 skipped     (exit 0)
+> uv run pytest -m g0 --strict-markers -q  →  142 passed, 17 deselected  (exit 0)
+> uv run pytest -q                         →  142 passed, 17 skipped     (exit 0)
 > uv lock --check                          →  Resolved 23 packages       (clean)
 > ```
 >
@@ -170,7 +171,7 @@ edit was made.
 > index point here instead of repeating them. Any test added later moves the
 > number, and a figure transcribed into four documents goes stale silently — as
 > it did at 124, when PR #2 added seven registry tests and the hardening pass
-> below added eight more. Re-attesting means rerunning both commands on a clean
+> below added eleven more. Re-attesting means rerunning both commands on a clean
 > tree and replacing the block above together with its commit.
 >
 > The 17 are G3 scaffolds (`context_tree`, `tree_slices`, `null_calibration`,
@@ -184,15 +185,17 @@ edit was made.
 > marker set exited 0 — the gate command reported a green G0 the moment the
 > reader went green, with three mandatory areas at zero coverage.
 > `tests/test_g0_enforcement.py` now also asserts the D52(ii) inventory. Second
-> (post-merge review, commits `d015b98`–`0427c06`): that inventory guarded areas
+> (post-merge review, commits `d015b98`–`15e2ed8`): that inventory guarded areas
 > at *file* granularity while its keys name behaviours, so deleting every P-BOUND
 > test kept the gate green — and, symmetrically, §7's five-label taxonomy row was
 > covered by a subset assertion that two labels satisfied. The inventory now
-> requires named tests by exact name inside each enumerated area, and
+> requires named tests by exact name for every mandatory behaviour; its AST scan
+> accepts only collectable module-level tests carrying the real
+> `pytest.mark.g0`, never nested functions or unrelated `.g0` decorators.
 > `registry.REGIME_LABELS` is pinned by equality with all five labels exercised
 > through `build_registry`. A green gate now implies that every mandatory area is
-> represented, that its named behaviours are still tested, and that those tests
-> really assert.
+> represented, that its named behaviours are still selected by `-m g0`, and that
+> those tests really assert.
 >
 > Still assigned to G1: `sent_ord`, the empirical Greek prefix granularity and
 > the O2/O8 decision about which prefixes to merge. The mechanism itself and the

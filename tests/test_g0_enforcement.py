@@ -21,57 +21,146 @@ pytestmark = pytest.mark.g0
 # both P-RESET and P-BOUND", but deleting every P-BOUND test kept the gate green
 # because the file still held twenty other g0 tests. Where a key enumerates
 # behaviours, the named tests are mandatory by exact name; renaming one is a
-# deliberate edit here, which is the traceability act D52(ii) asks for. An empty
-# tuple means the area is pinned at file level only.
+# deliberate edit here, which is the traceability act D52(ii) asks for. Empty
+# required-name tuples are rejected: they recreate the file-level hole.
 SEQUENCES_AREA = "sequence construction under both P-RESET and P-BOUND (§3.5, D52(x))"
+PERMUTATION_AREA = "exact document-label permutation and sign-flip utilities"
 
 G0_REQUIRED_COVERAGE = {
-    "conllu_reader": ("test_conllu_reader.py", ()),
-    "total alphabet mapping (§3.4)": ("test_alphabet.py", ()),
+    "conllu_reader": (
+        "test_conllu_reader.py",
+        (
+            "test_malformed_row_raises_parse_error_with_location",
+            "test_missing_sent_id_raises_parse_error",
+            "test_id_order_preserved",
+            "test_out_of_order_integer_ids_raise_parse_error",
+        ),
+    ),
+    "total alphabet mapping (§3.4)": (
+        "test_alphabet.py",
+        (
+            "test_subtype_stripping_incl_multi_colon",
+            "test_propn_maps_to_noun",
+            "test_drop_rules",
+            "test_upos_rule_precedes_deprel_rule",
+            "test_excluded_deprel_dropped_under_primary_policy",
+            "test_oth_arm",
+            "test_totality_on_any_ud_label",
+            "test_upos_only_keeps_the_retention_rules",
+            "test_upos_only_alphabet_is_the_twelve_retained_tags",
+            "test_inconsistent_alphabet_configuration_raises",
+            "test_synthetic_conllu_with_mwt_and_empty_node",
+        ),
+    ),
     "registry construction and validation": (
         "test_registry.py",
         (
+            "test_doc_id_derived_from_sent_id_prefix",
+            "test_counts_aggregate_over_gappy_ordinals_and_split_files",
+            "test_n_tokens_raw_counts_integer_id_words_before_alphabet",
+            "test_newdoc_id_disagreement_raises",
+            "test_build_registry_assigns_taxonomy_and_schema",
             "test_regime_labels_are_exactly_the_five_of_d04",
             "test_build_registry_accepts_every_d04_regime",
+            "test_overrides_merge_raw_prefixes_into_canonical_document",
+            "test_merge_rejects_inconsistent_metadata",
+            "test_canonical_doc_id_must_be_a_nonempty_string",
+            "test_merge_into_a_canonical_that_is_not_itself_a_raw_prefix",
+            "test_merge_requires_explicit_source_urn_on_every_contributor",
+            "test_unshared_canonical_target_is_rejected",
+            "test_typo_in_a_merge_target_splits_the_group_and_is_rejected",
+            "test_unicode_homoglyph_target_is_rejected",
+            "test_canonical_target_chain_is_rejected",
+            "test_self_targeting_prefix_without_merge_is_allowed",
+            "test_n_tokens_retained_is_nullable_until_the_alphabet_is_frozen",
+            "test_unassigned_document_raises",
+            "test_unknown_override_raises",
+            "test_invalid_regime_raises",
+            "test_missing_override_field_raises",
         ),
     ),
     SEQUENCES_AREA: (
         "test_sequences.py",
         (
+            "test_build_sequences_keeps_retained_symbols_in_token_order",
+            "test_all_dropped_sentence_remains_an_empty_row",
+            "test_sequences_never_carry_the_boundary_symbol",
             "test_p_reset_returns_one_sequence_per_sentence",
             "test_p_bound_returns_one_stream_with_exactly_n_minus_one_boundaries",
+            "test_p_bound_produces_adjacent_boundaries_around_an_all_dropped_sentence",
             "test_extend_alphabet_bound_appends_at_size_and_keeps_ids_stable",
             "test_extend_alphabet_bound_does_not_mutate_the_frozen_alphabet",
+            "test_to_model_input_never_spans_documents",
             "test_manifest_records_the_runtime_alphabet_extension",
         ),
     ),
-    "sentence-aligned document-safe blocks": ("test_blocks.py", ()),
-    "exact document-label permutation and sign-flip utilities": (
-        "test_permutation.py",
-        (),
+    "sentence-aligned document-safe blocks": (
+        "test_blocks.py",
+        (
+            "test_sentence_aligned_fill",
+            "test_tail_kept_iff_at_least_min_frac",
+            "test_never_spans_documents",
+        ),
     ),
-    "bootstrap reproducibility and Holm correction": ("test_bootstrap_holm.py", ()),
+    PERMUTATION_AREA: (
+        "test_permutation.py",
+        (
+            "test_enumeration_counts",
+            "test_label_permutation_exact_pvalues",
+            "test_sign_flip_exact_pvalues",
+            "test_null_synthetic_p_uniform",
+            "test_planted_effect_small_p",
+            "test_one_two_sided_consistency",
+        ),
+    ),
+    "bootstrap reproducibility and Holm correction": (
+        "test_bootstrap_holm.py",
+        (
+            "test_holm_family_of_two_thresholds",
+            "test_holm_step_down_stops_at_first_non_reject",
+            "test_holm_boundary_and_order_invariance",
+            "test_bootstrap_reproducible_under_fixed_seed",
+        ),
+    ),
     "seed derivation, resolved-config hash, run manifest, sidecar, overwrite refusal": (
         "test_determinism.py",
         (
             "test_seed_derivation_matches_spec_formula",
+            "test_load_config_reads_frozen_defaults",
             "test_config_hash_canonical_and_sensitive",
+            "test_resolve_config_deep_merges_without_mutating_base",
             "test_build_manifest_carries_d46_fields_and_artifact_hashes",
             "test_write_manifest_central_path_and_refuses_overwrite",
+            "test_write_manifest_refusal_is_atomic",
             "test_write_sidecar_is_minimal_and_refuses_overwrite",
         ),
     ),
     "label-free scoring core signature (§7 scoring-boundary case 1)": (
         "test_scores.py",
-        (),
+        ("test_pooled_score_core_has_label_free_signature",),
     ),
 }
 
 
-def _mentions_g0(node: ast.AST) -> bool:
-    return any(
-        isinstance(sub, ast.Attribute) and sub.attr == "g0" for sub in ast.walk(node)
+def _is_pytest_g0_marker(node: ast.AST) -> bool:
+    if isinstance(node, ast.Call):
+        node = node.func
+    return (
+        isinstance(node, ast.Attribute)
+        and node.attr == "g0"
+        and isinstance(node.value, ast.Attribute)
+        and node.value.attr == "mark"
+        and isinstance(node.value.value, ast.Name)
+        and node.value.value.id == "pytest"
     )
+
+
+def _contains_pytest_g0_marker(node: ast.AST) -> bool:
+    if _is_pytest_g0_marker(node):
+        return True
+    if isinstance(node, (ast.List, ast.Tuple, ast.Set)):
+        return any(_is_pytest_g0_marker(element) for element in node.elts)
+    return False
 
 
 def _g0_test_names(path: Path) -> set:
@@ -80,15 +169,18 @@ def _g0_test_names(path: Path) -> set:
     module_marked = any(
         isinstance(node, ast.Assign)
         and any(getattr(target, "id", None) == "pytestmark" for target in node.targets)
-        and _mentions_g0(node.value)
+        and _contains_pytest_g0_marker(node.value)
         for node in tree.body
     )
     return {
         node.name
-        for node in ast.walk(tree)
+        for node in tree.body
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
         and node.name.startswith("test_")
-        and (module_marked or any(_mentions_g0(dec) for dec in node.decorator_list))
+        and (
+            module_marked
+            or any(_is_pytest_g0_marker(dec) for dec in node.decorator_list)
+        )
     }
 
 
@@ -100,6 +192,9 @@ def _missing_coverage(tests_dir: Path, inventory: dict) -> dict:
         path = tests_dir / filename
         if not path.is_file():
             missing[area] = f"tests/{filename} does not exist"
+            continue
+        if not required:
+            missing[area] = f"tests/{filename} has no mandatory test names in inventory"
             continue
         present = _g0_test_names(path)
         if not present:
@@ -141,6 +236,60 @@ def test_inventory_rejects_a_tree_that_lost_the_p_bound_test(tmp_path):
     missing = _missing_coverage(tmp_path, {SEQUENCES_AREA: (filename, required)})
 
     assert dropped in missing[SEQUENCES_AREA]
+
+
+def test_g0_name_scan_rejects_uncollected_and_non_pytest_markers(tmp_path):
+    """Only module-level tests carrying pytest.mark.g0 are inventory evidence.
+
+    A nested function is not collected by pytest, and an unrelated decorator
+    named ``g0`` does not place a test in the canonical ``-m g0`` selection.
+    """
+    path = tmp_path / "test_synthetic.py"
+    path.write_text(
+        "import pytest\n\n"
+        "def marker(fn):\n    return fn\n\n"
+        "marker.g0 = marker\n\n"
+        "@pytest.mark.g0\n"
+        "def test_real():\n    assert True\n\n"
+        "@marker.g0\n"
+        "def test_unrelated_marker():\n    assert True\n\n"
+        "def helper():\n"
+        "    @pytest.mark.g0\n"
+        "    def test_nested():\n"
+        "        assert True\n"
+        "    return test_nested\n",
+        encoding="utf-8",
+    )
+
+    assert _g0_test_names(path) == {"test_real"}
+
+
+def test_inventory_rejects_an_area_without_named_behaviours(tmp_path):
+    path = tmp_path / "test_area.py"
+    path.write_text(
+        "import pytest\n\npytestmark = pytest.mark.g0\n\n"
+        "def test_something():\n    assert True\n",
+        encoding="utf-8",
+    )
+
+    missing = _missing_coverage(tmp_path, {"area": (path.name, ())})
+
+    assert "no mandatory test names" in missing["area"]
+
+
+def test_inventory_rejects_a_shared_file_that_lost_label_permutation(tmp_path):
+    area = PERMUTATION_AREA
+    filename, required = G0_REQUIRED_COVERAGE[area]
+    dropped = "test_label_permutation_exact_pvalues"
+    (tmp_path / filename).write_text(
+        "import pytest\n\npytestmark = pytest.mark.g0\n\n"
+        "def test_sign_flip_exact_pvalues():\n    assert True\n",
+        encoding="utf-8",
+    )
+
+    missing = _missing_coverage(tmp_path, {area: (filename, required)})
+
+    assert dropped in missing[area]
 
 
 def _config(*, assertion_pass=True):

@@ -95,7 +95,7 @@ may carry `canonical_doc_id`, a nonempty string defaulting to that raw prefix.
 `build_registry` groups assignments by this target and sums `n_sentences` and
 `n_tokens_raw`. Every prefix in a merged group must agree on `language`,
 `source_urn`, `author`, `work`, `regime`, `meter`, `period`, and `flags`; a
-conflict raises with the field, raw prefix, and canonical target. Because
+conflict raises with the field, both raw prefixes, and canonical target. Because
 `source_urn` defaults to the raw prefix, a real multi-prefix merge normally sets
 the same explicit `source_urn` on every contributing assignment. This preserves
 the raw-prefix-to-document trace in the overrides while keeping one row per

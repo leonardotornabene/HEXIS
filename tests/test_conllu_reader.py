@@ -1,12 +1,10 @@
 """CoNLL-U reader tests (Spec §7, gate G0; §3.2; D54).
 
-RED-only in the overnight run: these encode the D54(ii)-(iv) contract before
-`conllu_reader.iter_sentences` / `ParseError` exist, so they must FAIL. The
-implementation is deliberately deferred (owner's RED checkpoint).
-
-Beyond the §7 minimum (malformed→ParseError; sent_id required; ID order), the
-last three are declared additions permitted by "edge cases throughout":
-MWT/empty-node removal, PUNCT passthrough, and newdoc-id recovery.
+These cases originated as the RED checkpoint in the overnight run and now form
+active G0 coverage of D54(ii)-(iv). Beyond the §7 minimum (malformed input,
+mandatory sent_id, and ID order), they cover MWT/empty-node removal,
+representation blindness, streaming failure boundaries, label validation, and
+newdoc-id recovery.
 """
 
 import pytest

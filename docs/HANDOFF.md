@@ -148,21 +148,19 @@ edit was made.
 
 ---
 
-## G0 status — PRE-MERGE REVIEW REOPENED 2026-08-13
+## G0 status — CLOSED AFTER PRE-MERGE REVIEW 2026-08-14
 
-> The overnight snapshot below is historical. Its four implementation areas
-> were completed on 2026-08-13 (branch tip `be42c54`), and the test commands are
-> green. An independent pre-merge review nevertheless found that the registry
-> body does not yet implement the prefix merge assigned to overrides by the API
-> contract ratified that day
-> (`docs/implementation/specs/2026-08-13-g0-api-contract.md`), and that the
-> `n_tokens_raw` denominator remains unspecified. Formal G0 closure is therefore
-> suspended until both readings are ratified, implemented tests-first, and the
-> complete verification is rerun.
+> The first pre-merge review reopened G0 after finding three uncovered contract
+> defects: out-of-order integer token IDs were accepted; registry overrides could
+> not merge prefixes; and `n_tokens_raw` had no ratified meaning. The reader fix
+> is commit `73f70e3`; the owner ratified both registry readings on 2026-08-14 and
+> their tests-first implementation is commit `eea3b3e`. A second independent
+> review found no Critical or Important issue and confirmed that every previous
+> blocker was resolved.
 >
 > ```
-> uv run pytest -m g0 --strict-markers -q  →  110 passed, 17 deselected  (exit 0)
-> uv run pytest -q                         →  110 passed, 17 skipped     (exit 0)
+> uv run pytest -m g0 --strict-markers -q  →  124 passed, 17 deselected  (exit 0)
+> uv run pytest -q                         →  124 passed, 17 skipped     (exit 0)
 > ```
 >
 > The 17 are G3 scaffolds (`context_tree`, `tree_slices`, `null_calibration`,
@@ -178,10 +176,10 @@ edit was made.
 > inventory, so a green gate implies both that every mandatory area is
 > represented and that its tests really assert.
 >
-> Still open and now blocking G0 closure: the `n_tokens_raw` definition and the
-> override merge contract. Still assigned to G1: `sent_ord`, the empirical Greek
-> prefix granularity and the O2/O8 decision about which prefixes to merge. The
-> KS-headroom question below (Q5) also remains open.
+> Still assigned to G1: `sent_ord`, the empirical Greek prefix granularity and
+> the O2/O8 decision about which prefixes to merge. The mechanism itself and the
+> `n_tokens_raw` denominator are now ratified. The KS-headroom question below
+> (Q5) also remains open.
 
 ### Historical: what remained at the overnight handoff
 

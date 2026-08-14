@@ -28,17 +28,17 @@ Read `01_MASTER_SPEC.md` §3.1 and §6.1. Initialize the `hexis` skeleton exactl
 
 **Chiusura fase:** nessuna profilazione richiesta a G0 (O6 è spostato a G3; D45; un microbenchmark sintetico indicativo è ammesso solo via il candidato in quarantena D47, etichettato come indicativo). **Gate G0** si chiude in Fase 1a con i test non-tree reali e l'infrastruttura deterministica verificata.
 
-## FASE 1a — Pipeline non-tree → chiusura Gate G0 (settimana 2, ~8–10 h) — **REVIEW PRE-MERGE APERTA**
+## FASE 1a — Pipeline non-tree → chiusura Gate G0 (settimana 2, ~8–10 h) — **CHIUSA 14 agosto 2026**
 
-> Il comando canonico e la suite completa sono verdi sul ramo della PR, ma la
-> review pre-merge del 13 agosto 2026 ha sospeso la chiusura formale: il contratto
-> ratificato assegna agli override l'eventuale merge di più prefissi, mentre
-> `build_registry` non sa ancora aggregarli; inoltre la semantica di
-> `n_tokens_raw`, rilevante per i denominatori di GATE-A/B, è ancora da ratificare.
-> G0 si chiude solo dopo il riallineamento tests-first di questi due punti e una
-> nuova verifica completa. Restano a G1 l'enumerazione reale, le assegnazioni
-> umane, O2/O8, `sent_ord` e la decisione su quali prefissi vadano effettivamente
-> uniti.
+> **Gate G0 chiuso il 14 agosto 2026 dopo review pre-merge indipendente.**
+> `uv run pytest -m g0 --strict-markers -q` → 124 passed, 17 deselected;
+> suite completa → 124 passed, 17 skipped (tutti scaffold G3). La review aveva
+> riaperto G0 su tre difetti: ordine degli ID nel reader, merge dei prefissi nel
+> registry e semantica di `n_tokens_raw`. Sono stati corretti tests-first; le due
+> letture registry sono state ratificate dall'owner il 14 agosto e registrate in
+> `docs/implementation/specs/2026-08-13-g0-api-contract.md`. Restano a G1
+> l'enumerazione reale, le assegnazioni umane, O2/O8, `sent_ord` e la decisione
+> su quali prefissi vadano effettivamente uniti.
 
 **Obiettivo:** implementare e testare tutto ciò che non è l'albero: `conllu_reader`, `registry`, `alphabet`, `sequences`, `blocks` + test (§7) con asserzioni reali (zero skip nel set G0), più l'infrastruttura deterministica (derivazione dei seed, risoluzione della config, scrittura del manifest per run con sidecar minimo — §6.4/D46, protezione da sovrascrittura). **Cosa impari:** il formato CoNLL-U; i multiword token latini (que/ue) e perché si espandono; l'alfabeto UPOS+DEPREL come funzione totale (§3.4). **Criterio di accettazione (G0, riformulato da D45):** ambiente bloccato; tutti i test non-tree verdi con asserzioni reali; infrastruttura deterministica verificata. Nessuna profilazione qui: O6 → G3 (D45). **Clausola di acquisizione parallela (D45):** il clone dei treebank e la compilazione di `PROVENANCE.md` (v2.18, §2.5, con SHA-256 e commit) sono acquisizione, non audit, non toccano modelli e possono procedere in parallelo a G0; l'audit di G1 resta rigorosamente dopo G0. **Prompt-tipo (EN):**
 
@@ -64,7 +64,7 @@ Implement `model/context_tree.py` per §4.1–§4.3 exactly: reversed-context tr
 
 ## FASE 4 — Inferenza confermativa → Gate G5 (settimane 9–10, ~15 h)
 
-**Obiettivo:** P1 e P2 (più S1 secondaria). **Cosa impari:** perché i punteggi di P2 sono **label-free** (protocollo c: modelli pooled LODO che non consultano mai le etichette → la permutazione esatta sui punteggi fissi è valida sotto H0; D36 — corregge un difetto sottile della v1); perché P1 usa il sign-flip (simmetria di ΔCE sotto H0 con T*-matching); la **restrizione di posizione** available_past ≥ 4 (D35: la segmentazione in frasi è editoriale; senza restrizione il guadagno confonderebbe organizzazione e lunghezza delle frasi); Holm su famiglia {P1, P2} (soglie 0.025/0.05; minimi raggiungibili 1/2048 e 1/462, con lateralità dichiarata accanto a ogni soglia — D43: per la permutazione a gruppi disuguali le soglie uni- e bilaterale coincidono). **Cosa fa l'AI:** `protocols/sampling.py`, `protocols/scores.py` (delta_ce_scores; pooled_scores **con test di invarianza alle etichette obbligatorio**), `stats/permutation.py` (enumerazioni esatte), bootstrap gerarchico, `run_confirmatory` → T3, T5, F2–F4 (+ curve di apprendimento F8). **Criterio (G5):** test §7 verdi (incluso label-free byte-identico); risultati con p esatti Tier-1, più il piano-autore **descrittivo senza α** (D43: soglie strutturali dichiarate — permutazione bilaterale 2/20 = 0,10; sign-flip unilaterale 1/64 ≈ 0,016; punteggio di blocco = media non pesata dei suoi documenti; rerun Lisia-fusa anch'esso senza α), effetti in bit, CI bootstrap (etichettate "tra documenti", §5.3); colonne descrittive `G_own` e frazioni di pool own-regime (D44/D49); dot plot per documento come display primario. **Prerequisito (D44): O7 risolto** — nessuna inferenza confermativa su P1 prima della validazione del sign-flip.
+**Obiettivo:** P1 e P2 (più S1 secondaria). **Cosa impari:** perché i punteggi di P2 sono **label-free** (protocollo c: modelli pooled LODO che non consultano mai le etichette → la permutazione esatta sui punteggi fissi è valida sotto H0; D36 — corregge un difetto sottile della v1); perché P1 usa il sign-flip (simmetria di ΔCE sotto H0 con T*-matching); la **restrizione di posizione** available_past ≥ 4 (D35: la segmentazione in frasi è editoriale; senza restrizione il guadagno confonderebbe organizzazione e lunghezza delle frasi); Holm su famiglia {P1, P2} (soglie 0.025/0.05; minimi raggiungibili 1/2048 e 1/462, con lateralità dichiarata accanto a ogni soglia — D43: per la permutazione a gruppi disuguali le soglie uni- e bilaterale coincidono). **Cosa fa l'AI:** `protocols/sampling.py`, `protocols/scores.py` (`delta_ce_scores`; `pooled_score_core` label-free con test di invarianza obbligatorio; etichette solo in `annotate_scores`, D52(v)), `stats/permutation.py` (enumerazioni esatte), bootstrap gerarchico, `run_confirmatory` → T3, T5, F2–F4 (+ curve di apprendimento F8). **Criterio (G5):** test §7 verdi (incluso label-free byte-identico); risultati con p esatti Tier-1, più il piano-autore **descrittivo senza α** (D43: soglie strutturali dichiarate — permutazione bilaterale 2/20 = 0,10; sign-flip unilaterale 1/64 ≈ 0,016; punteggio di blocco = media non pesata dei suoi documenti; rerun Lisia-fusa anch'esso senza α), effetti in bit, CI bootstrap (etichettate "tra documenti", §5.3); colonne descrittive `G_own` e frazioni di pool own-regime (D44/D49); dot plot per documento come display primario. **Prerequisito (D44): O7 risolto** — nessuna inferenza confermativa su P1 prima della validazione del sign-flip.
 
 ## FASE 5 — Latino + sottocampioni greci appaiati → Gate G6 (settimana 11, ~8–10 h)
 

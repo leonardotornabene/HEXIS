@@ -56,7 +56,7 @@ Nessuna modifica silenziosa. Ogni cambiamento a metodologia, alfabeto, parametri
 
 **Ordine di esecuzione v2.1 (D44(vii)): G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7.**
 
-- [ ] Gate G0: comando canonico verde sul ramo della PR; chiusura sospesa il 13 ago 2026 dalla review pre-merge, in attesa di riallineare il contratto del registry (merge dei prefissi e semantica di `n_tokens_raw`)
+- [x] Gate G0: chiuso il 14 ago 2026 dopo review pre-merge — contratto registry riallineato; 124 test G0 verdi con asserzioni reali + infrastruttura deterministica verificata (profilazione → G3; D45)
 
 - [ ] Gate G1: audit → registro, alfabeto e T* CONGELATI (con O2/O8 risolti)
 

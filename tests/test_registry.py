@@ -172,6 +172,12 @@ def test_overrides_merge_raw_prefixes_into_canonical_document():
     assert row["n_sentences"] == 3
     assert row["n_tokens_raw"] == 15
 
+    reversed_reg = registry.build_registry(
+        counts.iloc[::-1].reset_index(drop=True),
+        dict(reversed(list(overrides.items()))),
+    )
+    pd.testing.assert_frame_equal(reg, reversed_reg)
+
 
 @pytest.mark.parametrize(
     ("field", "conflicting_value"),
@@ -198,6 +204,7 @@ def test_merge_rejects_inconsistent_metadata(field, conflicting_value):
 
     assert field in str(exc.value)
     assert ILIAD in str(exc.value)
+    assert ILIAD_PART in str(exc.value)
 
 
 @pytest.mark.parametrize("invalid_target", [None, "", 7])

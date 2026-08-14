@@ -123,6 +123,7 @@ def build_registry(prefix_counts: pd.DataFrame, overrides: Mapping) -> pd.DataFr
         )
 
     rows_by_doc_id = {}
+    first_raw_prefix_by_doc_id = {}
     for record in prefix_counts.to_dict("records"):
         raw_doc_id = record["doc_id"]
         assignment = overrides[raw_doc_id]
@@ -147,6 +148,7 @@ def build_registry(prefix_counts: pd.DataFrame, overrides: Mapping) -> pd.DataFr
             "flags": assignment.get("flags", []),
         }
         if canonical_doc_id not in rows_by_doc_id:
+            first_raw_prefix_by_doc_id[canonical_doc_id] = raw_doc_id
             rows_by_doc_id[canonical_doc_id] = {
                 **metadata,
                 "doc_id": canonical_doc_id,
@@ -159,8 +161,10 @@ def build_registry(prefix_counts: pd.DataFrame, overrides: Mapping) -> pd.DataFr
             for field in MERGE_METADATA_FIELDS:
                 if existing[field] != metadata[field]:
                     raise ValueError(
-                        f"conflicting {field} for raw prefix {raw_doc_id!r} merged "
-                        f"into canonical doc_id {canonical_doc_id!r}"
+                        f"conflicting {field} for raw prefixes "
+                        f"{first_raw_prefix_by_doc_id[canonical_doc_id]!r} and "
+                        f"{raw_doc_id!r} merged into canonical doc_id "
+                        f"{canonical_doc_id!r}"
                     )
         rows_by_doc_id[canonical_doc_id]["n_sentences"] += record["n_sentences"]
         rows_by_doc_id[canonical_doc_id]["n_tokens_raw"] += record["n_tokens_raw"]

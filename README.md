@@ -81,9 +81,8 @@ randomization utilities, and reproducibility and overwrite safeguards are
 written and tested. The G1 audit and encoding stages that turn those pieces into
 a frozen registry, alphabet, and T*, as well as the context tree and the score
 functions that read it, remain declared interfaces without bodies. The tests
-describe intended behaviour ahead of the code; the current G0 selection passes,
-but formal closure remains pending until the registry implementation matches its
-ratified contract. The rest are switched on as their component is written. **No
+describe intended behaviour ahead of the code; G0 is formally closed, and the
+rest are switched on as their component is written. **No
 canonical context-tree fit has been run and no project results exist; synthetic
 work in the quarantined candidate is not a canonical fit or result (D47).**
 
@@ -201,13 +200,14 @@ Python 3.12, managed with [`uv`](https://docs.astral.sh/uv/).
 
 ```bash
 uv sync         # install the locked environment
-uv run pytest   # run the test suite
+uv run pytest -m g0 --strict-markers -q  # verify Gate G0
+uv run pytest -q                         # run the full test suite
 ```
 
-The G0 tests execute real assertions; later-stage scaffold tests remain skipped
-until their components are implemented. A green selection is necessary but is
-not by itself a gate closure: the implementation must also match every binding
-contract. The current gate status is recorded in `docs/00_LEGGIMI_INDICE.md`.
+At the G0 closure on 2026-08-14 the gate command reported 124 passing tests;
+the full suite reported the same 124 passing tests and 17 later-stage scaffold
+tests skipped until their components are implemented. Gate status is recorded
+in `docs/00_LEGGIMI_INDICE.md`.
 
 The analysis pipeline is not yet runnable.
 

@@ -101,12 +101,12 @@ def _canonical_targets(prefix_counts: pd.DataFrame, overrides: Mapping) -> dict:
     A wrong merge is silent: all sentences stay assigned, so §3.3's "the audit
     fails on any unassigned sentence" never fires, while the resulting document
     count fixes the exact enumeration sizes of D43 and therefore the attainable
-    p floors. Two rules make a mistyped target unrepresentable:
+    p floors. Two rules reject unshared mistyped targets:
 
     1. a target may differ from its raw prefix only if **at least two** prefixes
        share it — an unshared target means no merge is happening, so it can only
-       be an error (this also rejects invented targets and visually identical
-       homoglyphs, which split a group instead of joining it);
+       be an error (this also rejects unshared invented targets and visually
+       identical homoglyphs when they split a group instead of joining it);
     2. a merge target must be a stable root: if A → B then B → B, so no chain or
        cycle can make the intended document ambiguous.
 

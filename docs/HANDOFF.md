@@ -159,7 +159,7 @@ edit was made.
 > blocker was resolved.
 >
 > **Attestation of record — commit
-> `15e2ed838db9419a60f6acb3f506715239fcbcdf`, working tree clean:**
+> `180e05cf83985be08a5d4dd27ba843a680d826a8`, working tree clean:**
 >
 > ```
 > uv run pytest -m g0 --strict-markers -q  →  142 passed, 17 deselected  (exit 0)
@@ -185,13 +185,14 @@ edit was made.
 > marker set exited 0 — the gate command reported a green G0 the moment the
 > reader went green, with three mandatory areas at zero coverage.
 > `tests/test_g0_enforcement.py` now also asserts the D52(ii) inventory. Second
-> (post-merge review, commits `d015b98`–`15e2ed8`): that inventory guarded areas
+> (post-merge review, commits `d015b98`–`180e05c`): that inventory guarded areas
 > at *file* granularity while its keys name behaviours, so deleting every P-BOUND
 > test kept the gate green — and, symmetrically, §7's five-label taxonomy row was
 > covered by a subset assertion that two labels satisfied. The inventory now
-> requires named tests by exact name for every mandatory behaviour; its AST scan
-> accepts only collectable module-level tests carrying the real
-> `pytest.mark.g0`, never nested functions or unrelated `.g0` decorators.
+> requires named tests by exact name for every mandatory behaviour, and the
+> canonical gate compares them with the module-level G0 items actually collected
+> by the current pytest session. The AST scanner remains only in isolated
+> synthetic probes; it is not closure evidence.
 > `registry.REGIME_LABELS` is pinned by equality with all five labels exercised
 > through `build_registry`. A green gate now implies that every mandatory area is
 > represented, that its named behaviours are still selected by `-m g0`, and that

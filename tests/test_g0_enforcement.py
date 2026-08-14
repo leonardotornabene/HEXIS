@@ -2,6 +2,7 @@
 mandatory-coverage inventory (D52(ii))."""
 
 import ast
+from collections import defaultdict
 from pathlib import Path
 
 import pytest
@@ -164,7 +165,7 @@ def _contains_pytest_g0_marker(node: ast.AST) -> bool:
 
 
 def _g0_test_names(path: Path) -> set:
-    """Names of the test functions in `path` carrying the g0 marker."""
+    """Source-level G0 candidates used by the isolated synthetic regressions."""
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     module_marked = any(
         isinstance(node, ast.Assign)
@@ -172,6 +173,17 @@ def _g0_test_names(path: Path) -> set:
         and _contains_pytest_g0_marker(node.value)
         for node in tree.body
     )
+    disabled = {
+        target.value.id
+        for node in tree.body
+        if isinstance(node, ast.Assign)
+        and isinstance(node.value, ast.Constant)
+        and node.value.value is False
+        for target in node.targets
+        if isinstance(target, ast.Attribute)
+        and target.attr == "__test__"
+        and isinstance(target.value, ast.Name)
+    }
     return {
         node.name
         for node in tree.body
@@ -181,6 +193,7 @@ def _g0_test_names(path: Path) -> set:
             module_marked
             or any(_is_pytest_g0_marker(dec) for dec in node.decorator_list)
         )
+        and node.name not in disabled
     }
 
 
@@ -206,13 +219,44 @@ def _missing_coverage(tests_dir: Path, inventory: dict) -> dict:
     return missing
 
 
-def test_g0_set_covers_every_mandatory_area():
+def _missing_collected_coverage(items, inventory: dict) -> dict:
+    """Compare the inventory with the G0 functions pytest actually collected."""
+    collected = defaultdict(set)
+    for item in items:
+        if item.get_closest_marker("g0") is None or not isinstance(
+            item.parent, pytest.Module
+        ):
+            continue
+        name = getattr(item, "originalname", None) or item.name.split("[", 1)[0]
+        collected[Path(item.path).name].add(name)
+
+    missing = {}
+    for area, (filename, required) in inventory.items():
+        if not required:
+            missing[area] = f"tests/{filename} has no mandatory test names in inventory"
+            continue
+        present = collected.get(filename, set())
+        if not present:
+            missing[area] = f"tests/{filename} has no collected g0 test"
+            continue
+        absent = sorted(set(required) - present)
+        if absent:
+            missing[area] = (
+                f"tests/{filename} is missing {absent} from collected g0 tests"
+            )
+    return missing
+
+
+def test_g0_set_covers_every_mandatory_area(request):
     """G0 cannot close on a subset: `-m g0` must stay red until every mandatory
     D52(ii) area declares g0 coverage. Without this, deselection makes an
     incomplete set look green (the marker set is a subset by construction), and
     without the per-area names a file could keep its g0 tests while losing the
-    behaviour its inventory key promises."""
-    missing = _missing_coverage(TESTS_DIR, G0_REQUIRED_COVERAGE)
+    behaviour its inventory key promises. Evidence comes from the current pytest
+    session, not an approximation of pytest collection from source text."""
+    missing = _missing_collected_coverage(
+        request.session.items, G0_REQUIRED_COVERAGE
+    )
     assert not missing, "incomplete mandatory D52(ii) coverage: " + "; ".join(
         f"{area}: {reason}" for area, reason in sorted(missing.items())
     )
@@ -253,6 +297,9 @@ def test_g0_name_scan_rejects_uncollected_and_non_pytest_markers(tmp_path):
         "def test_real():\n    assert True\n\n"
         "@marker.g0\n"
         "def test_unrelated_marker():\n    assert True\n\n"
+        "@pytest.mark.g0\n"
+        "def test_disabled():\n    assert True\n\n"
+        "test_disabled.__test__ = False\n\n"
         "def helper():\n"
         "    @pytest.mark.g0\n"
         "    def test_nested():\n"

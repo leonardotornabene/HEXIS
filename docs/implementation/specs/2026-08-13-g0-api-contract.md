@@ -96,10 +96,36 @@ may carry `canonical_doc_id`, a nonempty string defaulting to that raw prefix.
 `n_tokens_raw`. Every prefix in a merged group must agree on `language`,
 `source_urn`, `author`, `work`, `regime`, `meter`, `period`, and `flags`; a
 conflict raises with the field, both raw prefixes, and canonical target. Because
-`source_urn` defaults to the raw prefix, a real multi-prefix merge normally sets
-the same explicit `source_urn` on every contributing assignment. This preserves
-the raw-prefix-to-document trace in the overrides while keeping one row per
-observed document in the §2.3 registry.
+`source_urn` defaults to the raw prefix, a real multi-prefix merge **must** set
+the same explicit `source_urn` on every contributing assignment — without it the
+defaults differ and the merge raises. This preserves the raw-prefix-to-document
+trace in the overrides while keeping one row per observed document in the §2.3
+registry.
+
+**Canonical target validation (owner-ratified 2026-08-14, hardened after the
+post-merge review).** A wrong merge target is silent: every sentence stays
+assigned, so §3.3's "the audit fails on any unassigned sentence" never fires,
+while the resulting document count fixes the exact enumeration sizes of D43 and
+therefore the attainable p floors. Two rules make a mistyped target
+unrepresentable:
+
+1. a target may differ from its raw prefix **only if at least two raw prefixes
+   share it**. An unshared target means no merge is happening, so it can only be
+   an error. This rejects invented targets, and rejects near-miss typos and
+   Unicode homoglyphs because they *split* a group rather than joining it;
+2. a merge target must be a **stable root**: if A → B then B → B. No chain or
+   cycle may make the intended document ambiguous.
+
+All violations are reported in one error, each naming the raw prefix and its
+target. The target is deliberately **not** required to be an existing raw
+prefix: merging subdivisions `X.1`/`X.2` into `X` must stay legal where a bare
+`X` never occurs, and promoting one subdivision to stand for the whole document
+would be arbitrary.
+
+These rules bound the mechanism, not the inventory. They cannot detect a typo
+that lands on another *valid* group, nor a semantically wrong but
+correctly-shaped assignment. That is the job of the §3.3 cross-check against
+§2.3, which remains a G1 deliverable and is specified in §5 below.
 
 **`n_tokens_raw` (owner-ratified 2026-08-14).** Count the integer-ID syntactic
 word rows yielded by the D54 reader, before alphabet mapping or retention. MWT
@@ -171,3 +197,24 @@ emitting, when supplied:
   encode stage.
 - **Greek prefix granularity** (`…grc1.1.…`): work vs internal subdivision —
   G1 audit, coupled to O2/O8.
+- **Semantic inventory check, required before the G1 freeze.** The target rules
+  above bound the merge *mechanism*; they cannot tell a correctly-shaped wrong
+  assignment from a right one. Before `registry`, `alphabet.json` or T\* are
+  frozen, the audit must fail loud unless:
+  1. the set of `(language, author, work, regime)` in the built registry equals
+     the set declared in Spec §2.3 — **identity first**, since a count check
+     alone is satisfiable by a wrong assignment that preserves n, and a split
+     can cancel a merge;
+  2. the per-regime document counts match the declared analysis sets (Greek
+     HEX 5 / PROSE_CLASS 6; Latin HEX 2 / PROSE 6);
+  3. the exact enumeration sizes recomputed from the built registry match the
+     D43 table (462 / 2048; 28 / 256; 20 / 64; 56 / 256). This is a *derived*
+     check, not an independent one — it is the last line, not the first.
+
+  This implements the cross-check against §2.3 that §3.3 already requires, and
+  makes it mechanical rather than by eye, following the D52(iii) precedent. It is
+  **not implemented here**: expectation (1) requires transcribing §2.3's document
+  tables, and both (1) and (2) depend on **O2** — whether the Hymn to Demeter is
+  one document, aggregated to Homer, or excluded, which sets 5 or 6 Greek HEX
+  documents and therefore every number above. Writing the expectation before that
+  ruling would hard-code a guess into the check meant to catch guesses.

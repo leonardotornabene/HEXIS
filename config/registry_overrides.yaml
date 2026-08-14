@@ -1,4 +1,5 @@
-# Human-verified doc_id -> (author, work, regime, meter, period, flags) assignments.
+# Human-verified raw-prefix -> assignment. Optional canonical_doc_id merges raw
+# prefixes; all merged metadata must agree (G0 API contract, ratified 2026-08-14).
 # GATED:G1 (Spec §3.3, D04): populated at Gate G1 from the sent_id-prefix
 # enumeration, cross-checked against Spec §2.3. Empty until then — the G1 audit
 # fails on any unassigned sentence, so nothing here may be guessed.

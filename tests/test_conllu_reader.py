@@ -1,24 +1,123 @@
-"""CoNLL-U reader tests (Spec §7, gate G0; §3.2).
+"""CoNLL-U reader tests (Spec §7, gate G0; §3.2; D54).
 
-Fase 0 placeholders: cases enumerated per Spec §7, no assertions yet.
-Never delete or weaken a test to make it pass.
+These cases originated as the RED checkpoint in the overnight run and now form
+active G0 coverage of D54(ii)-(iv). Beyond the §7 minimum (malformed input,
+mandatory sent_id, and ID order), they cover MWT/empty-node removal,
+representation blindness, streaming failure boundaries, label validation, and
+newdoc-id recovery.
 """
 
 import pytest
+from conllu import TokenList
 
-SKIP = pytest.mark.skip(reason="Fase 0 scaffold — implement at gate G0 per Spec §7")
-
-
-@SKIP
-def test_malformed_row_raises_with_location():
-    """Malformed row → parse error carrying file, sent_id, token id (§3.2)."""
+from hexis import conllu_reader
 
 
-@SKIP
-def test_sent_id_required():
-    """sent_id mandatory — fail loudly if absent (§3.2)."""
+# --- the three §7 cases ---------------------------------------------------------
 
 
-@SKIP
-def test_id_order_preserved():
-    """Surface order = CoNLL-U ID order (§3.2)."""
+@pytest.mark.g0
+def test_malformed_row_raises_parse_error_with_location(conllu_samples):
+    with pytest.raises(conllu_reader.ParseError) as exc:
+        list(conllu_reader.iter_sentences(conllu_samples["malformed"]))
+    err = exc.value
+    assert err.path == conllu_samples["malformed"]
+    assert err.sent_id == "gamma@1"
+    assert err.token_id == 2
+    assert err.reason  # populated, non-empty
+    assert isinstance(err, ValueError)
+    rendered = str(err)
+    values = (str(err.path), err.sent_id, "2", err.reason)
+    assert all(value in rendered for value in values)
+    assert "\n" not in rendered
+
+
+@pytest.mark.g0
+def test_missing_sent_id_raises_parse_error(conllu_samples):
+    with pytest.raises(conllu_reader.ParseError) as exc:
+        list(conllu_reader.iter_sentences(conllu_samples["missing_sent_id"]))
+    assert exc.value.sent_id is None  # violation precedes sent_id availability (D54 iv)
+
+
+@pytest.mark.g0
+def test_id_order_preserved(conllu_samples):
+    sentences = list(conllu_reader.iter_sentences(conllu_samples["valid"]))
+    first = sentences[0]
+    assert [tok["id"] for tok in first] == [1, 2, 3, 4]  # surface CoNLL-U ID order
+
+
+@pytest.mark.g0
+def test_out_of_order_integer_ids_raise_parse_error(conllu_samples):
+    """Removing MWT/empty rows must not let malformed word order pass silently."""
+    with pytest.raises(conllu_reader.ParseError) as exc:
+        list(conllu_reader.iter_sentences(conllu_samples["out_of_order"]))
+    assert exc.value.sent_id == "iota@1"
+    assert exc.value.token_id == 1
+    assert "order" in exc.value.reason.lower()
+
+
+# --- declared additions (edge cases) --------------------------------------------
+
+
+@pytest.mark.g0
+def test_mwt_range_and_empty_nodes_removed(conllu_samples):
+    first = next(iter(conllu_reader.iter_sentences(conllu_samples["valid"])))
+    assert all(isinstance(tok["id"], int) for tok in first)  # no (i,'-',j) / (i,'.',k)
+    assert len(first) == 4
+
+
+@pytest.mark.g0
+def test_punct_token_yielded_unchanged(conllu_samples):
+    first = next(iter(conllu_reader.iter_sentences(conllu_samples["valid"])))
+    puncts = [tok for tok in first if tok["upos"] == "PUNCT"]
+    assert len(puncts) == 1 and puncts[0]["form"] == "."  # representation blindness (D54 iii)
+
+
+@pytest.mark.g0
+def test_newdoc_id_recoverable_from_metadata(conllu_samples):
+    first = next(iter(conllu_reader.iter_sentences(conllu_samples["valid"])))
+    assert first.metadata["newdoc id"] == "alpha"  # key pinned by the probe
+    assert first.metadata["sent_id"] == "alpha@1"
+
+
+@pytest.mark.g0
+def test_public_type_and_streaming_failure_boundary(conllu_samples):
+    sentences = conllu_reader.iter_sentences(conllu_samples["lazy"])
+    assert iter(sentences) is sentences
+    first = next(sentences)
+    assert isinstance(first, TokenList)
+    assert first.metadata["sent_id"] == "theta@1"
+    with pytest.raises(conllu_reader.ParseError) as exc:
+        next(sentences)
+    assert exc.value.path == conllu_samples["lazy"]
+
+
+@pytest.mark.g0
+@pytest.mark.parametrize("sample", ["invalid_upos", "empty_deprel"])
+def test_invalid_required_labels_raise_parse_error(conllu_samples, sample):
+    with pytest.raises(conllu_reader.ParseError) as exc:
+        list(conllu_reader.iter_sentences(conllu_samples[sample]))
+    assert exc.value.path == conllu_samples[sample]
+    assert exc.value.token_id == 1
+    assert exc.value.reason
+
+
+@pytest.mark.g0
+def test_conllu_parse_exception_is_wrapped(conllu_samples):
+    with pytest.raises(conllu_reader.ParseError) as exc:
+        list(conllu_reader.iter_sentences(conllu_samples["invalid_id"]))
+    assert exc.value.path == conllu_samples["invalid_id"]
+    assert exc.value.reason
+
+
+@pytest.mark.g0
+def test_representation_exclusions_are_yielded_unchanged(conllu_samples):
+    sentence = next(
+        iter(conllu_reader.iter_sentences(conllu_samples["representation_blind"]))
+    )
+    assert [(token["upos"], token["deprel"]) for token in sentence] == [
+        ("PUNCT", "punct"),
+        ("X", "discourse"),
+        ("INTJ", "vocative"),
+        ("SYM", "dep"),
+    ]

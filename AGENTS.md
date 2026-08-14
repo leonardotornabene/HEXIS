@@ -24,8 +24,8 @@ silent deviations. O7 blocks G2/G5; gate order G0 → G1 → G3 → G2 → G4 �
   standalone conditional entropy, MI (+decay/shuffle), higher-order tables, chunk JSD,
   PERMANOVA, LZ (D32). Slices = diagnostics only (§4.6). JSD = R1, mandatory descriptive
   distributional reading, no α, no test (D41).
-- Do not consult regime labels inside pooled_scores (D36); keep the label-invariance test
-  intact.
+- Do not consult regime labels inside pooled_score_core (D36; D52(v): core label-free, labels
+  enter only via annotate_scores); keep the label-invariance test intact.
 - Do not compute unrestricted gain as primary (D35: available_past ≥ 4).
 - Do not do chunk-level inference (D34); blocks serve figure F7 only.
 - Do not use UD train/dev/test splits (D03); documents from sent_id.

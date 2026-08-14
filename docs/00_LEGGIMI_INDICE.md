@@ -1,6 +1,6 @@
 # PROGETTO HEXIS — INDICE DEL PACCHETTO OPERATIVO
 
-**Hexameter Information Signature** — Organizzazione morfosintattica sotto vincolo metrico, misurata con un unico strumento: il context tree MDL alla Rissanen. **Versione 2.1 — 21 luglio 2026.** Sostituisce la v2.0 (6 luglio 2026); la v1.0 (5 luglio 2026) resta conservata in `archive_v1/`.
+**Hexameter Information Signature** — Organizzazione morfosintattica sotto vincolo metrico, misurata con un unico strumento: il context tree MDL alla Rissanen. **Versione 2.1 — 21 luglio 2026.** Sostituisce la v2.0 (6 luglio 2026); la v1.0 (5 luglio 2026) è superata e non è depositata in questo repository (O9, risolto 13 agosto 2026).
 
 ## Che cosa è cambiato nella v2.0 (in una frase)
 
@@ -16,7 +16,7 @@ Sincronizzazione del pacchetto operativo con la **proposta finale** e chiusura d
 | --- | --- | --- | --- |
 | `00_LEGGIMI_INDICE.md` | IT | Questo indice | Ora |
 | `01_MASTER_SPEC.md` | EN | **Il documento centrale (v2.1, con tabella degli emendamenti in testa):** fatti di corpus verificati, pipeline, alfabeto, l'algoritmo integrale del context tree con pseudocodice normativo, i protocolli di fitting (riferimento / LODO di regime / LODO pooled label-free), le statistiche P1/P2/S1/R1/L1, l'inferenza esatta a livello di documento, architettura software, suite di test con verità analitiche, tabelle/figure, gate G0–G7 (ordine di esecuzione v2.1) | Da allegare in ogni sessione AI |
-| `02_DECISION_LOG.md` | EN | 54 decisioni: D01–D31 con stato aggiornato, D32–D39 (v2) per esteso, **D40–D51 (v2.1, sincronizzazione con la proposta finale)** per esteso, **D52–D54 (ratifica post-v2.1)** per esteso; open items O1–O9 (**O7 bloccante per G2/G5**); nodi differiti DN-1–DN-3 | Ogni volta che qualcosa deve cambiare: si emenda qui, mai in silenzio |
+| `02_DECISION_LOG.md` | EN | 54 decisioni: D01–D31 con stato aggiornato, D32–D39 (v2) per esteso, **D40–D51 (v2.1, sincronizzazione con la proposta finale)** per esteso, **D52–D54 (ratifica post-v2.1)** per esteso; open items O1–O8 (**O7 bloccante per G2/G5**), con O9 risolto; nodi differiti DN-1–DN-3 | Ogni volta che qualcosa deve cambiare: si emenda qui, mai in silenzio |
 | `03_ROADMAP_OPERATIVA_IT.md` | IT | Roadmap v2.1: 13 settimane nominali dentro la tua finestra di 12–15, con il context tree **anticipato alla Fase 2** e la Fase 1 divisa in **1a** (pipeline non-tree → G0) e **1b** (audit → G1; acquisizione in parallelo a G0, D45); criteri di accettazione allineati all'ordine v2.1 dei gate; checklist di comprensione, prompt-tipo; in appendice il **REGISTRO BIBLIOGRAFICO COMPLETO** (le fonti della proposta con crosswalk alla numerazione finale, Chomsky, Galves 2012, Chen 2024, i fondamenti VLMC, le risorse dati, e Greco et al. 2023 aggiunta in v2.1 — con stato di verifica e ruolo nel preprint) | La tua guida quotidiana; il registro serve alla Fase 7 |
 | `04_AI_HANDOFF_PROMPT.md` | EN | Bootstrap prompt v2.1 (regole del disegno a strumento unico + disciplina O7/D44), template `CLAUDE.md`, template di sessione, checklist di revisione | All'avvio di ogni sessione AI |
 
@@ -28,7 +28,7 @@ Sincronizzazione del pacchetto operativo con la **proposta finale** e chiusura d
 
 3. `01_MASTER_SPEC.md`: §1 (le tre letture e le statistiche P1/P2), §2 (fatti di corpus), §4 (lo strumento), §9 (gate). Il resto fase per fase.
 
-4. `02_DECISION_LOG.md`: leggi per esteso D32–D53; scorri le altre.
+4. `02_DECISION_LOG.md`: leggi per esteso D32–D54; scorri le altre.
 
 ## Le scoperte di verifica che restano fondanti (invariate dalla v1.0)
 
@@ -48,7 +48,7 @@ Nessuna modifica silenziosa. Ogni cambiamento a metodologia, alfabeto, parametri
 
 - [x] Verifica fatti di corpus su fonti primarie (5 lug 2026)
 
-- [x] Pacchetto operativo v1.0 (5 lug 2026, archiviato)
+- [x] Pacchetto operativo v1.0 (5 lug 2026, superato; non depositato in questo repository, O9)
 
 - [x] Ristrutturazione a strumento unico + pacchetto v2.0 (6 lug 2026)
 
@@ -56,7 +56,7 @@ Nessuna modifica silenziosa. Ogni cambiamento a metodologia, alfabeto, parametri
 
 **Ordine di esecuzione v2.1 (D44(vii)): G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7.**
 
-- [ ] Gate G0: ambiente + test non-tree verdi (asserzioni reali) + infrastruttura deterministica (profilazione → G3; D45)
+- [x] Gate G0: chiuso il 14 ago 2026 dopo review pre-merge — contratto registry riallineato; 124 test G0 verdi con asserzioni reali + infrastruttura deterministica verificata (profilazione → G3; D45)
 
 - [ ] Gate G1: audit → registro, alfabeto e T* CONGELATI (con O2/O8 risolti)
 

@@ -254,6 +254,22 @@ def test_merge_into_a_canonical_that_is_not_itself_a_raw_prefix():
     assert reg.iloc[0]["n_sentences"] == 2
 
 
+def test_merge_requires_explicit_source_urn_on_every_contributor():
+    """A root prefix's default can equal another prefix's explicit value; that
+    must not satisfy the explicit traceability contract for a real merge."""
+    root = assignment("X")
+    del root["source_urn"]
+
+    with pytest.raises(ValueError) as exc:
+        registry.build_registry(
+            merged_counts("X", "X.1"),
+            {"X": root, "X.1": assignment("X", urn="X")},
+        )
+
+    message = str(exc.value)
+    assert "source_urn" in message and "X" in message and "X.1" in message
+
+
 def test_unshared_canonical_target_is_rejected():
     """A single prefix pointing at an invented target: no merge is happening, so
     the target can only be a mistake."""

@@ -178,6 +178,25 @@ def build_registry(prefix_counts: pd.DataFrame, overrides: Mapping) -> pd.DataFr
 
     canonical_of = _canonical_targets(prefix_counts, overrides)
 
+    group_sizes = Counter(canonical_of.values())
+    missing_merge_sources = []
+    for target in sorted(group_sizes):
+        if group_sizes[target] < 2:
+            continue
+        members = sorted(
+            raw for raw, canonical in canonical_of.items() if canonical == target
+        )
+        missing = [raw for raw in members if "source_urn" not in overrides[raw]]
+        if missing:
+            missing_merge_sources.append(
+                f"{target!r} <- {members!r} (missing for {missing!r})"
+            )
+    if missing_merge_sources:
+        raise ValueError(
+            "every raw prefix in a multi-prefix merge must define the same "
+            "explicit source_urn: " + "; ".join(missing_merge_sources)
+        )
+
     rows_by_doc_id = {}
     first_raw_prefix_by_doc_id = {}
     for record in prefix_counts.to_dict("records"):

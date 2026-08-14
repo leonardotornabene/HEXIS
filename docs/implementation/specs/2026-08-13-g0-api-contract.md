@@ -209,8 +209,10 @@ emitting, when supplied:
   2. the per-regime document counts match the declared analysis sets (Greek
      HEX 5 / PROSE_CLASS 6; Latin HEX 2 / PROSE 6);
   3. the exact enumeration sizes recomputed from the built registry match the
-     D43 table (462 / 2048; 28 / 256; 20 / 64; 56 / 256). This is a *derived*
-     check, not an independent one — it is the last line, not the first.
+     applicable D43 rows: primary Greek 462 / 2048, Latin 28 / 256 and
+     Lysias-merged 56 / 256; author-level 20 / 64 under the 3/3 O2/O8 partition,
+     or 10 / 32 if the Hymn is aggregated to Homer. This is a *derived* check,
+     not an independent one — it is the last line, not the first.
 
   This implements the cross-check against §2.3 that §3.3 already requires, and
   makes it mechanical rather than by eye, following the D52(iii) precedent. It is

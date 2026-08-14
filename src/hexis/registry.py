@@ -215,7 +215,7 @@ def build_registry(prefix_counts: pd.DataFrame, overrides: Mapping) -> pd.DataFr
             "language": record["language"],
             "source_urn": assignment.get("source_urn", raw_doc_id),
             **{field: assignment[field] for field in REQUIRED_OVERRIDE_FIELDS},
-            "flags": assignment.get("flags", []),
+            "flags": list(assignment.get("flags", [])),
         }
         if canonical_doc_id not in rows_by_doc_id:
             first_raw_prefix_by_doc_id[canonical_doc_id] = raw_doc_id

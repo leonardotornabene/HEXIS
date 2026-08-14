@@ -14,7 +14,14 @@ from hexis import conllu_reader, registry
 
 pytestmark = pytest.mark.g0
 
-REGIME_LABELS = {"HEX", "PROSE_CLASS", "PROSE_POST", "OTHER_VERSE", "EXCLUDED"}
+# Transcription of D04's five labels, kept deliberately literal: it is the oracle
+# for `registry.REGIME_LABELS`, so it must not be imported from the module it
+# checks. Pinned by equality below, not merely as an upper bound — a subset
+# assertion is satisfied by any two labels and lets a deleted or mistyped regime
+# through, to surface at G1 as a spurious rejection on real data.
+D04_REGIME_LABELS = frozenset(
+    {"HEX", "PROSE_CLASS", "PROSE_POST", "OTHER_VERSE", "EXCLUDED"}
+)
 
 ILIAD = "tlg0012.tlg001.perseus-grc1.tb.xml"
 ILIAD_PART = "tlg0012.tlg001.perseus-grc1.1.tb.xml"
@@ -153,7 +160,35 @@ def test_build_registry_assigns_taxonomy_and_schema():
     assert row["period"] == "archaic"
     assert row["n_sentences"] == 1
     assert row["n_tokens_raw"] == 5
-    assert set(reg["regime"]) <= REGIME_LABELS
+
+
+def test_regime_labels_are_exactly_the_five_of_d04():
+    """§2.3/D04 fix the taxonomy at five labels. Equality, not containment: the
+    document count and per-regime partition fix the exact enumeration sizes of
+    D43, so a silently narrowed vocabulary would first show up as an unassignable
+    document in the G1 audit."""
+    assert registry.REGIME_LABELS == D04_REGIME_LABELS
+
+
+@pytest.mark.parametrize("regime", sorted(D04_REGIME_LABELS))
+def test_build_registry_accepts_every_d04_regime(regime):
+    """All five must be assignable, not just the two that occur in these fixtures:
+    PROSE_POST, OTHER_VERSE and EXCLUDED are first exercised on real data at G1."""
+    reg = registry.build_registry(
+        counts_fixture(), {k: dict(v, regime=regime) for k, v in OVERRIDES.items()}
+    )
+    assert set(reg["regime"]) == {regime}
+
+
+def test_registry_does_not_alias_the_overrides_flags_list():
+    """The row must own its flags: sharing the caller's list lets a later edit of
+    the overrides mutate an already-built registry."""
+    overrides = {k: dict(v, flags=list(v["flags"])) for k, v in OVERRIDES.items()}
+    reg = registry.build_registry(counts_fixture(), overrides)
+
+    overrides[ILIAD]["flags"].append("mutated_after_build")
+
+    assert list(reg.set_index("doc_id").loc[ILIAD, "flags"]) == []
 
 
 def test_source_urn_defaults_to_doc_id():

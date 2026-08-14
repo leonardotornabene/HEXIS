@@ -204,10 +204,11 @@ uv run pytest -m g0 --strict-markers -q  # verify Gate G0
 uv run pytest -q                         # run the full test suite
 ```
 
-At the G0 closure on 2026-08-14 the gate command reported 124 passing tests;
-the full suite reported the same 124 passing tests and 17 later-stage scaffold
-tests skipped until their components are implemented. Gate status is recorded
-in `docs/00_LEGGIMI_INDICE.md`.
+Gate G0 closed on 2026-08-14. The full suite is green apart from later-stage
+scaffold tests, which stay skipped until their components are implemented; the
+attestation of record — canonical commands, test counts and the commit they were
+measured at — is in `docs/HANDOFF.md`, and gate status is tracked in
+`docs/00_LEGGIMI_INDICE.md`.
 
 The analysis pipeline is not yet runnable.
 

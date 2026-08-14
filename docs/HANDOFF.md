@@ -158,10 +158,21 @@ edit was made.
 > review found no Critical or Important issue and confirmed that every previous
 > blocker was resolved.
 >
+> **Attestation of record — commit
+> `180e05cf83985be08a5d4dd27ba843a680d826a8`, working tree clean:**
+>
 > ```
-> uv run pytest -m g0 --strict-markers -q  →  124 passed, 17 deselected  (exit 0)
-> uv run pytest -q                         →  124 passed, 17 skipped     (exit 0)
+> uv run pytest -m g0 --strict-markers -q  →  142 passed, 17 deselected  (exit 0)
+> uv run pytest -q                         →  142 passed, 17 skipped     (exit 0)
+> uv lock --check                          →  Resolved 23 packages       (clean)
 > ```
+>
+> This is the **only** place the counts are recorded; README, the roadmap and the
+> index point here instead of repeating them. Any test added later moves the
+> number, and a figure transcribed into four documents goes stale silently — as
+> it did at 124, when PR #2 added seven registry tests and the hardening pass
+> below added eleven more. Re-attesting means rerunning both commands on a clean
+> tree and replacing the block above together with its commit.
 >
 > The 17 are G3 scaffolds (`context_tree`, `tree_slices`, `null_calibration`,
 > the G3 scoring-boundary cases); none carries the `g0` marker. D52(i)'s three
@@ -169,12 +180,23 @@ edit was made.
 > 23 packages); every G0 test passes with an executed assertion; the D45/D46
 > deterministic infrastructure is verified.
 >
-> One gap in the enforcement was closed in the process: `-m g0` selects only
-> marked tests, so an incomplete marker set exited 0 — the gate command reported
-> a green G0 the moment the reader went green, with three mandatory areas at
-> zero coverage. `tests/test_g0_enforcement.py` now also asserts the D52(ii)
-> inventory, so a green gate implies both that every mandatory area is
-> represented and that its tests really assert.
+> Two gaps in the enforcement were closed in the process, each one level finer
+> than the last. First: `-m g0` selects only marked tests, so an incomplete
+> marker set exited 0 — the gate command reported a green G0 the moment the
+> reader went green, with three mandatory areas at zero coverage.
+> `tests/test_g0_enforcement.py` now also asserts the D52(ii) inventory. Second
+> (post-merge review, commits `d015b98`–`180e05c`): that inventory guarded areas
+> at *file* granularity while its keys name behaviours, so deleting every P-BOUND
+> test kept the gate green — and, symmetrically, §7's five-label taxonomy row was
+> covered by a subset assertion that two labels satisfied. The inventory now
+> requires named tests by exact name for every mandatory behaviour, and the
+> canonical gate compares them with the module-level G0 items actually collected
+> by the current pytest session. The AST scanner remains only in isolated
+> synthetic probes; it is not closure evidence.
+> `registry.REGIME_LABELS` is pinned by equality with all five labels exercised
+> through `build_registry`. A green gate now implies that every mandatory area is
+> represented, that its named behaviours are still selected by `-m g0`, and that
+> those tests really assert.
 >
 > Still assigned to G1: `sent_ord`, the empirical Greek prefix granularity and
 > the O2/O8 decision about which prefixes to merge. The mechanism itself and the

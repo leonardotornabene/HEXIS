@@ -196,6 +196,15 @@ emitting, when supplied:
 - **`sent_ord` derivation at G1.** Needs a defined document ordering across the
   UD split files. Naming it here so it cannot become a silent convention in the
   encode stage.
+- **`|A⁺|` wherever `|A|` enters the tree — GATED:G3.** D52(x) binds the P-BOUND
+  extension to `|A⁺| = |A| + 1` "used wherever `|A|` enters", and `|A|` enters the
+  instrument twice: the smoothing denominator `N_s + β·|A|` of every predictive
+  probability (§4.2) and the `β ∈ {1/|A|, 0.25, 1.0}` one-at-a-time sensitivity
+  cell (§5.6). On a P-BOUND run both must read `|A⁺|`. Nothing at G0 consumes
+  `|A|` — §3.5 builds the extension, the manifest records it, and there the chain
+  stops — so there is nothing to implement or test here; the clause is named so it
+  cannot become a silent convention when the context tree lands at G3. The G0
+  extension itself is already tested (`test_sequences.py`, §7).
 - **Greek prefix granularity** (`…grc1.1.…`): work vs internal subdivision —
   G1 audit, coupled to O2/O8.
 - **Semantic inventory check, required before the G1 freeze.** The target rules

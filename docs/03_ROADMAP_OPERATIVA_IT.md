@@ -31,14 +31,18 @@ Read `01_MASTER_SPEC.md` §3.1 and §6.1. Initialize the `hexis` skeleton exactl
 ## FASE 1a — Pipeline non-tree → chiusura Gate G0 (settimana 2, ~8–10 h) — **CHIUSA 14 agosto 2026**
 
 > **Gate G0 chiuso il 14 agosto 2026 dopo review pre-merge indipendente.**
-> `uv run pytest -m g0 --strict-markers -q` → 124 passed, 17 deselected;
-> suite completa → 124 passed, 17 skipped (tutti scaffold G3). La review aveva
-> riaperto G0 su tre difetti: ordine degli ID nel reader, merge dei prefissi nel
-> registry e semantica di `n_tokens_raw`. Sono stati corretti tests-first; le due
-> letture registry sono state ratificate dall'owner il 14 agosto e registrate in
-> `docs/implementation/specs/2026-08-13-g0-api-contract.md`. Restano a G1
-> l'enumerazione reale, le assegnazioni umane, O2/O8, `sent_ord` e la decisione
-> su quali prefissi vadano effettivamente uniti.
+> L'attestazione di riferimento — comandi canonici, conteggi e commit — sta in
+> `docs/HANDOFF.md` («G0 status»); qui non si duplicano i numeri, che cambiano a
+> ogni test aggiunto. La review aveva riaperto G0 su tre difetti: ordine degli ID
+> nel reader, merge dei prefissi nel registry e semantica di `n_tokens_raw`. Sono
+> stati corretti tests-first; le due letture registry sono state ratificate
+> dall'owner il 14 agosto e registrate in
+> `docs/implementation/specs/2026-08-13-g0-api-contract.md`. Una review
+> post-merge ha poi richiesto una patch di hardening (tassonomia D04 fissata per
+> uguaglianza, inventario D52(ii) vincolato ai nomi dei test) prima di usare il
+> registro sui dati reali di G1. Restano a G1 l'enumerazione reale, le
+> assegnazioni umane, O2/O8, `sent_ord` e la decisione su quali prefissi vadano
+> effettivamente uniti.
 
 **Obiettivo:** implementare e testare tutto ciò che non è l'albero: `conllu_reader`, `registry`, `alphabet`, `sequences`, `blocks` + test (§7) con asserzioni reali (zero skip nel set G0), più l'infrastruttura deterministica (derivazione dei seed, risoluzione della config, scrittura del manifest per run con sidecar minimo — §6.4/D46, protezione da sovrascrittura). **Cosa impari:** il formato CoNLL-U; i multiword token latini (que/ue) e perché si espandono; l'alfabeto UPOS+DEPREL come funzione totale (§3.4). **Criterio di accettazione (G0, riformulato da D45):** ambiente bloccato; tutti i test non-tree verdi con asserzioni reali; infrastruttura deterministica verificata. Nessuna profilazione qui: O6 → G3 (D45). **Clausola di acquisizione parallela (D45):** il clone dei treebank e la compilazione di `PROVENANCE.md` (v2.18, §2.5, con SHA-256 e commit) sono acquisizione, non audit, non toccano modelli e possono procedere in parallelo a G0; l'audit di G1 resta rigorosamente dopo G0. **Prompt-tipo (EN):**
 

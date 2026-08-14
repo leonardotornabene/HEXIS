@@ -56,7 +56,7 @@ Nessuna modifica silenziosa. Ogni cambiamento a metodologia, alfabeto, parametri
 
 **Ordine di esecuzione v2.1 (D44(vii)): G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7.**
 
-- [x] Gate G0: chiuso il 14 ago 2026 dopo review pre-merge — contratto registry riallineato; 124 test G0 verdi con asserzioni reali + infrastruttura deterministica verificata (profilazione → G3; D45)
+- [x] Gate G0: chiuso il 14 ago 2026 dopo review pre-merge — contratto registry riallineato; set G0 verde con asserzioni reali + infrastruttura deterministica verificata (profilazione → G3; D45). Attestazione (comandi, conteggi, commit): `docs/HANDOFF.md`
 
 - [ ] Gate G1: audit → registro, alfabeto e T* CONGELATI (con O2/O8 risolti)
 

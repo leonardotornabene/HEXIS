@@ -159,26 +159,49 @@ edit was made.
 > blocker was resolved.
 >
 > **Attestation of record — commit
-> `180e05cf83985be08a5d4dd27ba843a680d826a8`, working tree clean:**
+> `1271d57e2c1b112d46f59e27f56f5bdd7f0a8c68`, working tree clean:**
 >
 > ```
-> uv run pytest -m g0 --strict-markers -q  →  142 passed, 17 deselected  (exit 0)
-> uv run pytest -q                         →  142 passed, 17 skipped     (exit 0)
-> uv lock --check                          →  Resolved 23 packages       (clean)
+> uv run pytest -m g0 --strict-markers -q  →  144 passed, 112 deselected  (exit 0)
+> uv run pytest -m g1 --strict-markers -q  →   95 passed, 161 deselected  (exit 0)
+> uv run pytest -q                         →  239 passed,  17 skipped     (exit 0)
+> uv lock --check                          →  Resolved 23 packages        (clean)
 > ```
+>
+> Superseded attestation, kept for the trail: commit
+> `180e05cf83985be08a5d4dd27ba843a680d826a8` at 142 passed / 17 deselected (G0)
+> and 142 / 17 (full suite). **G0 itself did not reopen.** The selection moved
+> 142 → 144 because convention 12 of the D55 proposal (unknown override fields
+> rejected) changes `registry.build_registry`, whose mandatory-coverage area is
+> "registry construction and validation" in the D52(ii) inventory: testing it only
+> in an unmarked file would have left `-m g0` green while the rule went
+> unexercised. The suite moved 142 → 239 because this branch adds the G1 audit
+> tests, which carry `g1` and never `g0`.
 >
 > This is the **only** place the counts are recorded; README, the roadmap and the
 > index point here instead of repeating them. Any test added later moves the
 > number, and a figure transcribed into four documents goes stale silently — as
 > it did at 124, when PR #2 added seven registry tests and the hardening pass
-> below added eleven more. Re-attesting means rerunning both commands on a clean
+> below added eleven more. Re-attesting means rerunning the commands on a clean
 > tree and replacing the block above together with its commit.
 >
 > The 17 are G3 scaffolds (`context_tree`, `tree_slices`, `null_calibration`,
-> the G3 scoring-boundary cases); none carries the `g0` marker. D52(i)'s three
+> the G3 scoring-boundary cases); none carries a gate marker. D52(i)'s three
 > conditions hold: environment locked (Python 3.12.13, `uv lock --check` clean,
 > 23 packages); every G0 test passes with an executed assertion; the D45/D46
 > deterministic infrastructure is verified.
+>
+> **`-m g1` is new here** (D55 §xiv, convention 13; owner-authorized 2026-08-17,
+> PROPOSED with the rest of the package). It puts the G1 audit tests under the
+> same enforcement as G0 — `conftest.GATE_MARKERS` — because they previously ran
+> only inside the full suite, where one skipped test moves `239 passed / 17
+> skipped` to `238 / 18` and stays green: the failure mode D52(iii) forbids for G0
+> and left open for G1. Its first run found nineteen G1 tests passing while
+> executing no Python assert, relying on `pytest.raises(match=…)` alone; each now
+> asserts on the exception's content. Mutation-verified in both directions.
+> It attests no gate: **G1 is not closed** — nothing is frozen, the registry is
+> unratified, and the evidence for its ratification is in
+> `docs/g1_D55_proposal.md` and `docs/g1_registry_proposal.md` (both PROPOSED).
 >
 > Two gaps in the enforcement were closed in the process, each one level finer
 > than the last. First: `-m g0` selects only marked tests, so an incomplete
@@ -202,6 +225,16 @@ edit was made.
 > the O2/O8 decision about which prefixes to merge. The mechanism itself and the
 > `n_tokens_raw` denominator are now ratified. The KS-headroom question below
 > (Q5) also remains open.
+>
+> **State of those items at this attestation.** The G1 enumeration has been run
+> on the pinned data: the Greek prefix granularity is empirical (18 raw prefixes,
+> 17 canonical if Athenaeus 12+13 merge) and **O2 is resolved at document level**
+> — one Hymn prefix, no duplication — while **O8 remains open** and `sent_ord` is
+> proposed, not implemented. The enumeration also contradicts §2.3: Greek
+> PROSE_CLASS holds 2 documents, not 6, so 𝔻 is 7 (or 11 only under the union
+> option) and the constants of D21/D24/D33/D43 do not describe this corpus. That
+> finding, both options and every recomputed constant are in
+> `docs/g1_D55_proposal.md` — **PROPOSED, applied to nothing**.
 
 ### Historical: what remained at the overnight handoff
 

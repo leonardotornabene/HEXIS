@@ -1135,6 +1135,18 @@ Two orders that do work:
    **before** writing) → commit `results/`. The manifests then name the
    attestation commit, which is the first commit at which the code and its
    recorded evidence agree.
+
+   **One commit per run — found by executing this sequence on 2026-08-17, and it
+   is not a detail.** With `results/` tracked, only the *first* regenerated run
+   sees a clean tree: the second samples git after the first has written into the
+   worktree and records `git.dirty: true`. That flag would then report a
+   dirtiness caused by a **sibling artifact of the same package**, which is the
+   same distortion convention 11 exists to remove — one step removed. So each run
+   is generated and committed before the next is generated, and the two manifests
+   name different commits by construction (here `1680d3a` and `84a9319`). The
+   alternative that removes the problem structurally is gitignoring `results/`,
+   which is the open question below: untracked artifacts never dirty the tree, so
+   every run of a batch would sample `dirty: false` from the same commit.
 2. **Regenerate in a clean worktree.** Same first two commits; then check the
    attestation commit out in a fresh worktree with no `results/`, regenerate
    there, copy the artifacts back and commit them.

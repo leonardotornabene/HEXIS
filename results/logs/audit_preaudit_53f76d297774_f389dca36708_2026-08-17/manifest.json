@@ -1,0 +1,67 @@
+{
+  "artifacts": [
+    {
+      "path": "results/tables/audit_report_preaudit_53f76d297774_f389dca36708_2026-08-17.md",
+      "sha256": "ee355e4bb58a1a10d7145bb41912eb9c5874dd33d38544e1c73297e275c9f5b6"
+    },
+    {
+      "path": "results/tables/alphabet_inventory_preaudit_53f76d297774_f389dca36708_2026-08-17.csv",
+      "sha256": "372f33b8746b4666f8217493e17c2169e86f3e1bc05f0900bd88fc8c39dd0cc4"
+    },
+    {
+      "path": "results/tables/contingency_by_document_preaudit_53f76d297774_f389dca36708_2026-08-17.csv",
+      "sha256": "9330a74c189156ecd3877ab7c522745b4b4c90c3ede9598d22b0d7e141cf15fb"
+    },
+    {
+      "path": "results/tables/contingency_by_regime_preaudit_53f76d297774_f389dca36708_2026-08-17.csv",
+      "sha256": "b6eb33568885315ba56f17c686d68d0002dd59c85c998093242efcf2c0cf1f61"
+    }
+  ],
+  "config_sha256": "53f76d297774bba46042d97e6170b093fcef4833a4633633a7712192d14b2440",
+  "created_utc": "2026-08-17T20:58:39.251984+00:00",
+  "entry_point": "hexis.pipeline.run_audit --pre-audit",
+  "git": {
+    "commit": "84a9319876bcfc77c0874c20b094b58b849183e1",
+    "dirty": false
+  },
+  "inputs": [
+    {
+      "path": "data/raw/UD_Ancient_Greek-Perseus/grc_perseus-ud-dev.conllu",
+      "sha256": "7899f809fc250404839694330b9db25f79a5b1f20cfa12e6dc3a368a4ec7cd22"
+    },
+    {
+      "path": "data/raw/UD_Ancient_Greek-Perseus/grc_perseus-ud-test.conllu",
+      "sha256": "e18d47c395c0ec8da678fb5e315ce6d90133e88c25ed2a55bc72a2a66e6254d5"
+    },
+    {
+      "path": "data/raw/UD_Ancient_Greek-Perseus/grc_perseus-ud-train.conllu",
+      "sha256": "d7471c9b91bcd975848fa5d9b65c31f1fc48a597ed3667796968a82c6d098a7e"
+    },
+    {
+      "path": "data/raw/UD_Latin-Perseus/la_perseus-ud-test.conllu",
+      "sha256": "e0e53fdcc8040a2a6d3b6e7b5dfa69fa35d355ce11cae0682b61e6848745d386"
+    },
+    {
+      "path": "data/raw/UD_Latin-Perseus/la_perseus-ud-train.conllu",
+      "sha256": "49d2e3813fc34595fe8cf569f263df4396e4b21aba9429fcdb0eea3ae09e64fa"
+    },
+    {
+      "path": "docs/g1_registry_proposal.yaml",
+      "sha256": "50fc7f3d64ffec26fbc211c054afc4f45ac5699f4979812327cf0d1b22adb4e4"
+    }
+  ],
+  "mode": "preaudit",
+  "package_versions": {
+    "conllu": "6.0.0",
+    "matplotlib": "3.11.0",
+    "numpy": "2.5.1",
+    "pandas": "3.0.3",
+    "pyarrow": "25.0.0",
+    "pytest": "9.1.1",
+    "pyyaml": "6.0.3",
+    "scipy": "1.18.0"
+  },
+  "run_id": "audit_preaudit_53f76d297774_f389dca36708_2026-08-17",
+  "seed": 2469255195,
+  "status": "PROVISIONAL"
+}

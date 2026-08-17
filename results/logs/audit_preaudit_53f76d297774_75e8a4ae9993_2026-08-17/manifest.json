@@ -1,0 +1,63 @@
+{
+  "artifacts": [
+    {
+      "path": "results/tables/audit_report_preaudit_53f76d297774_75e8a4ae9993_2026-08-17.md",
+      "sha256": "9b8f1c8d37891a5d7377e798a1254ed1d107235c4337a78d2e40b75814f39046"
+    },
+    {
+      "path": "results/tables/alphabet_inventory_preaudit_53f76d297774_75e8a4ae9993_2026-08-17.csv",
+      "sha256": "372f33b8746b4666f8217493e17c2169e86f3e1bc05f0900bd88fc8c39dd0cc4"
+    },
+    {
+      "path": "results/tables/contingency_by_document_preaudit_53f76d297774_75e8a4ae9993_2026-08-17.csv",
+      "sha256": "1bb137a0cc97eaf620e1f003386f604d0a4314d4bff1d65ec3a2cb1a9c0718c1"
+    }
+  ],
+  "config_sha256": "53f76d297774bba46042d97e6170b093fcef4833a4633633a7712192d14b2440",
+  "created_utc": "2026-08-17T20:58:14.304575+00:00",
+  "entry_point": "hexis.pipeline.run_audit --pre-audit",
+  "git": {
+    "commit": "1680d3aff7b96a5d104d3f5b1975f9144ea49526",
+    "dirty": false
+  },
+  "inputs": [
+    {
+      "path": "config/registry_overrides.yaml",
+      "sha256": "0058d0975598330e8155191dbd1864a9d009453f60b59c16c84468a13a91d646"
+    },
+    {
+      "path": "data/raw/UD_Ancient_Greek-Perseus/grc_perseus-ud-dev.conllu",
+      "sha256": "7899f809fc250404839694330b9db25f79a5b1f20cfa12e6dc3a368a4ec7cd22"
+    },
+    {
+      "path": "data/raw/UD_Ancient_Greek-Perseus/grc_perseus-ud-test.conllu",
+      "sha256": "e18d47c395c0ec8da678fb5e315ce6d90133e88c25ed2a55bc72a2a66e6254d5"
+    },
+    {
+      "path": "data/raw/UD_Ancient_Greek-Perseus/grc_perseus-ud-train.conllu",
+      "sha256": "d7471c9b91bcd975848fa5d9b65c31f1fc48a597ed3667796968a82c6d098a7e"
+    },
+    {
+      "path": "data/raw/UD_Latin-Perseus/la_perseus-ud-test.conllu",
+      "sha256": "e0e53fdcc8040a2a6d3b6e7b5dfa69fa35d355ce11cae0682b61e6848745d386"
+    },
+    {
+      "path": "data/raw/UD_Latin-Perseus/la_perseus-ud-train.conllu",
+      "sha256": "49d2e3813fc34595fe8cf569f263df4396e4b21aba9429fcdb0eea3ae09e64fa"
+    }
+  ],
+  "mode": "preaudit",
+  "package_versions": {
+    "conllu": "6.0.0",
+    "matplotlib": "3.11.0",
+    "numpy": "2.5.1",
+    "pandas": "3.0.3",
+    "pyarrow": "25.0.0",
+    "pytest": "9.1.1",
+    "pyyaml": "6.0.3",
+    "scipy": "1.18.0"
+  },
+  "run_id": "audit_preaudit_53f76d297774_75e8a4ae9993_2026-08-17",
+  "seed": 2469255195,
+  "status": "PROVISIONAL"
+}

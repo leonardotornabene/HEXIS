@@ -61,6 +61,8 @@ G0_REQUIRED_COVERAGE = {
             "test_n_tokens_raw_counts_integer_id_words_before_alphabet",
             "test_newdoc_id_disagreement_raises",
             "test_build_registry_assigns_taxonomy_and_schema",
+            "test_build_registry_rejects_unknown_fields",
+            "test_build_registry_accepts_every_declared_optional_field",
             "test_regime_labels_are_exactly_the_five_of_d04",
             "test_build_registry_accepts_every_d04_regime",
             "test_overrides_merge_raw_prefixes_into_canonical_document",

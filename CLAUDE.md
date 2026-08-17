@@ -33,6 +33,14 @@ silent deviations. O7 blocks G2/G5; gate order G0 → G1 → G3 → G2 → G4 �
   includes it.
 - Do not permute labels at chunk level (D21): document level, exact schemes (Greek 462 /
   2048; Latin 28 / 256; author 20 / 64; Lysias-merged 56 / 256) — sidedness declared per D43.
+  **Open finding — a pointer, not an amendment (2026-08-17):** the G1 enumeration of the
+  pinned r2.18 data contradicts the document counts these schemes rest on. Greek 𝔻 is 7
+  (11 only if PROSE_POST joins the primary contrast), Latin is 9, and Lysias is absent
+  from the release, so 56 / 256 has no referent. Recomputed constants, both options and
+  every consequence: `docs/g1_D55_proposal.md` — **PROPOSED, applied to nothing**. Until
+  it is ratified, D21/D24/D33/D43 stand exactly as written: treat the numbers above as
+  the binding plan, never as a description of this corpus, and never silently substitute
+  the new ones.
 - Do not run confirmatory P1 inference or freeze G2 before O7 is resolved (D44).
 - Do not import from candidates/ (quarantined non-canonical implementations; D47).
 - Do not treat the representation-analysis cells (alphabet/boundary) as automatic validity

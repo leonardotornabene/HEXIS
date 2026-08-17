@@ -1,0 +1,289 @@
+# PROPOSED / UNVERIFIED — NOT the canonical registry.
+#
+# Companion to docs/g1_registry_proposal.md, which carries the evidence for every
+# row. This file exists so the pre-audit stage can be pointed at it:
+#
+#   uv run python -m hexis.pipeline.run_audit --pre-audit \
+#       --overrides docs/g1_registry_proposal.yaml
+#
+# It is executable ONLY under --pre-audit, and `_status` below **enforces** that
+# rather than merely asserting it: the audit stage refuses to produce a canonical
+# report from any overrides file whose `_status` is not RATIFIED. Keys beginning
+# with `_` are reserved metadata and are never read as document assignments.
+#
+# config/registry_overrides.yaml, the file that declares human-verified
+# assignments (§3.3, D04), stays empty until the owner ratifies these rows.
+# Nothing here may be copied there by an agent.
+_status: PROPOSED
+#
+# Regime labels follow §2.3 under OPTION A of the D55 proposal (Greek PROSE_CLASS
+# kept as the primary prose set). Under option B the labels below are unchanged —
+# what changes is which regimes the primary contrast unions, which is a config
+# question, not a registry field.
+
+# ---------------------------------------------------------------- Greek: HEX (5)
+tlg0012.tlg001.perseus-grc1.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0012.tlg001.perseus-grc1
+  author: Homer
+  work: Iliad
+  regime: HEX
+  meter: hexameter
+  period: archaic
+  flags: []
+tlg0020.tlg001.perseus-grc1.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0020.tlg001.perseus-grc1
+  author: Hesiod
+  work: Theogony
+  regime: HEX
+  meter: hexameter
+  period: archaic
+  flags: []
+tlg0020.tlg002.perseus-grc1.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0020.tlg002.perseus-grc1
+  author: Hesiod
+  work: Works and Days
+  regime: HEX
+  meter: hexameter
+  period: archaic
+  flags: []
+tlg0020.tlg003.perseus-grc1.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0020.tlg003.perseus-grc1
+  author: Hesiod
+  work: Shield of Heracles
+  regime: HEX
+  meter: hexameter
+  period: archaic
+  flags: []
+tlg0013.tlg002.perseus-grc1.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0013.tlg002.perseus-grc1
+  author: Anonymous
+  work: Homeric Hymn to Demeter
+  regime: HEX
+  meter: hexameter
+  period: archaic
+  flags: [o2_single_prefix, o8_author_block_open]
+
+# -------------------------------------------------------- Greek: PROSE_CLASS (2)
+tlg0016.tlg001.perseus-grc1.1.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0016.tlg001.perseus-grc1
+  author: Herodotus
+  work: Histories, book 1
+  regime: PROSE_CLASS
+  meter: prose
+  period: classical
+  flags: [partial_work_single_book]
+tlg0003.tlg001.perseus-grc1.1.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0003.tlg001.perseus-grc1
+  author: Thucydides
+  work: Histories, book 1
+  regime: PROSE_CLASS
+  meter: prose
+  period: classical
+  flags: [partial_work_single_book]
+
+# --------------------------------------------------------- Greek: PROSE_POST (5)
+# Athenaeus books 12 and 13 are two prefixes of one work: merge PROPOSED.
+tlg0008.tlg001.perseus-grc1.12.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0008.tlg001.perseus-grc1
+  canonical_doc_id: tlg0008.tlg001.perseus-grc1.tb.xml
+  part_order: 12
+  author: Athenaeus
+  work: Deipnosophistae, books 12-13
+  regime: PROSE_POST
+  meter: prose
+  period: imperial
+  flags: [partial_work_two_books, merged_prefixes]
+tlg0008.tlg001.perseus-grc1.13.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0008.tlg001.perseus-grc1
+  canonical_doc_id: tlg0008.tlg001.perseus-grc1.tb.xml
+  part_order: 13
+  author: Athenaeus
+  work: Deipnosophistae, books 12-13
+  regime: PROSE_POST
+  meter: prose
+  period: imperial
+  flags: [partial_work_two_books, merged_prefixes]
+tlg0060.tlg001.perseus-grc3.11.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0060.tlg001.perseus-grc3
+  author: Diodorus Siculus
+  work: Bibliotheca historica, book 11
+  regime: PROSE_POST
+  meter: prose
+  period: hellenistic
+  flags: [partial_work_single_book]
+tlg0007.tlg004.perseus-grc1.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0007.tlg004.perseus-grc1
+  author: Plutarch
+  work: Lycurgus
+  regime: PROSE_POST
+  meter: prose
+  period: imperial
+  flags: []
+tlg0007.tlg015.perseus-grc1.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0007.tlg015.perseus-grc1
+  author: Plutarch
+  work: Alcibiades
+  regime: PROSE_POST
+  meter: prose
+  period: imperial
+  flags: []
+
+# -------------------------------------------------------- Greek: OTHER_VERSE (6)
+tlg0011.tlg001.perseus-grc2.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0011.tlg001.perseus-grc2
+  author: Sophocles
+  work: Trachiniae
+  regime: OTHER_VERSE
+  meter: iambic trimeter + lyric (mixed)
+  period: classical
+  flags: []
+tlg0011.tlg002.perseus-grc2.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0011.tlg002.perseus-grc2
+  author: Sophocles
+  work: Antigone
+  regime: OTHER_VERSE
+  meter: iambic trimeter + lyric (mixed)
+  period: classical
+  flags: []
+tlg0011.tlg003.perseus-grc1.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0011.tlg003.perseus-grc1
+  author: Sophocles
+  work: Ajax
+  regime: OTHER_VERSE
+  meter: iambic trimeter + lyric (mixed)
+  period: classical
+  flags: []
+tlg0011.tlg004.perseus-grc1.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0011.tlg004.perseus-grc1
+  author: Sophocles
+  work: Oedipus Tyrannus
+  regime: OTHER_VERSE
+  meter: iambic trimeter + lyric (mixed)
+  period: classical
+  flags: []
+tlg0011.tlg005.perseus-grc2.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0011.tlg005.perseus-grc2
+  author: Sophocles
+  work: Electra
+  regime: OTHER_VERSE
+  meter: iambic trimeter + lyric (mixed)
+  period: classical
+  flags: []
+tlg0085.tlg001.perseus-grc2.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0085.tlg001.perseus-grc2
+  author: Aeschylus
+  work: Suppliant Women
+  regime: OTHER_VERSE
+  meter: iambic trimeter + lyric (mixed)
+  period: classical
+  flags: [e1_only_one_aeschylus_play_present]
+
+# ---------------------------------------------------------------- Latin: HEX (2)
+phi0690.phi003.perseus-lat1.tb.xml:
+  source_urn: urn:cts:latinLit:phi0690.phi003.perseus-lat1
+  author: Vergil
+  work: Aeneid
+  regime: HEX
+  meter: hexameter
+  period: classical
+  flags: [smallest_hex_document]
+phi0959.phi006.perseus-lat1.tb.xml:
+  source_urn: urn:cts:latinLit:phi0959.phi006.perseus-lat1
+  author: Ovid
+  work: Metamorphoses
+  regime: HEX
+  meter: hexameter
+  period: classical
+  flags: []
+
+# -------------------------------------------------------- Latin: PROSE_CLASS (4)
+phi0474.phi013.perseus-lat1.tb.xml:
+  source_urn: urn:cts:latinLit:phi0474.phi013.perseus-lat1
+  author: Cicero
+  work: In Catilinam
+  regime: PROSE_CLASS
+  meter: prose
+  period: classical
+  flags: []
+phi0631.phi001.perseus-lat1.tb.xml:
+  source_urn: urn:cts:latinLit:phi0631.phi001.perseus-lat1
+  author: Sallust
+  work: Bellum Catilinae
+  regime: PROSE_CLASS
+  meter: prose
+  period: classical
+  flags: []
+phi1221.phi007.perseus-lat1.tb.xml:
+  source_urn: urn:cts:latinLit:phi1221.phi007.perseus-lat1
+  author: Augustus
+  work: Res Gestae Divi Augusti
+  regime: PROSE_CLASS
+  meter: prose
+  period: classical
+  flags: [epigraphic]
+# NOT in the treebank README works table; contradicts erratum E2. Regime PROPOSED.
+phi0448.phi001.perseus-lat1.tb.xml:
+  source_urn: urn:cts:latinLit:phi0448.phi001.perseus-lat1
+  author: Caesar
+  work: De bello Gallico
+  regime: PROSE_CLASS
+  meter: prose
+  period: classical
+  flags: [absent_from_readme, contradicts_e2, smallest_document]
+
+# --------------------------------------------------------- Latin: PROSE_POST (3)
+phi1351.phi005.perseus-lat1.tb.xml:
+  source_urn: urn:cts:latinLit:phi1351.phi005.perseus-lat1
+  author: Tacitus
+  work: Historiae
+  regime: PROSE_POST
+  meter: prose
+  period: imperial
+  flags: []
+phi1348.abo012.perseus-lat1.tb.xml:
+  source_urn: urn:cts:latinLit:phi1348.abo012.perseus-lat1
+  author: Suetonius
+  work: Divus Augustus
+  regime: PROSE_POST
+  meter: prose
+  period: imperial
+  flags: []
+phi0972.phi001.perseus-lat1.xml:
+  source_urn: urn:cts:latinLit:phi0972.phi001.perseus-lat1
+  author: Petronius
+  work: Satyricon
+  regime: PROSE_POST
+  meter: prose
+  period: imperial
+  flags: [verse_insets, o4_open, prefix_lacks_tb_infix]
+
+# -------------------------------------------------------- Latin: OTHER_VERSE (2)
+phi0620.phi001.perseus-lat1.tb.xml:
+  source_urn: urn:cts:latinLit:phi0620.phi001.perseus-lat1
+  author: Propertius
+  work: Elegiae
+  regime: OTHER_VERSE
+  meter: elegiac couplets
+  period: classical
+  flags: []
+phi0975.phi001.perseus-lat1.tb.xml:
+  source_urn: urn:cts:latinLit:phi0975.phi001.perseus-lat1
+  author: Phaedrus
+  work: Fabulae
+  regime: OTHER_VERSE
+  meter: iambic senarii
+  period: imperial
+  flags: []
+
+# ----------------------------------------------------------- Latin: EXCLUDED (1)
+# Namespace note: `tlg0031` is the TLG textgroup of the New Testament, so the CTS
+# URN is greekLit even though this edition (`perseus-lat1`) is the Latin
+# translation. The namespace follows the textgroup, not the language of the edition.
+tlg0031.tlg027.perseus-lat1.tb.xml:
+  source_urn: urn:cts:greekLit:tlg0031.tlg027.perseus-lat1
+  author: Jerome
+  work: Vulgata (Apocalypsis)
+  regime: EXCLUDED
+  meter: prose
+  period: late-antique
+  flags: [bible, late_antique_translation]

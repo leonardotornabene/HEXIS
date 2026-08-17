@@ -162,6 +162,39 @@ def test_build_registry_assigns_taxonomy_and_schema():
     assert row["n_tokens_raw"] == 5
 
 
+def test_build_registry_rejects_unknown_fields():
+    """An unlisted key is a typo, and a mistyped *optional* field is otherwise
+    invisible: the required five are caught by their absence, but `flag:` for
+    `flags:` would be dropped silently and appear in no artifact (§2.3)."""
+    stray = {ILIAD: dict(OVERRIDES[ILIAD], flag=["epigraphic"]), THUC: OVERRIDES[THUC]}
+
+    with pytest.raises(ValueError, match="unknown field") as caught:
+        registry.build_registry(counts_fixture(), stray)
+
+    # Asserted, not merely raised. `pytest.raises` alone executes no Python
+    # assert, so the D52(iii) gate counts this test as assertion-free and turns
+    # `-m g0` red — and "unknown field" on its own does not tell the operator
+    # which key in which document, which is the whole point of refusing it.
+    assert "'flag'" in str(caught.value)
+    assert ILIAD in str(caught.value)
+
+
+def test_build_registry_accepts_every_declared_optional_field():
+    """The converse guard: `part_order` is declared-but-unread, not unknown.
+    Rejecting it would make the merge proposal unloadable."""
+    declared = {
+        ILIAD: dict(OVERRIDES[ILIAD], source_urn="urn:cts:greekLit:tlg0012.tlg001",
+                    part_order=1, flags=["x"]),
+        THUC: OVERRIDES[THUC],
+    }
+
+    assert len(registry.build_registry(counts_fixture(), declared)) == 2
+    assert registry.KNOWN_OVERRIDE_FIELDS == frozenset(
+        registry.REQUIRED_OVERRIDE_FIELDS
+        + ("source_urn", "flags", "canonical_doc_id", "part_order")
+    )
+
+
 def test_regime_labels_are_exactly_the_five_of_d04():
     """§2.3/D04 fix the taxonomy at five labels. Equality, not containment: the
     document count and per-regime partition fix the exact enumeration sizes of

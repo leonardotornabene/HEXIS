@@ -33,5 +33,6 @@ enable_assertion_pass_hook = true
 xfail_strict = true
 markers = [
     "g0: Gate G0 acceptance tests (D52); incomplete until all mandatory coverage is implemented",
+    "g1: Gate G1 audit tests (D55 §xiv, convention 13 — PROPOSED); same no-skip/real-assert enforcement as g0",
 ]
 norecursedirs = ["candidates", ".venv", "data", "results", "notebooks"]

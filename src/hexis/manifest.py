@@ -29,7 +29,14 @@ def sha256_file(path) -> str:
     return digest.hexdigest()
 
 
-def _git_state() -> dict:
+def git_state() -> dict:
+    """Commit and dirty flag **at the moment of the call**.
+
+    Public because *when* it is sampled is itself provenance: a stage that writes
+    artifacts into the worktree and only then asks git would record a dirtiness
+    its own outputs caused. Callers capture this before their first write and hand
+    it to `build_manifest(git=…)`.
+    """
     try:
         commit = subprocess.run(
             ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
@@ -69,23 +76,36 @@ def build_manifest(
     entry_point: str,
     *,
     inputs=(),
+    input_records=None,
     alphabet_extension=None,
+    git=None,
 ) -> dict:
     """Assemble the central run manifest (D46): provenance + artifact hashes.
 
     `alphabet_extension` records the run-time alphabet extension A⁺ that D52(x)
     requires the manifest to carry (P-BOUND arms). `None` omits the key, so
     P-RESET manifests are unchanged.
+
+    `git` accepts a state captured earlier by `git_state()`. Artifacts have to
+    exist before they can be hashed, so this function necessarily runs *after* the
+    stage has written into the worktree; sampling git here would then attribute
+    the run's own untracked outputs to the tree it started from. `None` keeps the
+    previous behaviour of sampling at assembly time.
+
+    `input_records` accepts digests taken before the inputs were parsed, for the
+    same reason: hashing `inputs` here would describe the files as they are *now*,
+    not as the run read them. It takes precedence over `inputs`; `None` keeps the
+    previous behaviour.
     """
     record = {
         "run_id": run_id,
         "entry_point": entry_point,
         "seed": seed,
         "config_sha256": config_sha256,
-        "git": _git_state(),
+        "git": git if git is not None else git_state(),
         "package_versions": _package_versions(),
         "created_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "inputs": _file_records(inputs),
+        "inputs": list(input_records) if input_records is not None else _file_records(inputs),
         "artifacts": _file_records(artifacts),
     }
     if alphabet_extension is not None:

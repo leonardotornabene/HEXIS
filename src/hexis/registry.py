@@ -30,6 +30,17 @@ REGISTRY_COLUMNS = (
 )
 
 REQUIRED_OVERRIDE_FIELDS = ("author", "work", "regime", "meter", "period")
+
+# Every field an assignment may carry. Beyond the required five, `source_urn`,
+# `flags` and `canonical_doc_id` are read here; `part_order` is declared in the G1
+# ratification package (§viii) and read by nothing yet. It is listed so that
+# accepting it is a decision on record rather than the silence of a missing check:
+# without the list, a mistyped optional key (`flag:` for `flags:`, `urn:` for
+# `source_urn:`) is dropped without a trace and shows up in no artifact.
+KNOWN_OVERRIDE_FIELDS = frozenset(
+    REQUIRED_OVERRIDE_FIELDS + ("source_urn", "flags", "canonical_doc_id", "part_order")
+)
+
 MERGE_METADATA_FIELDS = (
     "language",
     "source_urn",
@@ -95,8 +106,12 @@ def enumerate_prefixes(sentences: Iterable, *, language: str) -> pd.DataFrame:
     )
 
 
-def _canonical_targets(prefix_counts: pd.DataFrame, overrides: Mapping) -> dict:
+def canonical_targets(prefix_counts: pd.DataFrame, overrides: Mapping) -> dict:
     """Resolve and validate every raw prefix's merge target.
+
+    Public because the audit pipeline needs the raw -> canonical map to fold merged
+    prefixes into one document before counting: re-deriving the "default to the raw
+    prefix" rule at the call site would give the merge two sources of truth.
 
     A wrong merge is silent: all sentences stay assigned, so §3.3's "the audit
     fails on any unassigned sentence" never fires, while the resulting document
@@ -162,6 +177,10 @@ def build_registry(prefix_counts: pd.DataFrame, overrides: Mapping) -> pd.DataFr
     An optional nonempty `canonical_doc_id` in each raw-prefix assignment merges
     prefixes into one registry row. Counts are summed; traceability metadata must
     agree exactly across the group (owner-ratified G0 API reading, 2026-08-14).
+
+    Fields outside `KNOWN_OVERRIDE_FIELDS` are rejected rather than ignored: the
+    required five are caught by their absence, but a mistyped *optional* key is
+    caught by nothing and disappears without a trace.
     """
     present = set(prefix_counts["doc_id"])
     unassigned = sorted(present - set(overrides))
@@ -176,7 +195,21 @@ def build_registry(prefix_counts: pd.DataFrame, overrides: Mapping) -> pd.DataFr
             f"registry overrides name documents absent from the corpus: {unknown}"
         )
 
-    canonical_of = _canonical_targets(prefix_counts, overrides)
+    stray = sorted(
+        f"{doc_id}: {sorted(set(assignment) - KNOWN_OVERRIDE_FIELDS)}"
+        for doc_id, assignment in overrides.items()
+        if set(assignment) - KNOWN_OVERRIDE_FIELDS
+    )
+    if stray:
+        raise ValueError(
+            "registry assignments carry unknown field(s): "
+            + "; ".join(stray)
+            + f" — the schema is {sorted(KNOWN_OVERRIDE_FIELDS)} (§2.3). An "
+            "unlisted key is a typo, and a dropped optional field is invisible in "
+            "every artifact the run produces."
+        )
+
+    canonical_of = canonical_targets(prefix_counts, overrides)
 
     group_sizes = Counter(canonical_of.values())
     missing_merge_sources = []

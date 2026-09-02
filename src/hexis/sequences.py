@@ -91,8 +91,10 @@ def to_model_input(
     stream per document with exactly `n_sentences - 1` boundary symbols and no
     reset.
 
-    `doc_id` is required and keyword-only, so "blocks never span documents"
-    (§3.6) holds structurally rather than by convention.
+    `doc_id` is required and keyword-only, so every call returns exactly one
+    document's sequences. That does **not** make §3.6's "blocks never span
+    documents" structural: `make_blocks` accepts any list of sentences, so the
+    property still rests on the pipeline invoking it per document (`blocks.py`).
     """
     if boundary not in ("reset", "bound"):
         raise ValueError(f"boundary policy {boundary!r} is not 'reset' or 'bound' (§3.5)")

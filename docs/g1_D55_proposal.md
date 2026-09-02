@@ -1089,11 +1089,12 @@ the files below it that carry no constant but encode the same assumptions:
 | --- | --- |
 | `docs/01_MASTER_SPEC.md` | §2.3 works tables **and the registry schema** (`author_block`, if adopted); §2.6 errata E1, E2; §3.3 (document identity, `part_order`, `sent_ord`); §3.4 (GATE-A readings); §4.2 (𝔻 = 11, T\*, learning-curve grid and its protocol-(c) extension); §5.1 (462 / 2048 / 20 / 64 / 56 / 256); §5.2 (per-regime pool fractions quoted at 11 documents); §5.3 (see below); §5.4 (Holm wording); §5.6 (13 cells over 11 documents); §5.7 (Latin 28 / 256 and its rationale); §5.8 (confound register, if option B); §6.1 (artifact naming); §6.4 (manifest fields); §8 (F3–F4 "11 points", T1–T3 shapes) |
 | `docs/02_DECISION_LOG.md` | **D04** (the contrast and the composition it is frozen on), D20, D21, D24, **D25** (option B only), D33, D37, D43 (floors, and `author_block` if adopted), D44, D46, D51; the new `alphabet.json` decision (§xv); open items O1, O2, O4, O8; deferred node DN-2 |
-| `docs/03_ROADMAP_OPERATIVA_IT.md` | the G1 and G3 phase descriptions (11 pseudo-documents at O7); the placement of the linguistic touchpoint inside the G1 phase, if `D29-A1` is ratified |
-| `docs/04_AI_HANDOFF_PROMPT.md` | the enumeration constants quoted to a fresh agent |
+| `docs/00_LEGGIMI_INDICE.md` | **added 2026-09-02**, and it escaped the constant search because it carries no constant: points 1 and 2 of "Le scoperte di verifica che restano fondanti" assert E1 and E2 as *founding* verified facts. Also the pointer added under them, per item 24 |
+| `docs/03_ROADMAP_OPERATIVA_IT.md` | the G1 and G3 phase descriptions (11 pseudo-documents at O7); the placement of the linguistic touchpoint inside the G1 phase, if `D29-A1` is ratified; and the pointer at the head of FASE 1b, per item 24 |
+| `docs/04_AI_HANDOFF_PROMPT.md` | the enumeration constants quoted to a fresh agent — in **two** places: rule 8 of the bootstrap prompt and the `CLAUDE.md` template of §B, which must stay byte-identical to the root copies (item 25). Both pointers retire per item 24 |
 | `CLAUDE.md` | the "exact schemes" line (Greek 462 / 2048; Latin 28 / 256; author 20 / 64; Lysias-merged 56 / 256) — **and the pointer note added under it on 2026-08-17**, which says this amendment is PROPOSED and applied to nothing. Ratifying makes that note false, so it is replaced by the ratified constants in the same act; it exists only because these two files are loaded as standing instructions in every session, so a superseded constant left unflagged is re-derived indefinitely (owner-authorized, no value changed) |
 | `AGENTS.md` | the same line and the same note, mirrored — the two files are byte-identical below their first line, and any edit to one is an edit to both |
-| `README.md` | the design summary's document counts and constants |
+| `README.md` | the design summary's document counts and constants — "eleven documents" six times, "twelve tragedies", the Greek and Latin prose counts, 2,048 / 462; at lines 116–125 they carry the O7 argument rather than decorate it. Plus the pointer added 2026-09-02, per item 24 |
 | `docs/implementation/specs/2026-08-13-g0-api-contract.md` | constants quoted in the ratified API contract — and, more than constants, **§5's semantic inventory check**: its reference set (§2.3) and its expectations (Greek HEX 5 / PROSE_CLASS 6, Latin HEX 2 / PROSE 6; 462 / 2048, 28 / 256, 56 / 256, 20 / 64) are exactly what this amendment replaces, so the check is unsatisfiable as written and must be re-pointed at the ratified registry before the freeze (§xvi) |
 | `src/hexis/stats/permutation.py:4` | module docstring: "Greek 2^11 = 2048 … Latin 2^8 = 256" |
 | `docs/01_MASTER_SPEC.md` §5.3 | "5–6 documents per group make these CIs crude" and "per-document dot displays (11 points, F3–F4)" — under option A one group holds **2** documents, where a between-document bootstrap is not crude but near-degenerate (resampling 2 with replacement has 3 distinct outcomes), and the dot plots carry 7 points |
@@ -1230,6 +1231,45 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     The freeze is not blocked by this; the question is whether the canonical run
     should refuse to proceed when the two disagree. Recommended: yes, and before
     the canonical run, since that is the run whose inputs get frozen.
+
+24. **The documentary scope of the ratification act** (new 2026-09-02). **Nine
+    statements across seven files** declare this amendment PROPOSED and applied to
+    nothing, and **ratification makes every one of them false in the same
+    instant**: `CLAUDE.md`, `AGENTS.md`, `docs/03_ROADMAP_OPERATIVA_IT.md`,
+    `README.md` and `docs/HANDOFF.md` once each; `docs/04_AI_HANDOFF_PROMPT.md`
+    twice (rule 8 of the bootstrap prompt, and the `CLAUDE.md` template of §B);
+    `docs/00_LEGGIMI_INDICE.md` twice (the pointer, and the working-documents
+    table row — which also states the checklist's item count, so it goes stale
+    whenever this list grows, as it did today). Item 18 fixes the *form* of the
+    filing; this fixes its *scope*. Recommended: the act that ratifies is the act
+    that retires all nine and installs the ratified figures, and a survivor is a
+    defect of that act rather than tidying to be done later.
+
+    Three traps for whoever executes it, each one already sprung. **Do not work
+    from a file list:** the table above was wrong once, omitting
+    `00_LEGGIMI_INDICE.md`, which carries no constant and so escaped the constant
+    search while asserting E1 and E2 as *founding* verified facts. **Do not grep
+    the heading:** the pointers are worded four ways ("a pointer, not an
+    amendment", "a pointer, not a correction", "un puntatore, non un
+    emendamento", "Deferral clause"). **Do not grep the claim either:**
+    `README.md` wraps "applied to / nothing" across a blockquote-marked line
+    break, so both a plain and a whitespace-normalised phrase search miss it —
+    verified 2026-09-02, the count came back 8 of 9. The one handle all nine
+    share is the citation `g1_D55_proposal.md`. It
+    over-selects — `HANDOFF.md` and `00` cite the file for other reasons too —
+    and a superset you triage by hand is the safe error here.
+25. **Whether anything should enforce that the three standing-instruction copies
+    stay identical** (new 2026-09-02). `CLAUDE.md`, `AGENTS.md` and the template
+    in §B of `04` are one text in three places; `AGENTS.md` differs by design only
+    in its first line. On 2026-09-02 the `04` template was found drifted from the
+    live file on the D36/D52(v) bullet **and** carrying the falsified constants
+    with no pointer at all — so an agent bootstrapped from the document the index
+    calls "da allegare in ogni sessione AI" would regenerate a `CLAUDE.md`
+    presenting them as description. That is the only defect in this package that
+    had an execution path. The three are byte-identical again as of `d8b8052`.
+    The question is whether a check should hold them so, or whether it stays a
+    habit; a test comparing the three is cheap, and the cost of having one is
+    that `04` and the two root files become a single editing unit.
 
 ## Open items this amendment does not close
 

@@ -18,7 +18,7 @@ esiste, ed è ciò da cui si scriveranno le voci `Dnn-A1`.
 **La sua numerazione non è trasferibile qui: coincidono solo le voci 1–11.** Il
 foglio numera 12, 13, 14 e 15 ciò che qui è **17, 18, 19 e 21**; lascia senza
 numero, nella sua sezione C, ciò che qui è **12–16**; e non contiene affatto le
-voci **20, 22, 23** né l'**ambito documentale dell'alfabeto**. Un verdetto preso
+voci **20, 22, 23, 24, 25** né l'**ambito documentale dell'alfabeto**. Un verdetto preso
 sul foglio va quindi trascritto **per argomento, mai per numero**. Una copia
 firmabile si rigenera alla fine, con i verdetti dentro, se serve.
 
@@ -31,9 +31,11 @@ voci `Dnn-A1` che ne discendono saranno in inglese come il resto del Decision Lo
 
 1. **Voce 21 per prima** — decide se le voci 1–7 si prendono oggi o dopo il
    supervisore linguistico. È l'unica che riordina tutte le altre, e costa nulla.
-2. **Blocco tecnico, indipendente da A/B:** 8, 9, 10, 11, 17, 18, 19, 20, 23.
-   Sblocca tutto il lavoro implementativo (contratto `freeze_alphabet`, `t_star`,
-   semantic inventory check, governance) senza toccare una costante scientifica.
+2. **Blocco tecnico, indipendente da A/B:** 8, 9, 10, 11, 17, 18, 19, 20, 23, 24,
+   25. Sblocca tutto il lavoro implementativo (contratto `freeze_alphabet`,
+   `t_star`, semantic inventory check, governance) senza toccare una costante
+   scientifica. La 24 va presa **con** la 18: quella decide la forma del deposito,
+   questa il suo perimetro.
 3. **Voce 1** — con il supervisore se la 21 dice «prima», da sola se dice «dopo».
 4. **Voci 2–7** — il registro e ciò che ci sta attaccato.
 5. **Sezione B** — dopo il freeze, ai gate che la richiedono.
@@ -77,6 +79,8 @@ voci `Dnn-A1` che ne discendono saranno in inglese come il resto del Decision Lo
 | 19 | `results/` tracciato o ignorato **+** eccezione `.gitignore` per gli artefatti congelati | — | APERTA | — | — |
 | 20 | Gate `g1`: inventario di copertura obbligatoria — se sì, prima del run canonico | — | APERTA | — | — |
 | 23 | Legare gli input dell'audit a `PROVENANCE.md` | — | APERTA | — | — |
+| 24 | Ambito documentale dell'atto di ratifica: le **nove** dichiarazioni su **sette** file che la ratifica rende false nello stesso istante | 18 | APERTA | — | — |
+| 25 | Se qualcosa debba imporre l'identità delle tre copie delle istruzioni permanenti (`CLAUDE.md`, `AGENTS.md`, template di `04` §B) | — | APERTA | — | — |
 
 ---
 

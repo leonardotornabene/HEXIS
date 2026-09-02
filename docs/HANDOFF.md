@@ -159,7 +159,7 @@ edit was made.
 > blocker was resolved.
 >
 > **Attestation of record — commit
-> `8fd72becbc4359dd6c7af49b98d0897e4f0f9ffd`, working tree clean:**
+> `67789c45a1b1a07e7f92b52766046096b3f71bcf`, working tree clean:**
 >
 > ```
 > uv run pytest -m g0 --strict-markers -q  →  144 passed, 112 deselected  (exit 0)
@@ -168,20 +168,26 @@ edit was made.
 > uv lock --check                          →  Resolved 23 packages        (clean)
 > ```
 >
-> Re-attested 2026-09-02. The delta from `1271d57` is twelve commits and no test:
-> the previous attestation itself (`1680d3a`), the two pre-audit artifact sets
-> under `results/` (`84a9319`, `dc4cf43`), D55's revision and the opening of the
-> ratification record (`61d6496`, `15352a5`), and the post-review pass —
-> `eec419f` and `d8b8052` (D55's two false `git.dirty: true` claims, its
-> untracked-vs-ignored error, the stale 142/17 in its commit recipe, and the
-> template/live `CLAUDE.md` drift), `729679f` and `8fd72be` (the open-finding
+> Re-attested 2026-09-02, closing the post-review pass. The delta from `1271d57`
+> is fifteen commits and no test: the previous attestation itself (`1680d3a`), the
+> two pre-audit artifact sets under `results/` (`84a9319`, `dc4cf43`), D55's
+> revision and the opening of the ratification record (`61d6496`, `15352a5`), and
+> the pass — `eec419f`, `d8b8052` and `67789c4` (D55's two false `git.dirty: true`
+> claims, its untracked-vs-ignored error, the stale 142/17 in its commit recipe,
+> the template/live `CLAUDE.md` drift, and a header that called three
+> pointer-bearing files "untouched"), `729679f` and `8fd72be` (the open-finding
 > pointer into `00`/`03`/`04` and into `README.md`), `4766f35` (one overclaiming
-> docstring in `sequences.py`) and the two intermediate re-attestations this block
-> replaces (`025f236`, `22c6c4f`).
+> docstring in `sequences.py`), `8a8ff00` (ratification items 24–25) and the three
+> intermediate re-attestations this block replaces (`025f236`, `22c6c4f`,
+> `f0704a9`).
 > **Every count is unchanged** — prose and artifacts only, no test and no library
 > behaviour — and it is re-run rather than transcribed because a figure carried
-> over untested is a figure nobody measured. Superseded attestations, same counts,
-> kept for the trail: `d8b805251b261d116251fed31c82bfc2ad5f5610`,
+> over untested is a figure nobody measured. The convention this block follows:
+> the attestation commit is the tip and names its parent, so a content commit that
+> lands after it puts the two out of step and calls for a re-run, not a
+> transcription. Superseded attestations, same counts, kept for the trail:
+> `8fd72becbc4359dd6c7af49b98d0897e4f0f9ffd`,
+> `d8b805251b261d116251fed31c82bfc2ad5f5610`,
 > `4766f355a0dfbf09ec70d7b07ba99b81d62e8e43` and
 > `1271d57e2c1b112d46f59e27f56f5bdd7f0a8c68`.
 >

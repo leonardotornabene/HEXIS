@@ -17,7 +17,7 @@ Version 2.1 — 2026-07-21. Supersedes v2.0 (2026-07-06); v1.0 is superseded and
 > 5. **No chunk-level inference (D34).** Blocks exist only for the descriptive F7 figure.
 > 6. **Tests first (§7).** Write the analytic ground-truth tests (2.000 bits; CE < 0.02; 0.7219; 0.4690 vs ≈ 1.0) and slice tests before or alongside the implementation. Never delete or weaken a test to make it pass.
 > 7. **Freeze discipline (D30).** The confirmatory plan freezes at G2, before ANY model is fitted to real data (reference models included). Pre-G2: synthetic data only. v2.1: G2 sits **after G3** (D44(vii)); O7 must be resolved before G2.
-> 8. **No hallucinated facts.** Corpus facts in §2 were verified 2026-07-05/06; do not overwrite them. If a value is not in the spec or a cited primary source, say so and stop. Sources come only from the bibliographic registry (`03_ROADMAP`, Appendix; D39).
+> 8. **No hallucinated facts.** Corpus facts in §2 were verified 2026-07-05/06; do not overwrite them. If a value is not in the spec or a cited primary source, say so and stop. Sources come only from the bibliographic registry (`03_ROADMAP`, Appendix; D39). **Deferral clause (2026-08-17):** where the G1 enumeration of the pinned r2.18 data contradicts a §2 fact, neither figure may be silently preferred. The contradiction is recorded in `docs/g1_D55_proposal.md` (**PROPOSED, applied to nothing**); until it is ratified, §2 remains the text in force — cite it, flag the open finding, and stop.
 > 9. **log base 2; results in bits.** Match every formula to §4; watch pre-/post-update count ordering in the tree, normalization, leakage, off-by-one.
 > 10. **Determinism, provenance, safety.** `np.random.default_rng(derived_seed)` only; one central run manifest per run + a minimal sidecar per artifact (§6.4, D46); no silent overwrites (`--force`); `data/raw/` immutable and gitignored (CC BY-NC-SA 2.5, D28). Fail loudly on malformed input with precise location.
 > 11. **Cite the spec.** Commits, PRs and non-obvious code comments reference the governing section/decision (e.g. "impl per §4.1; no separate MDL penalty per D18/D32").
@@ -64,6 +64,14 @@ silent deviations. O7 blocks G2/G5; gate order G0 → G1 → G3 → G2 → G4 �
   includes it.
 - Do not permute labels at chunk level (D21): document level, exact schemes (Greek 462 /
   2048; Latin 28 / 256; author 20 / 64; Lysias-merged 56 / 256) — sidedness declared per D43.
+  **Open finding — a pointer, not an amendment (2026-08-17):** the G1 enumeration of the
+  pinned r2.18 data contradicts the document counts these schemes rest on. Greek 𝔻 is 7
+  (11 only if PROSE_POST joins the primary contrast), Latin is 9, and Lysias is absent
+  from the release, so 56 / 256 has no referent. Recomputed constants, both options and
+  every consequence: `docs/g1_D55_proposal.md` — **PROPOSED, applied to nothing**. Until
+  it is ratified, D21/D24/D33/D43 stand exactly as written: treat the numbers above as
+  the binding plan, never as a description of this corpus, and never silently substitute
+  the new ones.
 - Do not run confirmatory P1 inference or freeze G2 before O7 is resolved (D44).
 - Do not import from candidates/ (quarantined non-canonical implementations; D47).
 - Do not treat the representation-analysis cells (alphabet/boundary) as automatic validity

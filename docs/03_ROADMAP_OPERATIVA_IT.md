@@ -50,6 +50,15 @@ Implement `conllu_reader.py` per §3.2 and `alphabet.py` per §3.4 (TOTAL functi
 
 ## FASE 1b — Audit del corpus → Gate G1 (settimana 3, ~10 h)
 
+**Avvertenza (17 agosto 2026) — un puntatore, non un emendamento.** L'audit di G1
+ha trovato che il corpus non corrisponde a §2.3: 𝔻 greco è **7** (11 solo se
+PROSE_POST entra nel contrasto primario), il latino **9**, e **Lisia è assente**
+dalla release. Ne discende che ogni costante di enumerazione citata sotto —
+«11 pseudo-documenti» (Fase 2), «1/2048 e 1/462» e il «rerun Lisia-fusa» (Fase 4) —
+non ha il referente che presuppone. Tutto in `g1_D55_proposal.md`: **PROPOSTO,
+applicato a nulla**. Il testo di questa roadmap resta in vigore così com'è finché
+non è ratificato.
+
 **Obiettivo:** con i treebank acquisiti (`PROVENANCE.md` compilato), produrre l'audit che **congela alfabeto, registro e T\***. **Cosa impari:** le GATE-A/GATE-B; cosa è T* e perché serve (§4.2; ambito del contrasto primario, D51). **Cosa fa l'AI:** `run_audit` → `audit_report.md`. **Decisioni umane:** compili `config/registry_overrides.yaml` mappando ogni prefisso `sent_id` a (autore, opera, regime) contro le tabelle verificate di §2.3; risolvi il duplicato *Inno a Demetra* (O2 — nota D43(vi): la decisione ha conseguenze inferenziali dichiarate sul piano-autore, tracciate come O8); verifichi la partizione autoriale 3/3 (O8); controlli GATE-A (es. vocativi > 2%? — in caso di attivazione vale D50: C0 resta l'unica primaria e le celle `oth` diventano a interpretazione obbligatoria) e GATE-B; verifichi gli inserti in versi di Petronio (O4); prendi nota di T* calcolato (atteso vincolante: "HEX meno Iliade"; ambito: solo contrasto primario, D51). **Criterio di accettazione (G1):** nessuna frase non assegnata; gates risolti; O2/O8 risolti; `alphabet.json`, registro e T* congelati; tutti i test non-tree verdi (G0 incluso). **Touchpoint supervisore linguistico.** **Nota v2.1 (D44(vii)): il Gate G2 non segue più immediatamente G1** — è riposizionato dopo G3, perché il congelamento del piano richiede la risoluzione di O7 (validità del sign-flip), che a sua volta richiede l'albero implementato. L'invariante di D30 resta intatto: prima di G2 solo dati sintetici; i primi fit su dati reali restano a G4, dopo il congelamento. **Prompt-tipo (EN):**
 
 Implement `run_audit.py` producing `audit_report.md` with the contingency tables, GATE-A/B evaluations, per-regime restricted-position fractions (D35), and the T* computation per §4.2 (primary-contrast scope, D51). Do not freeze anything — I review before G1.

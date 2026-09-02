@@ -20,6 +20,21 @@ Sincronizzazione del pacchetto operativo con la **proposta finale** e chiusura d
 | `03_ROADMAP_OPERATIVA_IT.md` | IT | Roadmap v2.1: 13 settimane nominali dentro la tua finestra di 12–15, con il context tree **anticipato alla Fase 2** e la Fase 1 divisa in **1a** (pipeline non-tree → G0) e **1b** (audit → G1; acquisizione in parallelo a G0, D45); criteri di accettazione allineati all'ordine v2.1 dei gate; checklist di comprensione, prompt-tipo; in appendice il **REGISTRO BIBLIOGRAFICO COMPLETO** (le fonti della proposta con crosswalk alla numerazione finale, Chomsky, Galves 2012, Chen 2024, i fondamenti VLMC, le risorse dati, e Greco et al. 2023 aggiunta in v2.1 — con stato di verifica e ruolo nel preprint) | La tua guida quotidiana; il registro serve alla Fase 7 |
 | `04_AI_HANDOFF_PROMPT.md` | EN | Bootstrap prompt v2.1 (regole del disegno a strumento unico + disciplina O7/D44), template `CLAUDE.md`, template di sessione, checklist di revisione | All'avvio di ogni sessione AI |
 
+## Documenti operativi e di lavoro (non normativi)
+
+I cinque documenti sopra sono il pacchetto normativo v2.1 e restano cinque. Questi
+non lo sono, ma un agente che non li conosce lavora al buio.
+
+| File | Contenuto | Stato |
+| --- | --- | --- |
+| `HANDOFF.md` | Attestazione dei gate: comandi, conteggi, commit su cui sono stati misurati | **Unica sede dell'evidenza**; non duplicare i conteggi altrove |
+| `implementation/specs/` | Contratti di implementazione ratificati — le firme lasciate libere dalla Spec (D54(v)) | Vincolanti: `2026-08-13-g0-api-contract.md` porta obblighi che bloccano il freeze di G1 |
+| `probe_conllu.md` | Sonda esplorativa sui file `.conllu` | Descrittivo |
+| `g1_D55_proposal.md` | Emendamento D55 + il checklist delle 23 ratifiche di G1 | **PROPOSTO — applicato a nulla** |
+| `g1_registry_proposal.md` / `.yaml` | Le 30 righe del registro, con l'evidenza per riga | **PROPOSTO** (`_status: PROPOSED`: non produce un audit canonico) |
+| `g1_ratification_record.md` | Il registro dove i verdetti si depositano uno alla volta | Aperto, nessun verdetto |
+| `audit/` | Record pre-applicazione di emendamenti già eseguiti | ARCHIVIATO — non riapplicare |
+
 ## Ordine di lettura consigliato
 
 1. Questo indice.
@@ -37,6 +52,15 @@ Sincronizzazione del pacchetto operativo con la **proposta finale** e chiusura d
 2. Il treebank latino contiene anche Girolamo (Vulgata, esclusa), Properzio, Fedro, Petronio, Svetonio, Augusto; **Cesare è assente**.
 
 3. Release corrente **UD v2.18**; licenza **CC BY-NC-SA 2.5** (nessuna ridistribuzione dei dati nel repository). Novità di verifica della v2.0 (6 luglio 2026): citazioni **Galves et al. 2012** e **Chen et al. 2024** verificate su fonte primaria e inserite nel registro con obbligo di differenziazione nel related work. Novità di verifica della v2.1 (21 luglio 2026): **Greco et al. 2023** verificata su fonte primaria nei materiali di progetto e aggiunta al registro (voce 26); corrispondenza completa fra registro e bibliografia della proposta finale verificata sul testo.
+
+**Avvertenza (17 agosto 2026) — un puntatore, non un emendamento.** L'enumerazione
+G1 dei dati pinnati a r2.18 contraddice i punti 1 e 2 qui sopra: la release contiene
+**6 tragedie** (Sofocle ×5, Eschilo ×1), **3** autori di prosa post-classica, e
+**Cesare è presente** (`phi0448.phi001`, *De bello Gallico*). Analisi completa,
+entrambe le opzioni e ogni costante ricalcolata: `g1_D55_proposal.md` — **PROPOSTO,
+applicato a nulla**. Finché non è ratificato, i punti 1 e 2 restano il testo in
+vigore: trattali come il piano vincolante, mai come una descrizione di questo
+corpus, e non sostituirli in silenzio.
 
 ## Regola d'oro del progetto (invariata)
 

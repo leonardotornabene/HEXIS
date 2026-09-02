@@ -1290,8 +1290,9 @@ Two orders that do work:
    `X`; the tree is now clean) → on `X` run `-m g0`, **`-m g1`** (convention 13),
    the full suite and
    `uv lock --check` → **commit the re-attestation naming `X`**, replacing the
-   block in `docs/HANDOFF.md` (the G0 selection is **144**, not the 142 recorded
-   there, and the full suite is **239 passed, 17 skipped**, not 142/17) →
+   block in `docs/HANDOFF.md` (when this was written that block recorded 142/17;
+   the sequence was executed and `1680d3a` replaced it with a G0 selection of
+   **144**, `-m g1` at **95**, and a full suite of **239 passed, 17 skipped**) →
    regenerate on the still-clean tree (the manifest samples `dirty: false`
    **before** writing) → commit `results/`. The manifests then name the
    attestation commit, which is the first commit at which the code and its

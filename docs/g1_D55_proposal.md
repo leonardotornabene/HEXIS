@@ -18,8 +18,14 @@ ratification. Two things are being proposed here, and they stand differently:
 Prepared at the G1 pre-audit, 2026-08-15/16; revised 2026-08-17 after a full audit
 of the branch, which added §(xvi), took the GATE-A declared readings from three to
 five (§xiii), and attached to option A the two counterweights that were only
-reachable from later sections (§iii). No figure below comes from a model
-(D30 intact — counts only, no fit).
+reachable from later sections (§iii). Revised again **2026-08-20**, after a review
+of the ratification sheet against this document, the spec and the code: added the
+third counterweight to option A and **route A\*** (§iii), the **document scope** of
+the alphabet inventory and the version-control clause (§xv), a fourth expectation
+to the semantic inventory check (§xvi), the **`D29-A1`** row this ledger was
+missing (§Governance), the split of §(viii) between the registry-schema constraint
+and the ordering rule, and checklist items **21–23**. No figure below comes from a
+model (D30 intact — counts only, no fit).
 
 **Provenance, stated precisely.** Two classes of evidence, not one:
 
@@ -131,15 +137,21 @@ Athenaeus 12+13 merge.
 𝔻 = 5 + 2 = 7. Conservative: it preserves the estimand "hexameter vs *classical*
 prose" and keeps PROSE_POST intact as the chronological control arm.
 
-**Read this recommendation with its two counterweights, both established below
-and neither visible from this paragraph alone.** (i) §(iv-bis): if O7 sends P1 to
+**Read this recommendation with its three counterweights, all established below
+and none visible from this paragraph alone.** (i) §(iv-bis): if O7 sends P1 to
 a relabelling test, option A removes confirmatory attainability at document level
 entirely, while option B survives it — the strongest single argument in B's
 favour found anywhere in this amendment. (ii) §5.3 and the touched-documents
 table: with a prose side of **2** documents, the between-document bootstrap is
 not merely "crude" but near-degenerate — resampling 2 with replacement has 3
 distinct outcomes — and the per-document dot plots (F3–F4) carry 7 points, of
-which 2 carry the entire prose group. The recommendation stands on the estimand
+which 2 carry the entire prose group. (iii) §(v): **even with the sign-flip
+standing**, P2 cannot be the *first* rejection of the Holm family under option A,
+its floor 0.0476 exceeding α/2 = 0.025 — so P2 rejects only if P1 rejects first
+**and** P2 lands exactly on its floor, i.e. the 5 HEX and 2 PROSE values separate
+perfectly, one arrangement out of 21. Under option A the confirmatory layer
+therefore rests on P1 alone, which is the one statistic whose validity O7 leaves
+open. The recommendation stands on the estimand
 and on keeping the chronological control arm; it does not stand on power.
 
 **Option B — GRC-PROSE := PROSE_CLASS ∪ PROSE_POST**, mirroring Latin's
@@ -186,6 +198,35 @@ consequences:
 
 If option B is chosen it is a **pre-model redesign**, declared as such in the
 preprint, taken with the linguistic supervisor — not a technical correction.
+
+**Route A\* — option A with a pre-registered conditional switch (added
+2026-08-20).** The A/B choice is being taken **before** the one study that would
+inform it. O7 is a G3 study, and the roadmap's G3 description says its size
+profile is available *after* G1 — so the amendment that fixes 𝔻 must be filed
+before the calibration that says whether 𝔻 = 7 can carry a confirmatory family at
+all. That loop is real, and it has a third exit which is neither A nor B but a
+rule about them:
+
+> **Primary contrast = option A.** If O7 invalidates the exact sign-flip for P1
+> **and** the replacement scheme it validates has, at 𝔻 = 7, a minimum attainable
+> one-sided p greater than α/2 = 0.025, the primary contrast becomes option B.
+> Both T\* values are frozen at G1 from the ratified registry by the same rule
+> (`t_star`, §xi, run twice): **T\*_grc = 9,346 under A and 11,043 under B**.
+
+What it costs: `t_star` runs twice and both results are frozen; `D25-A1` (the
+claim template) is filed **conditionally** rather than not at all; `D37-A1` (the
+fit budget) states both figures; and the preprint declares the rule together with
+its trigger. What it buys: the branch in which option A leaves nothing attainable
+at document level (§iv-bis) stops being a discovery at G3 and becomes a
+contingency named before any model is fitted.
+
+**Why this is not estimand-shopping.** The trigger is a property of the
+*randomization scheme*, measured on **synthetic** data, and it is written down
+before the calibration runs. No real-data quantity enters it, D30 is untouched,
+and every real-data number that could inform the choice — the document counts,
+the token counts, both T\* values, the GATE-A shares — is already on the table
+today. The alternative is not a purer design: it is the same switch taken at G3
+without having been declared.
 
 ### (iv) Recomputed enumeration constants under option A
 
@@ -388,6 +429,15 @@ unique within it. Without it the ordinals of the parts interleave and a merged
 document produces duplicate or scrambled ranks. This is the only reason
 `part_order` appears in the registry proposal, and it is why the Athenaeus merge
 decision and the `sent_ord` rule have to be ratified together.
+
+**Which half rides with the merge (refined 2026-08-20).** "Together" is one word
+for two objects. The **constraint** is a registry-schema rule — it is what makes a
+merged document well-formed — so it belongs with the merge decision (checklist 4)
+and with the freeze. The **ordering rule** is read only by `run_encode` and the
+P-BOUND arm, so it stays where the checklist puts it (13). Ratifying the merge
+without the constraint leaves `part_order` accepted and unvalidated
+(`KNOWN_OVERRIDE_FIELDS`), which is correct only for as long as nothing reads it —
+and by then the file it lives in is `RATIFIED`.
 
 Bearing: under P-RESET (primary, D10) contexts truncate at sentence start, so
 sentence order does not affect the primary readings. It affects the P-BOUND
@@ -793,7 +843,7 @@ describe one file, and no decision anywhere resolves them. Until one is chosen t
 function cannot be written, so **this blocks the G1 freeze independently of every
 scientific question in this amendment**.
 
-**Three things must be decided together**, and deciding only the first leaves the
+**Four things must be decided together**, and deciding only the first leaves the
 function unwritable.
 
 **(1) Shape.** Two options, each stated as exactly one thing:
@@ -810,7 +860,44 @@ artifact per pair makes that structural rather than conventional, leaves §3.7's
 declared shape literally intact, and makes the pooling mistake unrepresentable
 rather than merely rejected.
 
-**(2) Scope of the freeze — which alphabets, not just which shape.** §3.4 speaks
+**(2) Document scope of the inventory — which documents constitute |A|.** §3.4
+says only "frozen alphabet = symbols observed at G1". Observed over **which
+documents**? Nothing in the spec, the Decision Log or this amendment says, and the
+audit stage answers it by default: `run_audit` passes every token of the language,
+`EXCLUDED` included. That default is one act away from being frozen.
+
+It is not cosmetic. |A| enters every predictive probability through
+`P_s(a) = (n_s(a) + β)/(N_s + β·|A|)`, and §4.1 names β·|A| "the implicit MDL model
+cost at work" — the term that decides how deep the tree is allowed to go. Measured
+on the second pre-audit run (C0, `ud23` / `drop`):
+
+| document scope | \|A_grc\| | β·\|A_grc\| | \|A_la\| | β·\|A_la\| |
+| --- | --- | --- | --- | --- |
+| every document of the language — **today's default** | 106 | 53.0 | 102 | 51.0 |
+| every document except `EXCLUDED` — *recommended* | 106 | 53.0 | **101** | 50.5 |
+| the primary contrast only | **86** (A) / 96 (B) | 43.0 / 48.0 | 98 | 49.0 |
+
+Two facts the table makes concrete. In Latin exactly one symbol — `CCONJ:nmod` —
+exists in the corpus **only** because of Jerome, a document assigned `EXCLUDED`,
+which enters no estimand, no regime aggregate and no T\*: as things stand it
+receives pseudo-mass in every Latin model the study fits. In Greek the
+primary-contrast reading would cut β·|A| by 19% and, worse, would make |A| a
+**function of the A/B decision** — the choice of contrast would silently retune the
+instrument.
+
+**Recommendation: every document of the language except `EXCLUDED`.** It is the
+line §(xiii) already draws for GATE-A reading 3, and for the same reason: *a census
+over everything, an effect only over the material the study analyses.* It also
+survives two tests the narrower reading fails — |A| stays independent of the A/B
+choice, and the exploratory arms (tragedy, and `PROSE_POST` under option A) keep
+their symbols inside the frozen alphabet, where §4.3's fallback covers "unseen in
+training" but nothing covers "outside the alphabet".
+
+Cost of adopting it: one filter in the freeze stage, and one symbol fewer in Latin.
+Cost of leaving it undecided: the number is frozen by default, which is the failure
+mode this amendment exists to prevent.
+
+**(3) Scope of the freeze — which alphabets, not just which shape.** §3.4 speaks
 of "the frozen alphabet" in the singular, but §5.6 runs three alphabet variants
 (`ud23`, `ud23_oth`, `upos_only`) across two languages. Either:
 
@@ -823,7 +910,7 @@ of "the frozen alphabet" in the singular, but §5.6 runs three alphabet variants
   freeze is for. The cost is computing five extra inventories from a token table
   the audit has already built.
 
-**(3) Atomicity — and no re-freezing.** Whichever shape is chosen, **all the
+**(4) Atomicity — and no re-freezing.** Whichever shape is chosen, **all the
 artifacts of the freeze are published in one act or none are**, under a single
 run_id, with the same preflight-and-rollback discipline the audit already uses.
 Option (B)'s multiple files must **not** be read as licensing a language or a
@@ -831,7 +918,16 @@ variant to be re-frozen later on its own: after G1 nothing is re-frozen at all,
 and a correction is a Decision-Log amendment with its own re-run, not a quiet
 rewrite of one file.
 
-**(4) `freeze_alphabet` contract**, to be ratified with the above:
+**And version-controlled in the same act (added 2026-08-20).** `data/processed/`
+is gitignored, under a note that defers the re-include exception for the derived
+statistics D28 does publish — naming `alphabet.json` among them — to **G4/G5**. But
+`alphabet.json` is frozen at **G1**: as things stand the freeze writes its
+artifacts into an ignored directory and "frozen" has no versioned referent. The
+`.gitignore` exception is part of the freeze, not of a later gate. Whether
+`results/` is tracked is a different question (checklist 19) and this clause holds
+under either answer.
+
+**(5) `freeze_alphabet` contract**, to be ratified with the above:
 
 ```python
 def freeze_alphabet(
@@ -845,6 +941,11 @@ def freeze_alphabet(
 - **refuses a token table carrying more than the named language**, exactly as
   `observed_alphabet` does — the guarantee must not weaken at the moment of
   freezing;
+- **records its own document scope** in the §3.7 payload — the canonical
+  `doc_id`s the inventory was computed over, or their count plus a digest — so the
+  artifact states the rule it was built under, and the semantic inventory check of
+  §(xvi) can verify it against the ratified registry instead of trusting the
+  caller;
 - writes a sidecar per artifact and is recorded in the run manifest;
 - is called once per (language, variant) in scope, from a single stage that
   publishes them atomically.
@@ -894,6 +995,10 @@ below):
 - expectation (3) becomes the enumerations recomputed here, so the check remains
   what it was meant to be — the derived last line that catches a registry edit
   silently changing an attainable p floor;
+- a **fourth expectation** is added: the frozen alphabet's declared document
+  scope equals the analysed documents of the ratified registry (§xv(2)). The check
+  exists to catch a registry edit that silently moves a derived quantity, and |A|
+  is one of them;
 - it runs **in the canonical audit, before anything is frozen**, and fails loud;
 - it is written **with its tests**, like every other rule in this stage.
 
@@ -911,22 +1016,23 @@ went stale.
 
 A single omnibus entry is **not** that form. The decisions touched:
 
-- **unconditionally (10):** D04, D06, D20, D21, D24, D33, D43, D44, D46, D51;
+- **unconditionally (11):** D04, D06, D20, D21, D24, **D29**, D33, D43, D44, D46,
+  D51 — D29 added 2026-08-20, see its ledger row and checklist 21;
 - **only under option A (1):** D37 (the fit budget);
 - **only under option B (1):** D25 (the claim template).
 
-So **eleven** amendments under either option, **twelve** entries in total across
+So **twelve** amendments under either option, **thirteen** entries in total across
 both. `author_block` is a **second clause of `D43-A1`**, not a further decision —
 it does not raise the count. Two genuinely **new** decisions sit alongside them:
 `D55` (the corpus finding and the §xiv conventions) and `D56` (the `alphabet.json`
 schema, §xv).
 
-The ledger below therefore has **sixteen rows for fourteen items**: the twelve
+The ledger below therefore has **seventeen rows for fifteen items**: the thirteen
 amendments, plus `D55` and `D56`. The two extra rows are `D43-A1`'s second clause,
 already excluded from the count above, and **`DN-2`**, which is a *deferred node*
 of §IV and not a frozen decision — it is tabled because option A voids its premise
 and option B widens it, so ratifying either leaves it in a different state than it
-is in now, but amending it is not among the eleven.
+is in now, but amending it is not among the twelve.
 
 The conforming shape is one `Dnn-A1` per touched decision plus those two new
 entries. Presented as a ledger below so ratification is mechanical; **which route
@@ -960,6 +1066,7 @@ ratification.
 | `D24-A1` | Latin P1 2⁸ = 256, P2 C(8,2) = 28, "cannot enter the Holm family" | 2⁹ = 512, C(9,2) = 36, and qualitative **by design decision** | Caesar is present (§ii, §vi); the exclusion rationale was a Holm misreading (§v) |
 | **`D25-A1`** (option B only) | claim template "…differs from **classical prose**…" | "…differs from **prose**…", with period declared a confound *inside* the primary contrast | under option B the prose side spans Herodotus to Athenaeus, so the frozen claim template would state something the design no longer measures (§iii). **Not needed under option A** |
 | **`D06-A1`** | "GATE-A: any excluded label > 2% of raw tokens in any regime at audit" — denominator, category scope, regime scope, the standing of exploratory regimes and the language scope all left to reading | the **five** readings of §(xiii) made explicit: denominator = all raw syntactic words **of the regime**; category scope = **per excluded-deprel label**, over the census of retained-UPOS tokens outside the 23 **independently of the drop/`oth` policy**; regime scope = the **analysed** regimes, `EXCLUDED` censused but unable to fire the verdict (GATE-B, being a flag and not an escalation, stays unnarrowed); exploratory regimes (`OTHER_VERSE`, `PROSE_POST`) **keep** their firing power even where the primary contrast excludes them; shares are computed per `(language, regime)` and the **verdict is one per run**, so a trigger in either language escalates the whole design | the audit cannot evaluate GATE-A without fixing all five, and three are changes of substance: counting drops would make the gate structurally unable to fire in the `(ud23_oth, ·)` cells D50 makes mandatory to interpret; letting `EXCLUDED` fire would let a document that enters no estimand impose D50's caveat on every primary conclusion; and readings 4–5 decide whether that caveat can be imposed by a regime outside the primary contrast (the likeliest trigger today: `OTHER_VERSE` at 1.28%) or by the other language |
+| **`D29-A1`** *(added 2026-08-20)* | supervision touchpoints "re-anchored to v2 gates: **after G1** (linguistic supervisor: registry + alphabet)" | the linguistic touchpoint precedes the **freeze**; the mathematical (after G3) and pre-submission touchpoints are unchanged | its object *is* what G1 freezes. A registry and an alphabet reviewed after they are frozen cannot be changed by the review: every correction would then cost an amendment with a re-run, and the seven catalogue-only rows would receive their second pair of eyes only after the act that makes them binding. D29 is FROZEN, so the reordering is an amendment and not a reading — and it was missing from this ledger until 2026-08-20 |
 | `D33-A1` | multiplicity wording resting on "floor > 0.025 ⇒ unattainable" | Holm restated: exceeding α/2 puts a test out of reach *first*, not out of reach | §(v) |
 | `D37-A1` *(option A only)* | "Total 13 cells. **Budget: ≈ 330 fits/cell** ≈ 10–20 laptop-minutes ⇒ ≈ 3–5 h total" — 330 = 11 docs × 3 fits × 10 seeds | 13 cells **unchanged**; budget recomputed to **≈ 210 fits/cell** (7 × 3 × 10) and the total scaled accordingly | D37 does not enumerate documents, so the cell count is untouched; what it freezes and what the corpus changes is the **fit budget**. Under option B, 11 × 3 × 10 = 330 stands and **no amendment is needed** |
 | `D43-A1` | tiers, floors and sidedness at 11 documents / 6 author blocks | recomputed floors with sidedness per §(iv), §(vii); D43(iv) Lysias clause removed | the corpus inventory |
@@ -968,7 +1075,7 @@ ratification.
 | `D51-A1` | T\* scope with expected binding condition "HEX minus Iliad" | T\* per §(ix); binding condition recorded as observed; learning-curve grid per §(x) | the binding condition moved to the prose side under option A |
 | **`D55`** (new) | — | the corpus finding, and §(xiv)'s conventions | not an amendment: a new question the corpus posed. The A/B decision itself belongs to `D04-A1`, since that is the entry that freezes the contrast |
 | `D43-A1` *(second clause, if `author_block` is adopted)* | author blocks named in prose by D43(v); the registry schema has only `author` | schema gains **`author_block`**, defaulting to `author` | `author` is bibliographic attribution; the author block is **D43(v)'s randomization unit**. One field for both would decide O8 by transcription (registry proposal, question 5). Belongs to D43, **not** D03: D03 governs the release pin, the splits and document derivation, and says nothing about author blocks. Schema impact on §2.3 / §3.3 |
-| **`D56`** (new) | §3.7: `alphabet.json` = `{symbol: id}` + one variant tag, **no language field** | one of the two shapes in §(xv), plus the freeze scope and the `freeze_alphabet` contract | §3.7 and §4.1 contradict each other today, and `freeze_alphabet` cannot be written until that is resolved — so **G1 cannot close without this**. A **new decision**, not an amendment to D46: D46 governs run manifests and sidecars, not artifact schemas |
+| **`D56`** (new) | §3.7: `alphabet.json` = `{symbol: id}` + one variant tag, **no language field**, and no statement anywhere of which **documents** the observed inventory covers | one of the two shapes in §(xv), plus the **document scope** of the inventory (§xv(2)), the freeze scope, atomicity including the `.gitignore` exception, and the `freeze_alphabet` contract | §3.7 and §4.1 contradict each other today, and `freeze_alphabet` cannot be written until that is resolved — so **G1 cannot close without this**. A **new decision**, not an amendment to D46: D46 governs run manifests and sidecars, not artifact schemas |
 | `DN-2` (deferred node) | "whether Tier 2 spends α on P1 alone (one-sided floor 0.0156 < 0.025)" | **premise void under option A** (floor 0.031 > 0.025); under option B the question widens from "P1 alone" to the whole Tier-2 family, which is attainable | §(iii), §(vii) |
 
 ## Documents this amendment touches, if ratified
@@ -981,7 +1088,7 @@ the files below it that carry no constant but encode the same assumptions:
 | --- | --- |
 | `docs/01_MASTER_SPEC.md` | §2.3 works tables **and the registry schema** (`author_block`, if adopted); §2.6 errata E1, E2; §3.3 (document identity, `part_order`, `sent_ord`); §3.4 (GATE-A readings); §4.2 (𝔻 = 11, T\*, learning-curve grid and its protocol-(c) extension); §5.1 (462 / 2048 / 20 / 64 / 56 / 256); §5.2 (per-regime pool fractions quoted at 11 documents); §5.3 (see below); §5.4 (Holm wording); §5.6 (13 cells over 11 documents); §5.7 (Latin 28 / 256 and its rationale); §5.8 (confound register, if option B); §6.1 (artifact naming); §6.4 (manifest fields); §8 (F3–F4 "11 points", T1–T3 shapes) |
 | `docs/02_DECISION_LOG.md` | **D04** (the contrast and the composition it is frozen on), D20, D21, D24, **D25** (option B only), D33, D37, D43 (floors, and `author_block` if adopted), D44, D46, D51; the new `alphabet.json` decision (§xv); open items O1, O2, O4, O8; deferred node DN-2 |
-| `docs/03_ROADMAP_OPERATIVA_IT.md` | the G1 and G3 phase descriptions (11 pseudo-documents at O7) |
+| `docs/03_ROADMAP_OPERATIVA_IT.md` | the G1 and G3 phase descriptions (11 pseudo-documents at O7); the placement of the linguistic touchpoint inside the G1 phase, if `D29-A1` is ratified |
 | `docs/04_AI_HANDOFF_PROMPT.md` | the enumeration constants quoted to a fresh agent |
 | `CLAUDE.md` | the "exact schemes" line (Greek 462 / 2048; Latin 28 / 256; author 20 / 64; Lysias-merged 56 / 256) — **and the pointer note added under it on 2026-08-17**, which says this amendment is PROPOSED and applied to nothing. Ratifying makes that note false, so it is replaced by the ratified constants in the same act; it exists only because these two files are loaded as standing instructions in every session, so a superseded constant left unflagged is re-derived indefinitely (owner-authorized, no value changed) |
 | `AGENTS.md` | the same line and the same note, mirrored — the two files are byte-identical below their first line, and any edit to one is an edit to both |
@@ -991,6 +1098,7 @@ the files below it that carry no constant but encode the same assumptions:
 | `docs/01_MASTER_SPEC.md` §5.3 | "5–6 documents per group make these CIs crude" and "per-document dot displays (11 points, F3–F4)" — under option A one group holds **2** documents, where a between-document bootstrap is not crude but near-degenerate (resampling 2 with replacement has 3 distinct outcomes), and the dot plots carry 7 points |
 | `config/default.yaml` | `corpus.primary_contrast` (flat pair, `PROSE_ALL` not a label), `scores.t_star` (scalar, must be per language), `scores.learning_curve_T` (needs §(x)'s two-part reading) |
 | `config/registry_overrides.yaml` | empty; receives the ratified rows **and** `_status: RATIFIED` |
+| `.gitignore` | `data/processed/` is ignored under a note deferring the re-include exception for `alphabet.json` to G4/G5 — but the artifact is created at G1, so the exception belongs to the freeze (§xv(4)) |
 | `src/hexis/pipeline/run_null_calibration.py`, `tests/test_null_calibration.py` | scaffolds sized for 11 pseudo-documents; O7 must be rebuilt per §(xii) — at G3, after ratification |
 | `02_DECISION_LOG.md` §IV, `DN-2` | premise void under option A; widened under option B (ledger above) |
 
@@ -1006,9 +1114,13 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
 
 ### A. Blocks the G1 freeze — the freeze cannot proceed without these
 
-1. **Option A or B** for the Greek primary contrast — §(iii), with the
-   refit-remedy dependency of §(iv-bis) and the 2-document bootstrap of §5.3 in
-   view. This *is* `D04-A1`.
+1. **Option A, option B, or route A\*** for the Greek primary contrast — §(iii),
+   with all three counterweights in view: the refit-remedy dependency of
+   §(iv-bis), the Holm structure of §(v) (under A, P2 can never be the family's
+   *first* rejection, so the confirmatory layer rests on P1 alone), and the
+   2-document bootstrap of §5.3. Route A\* is option A plus a pre-registered
+   conditional switch keyed on the O7 outcome, with both T\* values frozen
+   (§iii, added 2026-08-20). This *is* `D04-A1`.
 2. **The registry: all 30 rows.** Ratification covers every `PROPOSED /
    UNVERIFIED` row, not only the seven catalogue-only ones — regime, `meter`,
    `period`, `flags` and `source_urn` for each of the 30. The seven are simply the
@@ -1016,7 +1128,11 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
 3. **Caesar's regime** — PROSE_CLASS as proposed, or excluded with a stated reason
    that is not size (§vi).
 4. **Athenaeus 12+13** — merge or not; decides 29 vs 30 documents and, under
-   option B, whether 𝔻 = 11 or 12 (registry proposal Q1).
+   option B, whether 𝔻 = 11 or 12 (registry proposal Q1). **With it, the
+   `part_order` constraint** (mandatory, integer, present and unique within every
+   merged group), which is what makes a merged document well-formed and is the
+   half of §(viii) that belongs to the registry schema; the ordering rule itself
+   stays at 13 (added 2026-08-20).
 5. **Book-level documents** — Herodotus `.1`, Thucydides `.1`, Diodorus `.11` each
    standing as one document (registry proposal Q3).
 6. **`period` vocabulary and values** — §2.3 fixes neither (registry proposal,
@@ -1030,9 +1146,15 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
    is the reading that can actually bind; and the **language scope** (shares per
    language, one verdict per run, so a Latin excess escalates the Greek design).
    The gate cannot be evaluated without all five (§xiii, `D06-A1`).
-9. **`alphabet.json`: shape, freeze scope, atomicity, and the `freeze_alphabet`
-   contract** (§xv, `D56`). Blocks the freeze on its own, independently of every
-   scientific question here.
+9. **`alphabet.json`: shape, document scope, freeze scope, atomicity, and the
+   `freeze_alphabet` contract** (§xv, `D56`). Blocks the freeze on its own,
+   independently of every scientific question here. **Document scope added
+   2026-08-20**: nothing says which documents the observed inventory covers, and
+   the default about to be frozen puts a symbol contributed only by an `EXCLUDED`
+   document (`CCONJ:nmod`, Jerome) into the alphabet of every Latin model, while
+   the narrower reading would make |A| a function of the A/B decision (§xv(2)).
+   Atomicity now includes the `.gitignore` exception without which the frozen
+   artifacts are written to an ignored directory.
 10. **T\*** — the `t_star` signature (§xi) and the two config keys that must hold
     its result per language (§xi).
 11. **The semantic inventory check** (§xvi) — confirm that its reference set moves
@@ -1041,23 +1163,40 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     The check itself is then implemented, with its tests, and must pass before
     anything is frozen; what cannot be settled without you is what it should be
     checking against, since the values the contract names are the ones this
-    amendment replaces.
+    amendment replaces. Includes the fourth expectation added 2026-08-20: that the
+    frozen alphabet's declared document scope matches the ratified registry.
+
+21. **The linguistic supervisor's touchpoint — before or after the freeze**
+    (`D29-A1`, new 2026-08-20). D29 anchors it "after G1"; its object is the
+    registry and the alphabet, which is exactly what G1 freezes. This item decides
+    the **order of the rest**: items 1–7 are the touchpoint's subject matter, so
+    ratifying them today pre-empts the review this item would institute. Strictly
+    speaking it blocks the freeze only if the answer is "before" — which is why it
+    is the one to answer first.
 
 ### B. Blocks later gates, not G1
 
 12. **Latin family membership** — own family of 2 or joined into 4 (§vi). Bears on
     G5's inference, not on what G1 freezes.
-13. **`sent_ord` / `part_order`** — §(viii). The audit and the freeze read no
+13. **The `sent_ord` ordering rule** — §(viii). The audit and the freeze read no
     sentence order; `run_encode` and the P-BOUND arm do, and must not run until
-    the rule exists **with its tests**. Includes the `part_order` *constraint*
-    (mandatory, integer, present and unique within every merged group): today the
-    field is accepted as declared-but-unread (`KNOWN_OVERRIDE_FIELDS`) and nothing
-    validates it, which is correct only for as long as nothing reads it.
+    the rule exists **with its tests**. The `part_order` *constraint* that used to
+    sit here moved to **item 4** on 2026-08-20: it is a registry-schema rule, it
+    rides with the merge decision, and leaving it here would ratify a merge whose
+    well-formedness nothing validates.
 14. **Learning-curve grid** — §(x). A G6 display; needed before F8 is drawn.
 15. **O4** — Petronius verse insets. Sentence-level exclusion would change the
     encoded corpus, so it is needed before `run_encode`, not before the freeze.
 16. **O7's own resolution** — a G3 study; §(iv-bis) records what each outcome
     implies, and D44 already blocks G2/G5 on it.
+
+22. **Whether the Latin arm survives its own T\*** (new 2026-08-20). §(ix)
+    records T\*_la = **638** retained tokens — two orders of magnitude below the
+    size §4.1 profiles against — and that all three arms trip §4.2's pre-registered
+    `T* < 15k` contingency (Greek 9,346 under A, 11,043 under B). The contingency
+    itself is automatic and is filed as `D51-A1`; what no document decides is
+    whether L1 at 638 tokens remains a design arm or becomes an appendix. Bears on
+    G6, not on the freeze: T\* is frozen either way.
 
 ### C. Repository and process governance — not scientific gates at all
 
@@ -1066,13 +1205,30 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     with the rest).
 18. **Route (a) or (b)** for filing the amendments (§Governance).
 19. **Whether `results/` is tracked or gitignored**, and the commit order
-    (§Committing this package). Purely a Git question.
+    (§Committing this package). A Git question — with one half that is not
+    optional under either answer (added 2026-08-20): `data/processed/` is
+    gitignored, and its re-include exception for the frozen artifacts is noted for
+    G4/G5 while the artifacts it names are created at **G1**. That exception lands
+    with the freeze (§xv(4)).
 20. **The `g1` gate — decided and implemented (convention 13), ratification
     pending with the rest.** The marker plus the enforcement it inherits from G0
     is in force; what is *not* done, deliberately, is a D52(ii)-style inventory of
     mandatory G1 areas by test name. That step presupposes a normative definition
     of the G1 set, and no decision provides one — D52 governs G0 only. If you want
-    it, it is a Decision-Log matter, not a convention.
+    it, it is a Decision-Log matter, not a convention. **Sequencing, added
+    2026-08-20:** if you want it, it has to exist *before* the canonical audit run,
+    not after — after the freeze the gate has guarded nothing. That is the exact
+    failure that reopened G0, where `-m g0` exited 0 with three mandatory areas at
+    zero coverage.
+
+23. **Binding the audit's inputs to `PROVENANCE.md`** (new 2026-08-20; promoted
+    from the open items). Conventions 7–8 guarantee that a run describes the bytes
+    it read; nothing asserts that those bytes are the five `.conllu` files pinned
+    at r2.18. The record is not missing — the manifest carries every input digest
+    and `PROVENANCE.md` carries the declared ones — only the comparison is manual.
+    The freeze is not blocked by this; the question is whether the canonical run
+    should refuse to proceed when the two disagree. Recommended: yes, and before
+    the canonical run, since that is the run whose inputs get frozen.
 
 ## Open items this amendment does not close
 
@@ -1091,11 +1247,14 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
   family of 4.
 - **Binding the audit to `PROVENANCE.md`** (§xiv) — needs a machine-readable
   provenance format before the exact five files and SHA-256s can be enforced.
+  Promoted to a decision on 2026-08-20: **checklist 23**.
 - **`sent_ord` and `part_order`** (§viii) — the rule is proposed, not implemented,
   and neither is the `part_order` constraint that goes with it (mandatory,
   integer, unique within a merged group). Nothing in the audit or the freeze reads
   sentence order, so it does not block them; `run_encode` and the P-BOUND arm do,
-  and must not run until it exists with its tests.
+  and must not run until it exists with its tests. Split on 2026-08-20: the
+  **constraint** is checklist 4 (it rides with the merge), the **rule** is
+  checklist 13.
 - **The semantic inventory check** (§xvi) — tracked in the ratified G0 API
   contract §5, still unimplemented, and now unsatisfiable as written because its
   expectations are the values this amendment replaces. Its substance was performed

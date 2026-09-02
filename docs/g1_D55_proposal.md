@@ -1271,10 +1271,13 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     search while asserting E1 and E2 as *founding* verified facts. **Do not grep
     the heading:** the pointers are worded four ways ("a pointer, not an
     amendment", "a pointer, not a correction", "un puntatore, non un
-    emendamento", "Deferral clause"). **Do not grep the claim either:**
-    `README.md` wraps "applied to / nothing" across a blockquote-marked line
-    break, so both a plain and a whitespace-normalised phrase search miss it —
-    verified 2026-09-02, the count came back 8 of 9. The best handle is the
+    emendamento", "Deferral clause"). **Do not grep the claim either:** it is
+    worded four ways too, and `README.md` additionally wraps "applied to /
+    nothing" across a blockquote-marked line break. Measured 2026-09-02: a plain
+    phrase search returns **6 of 11**, and a whitespace-normalised one that also
+    joins the following line returns **9 of 11** — the wrap is recoverable, the
+    wording variance is not. The same measurement read 8 of 9 while this item's
+    own count was nine. The best handle is the
     citation `g1_D55_proposal.md` — but, the fourth trap, **it does not catch them
     all.** It **under-selects**: the `-m g1` paragraph of `HANDOFF.md` declares the
     package PROPOSED while naming only `D55 §xiv`, so the citation search returns

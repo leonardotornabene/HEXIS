@@ -4,9 +4,15 @@
 ratification. Two things are being proposed here, and they stand differently:
 
 - **Every scientific and governance item — §(i)–(xiii), §(xv)–(xvi) — is applied
-  to nothing.** `01_MASTER_SPEC.md`, `02_DECISION_LOG.md`, `CLAUDE.md`,
-  `AGENTS.md`, `README.md` and `config/` are untouched, and no alphabet, registry
-  or T\* is frozen.
+  to nothing.** No value in `01_MASTER_SPEC.md`, `02_DECISION_LOG.md`,
+  `CLAUDE.md`, `AGENTS.md`, `README.md` or `config/` has been changed, and no
+  alphabet, registry or T\* is frozen. What some of those files did receive,
+  between 2026-08-17 and 2026-09-02, is a **pointer** — nine statements across
+  seven files recording that this amendment exists and applies to nothing, so
+  that a superseded constant is never re-derived as a description of the corpus.
+  They change no figure, and they all retire in the act of ratification
+  (checklist item 24). "Untouched" would be the tidier word and it would be
+  false.
 - **The thirteen software conventions in §(xiv) are implemented**, because the evidence
   in this document could not be produced without them: two audit runs that differ
   only in mode would otherwise overwrite each other, and an unratified registry
@@ -24,8 +30,12 @@ third counterweight to option A and **route A\*** (§iii), the **document scope*
 the alphabet inventory and the version-control clause (§xv), a fourth expectation
 to the semantic inventory check (§xvi), the **`D29-A1`** row this ledger was
 missing (§Governance), the split of §(viii) between the registry-schema constraint
-and the ordering rule, and checklist items **21–23**. No figure below comes from a
-model (D30 intact — counts only, no fit).
+and the ordering rule, and checklist items **21–23**. Revised again
+**2026-09-02**, after an independent integral review of the branch: corrected the
+two false `git.dirty: true` claims and the untracked-vs-ignored error below,
+retired the stale 142/17 in the commit recipe, added `docs/00_LEGGIMI_INDICE.md`
+and `docs/HANDOFF.md` to the touched-documents table, and added checklist items
+**24–25**. No figure below comes from a model (D30 intact — counts only, no fit).
 
 **Provenance, stated precisely.** Two classes of evidence, not one:
 
@@ -1095,6 +1105,7 @@ the files below it that carry no constant but encode the same assumptions:
 | `CLAUDE.md` | the "exact schemes" line (Greek 462 / 2048; Latin 28 / 256; author 20 / 64; Lysias-merged 56 / 256) — **and the pointer note added under it on 2026-08-17**, which says this amendment is PROPOSED and applied to nothing. Ratifying makes that note false, so it is replaced by the ratified constants in the same act; it exists only because these two files are loaded as standing instructions in every session, so a superseded constant left unflagged is re-derived indefinitely (owner-authorized, no value changed) |
 | `AGENTS.md` | the same line and the same note, mirrored — the two files are byte-identical below their first line, and any edit to one is an edit to both |
 | `README.md` | the design summary's document counts and constants — "eleven documents" six times, "twelve tragedies", the Greek and Latin prose counts, 2,048 / 462; at lines 116–125 they carry the O7 argument rather than decorate it. Plus the pointer added 2026-09-02, per item 24 |
+| `docs/HANDOFF.md` | **added 2026-09-02.** Its G1 status block states that nothing is frozen, that the registry is unratified, and that this amendment is PROPOSED and applied to nothing — ratification falsifies all three at once (item 24). The gate attestation it carries is *not* affected: test counts are evidence measured at a commit, not a constant of the design |
 | `docs/implementation/specs/2026-08-13-g0-api-contract.md` | constants quoted in the ratified API contract — and, more than constants, **§5's semantic inventory check**: its reference set (§2.3) and its expectations (Greek HEX 5 / PROSE_CLASS 6, Latin HEX 2 / PROSE 6; 462 / 2048, 28 / 256, 56 / 256, 20 / 64) are exactly what this amendment replaces, so the check is unsatisfiable as written and must be re-pointed at the ratified registry before the freeze (§xvi) |
 | `src/hexis/stats/permutation.py:4` | module docstring: "Greek 2^11 = 2048 … Latin 2^8 = 256" |
 | `docs/01_MASTER_SPEC.md` §5.3 | "5–6 documents per group make these CIs crude" and "per-document dot displays (11 points, F3–F4)" — under option A one group holds **2** documents, where a between-document bootstrap is not crude but near-degenerate (resampling 2 with replacement has 3 distinct outcomes), and the dot plots carry 7 points |

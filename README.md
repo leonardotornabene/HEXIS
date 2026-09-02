@@ -43,6 +43,19 @@ The Greek treebank holds 13,919 sentences and 202,989 tokens, the Latin 2,273
 sentences and 28,868 tokens. Those are the totals of the treebanks; the analysed
 sample is smaller.
 
+> **Open finding (2026-08-17) — a pointer, not a correction.** Everything from
+> here to the end of "Current status" describes the corpus as the specification
+> enumerates it. The G1 audit of the pinned UD r2.18 release does not match that
+> enumeration: Greek classical prose holds **two** documents, not six, so eleven
+> becomes **seven**; **six** tragedies are present, not twelve; Latin prose holds
+> **seven** documents, not six. The permutation counts that follow from the old
+> figures — 2,048 and 462 — therefore have no referent in this release, and
+> neither does the Lysias-merged scheme. The full analysis, both options and every
+> recomputed constant are in `docs/g1_D55_proposal.md`: **PROPOSED, applied to
+> nothing.** Nothing below has been rewritten, because rewriting it before the
+> amendment is ratified would be exactly the silent change this project forbids.
+> Read the figures below as the binding plan, never as a description of the data.
+
 **The comparison.** Eleven Greek documents: five in hexameter against six of
 classical prose. Twelve tragedies are added as a control asking whether any
 signature that appears belongs to hexameter or to verse in general. Prose of a

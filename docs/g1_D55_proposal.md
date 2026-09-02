@@ -62,10 +62,11 @@ model (D30 intact — counts only, no fit).
 
    The T\* arithmetic of §(ix) and the learning-curve grids of §(x) are derived by
    hand from the `n_tokens_retained` column of the **second** run, whose documents
-   are canonical. Both runs record `mode: preaudit` and `git.dirty: true`; dirty
-   is expected while the code producing them is uncommitted, and the flag is now
-   sampled **before** the run's own writes, so it reports the tree the run started
-   from rather than one its outputs created.
+   are canonical. Both runs record `mode: preaudit` and **`git.dirty: false`**:
+   the flag is sampled **before** the run's own writes (§xiv, convention 11), and
+   each run was generated on a clean tree and committed before the next was
+   generated (`1680d3a`, `84a9319`). An earlier draft of this paragraph said
+   `true`, describing the sequence as planned rather than as executed.
 2. **From evidence outside those reports**, and so cited on its own terms: the
    MWT count and UD commit SHAs (`data/raw/PROVENANCE.md`); the README-vs-data
    divergence (the treebank READMEs at the pinned commits); the `sent_ord`
@@ -1268,11 +1269,12 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
 
 ## Committing this package — the order matters
 
-Every manifest here records `git.dirty: true`. That is now honest rather than
-self-inflicted (the flag is sampled before the run's own writes — §xiv, convention 11), but it
-is still true, because the generator, its tests and these documents are
+Both manifests here record `git.dirty: false` — the outcome of the order below,
+not its premise. Before that order was executed the flag read `true`, honestly
+rather than self-inflictedly (it is sampled before the run's own writes — §xiv,
+convention 11), because the generator, its tests and these documents were
 uncommitted. A naive "commit, then regenerate" does **not** clear it: `results/`
-is untracked, so the regenerated artifacts make the tree dirty again the moment
+is tracked, so the regenerated artifacts make the tree dirty again the moment
 they are written.
 
 Two orders that do work:
@@ -1304,8 +1306,11 @@ Two orders that do work:
    is generated and committed before the next is generated, and the two manifests
    name different commits by construction (here `1680d3a` and `84a9319`). The
    alternative that removes the problem structurally is gitignoring `results/`,
-   which is the open question below: untracked artifacts never dirty the tree, so
-   every run of a batch would sample `dirty: false` from the same commit.
+   which is the open question below — **ignored**, not merely untracked:
+   `manifest.git_state()` reads `git status --porcelain`, which lists untracked
+   files as `??` and would therefore still report dirty. Ignored files do not
+   appear there, so every run of a batch would sample `dirty: false` from the
+   same commit.
 2. **Regenerate in a clean worktree.** Same first two commits; then check the
    attestation commit out in a fresh worktree with no `results/`, regenerate
    there, copy the artifacts back and commit them.

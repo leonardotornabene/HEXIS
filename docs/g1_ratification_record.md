@@ -79,7 +79,7 @@ voci `Dnn-A1` che ne discendono saranno in inglese come il resto del Decision Lo
 | 19 | `results/` tracciato o ignorato **+** eccezione `.gitignore` per gli artefatti congelati | — | APERTA | — | — |
 | 20 | Gate `g1`: inventario di copertura obbligatoria — se sì, prima del run canonico | — | APERTA | — | — |
 | 23 | Legare gli input dell'audit a `PROVENANCE.md` | — | APERTA | — | — |
-| 24 | Ambito documentale dell'atto di ratifica: le **nove** dichiarazioni su **sette** file che la ratifica rende false nello stesso istante | 18 | APERTA | — | — |
+| 24 | Ambito documentale dell'atto di ratifica: le **undici** dichiarazioni su **sette** file che la ratifica rende false nello stesso istante | 18 | APERTA | — | — |
 | 25 | Se qualcosa debba imporre l'identità delle tre copie delle istruzioni permanenti (`CLAUDE.md`, `AGENTS.md`, template di `04` §B) | — | APERTA | — | — |
 
 ---

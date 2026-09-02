@@ -6,8 +6,9 @@ ratification. Two things are being proposed here, and they stand differently:
 - **Every scientific and governance item — §(i)–(xiii), §(xv)–(xvi) — is applied
   to nothing.** No value in `01_MASTER_SPEC.md`, `02_DECISION_LOG.md`,
   `CLAUDE.md`, `AGENTS.md`, `README.md` or `config/` has been changed, and no
-  alphabet, registry or T\* is frozen. What some of those files did receive,
-  between 2026-08-17 and 2026-09-02, is a **pointer** — nine statements across
+  alphabet, registry or T\* is frozen. What some of those files, and the operative
+  documents beside them, did receive between 2026-08-17 and 2026-09-02 is a
+  **pointer** — eleven statements across
   seven files recording that this amendment exists and applies to nothing, so
   that a superseded constant is never re-derived as a description of the corpus.
   They change no figure, and they all retire in the act of ratification
@@ -35,7 +36,10 @@ and the ordering rule, and checklist items **21–23**. Revised again
 two false `git.dirty: true` claims and the untracked-vs-ignored error below,
 retired the stale 142/17 in the commit recipe, added `docs/00_LEGGIMI_INDICE.md`
 and `docs/HANDOFF.md` to the touched-documents table, and added checklist items
-**24–25**. No figure below comes from a model (D30 intact — counts only, no fit).
+**24–25**. Item 24's own count was then found short in the same review — it read
+nine, the figure the citation search returns; `docs/HANDOFF.md` carries three of
+these statements, one of which cites no filename — and is corrected here to
+**eleven**. No figure below comes from a model (D30 intact — counts only, no fit).
 
 **Provenance, stated precisely.** Two classes of evidence, not one:
 
@@ -1105,7 +1109,7 @@ the files below it that carry no constant but encode the same assumptions:
 | `CLAUDE.md` | the "exact schemes" line (Greek 462 / 2048; Latin 28 / 256; author 20 / 64; Lysias-merged 56 / 256) — **and the pointer note added under it on 2026-08-17**, which says this amendment is PROPOSED and applied to nothing. Ratifying makes that note false, so it is replaced by the ratified constants in the same act; it exists only because these two files are loaded as standing instructions in every session, so a superseded constant left unflagged is re-derived indefinitely (owner-authorized, no value changed) |
 | `AGENTS.md` | the same line and the same note, mirrored — the two files are byte-identical below their first line, and any edit to one is an edit to both |
 | `README.md` | the design summary's document counts and constants — "eleven documents" six times, "twelve tragedies", the Greek and Latin prose counts, 2,048 / 462; at lines 116–125 they carry the O7 argument rather than decorate it. Plus the pointer added 2026-09-02, per item 24 |
-| `docs/HANDOFF.md` | **added 2026-09-02.** Its G1 status block states that nothing is frozen, that the registry is unratified, and that this amendment is PROPOSED and applied to nothing — ratification falsifies all three at once (item 24). The gate attestation it carries is *not* affected: test counts are evidence measured at a commit, not a constant of the design |
+| `docs/HANDOFF.md` | **added 2026-09-02.** Its G1 status block declares this amendment PROPOSED in **three** separate places — the `-m g1` paragraph ("PROPOSED with the rest of the package", naming no filename, so no citation search finds it), the sentence placing the ratification evidence here "and in `docs/g1_registry_proposal.md` (both PROPOSED)", and the closing open-finding paragraph — beside its statements that nothing is frozen and the registry is unratified. Ratification falsifies all of them at once (item 24). The gate attestation it carries is *not* affected: test counts are evidence measured at a commit, not a constant of the design |
 | `docs/implementation/specs/2026-08-13-g0-api-contract.md` | constants quoted in the ratified API contract — and, more than constants, **§5's semantic inventory check**: its reference set (§2.3) and its expectations (Greek HEX 5 / PROSE_CLASS 6, Latin HEX 2 / PROSE 6; 462 / 2048, 28 / 256, 56 / 256, 20 / 64) are exactly what this amendment replaces, so the check is unsatisfiable as written and must be re-pointed at the ratified registry before the freeze (§xvi) |
 | `src/hexis/stats/permutation.py:4` | module docstring: "Greek 2^11 = 2048 … Latin 2^8 = 256" |
 | `docs/01_MASTER_SPEC.md` §5.3 | "5–6 documents per group make these CIs crude" and "per-document dot displays (11 points, F3–F4)" — under option A one group holds **2** documents, where a between-document bootstrap is not crude but near-degenerate (resampling 2 with replacement has 3 distinct outcomes), and the dot plots carry 7 points |
@@ -1243,20 +1247,25 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     should refuse to proceed when the two disagree. Recommended: yes, and before
     the canonical run, since that is the run whose inputs get frozen.
 
-24. **The documentary scope of the ratification act** (new 2026-09-02). **Nine
+24. **The documentary scope of the ratification act** (new 2026-09-02). **Eleven
     statements across seven files** declare this amendment PROPOSED and applied to
     nothing, and **ratification makes every one of them false in the same
-    instant**: `CLAUDE.md`, `AGENTS.md`, `docs/03_ROADMAP_OPERATIVA_IT.md`,
-    `README.md` and `docs/HANDOFF.md` once each; `docs/04_AI_HANDOFF_PROMPT.md`
+    instant**: `CLAUDE.md`, `AGENTS.md`, `docs/03_ROADMAP_OPERATIVA_IT.md` and
+    `README.md` once each; `docs/04_AI_HANDOFF_PROMPT.md`
     twice (rule 8 of the bootstrap prompt, and the `CLAUDE.md` template of §B);
     `docs/00_LEGGIMI_INDICE.md` twice (the pointer, and the working-documents
     table row — which also states the checklist's item count, so it goes stale
-    whenever this list grows, as it did today). Item 18 fixes the *form* of the
-    filing; this fixes its *scope*. Recommended: the act that ratifies is the act
-    that retires all nine and installs the ratified figures, and a survivor is a
-    defect of that act rather than tidying to be done later.
+    whenever this list grows, as it did today); and `docs/HANDOFF.md` **three
+    times** — the open-finding paragraph at the end of the G1 block, the sentence
+    placing the ratification evidence in this file "and
+    `docs/g1_registry_proposal.md` (both PROPOSED)", and the `-m g1` paragraph,
+    which calls convention 13 of §xiv "PROPOSED with the rest of the package".
+    Item 18 fixes the *form* of the filing; this fixes its *scope*. Recommended:
+    the act that ratifies is the act that retires all eleven and installs the
+    ratified figures, and a survivor is a defect of that act rather than tidying
+    to be done later.
 
-    Three traps for whoever executes it, each one already sprung. **Do not work
+    Four traps for whoever executes it, each one already sprung. **Do not work
     from a file list:** the table above was wrong once, omitting
     `00_LEGGIMI_INDICE.md`, which carries no constant and so escaped the constant
     search while asserting E1 and E2 as *founding* verified facts. **Do not grep
@@ -1265,10 +1274,16 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     emendamento", "Deferral clause"). **Do not grep the claim either:**
     `README.md` wraps "applied to / nothing" across a blockquote-marked line
     break, so both a plain and a whitespace-normalised phrase search miss it —
-    verified 2026-09-02, the count came back 8 of 9. The one handle all nine
-    share is the citation `g1_D55_proposal.md`. It
-    over-selects — `HANDOFF.md` and `00` cite the file for other reasons too —
-    and a superset you triage by hand is the safe error here.
+    verified 2026-09-02, the count came back 8 of 9. The best handle is the
+    citation `g1_D55_proposal.md` — but, the fourth trap, **it does not catch them
+    all.** It **under-selects**: the `-m g1` paragraph of `HANDOFF.md` declares the
+    package PROPOSED while naming only `D55 §xiv`, so the citation search returns
+    ten of eleven and the eleventh surfaces only by reading the file. It was also
+    thought to over-select, on the ground that `HANDOFF.md` and `00` cite the file
+    for other reasons; they do not — every one of those ten citations is a
+    statement this act must retire. Both errors ran the same way, and this item's
+    own first count, on 2026-09-02, was nine because of them. Triage a
+    superset by hand, and do not treat an empty grep as an empty file.
 25. **Whether anything should enforce that the three standing-instruction copies
     stay identical** (new 2026-09-02). `CLAUDE.md`, `AGENTS.md` and the template
     in §B of `04` are one text in three places; `AGENTS.md` differs by design only

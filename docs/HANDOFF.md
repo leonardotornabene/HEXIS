@@ -159,7 +159,7 @@ edit was made.
 > blocker was resolved.
 >
 > **Attestation of record — commit
-> `95c4fecced24fadc8026f28b9f7cc9bd43cc5733`, working tree clean:**
+> `30253877bc49c39aa68c316d3dc45f62dfe08c1a`, working tree clean:**
 >
 > ```
 > uv run pytest -m g0 --strict-markers -q  →  144 passed, 112 deselected  (exit 0)
@@ -169,25 +169,27 @@ edit was made.
 > ```
 >
 > Re-attested 2026-09-02, closing the post-review pass. The delta from `1271d57`
-> is seventeen commits and no test: the previous attestation itself (`1680d3a`),
+> is nineteen commits and no test: the previous attestation itself (`1680d3a`),
 > the two pre-audit artifact sets under `results/` (`84a9319`, `dc4cf43`), D55's
 > revision and the opening of the ratification record (`61d6496`, `15352a5`), and
-> the pass — `eec419f`, `d8b8052`, `67789c4` and `95c4fec` (D55's two false
-> `git.dirty: true` claims, its untracked-vs-ignored error, the stale 142/17 in
-> its commit recipe, the template/live `CLAUDE.md` drift, a header that called
-> three pointer-bearing files "untouched", and checklist item 24's own count,
-> which read nine where the branch carries eleven — three of them in this file),
-> `729679f` and `8fd72be` (the open-finding
+> the pass — `eec419f`, `d8b8052`, `67789c4`, `95c4fec` and `3025387` (D55's two
+> false `git.dirty: true` claims, its untracked-vs-ignored error, the stale 142/17
+> in its commit recipe, the template/live `CLAUDE.md` drift, a header that called
+> three pointer-bearing files "untouched", checklist item 24's own count, which
+> read nine where the branch carries eleven — three of them in this file — and
+> that item's phrase-search ratio, left on the denominator the count had just
+> vacated), `729679f` and `8fd72be` (the open-finding
 > pointer into `00`/`03`/`04` and into `README.md`), `4766f35` (one overclaiming
-> docstring in `sequences.py`), `8a8ff00` (ratification items 24–25) and the four
+> docstring in `sequences.py`), `8a8ff00` (ratification items 24–25) and the five
 > intermediate re-attestations this block replaces (`025f236`, `22c6c4f`,
-> `f0704a9`, `404e550`).
+> `f0704a9`, `404e550`, `3faef5f`).
 > **Every count is unchanged** — prose and artifacts only, no test and no library
 > behaviour — and it is re-run rather than transcribed because a figure carried
 > over untested is a figure nobody measured. The convention this block follows:
 > the attestation commit is the tip and names its parent, so a content commit that
 > lands after it puts the two out of step and calls for a re-run, not a
 > transcription. Superseded attestations, same counts, kept for the trail:
+> `3faef5fc46febe4056a2b656924df76d0815a8a6`,
 > `404e55051380749716421e3d741bfbe8fe8fff55`,
 > `67789c45a1b1a07e7f92b52766046096b3f71bcf`,
 > `8fd72becbc4359dd6c7af49b98d0897e4f0f9ffd`,

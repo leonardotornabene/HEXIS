@@ -881,6 +881,18 @@ def main(argv=None) -> dict:
     parser.add_argument("--force", action="store_true", help="overwrite existing artifacts")
     args = parser.parse_args(argv)
 
+    # Before git_state and before any write: the corpus is immutable and every
+    # input is hashed into the run's identity, so artifacts landing inside it
+    # corrupt both the data and the next run's fingerprint. Resolved on both
+    # sides, so a symlink cannot walk in.
+    data_root = args.data_root.resolve()
+    results_root = args.results_root.resolve()
+    if results_root == data_root or data_root in results_root.parents:
+        raise ValueError(
+            f"--results-root {results_root} is inside the data root {data_root}: "
+            "the corpus is immutable and is hashed into every run's identity"
+        )
+
     # Sampled before the first write: this stage's own artifacts land inside the
     # worktree, so asking git afterwards would report a dirtiness it just created.
     git = git_state()

@@ -578,6 +578,30 @@ def test_mwt_and_empty_node_rows_never_reach_the_counts(tmp_path):
 # --- provenance and overwrite -----------------------------------------------------
 
 
+def test_results_root_inside_the_data_root_is_refused(corpus):
+    """`data/raw` is immutable (CC BY-NC-SA 2.5) and every input is hashed into
+    the run's identity, so artifacts landing inside it corrupt both the corpus and
+    the next run's fingerprint. The guard compares against `--data-root`, not a
+    literal path: the whole suite drives a synthetic corpus."""
+    with pytest.raises(ValueError) as caught:
+        invoke(
+            corpus,
+            "--results-root",
+            str(corpus["data_root"] / "results"),
+            "--overrides",
+            str(corpus["complete"]),
+        )
+
+    assert "data root" in str(caught.value)
+
+    link = corpus["tmp_path"] / "link"
+    link.symlink_to(corpus["data_root"] / "sneaky", target_is_directory=True)
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--results-root", str(link), "--overrides", str(corpus["complete"]))
+
+    assert "data root" in str(caught.value)
+
+
 def test_manifest_and_sidecar_record_every_input_hash(corpus):
     result = invoke(corpus, "--pre-audit", "--overrides", str(corpus["complete"]))
     manifest = json.loads(result["manifest_path"].read_text(encoding="utf-8"))

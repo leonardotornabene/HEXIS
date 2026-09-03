@@ -238,6 +238,36 @@ def build_registry(prefix_counts: pd.DataFrame, overrides: Mapping) -> pd.DataFr
         missing = [f for f in REQUIRED_OVERRIDE_FIELDS if f not in assignment]
         if missing:
             raise ValueError(f"registry assignment for {raw_doc_id} is missing {missing}")
+        blank = [
+            field
+            for field in REQUIRED_OVERRIDE_FIELDS
+            if not isinstance(assignment[field], str) or not assignment[field].strip()
+        ]
+        if blank:
+            raise ValueError(
+                f"registry assignment for {raw_doc_id} has blank or non-string "
+                f"{blank}: presence is not content, and an empty cell reaches the "
+                "frozen registry with nothing left to flag it (§2.3)"
+            )
+        flags = assignment.get("flags", [])
+        if not isinstance(flags, list) or any(
+            not isinstance(flag, str) or not flag.strip() for flag in flags
+        ):
+            raise ValueError(
+                f"flags for {raw_doc_id} must be a list of nonempty strings, got "
+                f"{flags!r}: list('draft') is five single-character flags nobody wrote"
+            )
+        if "part_order" in assignment:
+            part_order = assignment["part_order"]
+            if (
+                isinstance(part_order, bool)
+                or not isinstance(part_order, int)
+                or part_order < 0
+            ):
+                raise ValueError(
+                    f"part_order for {raw_doc_id} must be a non-negative int, got "
+                    f"{part_order!r} (booleans are ints in Python and are refused here)"
+                )
         if assignment["regime"] not in REGIME_LABELS:
             raise ValueError(
                 f"regime {assignment['regime']!r} for {raw_doc_id} is not one of the five "

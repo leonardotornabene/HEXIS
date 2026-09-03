@@ -42,8 +42,9 @@ these statements, one of which cites no filename — and is corrected here to
 **eleven**. Revised again **2026-09-03**, after an external review of the branch at
 `81f61ec`: the `--force` and provenance-binding designs written out in full under
 items 17 and 23, item 20 rewritten because the inventory it called deliberately
-undone was built that day, and checklist item **26** added for the
-`_status: RATIFIED` self-declaration. No figure below comes from a model
+undone was built that day, and checklist items **26–27** added — the
+`_status: RATIFIED` self-declaration, and the Tacitus URN conflict a verification
+pass over all thirty registry rows left unresolved. No figure below comes from a model
 (D30 intact — counts only, no fit).
 
 **Provenance, stated precisely.** Two classes of evidence, not one:
@@ -1461,6 +1462,37 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     presentation, not policy, and it does not decide α/β/γ/δ. It is still an
     **artifact-bytes change**, so it waits for ratification with the rest rather
     than being slipped in as tidying.
+
+27. **Tacitus `phi1351.phi005` — the URN and the work label cannot both be right**
+    (new 2026-09-03; external review). The registry row proposes
+    `source_urn: phi1351.phi005.perseus-lat1` with `work: Historiae`. The Perseus
+    catalogue records **phi005 as the *Annales*** and **phi004 as the
+    *Historiae***. The treebank's own `README.md` declares *Historiae* among the
+    works the release contains, and the `sent_id` prefix in the data carries
+    phi005. The full three-witness comparison, and the verification pass over all
+    thirty rows that surrounds it, are in `docs/g1_registry_proposal.md`.
+
+    **Not corrected by this package, deliberately.** The two claims are separable:
+    `work` is corroborated by the README, `source_urn` is transcribed from the
+    prefix the release itself carries. The likeliest reading — one error rather
+    than two — is that the treebank inherited the wrong URN. But that is an
+    assertion about *the treebank*, not about our registry, and the internal test
+    that would settle it (comparing the opening of the text against a printed
+    edition) cannot be recorded here: `docs/g1_registry_proposal.md` forbids any
+    word or line of the treebanks appearing in it (D28).
+
+    **What is being ratified is which of three dispositions to take**, not which
+    witness is right: **(a)** keep `source_urn` as transcribed and record the
+    conflict as a known defect of the upstream release; **(b)** correct
+    `source_urn` to phi004, which makes the registry disagree with the raw
+    `doc_id` it is derived from; **(c)** hold the row for the linguistic
+    supervisor (`D29-A1`, item 21) and ratify nothing about it until then —
+    **recommended**, because this is exactly the class of error the supervisor
+    exists to catch, and this one was found by chance rather than by process.
+
+    The raw `doc_id` is preserved under every disposition: it is the join key
+    between the registry and the data, and editing it to match a corrected URN
+    would break the only link that is not in dispute.
 
 ## Open items this amendment does not close
 

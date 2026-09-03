@@ -18,7 +18,7 @@ esiste, ed è ciò da cui si scriveranno le voci `Dnn-A1`.
 **La sua numerazione non è trasferibile qui: coincidono solo le voci 1–11.** Il
 foglio numera 12, 13, 14 e 15 ciò che qui è **17, 18, 19 e 21**; lascia senza
 numero, nella sua sezione C, ciò che qui è **12–16**; e non contiene affatto le
-voci **20, 22, 23, 24, 25** né l'**ambito documentale dell'alfabeto**. Un verdetto preso
+voci **20, 22, 23, 24, 25, 26, 27** né l'**ambito documentale dell'alfabeto**. Un verdetto preso
 sul foglio va quindi trascritto **per argomento, mai per numero**. Una copia
 firmabile si rigenera alla fine, con i verdetti dentro, se serve.
 
@@ -58,6 +58,7 @@ voci `Dnn-A1` che ne discendono saranno in inglese come il resto del Decision Lo
 | 10 | `t_star`: firma proposta e le due chiavi di `config/default.yaml` | — | APERTA | — | — |
 | 11 | Semantic inventory check — contro cosa si confronta (+ quarta attesa: ambito dell'alfabeto) | — | APERTA | — | — |
 | 21 | Touchpoint del supervisore linguistico **prima** del freeze (`D29-A1`) | — | APERTA | — | — |
+| 27 | Tacito `phi1351.phi005`: URN ed etichetta dell'opera non possono essere entrambi giusti — Perseus dice *Annales*, il README del treebank dice *Historiae*. **(a)** tenere l'URN trascritto e registrare il conflitto · **(b)** correggere a phi004 · **(c)** trattenere la riga per il supervisore linguistico (**consigliata**) | 2 · 21 | APERTA | — | — |
 
 ## B — bloccano gate successivi, non il freeze
 

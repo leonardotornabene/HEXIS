@@ -102,7 +102,7 @@ Apollodorus, Aesop, and 6 of the 7 Aeschylus plays.**
 | `phi0631.phi001.perseus-lat1.tb.xml` | `phi0631.phi001.perseus-lat1` | Sallust, *Bellum Catilinae* | PROSE_CLASS | 336 | 4999 | 4130 | [phi0631](https://atlas.perseus.tufts.edu/library/urn%3Acts%3AlatinLit%3Aphi0631/) + local check of proper nouns |
 | `phi1221.phi007.perseus-lat1.tb.xml` | `phi1221.phi007.perseus-lat1` | Augustus, *Res Gestae* | PROSE_CLASS | 38 | 713 | 620 | [phi1221](https://atlas.perseus.tufts.edu/library/urn%3Acts%3AlatinLit%3Aphi1221/) + local check of the opening sentence |
 | `phi0448.phi001.perseus-lat1.tb.xml` | `phi0448.phi001.perseus-lat1` | **Caesar, *De bello Gallico*** | PROSE_CLASS ⚠ | 24 | 352 | 304 | [phi0448](https://atlas.perseus.tufts.edu/library/urn%3Acts%3AlatinLit%3Aphi0448/) + local check of proper nouns; **not in README**, contradicts E2 |
-| `phi1351.phi005.perseus-lat1.tb.xml` | `phi1351.phi005.perseus-lat1` | Tacitus, *Historiae* | PROSE_POST | 64 | 867 | 730 | [phi1351](https://atlas.perseus.tufts.edu/library/urn%3Acts%3AlatinLit%3Aphi1351/) + local check of proper nouns |
+| `phi1351.phi005.perseus-lat1.tb.xml` | `phi1351.phi005.perseus-lat1` | Tacitus, *Historiae* ⚠ | PROSE_POST | 64 | 867 | 730 | [phi1351](https://atlas.perseus.tufts.edu/library/urn%3Acts%3AlatinLit%3Aphi1351/) + local check of proper nouns; ⚠ **URN/work conflict, UNRESOLVED** — see the verification pass below |
 | `phi1348.abo012.perseus-lat1.tb.xml` | `phi1348.abo012.perseus-lat1` | Suetonius, *Divus Augustus* | PROSE_POST | 109 | 2066 | 1748 | [phi1348](https://atlas.perseus.tufts.edu/library/urn%3Acts%3AlatinLit%3Aphi1348/) + local check of proper nouns |
 | `phi0972.phi001.perseus-lat1.xml` | `phi0972.phi001.perseus-lat1` | Petronius, *Satyricon* | PROSE_POST | 547 | 5955 | 4812 | [phi0972](https://atlas.perseus.tufts.edu/library/urn%3Acts%3AlatinLit%3Aphi0972/) + local check of proper nouns; ⚠ prefix lacks `.tb` |
 | `phi0620.phi001.perseus-lat1.tb.xml` | `phi0620.phi001.perseus-lat1` | Propertius, *Elegiae* | OTHER_VERSE | 224 | 2801 | 2318 | [phi0620](https://atlas.perseus.tufts.edu/library/urn%3Acts%3AlatinLit%3Aphi0620/) + local check of proper nouns |
@@ -114,6 +114,96 @@ is **`greekLit`**. `tlg0031` is the TLG textgroup of the New Testament, and a CT
 URN takes the namespace of its textgroup, not the language of the edition — so the
 Latin translation (`perseus-lat1`) of Revelation still sits under `greekLit`. The
 Perseus catalogue record linked above is the authority.
+
+---
+
+## Verification pass over all 30 rows (2026-09-03)
+
+Ordered after an external review found that the Tacitus row's URN and its work
+label cannot both be right. One wrong row is a reason to re-check thirty, not
+one.
+
+**Method, and why it is not the one the review asked for.** The review proposed
+recording each document's incipit and explicit as internal evidence. That is
+forbidden by this document's own licence clause above (D28): *no word, name or
+line of the treebanks appears here*. What replaces it is evidence that is
+mechanical, licence-safe and reproducible by anyone with the pinned release:
+
+1. **Prefix and sentence-count identity.** Every `sent_id` in the five pinned
+   `.conllu` files was reduced to its prefix and counted. The result is **exactly
+   the 30 prefixes** tabulated above, with **all 30 sentence counts matching** —
+   18 `grc` + 12 `la`, no prefix present that no row claims, no row claiming a
+   prefix the release lacks. This is what makes the tables above a description of
+   r2.18 rather than a description of §2.3.
+2. **Work label against the treebank's own README.** Each README declares the
+   works its release contains. That declaration is the treebank's claim about
+   itself, independent of both the catalogue and of us, so it is the third
+   witness a two-way disagreement needs.
+
+**Latin — 11 of 12 rows corroborated.** `UD_Latin-Perseus/README.md` declares
+eleven works, and eleven of the twelve proposed labels appear in it verbatim
+(allowing the README's own *Phaerus* for Phaedrus and *Life of Augustus* for
+*Divus Augustus*). The twelfth is **Caesar**, which the README does not declare
+at all — the already-recorded E2 contradiction, now confirmed from the opposite
+direction: it is not that we mislabelled a declared work, it is that a prefix is
+present that the release does not announce.
+
+**Greek — 18 of 18 rows corroborated, with one new finding.**
+`UD_Ancient_Greek-Perseus/README.md` declares thirty works, and every one of the
+eighteen proposed labels appears among them. The README also confirms **E1** from
+the same direction: it declares **seven** Aeschylus plays where the release
+carries **one**, and declares Lysias ×4, Polybius, Apollodorus and Aesop, none of
+which is present. A README is a claim about a release, not the release.
+
+**New finding — the Hymn is doubly attributed in the README (bears on O8).** The
+Greek README lists *Hymn to Demeter* **twice**, once under `Anonymous` and once
+under `Pseudo-Homer`, for the **single** prefix
+`tlg0013.tlg002.perseus-grc1.tb.xml`. O2 stays resolved — one prefix, no
+duplication in the data — but the source the registry would appeal to is itself
+undecided between an anonymous attribution and a Homeric one. That is precisely
+the O8 question (open question 5 above): whether the Hymn is its own author block
+or Homer's. The registry proposes `author: Anonymous`, which is one of the two
+things the README says, and it must not be read as settled by transcription.
+
+**No row is corrected here.** Where the evidence agrees, it is recorded as
+agreeing; where it does not, the row stays as written and is flagged below. Thirty
+silent corrections would be the same fault as one silent error.
+
+### UNRESOLVED — Tacitus `phi1351.phi005` (checklist item 27)
+
+Three witnesses, and they do not agree:
+
+| witness | says |
+| --- | --- |
+| this proposal (line 105) and `docs/g1_registry_proposal.yaml:235` | `phi1351.phi005` **=** *Historiae* |
+| Perseus catalogue | `phi1351.`**`phi005`** = ***Annales***; `phi1351.`**`phi004`** = ***Historiae*** |
+| `UD_Latin-Perseus/README.md:39` | the release contains Tacitus, ***Historiae*** |
+
+The two claims in our row are separable and can be wrong independently:
+
+- **`work: Historiae`** is corroborated by the treebank's own README and is the
+  claim least likely to be wrong.
+- **`source_urn: phi1351.phi005.perseus-lat1`** is transcribed from the `sent_id`
+  prefix the release itself carries, and the catalogue says that number names a
+  different work.
+
+So the likeliest reading is that **the treebank inherited a wrong URN** — the
+text is *Historiae*, carried under the identifier of the *Annales*. The opposite
+reading, that the URN is right and both the README and our label are wrong,
+requires two independent errors instead of one.
+
+**It is not corrected here, and the incipit test that would settle it is barred
+by D28.** Establishing which of the two is wrong is a claim about the *treebank*,
+not about our registry, and either resolution has a cost the owner must choose:
+changing `source_urn` makes the registry disagree with the raw `doc_id` it is
+derived from, while leaving it makes the registry cite a URN for a work it does
+not contain. The raw `doc_id` is preserved either way — it is the join key and
+must never be edited to match a correction.
+
+**Recommended disposal, for the linguistic supervisor (`D29-A1`):** verify
+against a printed edition, which is outside D39's citation restriction only if
+the registry cites it, and record the outcome as a ratified correction with its
+own evidence. Until then the row stands, marked UNRESOLVED.
 
 ---
 

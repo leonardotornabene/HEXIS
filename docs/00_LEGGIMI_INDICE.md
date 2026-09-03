@@ -30,7 +30,7 @@ non lo sono, ma un agente che non li conosce lavora al buio.
 | `HANDOFF.md` | Attestazione dei gate: comandi, conteggi, commit su cui sono stati misurati | **Unica sede dell'evidenza**; non duplicare i conteggi altrove |
 | `implementation/specs/` | Contratti di implementazione ratificati — le firme lasciate libere dalla Spec (D54(v)) | Vincolanti: `2026-08-13-g0-api-contract.md` porta obblighi che bloccano il freeze di G1 |
 | `probe_conllu.md` | Sonda esplorativa sui file `.conllu` | Descrittivo |
-| `g1_D55_proposal.md` | Emendamento D55 + il checklist delle 26 ratifiche di G1 | **PROPOSTO — applicato a nulla** |
+| `g1_D55_proposal.md` | Emendamento D55 + il checklist delle 27 ratifiche di G1 | **PROPOSTO — applicato a nulla** |
 | `g1_registry_proposal.md` / `.yaml` | Le 30 righe del registro, con l'evidenza per riga | **PROPOSTO** (`_status: PROPOSED`: non produce un audit canonico) |
 | `g1_ratification_record.md` | Il registro dove i verdetti si depositano uno alla volta | Aperto, nessun verdetto |
 | `audit/` | Record pre-applicazione di emendamenti già eseguiti | ARCHIVIATO — non riapplicare |

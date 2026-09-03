@@ -8,7 +8,7 @@ ratification. Two things are being proposed here, and they stand differently:
   `CLAUDE.md`, `AGENTS.md`, `README.md` or `config/` has been changed, and no
   alphabet, registry or T\* is frozen. What some of those files, and the operative
   documents beside them, did receive between 2026-08-17 and 2026-09-02 is a
-  **pointer** — eleven statements across
+  **pointer** — twelve statements across
   seven files recording that this amendment exists and applies to nothing, so
   that a superseded constant is never re-derived as a description of the corpus.
   They change no figure, and they all retire in the act of ratification
@@ -39,7 +39,8 @@ and `docs/HANDOFF.md` to the touched-documents table, and added checklist items
 **24–25**. Item 24's own count was then found short in the same review — it read
 nine, the figure the citation search returns; `docs/HANDOFF.md` carries three of
 these statements, one of which cites no filename — and is corrected here to
-**eleven**. Revised again **2026-09-03**, after an external review of the branch at
+**eleven**, and to **twelve** after the audit pass of 2026-09-03 added a
+statement of the same class to `HANDOFF.md`. Revised again **2026-09-03**, after an external review of the branch at
 `81f61ec`: the `--force` and provenance-binding designs written out in full under
 items 17 and 23, item 20 rewritten because the inventory it called deliberately
 undone was built that day, and checklist items **26–27** added — the
@@ -90,7 +91,8 @@ pass over all thirty registry rows left unresolved. No figure below comes from a
    are canonical. Both runs record `mode: preaudit` and **`git.dirty: false`**:
    the flag is sampled **before** the run's own writes (§xiv, convention 11), and
    each run was generated on a clean tree and committed before the next was
-   generated (`1680d3a`, `84a9319`). An earlier draft of this paragraph said
+   generated (`9fc5e0a`, `1168cee` — the pair regenerated on 2026-09-03, which
+   superseded `1680d3a` / `84a9319`). An earlier draft of this paragraph said
    `true`, describing the sequence as planned rather than as executed.
 2. **From evidence outside those reports**, and so cited on its own terms: the
    MWT count and UD commit SHAs (`data/raw/PROVENANCE.md`); the README-vs-data
@@ -739,7 +741,7 @@ and stripping the only assert from another each turn `-m g1` red.
 | 10 | **rollback over the predetermined destinations on failure**, released reservation, with `_preflight` and the reservation *outside* the guarded block | a write failing partway leaves a truncated artifact that no "what succeeded" record would catch — and a rollback that also covers the preflight deletes the very artifacts the refusal protects |
 | 11 | **git state sampled before the first write** (`manifest.git_state()` public, `build_manifest(git=…)`) | the stage writes into the worktree, so a sample taken at manifest-assembly time reports a dirtiness the run itself created |
 | 12 | **unknown override fields rejected** (`registry.KNOWN_OVERRIDE_FIELDS`), `part_order` listed as declared-but-unread | the required five are caught by their absence, but a mistyped *optional* key (`flag:` for `flags:`) was dropped without a trace and appeared in no artifact |
-| 13 | **`g1` marker + the same enforcement as G0** (`conftest.GATE_MARKERS`, `uv run pytest -m g1 --strict-markers`) | the G1 tests ran only inside the full suite, where a skipped one moves `239 passed / 17 skipped` to `238 / 18` and stays green — the failure mode D52(iii) forbids for G0 and left open for G1 |
+| 13 | **`g1` marker + the same enforcement as G0** (`conftest.GATE_MARKERS`, `uv run pytest -m g1 --strict-markers`) | the G1 tests ran only inside the full suite, where a skipped one lowers the passed count by one, raises the skipped count by one, and stays green — the failure mode D52(iii) forbids for G0 and left open for G1. No figure is quoted here: `docs/HANDOFF.md`'s attestation block is the only place counts are recorded, and the pair that stood here until 2026-09-03 had already gone stale |
 
 **Convention 12 changes a G0-attested contract, so it is gated like one.** It
 lives in `registry.build_registry`, whose mandatory-coverage area is
@@ -750,15 +752,36 @@ close. Two `g0`-marked tests were therefore added to `tests/test_registry.py` an
 **named in the inventory**, so deleting either turns the gate red rather than
 merely lowering a count (mutation-verified).
 
-**Consequence for the attestation, which is the owner's to complete.** Both lines
-of `docs/HANDOFF.md`'s attestation block are stale: the G0 selection moves
-**142 → 144**, and the full suite moves **142 passed / 17 skipped → 239 / 17**,
-since this branch adds the G1 tests (236 before the 2026-08-17 audit added three
-more, all outside the G0 selection — hence a moved suite total and an unmoved
-gate count). That block is deliberately **not** updated
-here: it records counts measured *on a clean tree together with their commit*, and
-this tree is not clean. Re-attesting is a step of the commit sequence below, and
-it has its own commit there — it cannot precede the commit it must name.
+**Two declared limits of the 2026-09-03 remediation guards** (owner-ruled the same
+day; recorded here so that neither is read as wider than it is).
+
+1. **The `--results-root` refusal is relative to the *declared* `--data-root`,
+   not to a literal `data/raw`.** The flag defaults to `data/raw`, so every
+   ordinary invocation is covered; re-pointing the corpus elsewhere and then
+   aiming the results at `data/raw` defeats it. That is a deliberate act of the
+   operator, and hardcoding the path would buy nothing the default does not
+   already give while fixing a repository layout in library code. The invariant
+   as enforced: **artifacts never land inside the corpus this run is reading.**
+2. **The code revision in `run_id` is HEAD alone.** Uncommitted work does not move
+   it, so two runs of differing *uncommitted* code still collide on the artifact
+   name. `_preflight` refuses that collision unless `--force` is passed, and the
+   manifest records `dirty` in either case, so the residual exposure is exactly:
+   dirty tree **and** `--force` **and** the same day, config, inputs and HEAD.
+   Widening the run identity would change the artifact naming convention, which
+   is a §xiv matter and therefore submitted rather than done — the conservative
+   reading of the ruling. Refusing to run on a dirty tree was the alternative and
+   was rejected: the test suite invokes the stage from the worktree, so it would
+   fail whenever the repository is mid-edit.
+
+**Consequence for the attestation, which was the owner's to complete.** Adding the
+G1 tests moved the G0 selection and the full-suite total apart (the gate count is
+unmoved, since the new tests are all outside the G0 selection). The block in
+`docs/HANDOFF.md` was deliberately **not** updated here: it records counts
+measured *on a clean tree together with their commit*, and the tree this section
+was written on was not clean. Re-attesting was a step of the commit sequence
+below and had its own commit there — it could not precede the commit it must
+name. It was executed on 2026-09-03 (`bbaf7e0`, and again after the audit pass
+that followed); the figures live only in that block.
 
 **Exception, declared:** conventions 9 and 10 do not apply under `--force`. Force
 skips the preflight, so a destination may hold a previous run's artifact and the
@@ -1130,7 +1153,7 @@ no constant but encode the same assumptions:
 | `CLAUDE.md` | the "exact schemes" line (Greek 462 / 2048; Latin 28 / 256; author 20 / 64; Lysias-merged 56 / 256) — **and the pointer note added under it on 2026-08-17**, which says this amendment is PROPOSED and applied to nothing. Ratifying makes that note false, so it is replaced by the ratified constants in the same act; it exists only because these two files are loaded as standing instructions in every session, so a superseded constant left unflagged is re-derived indefinitely (owner-authorized, no value changed) |
 | `AGENTS.md` | the same line and the same note, mirrored — the two files are byte-identical below their first line, and any edit to one is an edit to both |
 | `README.md` | the design summary's document counts and constants — "eleven documents" six times, "twelve tragedies", the Greek and Latin prose counts, 2,048 / 462; at lines 116–125 they carry the O7 argument rather than decorate it. Plus the pointer added 2026-09-02, per item 24 |
-| `docs/HANDOFF.md` | **added 2026-09-02.** Its G1 status block declares this amendment PROPOSED in **three** separate places — the `-m g1` paragraph ("PROPOSED with the rest of the package", naming no filename, so no citation search finds it), the sentence placing the ratification evidence here "and in `docs/g1_registry_proposal.md` (both PROPOSED)", and the closing open-finding paragraph — beside its statements that nothing is frozen and the registry is unratified. Ratification falsifies all of them at once (item 24). The gate attestation it carries is *not* affected: test counts are evidence measured at a commit, not a constant of the design |
+| `docs/HANDOFF.md` | **added 2026-09-02; count revised 2026-09-03.** Its G1 status block declares this amendment PROPOSED in **four** separate places — the `-m g1` paragraph ("PROPOSED with the rest of the package", naming no filename, so no citation search finds it), the sentence placing the ratification evidence here "and in `docs/g1_registry_proposal.md` (both PROPOSED)", the closing open-finding paragraph, and the "What is applied and what is not" paragraph added 2026-09-03 (which likewise names no filename) — beside its statements that nothing is frozen and the registry is unratified. Ratification falsifies all of them at once (item 24). The gate attestation it carries is *not* affected: test counts are evidence measured at a commit, not a constant of the design |
 | `docs/implementation/specs/2026-08-13-g0-api-contract.md` | constants quoted in the ratified API contract — and, more than constants, **§5's semantic inventory check**: its reference set (§2.3) and its expectations (Greek HEX 5 / PROSE_CLASS 6, Latin HEX 2 / PROSE 6; 462 / 2048, 28 / 256, 56 / 256, 20 / 64) are exactly what this amendment replaces, so the check is unsatisfiable as written and must be re-pointed at the ratified registry before the freeze (§xvi) |
 | `src/hexis/stats/permutation.py:4` | module docstring: "Greek 2^11 = 2048 … Latin 2^8 = 256" |
 | `docs/01_MASTER_SPEC.md` §5.3 | "5–6 documents per group make these CIs crude" and "per-document dot displays (11 points, F3–F4)" — under option A one group holds **2** documents, where a between-document bootstrap is not crude but near-degenerate (resampling 2 with replacement has 3 distinct outcomes), and the dot plots carry 7 points |
@@ -1243,9 +1266,10 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     with the rest).
 
     **Attestation discipline, added 2026-09-03 by owner ruling.** The block in
-    `docs/HANDOFF.md` is the tip and names its parent, so a commit landing after
-    it puts the two out of step. Until 2026-09-03 the stated remedy was a re-run
-    in every case. **It is now: a commit that touches no code, no test, no
+    `docs/HANDOFF.md` names the commit whose tree was actually measured, and that
+    commit is the tip unless this ruling has carried the block forward — so a
+    commit landing after it otherwise puts the two out of step. Until 2026-09-03
+    the stated remedy was a re-run in every case. **It is now: a commit that touches no code, no test, no
     dependency and no artifact does not require a re-run** — the attestation is
     moved to the new tip and the counts carried over, saying so. The measured
     price of the old rule was three full gate runs on 2026-09-02 for prose that
@@ -1375,7 +1399,8 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     ratification question, and the format of `PROVENANCE.md` is fixed by the same
     act.
 
-24. **The documentary scope of the ratification act** (new 2026-09-02). **Eleven
+24. **The documentary scope of the ratification act** (new 2026-09-02; count
+    revised 2026-09-03). **Twelve
     statements across seven files** declare this amendment PROPOSED and applied to
     nothing, and **ratification makes every one of them false in the same
     instant**: `CLAUDE.md`, `AGENTS.md`, `docs/03_ROADMAP_OPERATIVA_IT.md` and
@@ -1383,17 +1408,23 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     twice (rule 8 of the bootstrap prompt, and the `CLAUDE.md` template of §B);
     `docs/00_LEGGIMI_INDICE.md` twice (the pointer, and the working-documents
     table row — which also states the checklist's item count, so it goes stale
-    whenever this list grows, as it did today); and `docs/HANDOFF.md` **three
+    whenever this list grows, as it did today); and `docs/HANDOFF.md` **four
     times** — the open-finding paragraph at the end of the G1 block, the sentence
     placing the ratification evidence in this file "and
-    `docs/g1_registry_proposal.md` (both PROPOSED)", and the `-m g1` paragraph,
-    which calls convention 13 of §xiv "PROPOSED with the rest of the package".
+    `docs/g1_registry_proposal.md` (both PROPOSED)", the `-m g1` paragraph,
+    which calls convention 13 of §xiv "PROPOSED with the rest of the package",
+    and — **added 2026-09-03 by the commit that revised this very item, and not
+    counted until the audit pass caught it** — the "What is applied and what is
+    not" paragraph, which says all thirteen conventions are *submitted for
+    ratification* and that the amendment's scientific content is *applied to
+    nothing*. That is the fifth trap: this item's own scope grows under the
+    branch that maintains it.
     Item 18 fixes the *form* of the filing; this fixes its *scope*. Recommended:
-    the act that ratifies is the act that retires all eleven and installs the
+    the act that ratifies is the act that retires all twelve and installs the
     ratified figures, and a survivor is a defect of that act rather than tidying
     to be done later.
 
-    Four traps for whoever executes it, each one already sprung. **Do not work
+    Five traps for whoever executes it, each one already sprung. **Do not work
     from a file list:** the table above was wrong once, omitting
     `00_LEGGIMI_INDICE.md`, which carries no constant and so escaped the constant
     search while asserting E1 and E2 as *founding* verified facts. **Do not grep
@@ -1409,7 +1440,10 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     citation `g1_D55_proposal.md` — but, the fourth trap, **it does not catch them
     all.** It **under-selects**: the `-m g1` paragraph of `HANDOFF.md` declares the
     package PROPOSED while naming only `D55 §xiv`, so the citation search returns
-    ten of eleven and the eleventh surfaces only by reading the file. It was also
+    ten of eleven and the eleventh surfaces only by reading the file. **Every
+    ratio in this paragraph was measured on 2026-09-02 against a denominator of
+    eleven; the twelfth statement postdates the measurement and cites no filename
+    either, so the citation search now returns ten of twelve.** It was also
     thought to over-select, on the ground that `HANDOFF.md` and `00` cite the file
     for other reasons; they do not — every one of those ten citations is a
     statement this act must retire. Both errors ran the same way, and this item's
@@ -1573,7 +1607,7 @@ Two orders that do work:
    dirtiness caused by a **sibling artifact of the same package**, which is the
    same distortion convention 11 exists to remove — one step removed. So each run
    is generated and committed before the next is generated, and the two manifests
-   name different commits by construction (here `1680d3a` and `84a9319`). The
+   name different commits by construction (currently `9fc5e0a` and `1168cee`). The
    alternative that removes the problem structurally is gitignoring `results/`,
    which is the open question below — **ignored**, not merely untracked:
    `manifest.git_state()` reads `git status --porcelain`, which lists untracked

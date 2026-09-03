@@ -80,7 +80,7 @@ voci `Dnn-A1` che ne discendono saranno in inglese come il resto del Decision Lo
 | 19 | `results/` tracciato o ignorato **+** eccezione `.gitignore` per gli artefatti congelati | — | APERTA | — | — |
 | 20 | Gate `g1`: inventario di copertura obbligatoria — **costruito il 3 set 2026** (`tests/test_g1_enforcement.py`, undici aree, verificate contro la collection viva di pytest); resta da ratificare se quelle undici aree sono la definizione normativa dell'insieme G1 | — | APERTA | — | — |
 | 23 | Legare gli input dell'audit a `PROVENANCE.md` | — | APERTA | — | — |
-| 24 | Ambito documentale dell'atto di ratifica: le **undici** dichiarazioni su **sette** file che la ratifica rende false nello stesso istante | 18 | APERTA | — | — |
+| 24 | Ambito documentale dell'atto di ratifica: le **dodici** dichiarazioni su **sette** file che la ratifica rende false nello stesso istante (undici fino al 3 set 2026: la dodicesima è nata dallo stesso ramo che mantiene questa voce) | 18 | APERTA | — | — |
 | 25 | Se qualcosa debba imporre l'identità delle tre copie delle istruzioni permanenti (`CLAUDE.md`, `AGENTS.md`, template di `04` §B) | — | APERTA | — | — |
 | 26 | `_status: RATIFIED` è un'autodichiarazione del file, non prova della ratifica: **α** ancorare al path di default (non implementabile) · **β** imporre il basename (teatro) · **γ** registrare il digest ratificato fuori dal file (**consigliata**) · **δ** lasciarla com'è | 2 · 18 | APERTA | — | — |
 

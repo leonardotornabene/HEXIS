@@ -298,9 +298,11 @@ edit was made.
 > **`-m g1` is new here** (D55 §xiv, convention 13; owner-authorized 2026-08-17,
 > PROPOSED with the rest of the package). It puts the G1 audit tests under the
 > same enforcement as G0 — `conftest.GATE_MARKERS` — because they previously ran
-> only inside the full suite, where one skipped test moves `239 passed / 17
-> skipped` to `238 / 18` and stays green: the failure mode D52(iii) forbids for G0
-> and left open for G1. Its first run found nineteen G1 tests passing while
+> only inside the full suite, where one skipped test lowers the passed count by
+> one, raises the skipped count by one, and stays green: the failure mode D52(iii)
+> forbids for G0 and left open for G1. (The two figures were quoted here until
+> 2026-09-03; they were a second place recording counts, and they went stale the
+> first time the suite moved.) Its first run found nineteen G1 tests passing while
 > executing no Python assert, relying on `pytest.raises(match=…)` alone; each now
 > asserts on the exception's content. Mutation-verified in both directions.
 > It attests no gate: **G1 is not closed** — nothing is frozen, the registry is

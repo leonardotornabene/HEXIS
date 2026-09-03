@@ -49,6 +49,62 @@ def _record_items() -> list[int]:
     return [int(m.group(1)) for m in re.finditer(r"^\|\s*(\d+)\s*\|", tables, re.M)]
 
 
+def _checklist_sections() -> dict[int, str]:
+    """Item number -> "A" | "B" | "C", from the checklist's own subheadings."""
+    text = PROPOSAL.read_text(encoding="utf-8")
+    section = text.partition(CHECKLIST_HEADING)[2].split("\n## ")[0]
+    return _walk(section, r"^### ([ABC])\.", r"^(\d+)\. ")
+
+
+def _record_sections() -> dict[int, str]:
+    text = RECORD.read_text(encoding="utf-8")
+    tables = text.partition("\n## Verdetti")[0]
+    return _walk(tables, r"^## ([ABC]) ", r"^\|\s*(\d+)\s*\|")
+
+
+def _walk(text: str, heading: str, item: str) -> dict[int, str]:
+    current, found = None, {}
+    for line in text.splitlines():
+        section = re.match(heading, line)
+        if section:
+            current = section.group(1)
+        number = re.match(item, line)
+        if number:
+            found[int(number.group(1))] = current
+    return found
+
+
+def test_the_two_documents_agree_on_which_section_each_item_is_in():
+    """Numbering agreement is not agreement. Item 27 (the Tacitus URN conflict)
+    sat in the checklist's section C — "not scientific gates at all" — while the
+    record had it in A, blocking the freeze, and the three tests above passed
+    throughout: they compare sets of integers, and 27 is in both files either
+    way. What the two documents disagreed about was whether a decision blocks
+    G1, which is the one thing the pair exists to state.
+    """
+    checklist, record = _checklist_sections(), _record_sections()
+
+    disagreed = {
+        number: (checklist.get(number), record.get(number))
+        for number in sorted(set(checklist) | set(record))
+        if checklist.get(number) != record.get(number)
+    }
+
+    assert not disagreed, f"item -> (checklist section, record section): {disagreed}"
+
+
+def test_every_item_is_inside_a_lettered_section():
+    """A `None` section means an item drifted above the first subheading, where
+    the comparison above would call the two documents equal by matching None."""
+    for name, sections in (
+        ("checklist", _checklist_sections()),
+        ("record", _record_sections()),
+    ):
+        orphaned = sorted(n for n, s in sections.items() if s is None)
+
+        assert not orphaned, f"{name} numbers {orphaned} outside any A/B/C section"
+
+
 def test_the_checklist_and_the_record_number_the_same_items():
     checklist, record = set(_checklist_items()), set(_record_items())
 

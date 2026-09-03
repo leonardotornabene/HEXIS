@@ -1,5 +1,0 @@
-{
-  "entry_point": "hexis.pipeline.run_audit --pre-audit",
-  "run_id": "audit_preaudit_53f76d297774_f389dca36708_2026-08-17",
-  "sha256": "ee355e4bb58a1a10d7145bb41912eb9c5874dd33d38544e1c73297e275c9f5b6"
-}

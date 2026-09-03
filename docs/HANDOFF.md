@@ -186,9 +186,21 @@ edit was made.
 > **Every count is unchanged** — prose and artifacts only, no test and no library
 > behaviour — and it is re-run rather than transcribed because a figure carried
 > over untested is a figure nobody measured. The convention this block follows:
-> the attestation commit is the tip and names its parent, so a content commit that
-> lands after it puts the two out of step and calls for a re-run, not a
-> transcription. Superseded attestations, same counts, kept for the trail:
+> the attestation commit is the tip and names its parent, so a commit landing
+> after it puts the two out of step. **Owner ruling, 2026-09-03 — in force,
+> submitted for ratification as part of checklist item 17:** a commit that touches
+> no code, no test, no dependency and no artifact does **not** require a re-run;
+> the block is moved to the new tip and the counts carried over, saying so. The
+> boundary is mechanical, not editorial — anything outside `docs/`, `README.md`,
+> `CLAUDE.md` and `AGENTS.md` forces the re-run, and `git diff --stat` against the
+> attested commit decides it. Everything else still calls for a re-run, never a
+> transcription. So this block may sit some commits behind the tip, and that is
+> not drift: the carried-over commits are exactly those between the attested
+> commit above and the tip, and the reader checks the carry-over was legitimate
+> with `git diff --stat <attested>..HEAD` — every path must fall inside `docs/`,
+> `README.md`, `CLAUDE.md` or `AGENTS.md`. If one does not, these counts are
+> unattested for the current tree and the gates must be re-run.
+> Superseded attestations, same counts, kept for the trail:
 > `3faef5fc46febe4056a2b656924df76d0815a8a6`,
 > `404e55051380749716421e3d741bfbe8fe8fff55`,
 > `67789c45a1b1a07e7f92b52766046096b3f71bcf`,

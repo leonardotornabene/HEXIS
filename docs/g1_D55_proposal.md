@@ -1220,6 +1220,22 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
 17. **The thirteen software conventions** of §(xiv), including the `--force` exception
     and convention 13 (the `g1` gate, authorized 2026-08-17 and pending ratification
     with the rest).
+
+    **Attestation discipline, added 2026-09-03 by owner ruling.** The block in
+    `docs/HANDOFF.md` is the tip and names its parent, so a commit landing after
+    it puts the two out of step. Until 2026-09-03 the stated remedy was a re-run
+    in every case. **It is now: a commit that touches no code, no test, no
+    dependency and no artifact does not require a re-run** — the attestation is
+    moved to the new tip and the counts carried over, saying so. The measured
+    price of the old rule was three full gate runs on 2026-09-02 for prose that
+    could not move a count; the risk of the new one is that "documentation only"
+    is a judgement, and a wrong one silently converts a re-attestation into the
+    transcription this file exists to forbid. The boundary is therefore
+    mechanical, not editorial: **anything outside `docs/`, `README.md`,
+    `CLAUDE.md` and `AGENTS.md` forces the re-run**, `git diff --stat` against the
+    attested commit decides it, and the carried-over block names the commit the
+    counts were actually measured at. Ratify with the conventions or reject; the
+    old rule is the safe fallback, only expensive.
 18. **Route (a) or (b)** for filing the amendments (§Governance).
 19. **Whether `results/` is tracked or gitignored**, and the commit order
     (§Committing this package). A Git question — with one half that is not

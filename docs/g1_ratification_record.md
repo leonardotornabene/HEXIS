@@ -74,7 +74,7 @@ voci `Dnn-A1` che ne discendono saranno in inglese come il resto del Decision Lo
 
 | # | decisione | dipende da | stato | verdetto | data |
 | --- | --- | --- | --- | --- | --- |
-| 17 | Le tredici convenzioni software (§xiv), eccezione `--force` inclusa | — | APERTA | — | — |
+| 17 | Le tredici convenzioni software (§xiv), eccezione `--force` inclusa **+ la disciplina di ri-attestazione: nessun re-run per i commit solo-documentali** (deciso dal proprietario il 3 set 2026, in vigore, da ratificare qui) | — | APERTA | — | — |
 | 18 | Rotta (a) voci separate o (b) omnibus, per depositare gli emendamenti | — | APERTA | — | — |
 | 19 | `results/` tracciato o ignorato **+** eccezione `.gitignore` per gli artefatti congelati | — | APERTA | — | — |
 | 20 | Gate `g1`: inventario di copertura obbligatoria — se sì, prima del run canonico | — | APERTA | — | — |

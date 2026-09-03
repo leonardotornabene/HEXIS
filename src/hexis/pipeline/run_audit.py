@@ -947,7 +947,11 @@ def main(argv=None) -> dict:
     # `entry_point` is the invocation, so the flag reaches every artifact's sidecar
     # too — a CSV separated from its filename still says which mode produced it.
     entry_point = f"{ENTRY_POINT} --pre-audit" if args.pre_audit else ENTRY_POINT
-    stem = f"{mode}_{sha[:12]}_{fingerprint[:12]}_{stamp}"
+    # The software is part of the run's identity too: same day, same data, same
+    # config and different code otherwise collide on run_id, and --force then
+    # replaces evidence a different program produced. Placed before the date so
+    # the stem reads mode / config / inputs / code / when.
+    stem = f"{mode}_{sha[:12]}_{fingerprint[:12]}_{git['commit'][:12]}_{stamp}"
     run_id = f"audit_{stem}"
 
     tables = args.results_root / "tables"

@@ -911,6 +911,24 @@ def test_a_failure_between_writes_rolls_the_whole_run_back(corpus, monkeypatch):
     assert invoke(corpus, "--pre-audit", "--overrides", str(corpus["complete"]))["run_id"]
 
 
+def test_the_run_id_distinguishes_two_code_revisions(corpus, monkeypatch):
+    """Same day, same data, same config, different software: without the code
+    revision the second run either refuses to write or, under --force, replaces
+    evidence that a different program produced."""
+    run_ids = []
+    for commit in ("a" * 40, "b" * 40):
+        monkeypatch.setattr(
+            run_audit,
+            "git_state",
+            lambda commit=commit: {"commit": commit, "dirty": False},
+        )
+        run_ids.append(
+            invoke(corpus, "--pre-audit", "--overrides", str(corpus["complete"]))["run_id"]
+        )
+
+    assert run_ids[0] != run_ids[1]
+
+
 def test_build_manifest_honours_a_pre_captured_git_state():
     captured = {"commit": "0" * 40, "dirty": False}
     manifest = build_manifest(

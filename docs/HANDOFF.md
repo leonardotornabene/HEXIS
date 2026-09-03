@@ -159,20 +159,66 @@ edit was made.
 > blocker was resolved.
 >
 > **Attestation of record — commit
-> `b7428cc`, working tree clean:**
+> `0dc72dc`, working tree clean:**
 >
 > ```
-> uv run pytest -m g0 --strict-markers -q  →  144 passed, 139 deselected  (exit 0)
-> uv run pytest -m g1 --strict-markers -q  →  119 passed, 164 deselected  (exit 0)
-> uv run pytest -q                         →  266 passed,  17 skipped     (exit 0)
+> uv run pytest -m g0 --strict-markers -q  →  144 passed, 146 deselected  (exit 0)
+> uv run pytest -m g1 --strict-markers -q  →  126 passed, 164 deselected  (exit 0)
+> uv run pytest -q                         →  273 passed,  17 skipped     (exit 0)
 > uv lock --check --offline                →  Resolved 23 packages        (clean)
 > ```
 >
-> Re-attested 2026-09-03, closing the external-review remediation pass. **The
-> counts are not carried over: this pass changed library code, added tests and
-> rebuilt every artifact, so the docs-only ruling does not apply under either
-> boundary and all four commands were re-run.** The delta from `3025387` is
-> sixteen commits. Six are pure bug fixes with no ratification content —
+> Re-attested 2026-09-03, closing the audit of the remediation pass. Python
+> 3.12.13. **The counts are not carried over: this pass changed library code and
+> added tests, so the docs-only ruling does not apply under either boundary and
+> all four commands were re-run.** The delta from `b7428cc` is **three** commits,
+> and all three are named: `bbaf7e0` (the previous attestation block),
+> `4b0f4c0` (four holes closed in the guards the remediation pass had added) and
+> `0dc72dc` (the documentary corrections and two declared limits), which is the
+> commit measured above. G0 stayed at **144**, the invariant this pass was run
+> under; `-m g1` moved 119 → 126 and the suite 266 → 273 — seven new cases in four
+> new or tightened test functions, all named in the G1 coverage inventory. The
+> **artifacts were not regenerated**: nothing changed in `config/`, in the audit
+> inputs, or in the run identity, so both committed runs keep their names, their
+> hashes and their sidecars.
+>
+> **What that pass found, and why it matters more than its size.** The six fixes
+> of the remediation pass were correct in the path each named and one level too
+> coarse in three of them — the same failure mode this file has recorded three
+> times. `config.check_against_default` skipped any declared section replaced by a
+> non-mapping, and exempted `corpus.primary_contrast` by a name the check never
+> reaches, so that key could be deleted outright; `registry` validated five field
+> values and left `source_urn` — the field the unresolved Tacitus conflict lives
+> in — accepting `""`, `42` and `None` into the published frame; and
+> `enumerate_prefixes` still let a repeated `sent_id` inflate `n_sentences` while
+> the docstring of `read_tokens` claimed parity with it. One of the new tests was
+> vacuous. All four are now mutation-verified in the strict sense: the pre-fix
+> code was rebuilt in memory and **accepts every input the new tests reject**.
+> Two limits that cannot be closed by a fix are declared instead, in D55 §xiv:
+> the `--results-root` refusal is relative to the *declared* `--data-root`, and
+> the code revision in `run_id` is HEAD alone.
+>
+> **Nothing scientific was decided here either.** `config/`,
+> `docs/01_MASTER_SPEC.md` and `docs/02_DECISION_LOG.md` remain byte-identical to
+> `81f61ec` at the attested commit. Nothing is frozen, `freeze_alphabet` still
+> raises `NotImplementedError`, no model was fit on real data, and all
+> twenty-seven ratification items remain OPEN. What this pass changed is the
+> quality of the evidence, never its content.
+>
+> **Correction to the block this one replaces.** Its delta sentence said the delta
+> from `3025387` was sixteen commits and then named fifteen, of which one
+> (`bbaf7e0`) lay outside the range it was enumerating; `81f61ec` and `d39235f`
+> were omitted, the second being the immediately preceding attestation, which the
+> convention includes. The set is: `95330fc`, `7195eb0`, `2ef9df8`, `4e4dda2`,
+> `a8982df`, `31b5331`, `32421ff`, `9e66deb`, `6946da9`, `7bc4d7d`, `92c9c44`,
+> `9fc5e0a`, `1168cee`, `b7428cc`, **`81f61ec`** and **`d39235f`** — sixteen,
+> verified by set equality against `git rev-list 3025387..b7428cc` and not by
+> counting names in prose. An attestation that names only part of its delta is the
+> defect this block exists to prevent, and it had been committed twice.
+>
+> Previously re-attested 2026-09-03 at `b7428cc` (144 / 119 / 266 + 17), closing
+> the external-review remediation pass, over the sixteen commits set out above.
+> Six are pure bug fixes with no ratification content —
 > `95330fc` (the declared registry column order survives `_inventory`), `7195eb0`
 > (unknown and missing config keys refused at the entry point, where a typed
 > `dmax` used to be ignored and still move `config_hash`), `2ef9df8` (registry
@@ -189,9 +235,11 @@ edit was made.
 > documentary — `6946da9` (statements this branch's own edits had falsified),
 > `7bc4d7d` (the `--force`, `_status` and provenance-binding designs written out
 > as submissions rather than applied, plus new checklist item 26), `92c9c44` (the
-> thirty-row registry verification dossier and new item 27, Tacitus) and the
-> commit carrying this block. Three rebuild the evidence: `9fc5e0a` removes the
-> superseded artifacts, `1168cee` and `b7428cc` regenerate the two pre-audit runs.
+> thirty-row registry verification dossier and new item 27, Tacitus) and
+> `bbaf7e0`, which carried that block. Three rebuild the evidence: `9fc5e0a`
+> removes the superseded artifacts, `1168cee` and `b7428cc` regenerate the two
+> pre-audit runs. The remaining two are `81f61ec` (the docs-only ruling of item
+> 17) and `d39235f` (the attestation this one replaced).
 >
 > **Why the artifacts were rebuilt in three commits and not one.** Every artifact
 > name changed (the run identity now carries the code revision) and the report

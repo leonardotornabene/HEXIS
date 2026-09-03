@@ -57,19 +57,24 @@ pass over all thirty registry rows left unresolved. No figure below comes from a
    artifact.
 
    A run is cited by the **stable half** of its identity, `{config_hash}_{inputs
-   fingerprint}` — the trailing date component is the regeneration date and moves
-   whenever the artifacts are rebuilt, while the fingerprint does not, because it
-   is a digest of the inputs themselves.
+   fingerprint}` — what trails it moves whenever the artifacts are rebuilt, while
+   the fingerprint does not, because it is a digest of the inputs themselves.
+   Since 2026-09-03 two components trail it, not one: the **code revision** and
+   then the regeneration date, so a full id reads
+   `{mode}_{config}_{inputs}_{code}_{date}`. The revision was added because
+   without it two runs on the same day over the same data and config, produced by
+   different software, collide on `run_id` — and `--force` then replaces evidence
+   a different program produced.
 
    | run (stable identity) | overrides | what is read from it |
    | --- | --- | --- |
    | `preaudit_53f76d297774_75e8a4ae9993` | `config/registry_overrides.yaml` (empty) | the 18 + 12 raw-prefix enumeration; per-prefix sentence, raw and retained counts; per-prefix retention (min 80.8%); \|A_grc\| = 106 and \|A_la\| = 102 |
    | `preaudit_53f76d297774_f389dca36708` | `docs/g1_registry_proposal.yaml` | the 29-document canonical inventory (Athenaeus merged); per-regime drop rates and restricted-position fractions; the per-regime excluded-DEPREL shares (max 1.28% grc / 1.11% la) |
 
-   The full id appends the day the artifacts were last rebuilt. That component is
-   deliberately **not** quoted here: pinning it makes this document stale on the
-   next regeneration, and the commit sequence below requires at least one more.
-   Read it off the filenames in `results/tables/`.
+   The full id appends the revision that produced the artifacts and the day they
+   were last rebuilt. Neither is quoted here, deliberately: pinning them makes
+   this document stale on the next regeneration, and the commit sequence below
+   requires at least one more. Read them off the filenames in `results/tables/`.
 
    **What is and is not reproducible, precisely.** Regenerating on the same day
    reproduces the report, the CSVs and the sidecars **byte for byte** — verified.

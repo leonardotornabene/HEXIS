@@ -159,16 +159,60 @@ edit was made.
 > blocker was resolved.
 >
 > **Attestation of record — commit
-> `30253877bc49c39aa68c316d3dc45f62dfe08c1a`, working tree clean:**
+> `b7428cc`, working tree clean:**
 >
 > ```
-> uv run pytest -m g0 --strict-markers -q  →  144 passed, 112 deselected  (exit 0)
-> uv run pytest -m g1 --strict-markers -q  →   95 passed, 161 deselected  (exit 0)
-> uv run pytest -q                         →  239 passed,  17 skipped     (exit 0)
-> uv lock --check                          →  Resolved 23 packages        (clean)
+> uv run pytest -m g0 --strict-markers -q  →  144 passed, 139 deselected  (exit 0)
+> uv run pytest -m g1 --strict-markers -q  →  119 passed, 164 deselected  (exit 0)
+> uv run pytest -q                         →  266 passed,  17 skipped     (exit 0)
+> uv lock --check --offline                →  Resolved 23 packages        (clean)
 > ```
 >
-> Re-attested 2026-09-02, closing the post-review pass. The delta from `1271d57`
+> Re-attested 2026-09-03, closing the external-review remediation pass. **The
+> counts are not carried over: this pass changed library code, added tests and
+> rebuilt every artifact, so the docs-only ruling does not apply under either
+> boundary and all four commands were re-run.** The delta from `3025387` is
+> sixteen commits. Six are pure bug fixes with no ratification content —
+> `95330fc` (the declared registry column order survives `_inventory`), `7195eb0`
+> (unknown and missing config keys refused at the entry point, where a typed
+> `dmax` used to be ignored and still move `config_hash`), `2ef9df8` (registry
+> field *values* validated, not only their presence), `4e4dda2` (a
+> `--results-root` inside the immutable data root refused), `a8982df` (a `doc_id`
+> shared by two languages and a `sent_id` repeated across the pooled splits both
+> refused) and `31b5331` (the code revision enters `run_id`, so two runs of
+> different software over the same data and config no longer collide). One is the
+> missing half of the gate: `32421ff` adds `tests/test_g1_enforcement.py`, the
+> mandatory G1 coverage inventory, checked against pytest's live collection —
+> until it existed the `g1` marker certified only the tests already carrying it.
+> `9e66deb` adds an unmarked check that the D55 checklist and the ratification
+> record number the same items, replacing hand-reconciliation. Four are
+> documentary — `6946da9` (statements this branch's own edits had falsified),
+> `7bc4d7d` (the `--force`, `_status` and provenance-binding designs written out
+> as submissions rather than applied, plus new checklist item 26), `92c9c44` (the
+> thirty-row registry verification dossier and new item 27, Tacitus) and the
+> commit carrying this block. Three rebuild the evidence: `9fc5e0a` removes the
+> superseded artifacts, `1168cee` and `b7428cc` regenerate the two pre-audit runs.
+>
+> **Why the artifacts were rebuilt in three commits and not one.** Every artifact
+> name changed (the run identity now carries the code revision) and the report
+> bytes changed (the inventory's column order), so the committed pair was stale in
+> both name and content. They could not be regenerated together: `git_state`
+> samples `git status --porcelain`, which counts untracked files, so the first
+> run's fresh artifacts would have recorded `dirty: true` on the second. Each run
+> therefore needs a clean tree of its own — which is how the original pair was
+> produced too. Both were verified byte-reproducible against a second run into a
+> scratch results root outside the repository, and both manifests record
+> `dirty: false` correctly.
+>
+> **Nothing scientific was decided.** No binding document changed; `config/`,
+> `docs/01_MASTER_SPEC.md` and `docs/02_DECISION_LOG.md` are byte-identical to
+> `81f61ec`. Nothing is frozen, `freeze_alphabet` still raises
+> `NotImplementedError`, no model was fit on real data, and all twenty-seven
+> ratification items remain OPEN.
+>
+> Previously re-attested 2026-09-02 at
+> `30253877bc49c39aa68c316d3dc45f62dfe08c1a` (144 / 95 / 239 + 17), closing the
+> post-review pass. The delta from `1271d57`
 > is nineteen commits and no test: the previous attestation itself (`1680d3a`),
 > the two pre-audit artifact sets under `results/` (`84a9319`, `dc4cf43`), D55's
 > revision and the opening of the ratification record (`61d6496`, `15352a5`), and
@@ -214,7 +258,9 @@ edit was made.
 > with `git diff --stat <attested>..HEAD` — every path must fall inside `docs/`,
 > `README.md`, `CLAUDE.md` or `AGENTS.md`. If one does not, these counts are
 > unattested for the current tree and the gates must be re-run.
-> Superseded attestations, same counts, kept for the trail:
+> Superseded attestations kept for the trail —
+> `30253877bc49c39aa68c316d3dc45f62dfe08c1a` and `d39235f` at 144 / 95 / 239 + 17,
+> and before them, same counts:
 > `3faef5fc46febe4056a2b656924df76d0815a8a6`,
 > `404e55051380749716421e3d741bfbe8fe8fff55`,
 > `67789c45a1b1a07e7f92b52766046096b3f71bcf`,
@@ -231,7 +277,10 @@ edit was made.
 > "registry construction and validation" in the D52(ii) inventory: testing it only
 > in an unmarked file would have left `-m g0` green while the rule went
 > unexercised. The suite moved 142 → 239 because this branch adds the G1 audit
-> tests, which carry `g1` and never `g0`.
+> tests, which carry `g1` and never `g0`, and 239 → 266 in the 2026-09-03
+> remediation pass — twenty-four more `g1` tests (95 → 119) and three unmarked
+> ones checking that two documents number their items alike. G0 stayed at 144
+> throughout, which is the invariant that pass was run under.
 >
 > This is the **only** place the counts are recorded; README, the roadmap and the
 > index point here instead of repeating them. Any test added later moves the

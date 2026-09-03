@@ -53,9 +53,10 @@ of them matter beyond their own identity: the **Hymn** carries O2/O8, and the
 **Athenaeus** pair carries the merge that turns 30 prefixes into 29 documents.
 
 Counts are from the label-free pre-audit run, cited by the stable half of its
-identity — `preaudit_53f76d297774_75e8a4ae9993` — because the trailing date
-component of a `run_id` is the regeneration date and moves whenever the artifacts
-are rebuilt, while the fingerprint does not. It enumerates raw prefixes (18 grc +
+identity — `preaudit_53f76d297774_75e8a4ae9993` — because what trails it in a
+`run_id` (since 2026-09-03 the code revision, then the regeneration date) moves
+whenever the artifacts are rebuilt, while the fingerprint does not. It
+enumerates raw prefixes (18 grc +
 12 la, totals reconciling with §2.2); the merge in question 1 below is what turns
 30 of them into 29 documents.
 

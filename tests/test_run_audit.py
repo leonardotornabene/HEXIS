@@ -513,6 +513,33 @@ def test_report_carries_the_retained_token_column_t_star_will_be_derived_from(co
     assert "| 4 |" in report
 
 
+def test_a_mistyped_config_key_is_rejected_not_silently_ignored(corpus):
+    """`dmax` is not `d_max`: the merge accepts it, the pipeline reads it nowhere,
+    and `config_hash` changes anyway — so the run is misparameterised and its own
+    identity says nothing about it (§6.3)."""
+    config = yaml.safe_load(REPO_CONFIG.read_text(encoding="utf-8"))
+    config["context_tree"]["dmax"] = 8
+    bad = corpus["write_overrides"](config, "typo_config.yaml")
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--config", str(bad), "--overrides", str(corpus["complete"]))
+
+    assert "context_tree.dmax" in str(caught.value)
+
+
+def test_a_config_missing_a_declared_key_is_rejected(corpus):
+    """The converse: a key the default declares and the file omits leaves the run
+    taking a value the operator never saw in their own config."""
+    config = yaml.safe_load(REPO_CONFIG.read_text(encoding="utf-8"))
+    del config["context_tree"]["d_max"]
+    bad = corpus["write_overrides"](config, "short_config.yaml")
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--config", str(bad), "--overrides", str(corpus["complete"]))
+
+    assert "context_tree.d_max" in str(caught.value)
+
+
 def test_mwt_and_empty_node_rows_never_reach_the_counts(tmp_path):
     """§3.2: sequences are syntactic words; the reader's filtering must hold here too."""
     data_root = tmp_path / "raw" / "UD_Mwt"

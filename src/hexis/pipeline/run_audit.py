@@ -33,7 +33,12 @@ import pandas as pd
 import yaml
 
 from hexis import alphabet, conllu_reader, registry
-from hexis.config import config_hash, derive_seed, resolve_config
+from hexis.config import (
+    check_against_default,
+    config_hash,
+    derive_seed,
+    resolve_config,
+)
 from hexis.manifest import (
     build_manifest,
     git_state,
@@ -881,6 +886,7 @@ def main(argv=None) -> dict:
     git = git_state()
 
     cfg = resolve_config(base=_load_base(args.config))
+    check_against_default(cfg)
     files = discover_files(args.data_root)
     if not args.overrides.exists():
         raise FileNotFoundError(

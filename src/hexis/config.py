@@ -48,6 +48,56 @@ def resolve_config(overrides=None, base=None) -> dict:
     return _deep_merge(base, overrides or {})
 
 
+# Sections whose *keys* are data rather than schema: `primary_contrast` is keyed
+# by language, so its key set follows the corpus and cannot be fixed here.
+_OPEN_SECTIONS = frozenset({"corpus.primary_contrast"})
+
+
+def check_against_default(cfg: dict, *, reference: dict | None = None) -> None:
+    """Reject a resolved config whose key set differs from the default's (§6.3).
+
+    `resolve_config` merges anything, so `context_tree.dmax` is accepted, read by
+    nothing, and still changes `config_hash` — a misparameterized run whose own
+    identity does not say so. A *missing* declared key is the same failure from
+    the other side: the run takes a default the operator never saw.
+
+    The check is deliberately not inside `resolve_config`: that function's
+    partial-override semantics are attested at G0, and `stats/` merges fragments
+    against synthetic bases that are not the full config.
+
+    Two levels only — top-level sections and their immediate keys. Below that the
+    keys are values (regime lists, symbol maps) and a schema check would reject
+    legitimate data.
+    """
+    if reference is None:
+        reference = load_config()
+    unknown, missing = [], []
+    for section in sorted(set(cfg) | set(reference)):
+        if section not in reference:
+            unknown.append(section)
+            continue
+        if section not in cfg:
+            missing.append(section)
+            continue
+        want, have = reference[section], cfg[section]
+        if not isinstance(want, dict) or not isinstance(have, dict):
+            continue
+        for key in sorted(set(have) | set(want)):
+            if f"{section}.{key}" in _OPEN_SECTIONS:
+                continue
+            if key not in want:
+                unknown.append(f"{section}.{key}")
+            elif key not in have:
+                missing.append(f"{section}.{key}")
+    if unknown or missing:
+        raise ValueError(
+            "resolved config does not match config/default.yaml — unknown key(s): "
+            f"{unknown}; missing key(s): {missing}. An unknown key is read by "
+            "nothing yet still changes config_hash; a missing one lets the run "
+            "take a default its own config never showed (§6.3)."
+        )
+
+
 def config_hash(cfg: dict) -> str:
     """SHA-256 of the canonical JSON serialization (sorted keys) of the resolved config."""
     canonical = json.dumps(cfg, sort_keys=True, separators=(",", ":"), ensure_ascii=False)

@@ -24,8 +24,33 @@ def build_sequences(tokens_with_sent_ord: pd.DataFrame) -> pd.DataFrame:
 
     `sent_ord` is an input column, never derived here: sorting `sent_id` strings
     would put `…@10` before `…@3` and silently scramble document order. How it is
-    computed across the UD split files (which D03 ignores) is settled at G1.
+    computed across the UD split files (which D03 ignores) is settled at G1 —
+    which is why two sentences colliding on one `sent_ord` is refused here.
     """
+    # The guard belongs here, not downstream: the grouping below emits one row per
+    # (language, doc_id, sent_ord), so a collision is already fused — symbols
+    # interleaved by token_ord — by the time `to_model_input` could see it.
+    # ponytail: token_ord is the evidence the ratified G0 API contract puts in this
+    # frame; two fused sentences whose token_ord ranges happen to be disjoint stay
+    # invisible here, and seeing them needs `sent_id` in the frame, which is a G0
+    # contract amendment rather than a code change.
+    duplicated = tokens_with_sent_ord.duplicated(
+        ["language", "doc_id", "sent_ord", "token_ord"]
+    )
+    if duplicated.any():
+        collided = sorted(
+            set(
+                tokens_with_sent_ord.loc[duplicated, ["doc_id", "sent_ord"]].itertuples(
+                    index=False, name=None
+                )
+            )
+        )
+        raise ValueError(
+            f"repeated (doc_id, sent_ord, token_ord) at {collided}: two sentences "
+            "share one sent_ord, and grouping would fuse them into a single row "
+            "with their symbols interleaved by token_ord (§3.5)"
+        )
+
     ordered = tokens_with_sent_ord.sort_values(["doc_id", "sent_ord", "token_ord"])
     rows = []
     for (language, doc_id, sent_ord), group in ordered.groupby(
@@ -117,6 +142,10 @@ def to_model_input(
             "(language, doc_id, sent_ord), and one model input cannot span two "
             "languages (§3.7)"
         )
+    # The second belt. `build_sequences` refuses the collision while the evidence
+    # still exists, so a frame it produced can never reach this line; what reaches
+    # it is a frame assembled by hand, which is the only way `sequences.parquet`
+    # could carry two rows for one (doc_id, sent_ord).
     repeated = sorted(doc.loc[doc["sent_ord"].duplicated(), "sent_ord"])
     if repeated:
         raise ValueError(

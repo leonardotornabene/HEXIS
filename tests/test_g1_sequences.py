@@ -61,6 +61,33 @@ def test_a_repeated_sent_ord_within_one_document_is_refused():
     assert "sent_ord" in str(caught.value)
 
 
+def test_two_sentences_colliding_on_one_sent_ord_are_refused_at_construction():
+    """The guard above is the second belt, and on its own it was unreachable.
+
+    `build_sequences` groups by `(language, doc_id, sent_ord)` and emits one row
+    per key, so two sentences sharing a `sent_ord` are fused — their symbols
+    interleaved by `token_ord` — *before* `to_model_input` could see two rows. The
+    frame it returns can never trip the downstream check. `sent_ord` derivation
+    across the pooled UD split files is settled at checklist item 13, which is
+    exactly when this collision becomes reachable on real data.
+    """
+    tokens = pd.DataFrame(
+        [
+            # two distinct sentences, both numbered sent_ord 7 in doc alpha
+            {"language": "grc", "doc_id": "alpha", "sent_ord": 7, "token_ord": 0,
+             "symbol_id": 5, "kept": True},
+            {"language": "grc", "doc_id": "alpha", "sent_ord": 7, "token_ord": 0,
+             "symbol_id": 9, "kept": True},
+        ]
+    )
+
+    with pytest.raises(ValueError) as caught:
+        sequences.build_sequences(tokens)
+
+    assert "sent_ord" in str(caught.value)
+    assert "alpha" in str(caught.value)
+
+
 def test_a_single_language_document_still_converts():
     """The guards must not disturb the ordinary case: one language, gappy
     ordinals, sorted by sent_ord and not by row order."""

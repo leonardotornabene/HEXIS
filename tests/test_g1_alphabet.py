@@ -15,6 +15,8 @@ repeated here, because a figure transcribed into a docstring goes stale silently
 Never delete or weaken a test to make it pass.
 """
 
+import copy
+
 import pandas as pd
 import pytest
 
@@ -285,6 +287,34 @@ def test_gate_a_does_not_fire_at_exactly_two_percent():
     assert audit["gate_a"]["status"] == "evaluated"
     assert audit["gate_a"]["fired"] is False
     assert audit["gate_a"]["triggers"].empty
+
+
+@pytest.mark.parametrize("moved", [0.9, 0.002])
+def test_a_config_that_moves_the_gate_a_threshold_is_refused(moved):
+    """The threshold is a constant (§3.4, D06), as `GATE_B_RETENTION` always was.
+
+    It used to be read straight from config, and `config.check_against_default`
+    inspects key presence only — never a value — so `gate_a_threshold: 0.9`
+    disarmed the gate and the run reported `fired: False` on the same corpus that
+    fires it at 0.02. Both directions are refused: 0.002 fabricates a trigger just
+    as silently as 0.9 suppresses one.
+    """
+    config = copy.deepcopy(C0)
+    config["alphabet"]["gate_a_threshold"] = moved
+    raw = raw_frame(
+        repeat("hex1", "hex1@1", "NOUN", "nsubj", 97)
+        + repeat("hex1", "hex1@2", "NOUN", "vocative", 3)
+    )
+
+    with pytest.raises(ValueError) as caught:
+        alphabet.run_audit(
+            alphabet.map_tokens(raw, config),
+            config,
+            regimes=regimes_for({"hex1": "HEX"}),
+        )
+
+    assert "gate_a_threshold" in str(caught.value)
+    assert str(moved) in str(caught.value)
 
 
 def test_gate_a_aggregates_over_the_regime_not_the_document():

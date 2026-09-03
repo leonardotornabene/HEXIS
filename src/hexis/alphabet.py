@@ -15,6 +15,17 @@ import pandas as pd
 # not a gate.
 GATE_B_RETENTION = 0.70
 
+# §3.4/D06: "> 2% of a regime's raw tokens" (GATE-A). A constant for exactly the
+# reason above, which until 2026-09-03 was applied to GATE-B and not to its
+# sibling: GATE-A was read from config, and `config.check_against_default`
+# inspects key presence only, so `gate_a_threshold: 0.9` disarmed the gate in
+# silence and the run reported `fired: False`.
+# `config/default.yaml` still declares the key, because `config/` is untouched
+# until the ratification package is deposited as one act (D55 checklist item 18).
+# A config that disagrees is therefore refused, not silently ignored — a dead
+# declared key would be the same defect wearing the other face.
+GATE_A_THRESHOLD = 0.02
+
 # D04's fifth label is the disposal label, not a regime under study: an EXCLUDED
 # document enters no estimand — not P1, P2, S1, R1 or L1, not a regime aggregate,
 # not T*. D06 reads "in any regime" and D04 does list EXCLUDED among the five, so
@@ -379,7 +390,16 @@ def _gate_a(labelled: pd.DataFrame, section: Mapping) -> dict:
     fires the gate for the whole design, since D06 escalates the excluded-deprel
     *policy*, which is shared by both languages and by every cell of §5.6.
     """
-    threshold = section["gate_a_threshold"]
+    declared = section["gate_a_threshold"]
+    if declared != GATE_A_THRESHOLD:
+        raise ValueError(
+            f"alphabet.gate_a_threshold is {declared!r}, not {GATE_A_THRESHOLD}: the "
+            "GATE-A threshold is a constant (§3.4, D06) like GATE_B_RETENTION, and a "
+            "config that moved it would change a gate verdict without changing the "
+            "gate. The key survives in config/default.yaml only because config/ is "
+            "frozen until the ratification act (D55 checklist item 18)"
+        )
+    threshold = GATE_A_THRESHOLD
     shares = _label_shares(
         labelled, _excluded_deprel_rows(labelled, section), "deprel_base", key="regime"
     )

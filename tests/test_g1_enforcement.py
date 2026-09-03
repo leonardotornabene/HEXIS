@@ -170,6 +170,7 @@ G1_REQUIRED_COVERAGE = {
             "test_gate_b_looks_everywhere_including_the_excluded_regime",
             "test_gate_b_flags_a_document_below_seventy_percent_retention",
             "test_gates_are_not_evaluated_without_a_registry",
+            "test_a_config_that_moves_the_gate_a_threshold_is_refused",
         ),
     ),
     "registry field-value guards (§2.3, D04)": (
@@ -189,6 +190,7 @@ G1_REQUIRED_COVERAGE = {
         (
             "test_a_doc_id_shared_by_two_languages_is_refused",
             "test_a_repeated_sent_ord_within_one_document_is_refused",
+            "test_two_sentences_colliding_on_one_sent_ord_are_refused_at_construction",
             "test_a_single_language_document_still_converts",
         ),
     ),

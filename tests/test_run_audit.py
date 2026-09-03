@@ -578,6 +578,21 @@ def test_mwt_and_empty_node_rows_never_reach_the_counts(tmp_path):
 # --- provenance and overwrite -----------------------------------------------------
 
 
+def test_a_sent_id_repeated_across_split_files_is_refused(corpus):
+    """D03 pools train/dev/test, so a sent_id occurring in two files would be
+    counted twice in n_sentences and n_tokens_raw and inflate every figure
+    derived from them. `read_tokens` is the only place that sees every file of
+    every language at once."""
+    (corpus["data_root"] / "UD_Mini" / "grc_mini-ud-dev.conllu").write_text(
+        _sentence("alpha.tb.xml@1", [("NOUN", "nsubj")]) + "\n", encoding="utf-8"
+    )
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--overrides", str(corpus["complete"]))
+
+    assert "alpha.tb.xml@1" in str(caught.value)
+
+
 def test_results_root_inside_the_data_root_is_refused(corpus):
     """`data/raw` is immutable (CC BY-NC-SA 2.5) and every input is hashed into
     the run's identity, so artifacts landing inside it corrupt both the corpus and

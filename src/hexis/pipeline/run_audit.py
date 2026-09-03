@@ -168,6 +168,7 @@ def read_tokens(files, languages, *, staged=None) -> pd.DataFrame:
     prefix aborts the run.
     """
     records = []
+    seen_sent_ids = {}
     for path in files:
         # Language from the *original* name (the staged copy is index-prefixed),
         # bytes from the staged copy.
@@ -182,6 +183,18 @@ def read_tokens(files, languages, *, staged=None) -> pd.DataFrame:
             ) from exc
         for sentence in sentences:
             sent_id = sentence.metadata["sent_id"]
+            # D03 pools the UD splits, so a repeated id is not a duplicate row to
+            # drop: it is one sentence counted twice in n_sentences and
+            # n_tokens_raw, and in everything derived from them. Keyed on sent_id
+            # alone — doc_id is derived from it, so an id shared across languages
+            # is the same collision seen one level down.
+            if sent_id in seen_sent_ids:
+                raise ValueError(
+                    f"sent_id {sent_id!r} occurs in both {seen_sent_ids[sent_id]} "
+                    f"and {path}: D03 pools the UD splits, so a repeated id is "
+                    "counted twice in n_sentences and n_tokens_raw (§3.3)"
+                )
+            seen_sent_ids[sent_id] = path
             doc_id = registry.doc_id_from_sent_id(sent_id)
             declared = sentence.metadata.get("newdoc id")
             if declared is not None and declared != doc_id:

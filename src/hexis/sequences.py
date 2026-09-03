@@ -106,6 +106,23 @@ def to_model_input(
     doc = sequences[sequences["doc_id"] == doc_id].sort_values("sent_ord")
     if doc.empty:
         raise ValueError(f"no sequences for doc_id {doc_id!r}")
+    # The table is keyed (language, doc_id, sent_ord) and the signature is fixed
+    # by the ratified G0 API contract, so a doc_id shared across languages is
+    # refused rather than resolved: it is a registry error, and servicing it would
+    # pool two languages into one fit and interleave them by sent_ord.
+    languages = sorted(set(doc["language"]))
+    if len(languages) > 1:
+        raise ValueError(
+            f"doc_id {doc_id!r} occurs in languages {languages}: the table is keyed "
+            "(language, doc_id, sent_ord), and one model input cannot span two "
+            "languages (§3.7)"
+        )
+    repeated = sorted(doc.loc[doc["sent_ord"].duplicated(), "sent_ord"])
+    if repeated:
+        raise ValueError(
+            f"doc_id {doc_id!r} repeats sent_ord {repeated}: sentence order is then "
+            "undefined and a sentence is silently duplicated (§3.5)"
+        )
 
     sentence_symbols = [list(row) for row in doc["symbols"]]
     if boundary == "reset":

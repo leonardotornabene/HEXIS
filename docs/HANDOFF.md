@@ -159,49 +159,56 @@ edit was made.
 > blocker was resolved.
 >
 > **Attestation of record — commit
-> `0dc72dc`, working tree clean:**
+> `93f2425`, working tree clean:**
 >
 > ```
-> uv run pytest -m g0 --strict-markers -q  →  144 passed, 146 deselected  (exit 0)
-> uv run pytest -m g1 --strict-markers -q  →  126 passed, 164 deselected  (exit 0)
-> uv run pytest -q                         →  273 passed,  17 skipped     (exit 0)
+> uv run pytest -m g0 --strict-markers -q  →  144 passed, 151 deselected  (exit 0)
+> uv run pytest -m g1 --strict-markers -q  →  129 passed, 166 deselected  (exit 0)
+> uv run pytest -q                         →  278 passed,  17 skipped     (exit 0)
 > uv lock --check --offline                →  Resolved 23 packages        (clean)
 > ```
 >
-> Re-attested 2026-09-03, closing the audit of the remediation pass. Python
+> Re-attested 2026-09-03, closing an independent audit of the **whole branch** —
+> all forty commits from the merge-base `3f5a6ea`, not the last pass only. Python
 > 3.12.13. **The counts are not carried over: this pass changed library code and
-> added tests, so the docs-only ruling does not apply under either boundary and
-> all four commands were re-run.** The delta from `b7428cc` is **three** commits,
-> and all three are named: `bbaf7e0` (the previous attestation block),
-> `4b0f4c0` (four holes closed in the guards the remediation pass had added) and
-> `0dc72dc` (the documentary corrections and two declared limits), which is the
-> commit measured above. G0 stayed at **144**, the invariant this pass was run
-> under; `-m g1` moved 119 → 126 and the suite 266 → 273 — seven new cases in four
-> new or tightened test functions, all named in the G1 coverage inventory. The
-> **artifacts were not regenerated**: nothing changed in `config/`, in the audit
-> inputs, or in the run identity, so both committed runs keep their names, their
-> hashes and their sidecars.
+> added tests, so the docs-only ruling does not apply and all four commands were
+> re-run.** The delta from `0dc72dc` is **four** commits, and all four are named:
+> `04d3a38` (the previous attestation block), `5e9c2c9` (the two mis-sited
+> guards), `6f0341b` (item 27 moved to section A, and the test that would have
+> caught it) and `93f2425` (six documentary corrections), which is the commit
+> measured above — verified by set equality against `git rev-list 0dc72dc..HEAD`,
+> not by counting names. G0 stayed at **144**, the invariant every pass is run
+> under; `-m g1` moved 126 → 129 and the suite 273 → 278, the two extra being the
+> unmarked documentation-consistency cases. The three selections agree on the
+> collection: 144 + 151 = 129 + 166 = 278 + 17 = **295**. The **artifacts were
+> not regenerated**: nothing changed in `config/`, in the audit inputs, or in the
+> run identity, so both committed runs keep their names, hashes and sidecars.
 >
-> **What that pass found, and why it matters more than its size.** The six fixes
-> of the remediation pass were correct in the path each named and one level too
-> coarse in three of them — the same failure mode this file has recorded three
-> times. `config.check_against_default` skipped any declared section replaced by a
-> non-mapping, and exempted `corpus.primary_contrast` by a name the check never
-> reaches, so that key could be deleted outright; `registry` validated five field
-> values and left `source_urn` — the field the unresolved Tacitus conflict lives
-> in — accepting `""`, `42` and `None` into the published frame; and
-> `enumerate_prefixes` still let a repeated `sent_id` inflate `n_sentences` while
-> the docstring of `read_tokens` claimed parity with it. One of the new tests was
-> vacuous. All four are now mutation-verified in the strict sense: the pre-fix
-> code was rebuilt in memory and **accepts every input the new tests reject**.
-> Two limits that cannot be closed by a fix are declared instead, in D55 §xiv:
-> the `--results-root` refusal is relative to the *declared* `--data-root`, and
-> the code revision in `run_id` is HEAD alone.
+> **What the whole-branch audit found.** Three perimeters were audited
+> independently and every claim re-verified before it was acted on. The manifests
+> recompute exactly, the `--force` discipline holds, no dependency was added and
+> `data/raw/` is ignored and untracked. What it found was two more guards sited
+> one level away from the thing they guarantee — the branch's signature defect,
+> now recorded five times. `to_model_input` refused a repeated `sent_ord`, but
+> `build_sequences` groups by `(language, doc_id, sent_ord)` and had already
+> fused the two sentences into one row before that check could see them; and the
+> GATE-A threshold was a config value while its sibling `GATE_B_RETENTION` was a
+> constant carrying the comment "a threshold that can drift silently is not a
+> gate" — `gate_a_threshold: 0.9` reported `fired: False` on a corpus that fires
+> at 0.02. Both are mutation-verified: the pre-fix code was rebuilt in memory and
+> **accepts every input the new tests reject**.
+>
+> It also found the checklist and the record disagreeing on whether item 27
+> blocks the freeze — filed under C in one and A in the other, with three
+> consistency tests passing throughout because they compared sets of integers.
+> The item is now in A in both, by owner ruling, and section membership is
+> tested.
 >
 > **Nothing scientific was decided here either.** `config/`,
 > `docs/01_MASTER_SPEC.md` and `docs/02_DECISION_LOG.md` remain byte-identical to
-> `81f61ec` at the attested commit. Nothing is frozen, `freeze_alphabet` still
-> raises `NotImplementedError`, no model was fit on real data, and all
+> the merge-base `3f5a6ea` at the attested commit — verified over the whole
+> branch, not merely since the last pass. Nothing is frozen, `freeze_alphabet`
+> still raises `NotImplementedError`, no model was fit on real data, and all
 > twenty-seven ratification items remain OPEN. What this pass changed is the
 > quality of the evidence, never its content.
 >
@@ -215,6 +222,17 @@ edit was made.
 > verified by set equality against `git rev-list 3025387..b7428cc` and not by
 > counting names in prose. An attestation that names only part of its delta is the
 > defect this block exists to prevent, and it had been committed twice.
+>
+> Previously re-attested 2026-09-03 at `0dc72dc` (144 / 126 / 273 + 17), closing
+> the audit of the remediation pass, whose six fixes were correct in the path
+> each named and one level too coarse in three of them:
+> `config.check_against_default` skipped any declared section replaced by a
+> non-mapping and exempted `corpus.primary_contrast` by a name the check never
+> reaches; `registry` left `source_urn` unchecked, accepting `""`, `42` and
+> `None` into the published frame; `enumerate_prefixes` let a repeated `sent_id`
+> inflate `n_sentences`. One new test was vacuous. Two limits that no fix closes
+> were declared in D55 §xiv instead: the `--results-root` refusal is relative to
+> the *declared* `--data-root`, and the code revision in `run_id` is HEAD alone.
 >
 > Previously re-attested 2026-09-03 at `b7428cc` (144 / 119 / 266 + 17), closing
 > the external-review remediation pass, over the sixteen commits set out above.

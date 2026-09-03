@@ -39,7 +39,12 @@ and `docs/HANDOFF.md` to the touched-documents table, and added checklist items
 **24–25**. Item 24's own count was then found short in the same review — it read
 nine, the figure the citation search returns; `docs/HANDOFF.md` carries three of
 these statements, one of which cites no filename — and is corrected here to
-**eleven**. No figure below comes from a model (D30 intact — counts only, no fit).
+**eleven**. Revised again **2026-09-03**, after an external review of the branch at
+`81f61ec`: the `--force` and provenance-binding designs written out in full under
+items 17 and 23, item 20 rewritten because the inventory it called deliberately
+undone was built that day, and checklist item **26** added for the
+`_status: RATIFIED` self-declaration. No figure below comes from a model
+(D30 intact — counts only, no fit).
 
 **Provenance, stated precisely.** Two classes of evidence, not one:
 
@@ -1246,6 +1251,52 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     attested commit decides it, and the carried-over block names the commit the
     counts were actually measured at. Ratify with the conventions or reject; the
     old rule is the safe fallback, only expensive.
+
+    **Correction submitted 2026-09-03 (external review):** that boundary is too
+    wide, and the version above is recorded as ruled rather than quietly
+    replaced. `docs/` is not prose-only. It holds
+    `docs/g1_registry_proposal.yaml`, an **executable input** the pipeline reads
+    and whose digest enters the manifest; and it holds `docs/01_MASTER_SPEC.md`
+    and `docs/02_DECISION_LOG.md`, which define what the tests must prove. A
+    `git diff --stat` sees paths and line counts, never semantic inertia. The
+    narrower rule submitted: a commit may carry the attestation forward only if
+    it touches **no** file under `src/`, `tests/` or `config/`, no lockfile, no
+    artifact under `results/`, and none of `docs/**/*.yaml`,
+    `docs/01_MASTER_SPEC.md`, `docs/02_DECISION_LOG.md`. Anything else forces the
+    re-run. Both boundaries are recorded in `docs/HANDOFF.md`; the narrower one is
+    the one the 2026-09-03 session honoured. Ratify one.
+
+    **`--force` may leave a partially overwritten run — D5 of the external
+    review, submitted 2026-09-03.** This is present behaviour and it is
+    deliberate: `_preflight` returns immediately under `--force`
+    (`run_audit.py:1086`), and the rollback in the `except BaseException:` arm is
+    skipped under `--force` too (`run_audit.py:1021`). The stated reason is sound
+    as far as it goes — without the preflight's proof that no destination existed,
+    a destination may hold a *previous* run's artifact, and deleting it would
+    destroy someone else's output. So a `--force` run that fails midway leaves
+    some destinations holding the new run's output, some holding the old run's,
+    and possibly one truncated. Every file still carries a sidecar, so nothing is
+    unlabelled — but the *set* is a mixture of two runs, and no artifact says so.
+
+    The reviewer's argument: canonical evidence must never be half-replaced, and
+    the mixture is not detectable from any single artifact. The concrete
+    alternative, fully specified so ratification is one reading: write the whole
+    run into a staging directory beside the destination, and **rename into place**
+    only once every artifact, sidecar and the manifest have been written. Rename
+    within one filesystem is atomic per path, so a failure before the renames
+    leaves the previous run entirely intact and a failure during them leaves a
+    prefix — which the manifest, renamed last, still adjudicates. `--force`
+    becomes atomic at the run level, and the rollback special case disappears
+    rather than being documented.
+
+    The cost, stated so it is not discovered later: it changes the artifact
+    writing path, which conventions 7–10 rest on; it needs its own g1 tests
+    (failure before the renames, failure between two renames, and the manifest
+    written last); and `destinations_of` grows a staging counterpart, so the
+    "one list used twice" invariant at `run_audit.py:1066` becomes one list used
+    three times. **Not implemented.** Ratification decides; an agent changing
+    canonical evidence handling on its own initiative is the failure mode this
+    package exists to prevent.
 18. **Route (a) or (b)** for filing the amendments (§Governance).
 19. **Whether `results/` is tracked or gitignored**, and the commit order
     (§Committing this package). A Git question — with one half that is not
@@ -1255,14 +1306,35 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     with the freeze (§xv(4)).
 20. **The `g1` gate — decided and implemented (convention 13), ratification
     pending with the rest.** The marker plus the enforcement it inherits from G0
-    is in force; what is *not* done, deliberately, is a D52(ii)-style inventory of
-    mandatory G1 areas by test name. That step presupposes a normative definition
-    of the G1 set, and no decision provides one — D52 governs G0 only. If you want
-    it, it is a Decision-Log matter, not a convention. **Sequencing, added
-    2026-08-20:** if you want it, it has to exist *before* the canonical audit run,
-    not after — after the freeze the gate has guarded nothing. That is the exact
-    failure that reopened G0, where `-m g0` exited 0 with three mandatory areas at
-    zero coverage.
+    is in force. **Sequencing, added 2026-08-20:** a mandatory-area inventory has
+    to exist *before* the canonical audit run, not after — after the freeze the
+    gate has guarded nothing. That is the exact failure that reopened G0, where
+    `-m g0` exited 0 with three mandatory areas at zero coverage.
+
+    **Built 2026-09-03, and this item's premise changed with it.** Until then this
+    item said the D52(ii)-style inventory was deliberately *not* done, on the
+    ground that it presupposes a normative definition of the G1 set that no
+    decision supplies. The external review called that the same self-certification
+    hole G0 had: `conftest` guarantees that no test *carrying* `g1` is skipped,
+    xfailed or assertion-free, and guarantees nothing about which tests carry it,
+    so deleting a file or dropping a marker leaves `-m g1` green over a smaller
+    set. Acting on the sequencing clause above — the window closes at the
+    canonical run — `tests/test_g1_enforcement.py` now names **eleven areas test
+    by test** and checks them against pytest's **live collection**
+    (`request.session.items`), not an AST approximation, so it measures the
+    selection that actually ran.
+
+    What that does **not** do is supply the normative definition, and it must not
+    be read as one. The eleven areas are the current G1 set described, not a
+    decision about what G1 must cover; ratifying them is what would make the
+    inventory normative, and that is this item. Two consequences are already
+    load-bearing and are stated so nobody "fixes" them later: running
+    `tests/test_g1_enforcement.py` **alone always fails**, by construction, since
+    a session holding only that file has collected no other g1 test — the
+    canonical selection is `uv run pytest -m g1 --strict-markers`; and the G0
+    helper is **duplicated rather than shared**, because its marker name is
+    hard-coded and pinned by a named member of the attested 144-test G0 set, so
+    generalising it would mean editing attested G0 code to serve G1.
 
 23. **Binding the audit's inputs to `PROVENANCE.md`** (new 2026-08-20; promoted
     from the open items). Conventions 7–8 guarantee that a run describes the bytes
@@ -1272,6 +1344,30 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     The freeze is not blocked by this; the question is whether the canonical run
     should refuse to proceed when the two disagree. Recommended: yes, and before
     the canonical run, since that is the run whose inputs get frozen.
+
+    **Restated 2026-09-03 (external review, its D7), with the design specified so
+    ratification is one reading.** The reviewer's framing is sharper than the
+    paragraph above: the manifest records *what was read*, and **nothing asserts
+    that what was read is the pinned r2.18 release**. Those are different claims,
+    and only the first is currently made. A corpus silently replaced between runs
+    produces a manifest that is internally perfect and externally false.
+
+    The design. `data/raw/PROVENANCE.md` already carries the two UD commit SHAs
+    and the SHA-256 of each of the five `.conllu` files, and `inputs_fingerprint`
+    already computes a per-file digest of the bytes actually read — so the
+    comparison needs no new hashing, only a declared parse of the provenance file
+    and a set comparison. **Canonical mode refuses on any mismatch**, naming every
+    file whose digest differs and every pinned file the run did not read;
+    **pre-audit mode reports rather than refuses**, in the report and in the
+    manifest, consistent with pre-audit withholding every verdict. The
+    prerequisite the open-items list already names stands: `PROVENANCE.md` is
+    prose today, so it needs a machine-readable block before the five files and
+    their digests can be enforced — that is part of what is being ratified here,
+    not an obstacle discovered afterwards.
+
+    **Not implemented**, deliberately: what a canonical run must refuse to do is a
+    ratification question, and the format of `PROVENANCE.md` is fixed by the same
+    act.
 
 24. **The documentary scope of the ratification act** (new 2026-09-02). **Eleven
     statements across seven files** declare this amendment PROPOSED and applied to
@@ -1325,6 +1421,46 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     The question is whether a check should hold them so, or whether it stays a
     habit; a test comparing the three is cheap, and the cost of having one is
     that `04` and the two root files become a single editing unit.
+
+26. **`_status: RATIFIED` is a self-declaration, not proof of ratification** (new
+    2026-09-03; external review, its D6). Canonical mode proceeds only when the
+    overrides file it was given carries `_status: RATIFIED`. That key is inside
+    the file it certifies, so **any** file can assert it: copying
+    `docs/g1_registry_proposal.yaml`, changing one word and typing `RATIFIED` at
+    the top produces a canonical audit over an unratified registry, and no
+    artifact contradicts it. The manifest faithfully records the digest of
+    whatever was read; it does not know which digest you ratified.
+
+    The whole design space, so this is one reading and not a research task:
+
+    - **α — pin canonical mode to the default overrides path**
+      (`config/registry_overrides.yaml`). **Not implementable as things stand:**
+      that file is comment-only, so canonical mode would become impossible until
+      the freeze, and roughly fifteen canonical call sites in the g1 tests pass a
+      custom `--overrides` by design. Rejecting α is not a preference; it is a
+      fact about the tree.
+    - **β — require the file's basename.** Theatre: a copy renamed is a copy
+      ratified. It raises the cost of the accident by one `mv` and gives a false
+      sense that the question is closed.
+    - **γ — record the ratified digest outside the file. Recommended.** The
+      ratification act names a SHA-256 (in the Decision Log entry, or in
+      `config/`), and canonical mode compares it against the digest the pipeline
+      **already computes** for the overrides input. A file that edits itself into
+      `RATIFIED` then fails, because the thing it cannot forge is a digest
+      recorded elsewhere. Cost: the digest is fixed by the ratification act, so
+      any later correction to the registry is a new act — which is the intended
+      property, not a side effect.
+    - **δ — leave it as a declaration.** Defensible *only* while `--pre-audit`
+      withholds every verdict and nothing is frozen, which describes today and
+      stops describing the moment the freeze happens.
+
+    **The zero-risk increment, available immediately and deliberately not taken:**
+    the overrides digest is *already* in the input snapshot and in
+    `manifest["inputs"]`; only the **report header** omits it, so a reader holding
+    the report alone cannot see which registry produced it. Adding it there is
+    presentation, not policy, and it does not decide α/β/γ/δ. It is still an
+    **artifact-bytes change**, so it waits for ratification with the rest rather
+    than being slipped in as tidying.
 
 ## Open items this amendment does not close
 

@@ -77,10 +77,11 @@ voci `Dnn-A1` che ne discendono saranno in inglese come il resto del Decision Lo
 | 17 | Le tredici convenzioni software (§xiv), eccezione `--force` inclusa **+ la disciplina di ri-attestazione: nessun re-run per i commit solo-documentali** (deciso dal proprietario il 3 set 2026, in vigore, da ratificare qui) | — | APERTA | — | — |
 | 18 | Rotta (a) voci separate o (b) omnibus, per depositare gli emendamenti | — | APERTA | — | — |
 | 19 | `results/` tracciato o ignorato **+** eccezione `.gitignore` per gli artefatti congelati | — | APERTA | — | — |
-| 20 | Gate `g1`: inventario di copertura obbligatoria — se sì, prima del run canonico | — | APERTA | — | — |
+| 20 | Gate `g1`: inventario di copertura obbligatoria — **costruito il 3 set 2026** (`tests/test_g1_enforcement.py`, undici aree, verificate contro la collection viva di pytest); resta da ratificare se quelle undici aree sono la definizione normativa dell'insieme G1 | — | APERTA | — | — |
 | 23 | Legare gli input dell'audit a `PROVENANCE.md` | — | APERTA | — | — |
 | 24 | Ambito documentale dell'atto di ratifica: le **undici** dichiarazioni su **sette** file che la ratifica rende false nello stesso istante | 18 | APERTA | — | — |
 | 25 | Se qualcosa debba imporre l'identità delle tre copie delle istruzioni permanenti (`CLAUDE.md`, `AGENTS.md`, template di `04` §B) | — | APERTA | — | — |
+| 26 | `_status: RATIFIED` è un'autodichiarazione del file, non prova della ratifica: **α** ancorare al path di default (non implementabile) · **β** imporre il basename (teatro) · **γ** registrare il digest ratificato fuori dal file (**consigliata**) · **δ** lasciarla com'è | 2 · 18 | APERTA | — | — |
 
 ---
 

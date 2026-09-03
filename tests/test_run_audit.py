@@ -540,6 +540,34 @@ def test_a_config_missing_a_declared_key_is_rejected(corpus):
     assert "context_tree.d_max" in str(caught.value)
 
 
+def test_a_config_section_replaced_by_a_scalar_is_rejected(corpus):
+    """A declared section that is no longer a mapping has no keys to compare, and
+    the check used to skip it — accepting silently the misparameterisation it
+    exists to refuse, with `config_hash` moved and nothing saying so."""
+    config = yaml.safe_load(REPO_CONFIG.read_text(encoding="utf-8"))
+    config["context_tree"] = 5
+    bad = corpus["write_overrides"](config, "scalar_section_config.yaml")
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--config", str(bad), "--overrides", str(corpus["complete"]))
+
+    assert "context_tree.d_max" in str(caught.value)
+
+
+def test_a_deleted_language_keyed_section_is_rejected(corpus):
+    """`corpus.primary_contrast` was exempt by name so that its language keys
+    would not be schema-checked — but the check never descends that far, so the
+    exemption only made the key itself optional."""
+    config = yaml.safe_load(REPO_CONFIG.read_text(encoding="utf-8"))
+    del config["corpus"]["primary_contrast"]
+    bad = corpus["write_overrides"](config, "no_contrast_config.yaml")
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--config", str(bad), "--overrides", str(corpus["complete"]))
+
+    assert "corpus.primary_contrast" in str(caught.value)
+
+
 def test_mwt_and_empty_node_rows_never_reach_the_counts(tmp_path):
     """§3.2: sequences are syntactic words; the reader's filtering must hold here too."""
     data_root = tmp_path / "raw" / "UD_Mwt"

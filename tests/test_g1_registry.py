@@ -17,6 +17,7 @@ Never delete or weaken a test to make it pass.
 
 import pandas as pd
 import pytest
+from conllu import TokenList
 
 from hexis import registry
 
@@ -48,6 +49,36 @@ def test_a_blank_required_field_is_refused(field):
         registry.build_registry(PREFIX_COUNTS, _overrides(**{field: "   "}))
 
     assert field in str(caught.value)
+    # Without this the `regime` case is vacuous: a whitespace-only regime is
+    # already refused by the pre-existing label check, whose message names the
+    # field too, so the parametrisation passed with the blank guard deleted.
+    assert "blank" in str(caught.value)
+
+
+@pytest.mark.parametrize("value", ["", "   ", 42, None])
+def test_a_blank_source_urn_is_refused(value):
+    """`source_urn` is published in the registry and carries the work's identity —
+    it is the field the unresolved Tacitus conflict lives in (checklist item 27).
+    Its value was never checked at all: only its *presence* on a merge was."""
+    with pytest.raises(ValueError) as caught:
+        registry.build_registry(PREFIX_COUNTS, _overrides(source_urn=value))
+
+    assert "source_urn" in str(caught.value)
+
+
+def test_a_sent_id_repeated_in_the_stream_is_refused():
+    """`read_tokens` refuses a repeated `sent_id`; `enumerate_prefixes` performs
+    the same per-document aggregation from the same sentence stream and let it
+    inflate `n_sentences` and `n_tokens_raw` — the guard belonged in both."""
+    sentences = [
+        TokenList([{"id": 1, "form": "x"}], {"sent_id": "alpha.tb.xml@1"}),
+        TokenList([{"id": 1, "form": "x"}], {"sent_id": "alpha.tb.xml@1"}),
+    ]
+
+    with pytest.raises(ValueError) as caught:
+        registry.enumerate_prefixes(sentences, language="grc")
+
+    assert "occurs twice" in str(caught.value)
 
 
 def test_a_bare_string_flags_value_is_refused():

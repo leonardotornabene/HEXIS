@@ -75,13 +75,22 @@ def enumerate_prefixes(sentences: Iterable, *, language: str) -> pd.DataFrame:
     document's sentences arrive across several files with non-contiguous
     ordinals; the aggregation is by `doc_id` alone and never by file or by
     ordinal contiguity. Where `newdoc id` is present it must agree with the
-    derived prefix.
+    derived prefix, and a `sent_id` repeated in the stream aborts: pooled splits
+    make it one sentence counted twice, not a duplicate row to drop.
     """
     n_sentences: Counter = Counter()
     n_tokens: Counter = Counter()
+    seen_sent_ids: set[str] = set()
 
     for sentence in sentences:
         sent_id = sentence.metadata["sent_id"]
+        if sent_id in seen_sent_ids:
+            raise ValueError(
+                f"sent_id {sent_id!r} occurs twice in the {language} stream: D03 "
+                "pools the UD splits, so a repeated id is counted twice in "
+                "n_sentences and n_tokens_raw (§3.3)"
+            )
+        seen_sent_ids.add(sent_id)
         doc_id = doc_id_from_sent_id(sent_id)
         declared = sentence.metadata.get("newdoc id")
         if declared is not None and declared != doc_id:
@@ -240,8 +249,13 @@ def build_registry(prefix_counts: pd.DataFrame, overrides: Mapping) -> pd.DataFr
             raise ValueError(f"registry assignment for {raw_doc_id} is missing {missing}")
         blank = [
             field
-            for field in REQUIRED_OVERRIDE_FIELDS
-            if not isinstance(assignment[field], str) or not assignment[field].strip()
+            # `source_urn` is optional, so membership is tested; the required five
+            # are already caught above by their absence, so one expression covers
+            # both. It is published in the registry and carries the work's
+            # identity — it is the field the Tacitus conflict lives in.
+            for field in (*REQUIRED_OVERRIDE_FIELDS, "source_urn")
+            if field in assignment
+            and (not isinstance(assignment[field], str) or not assignment[field].strip())
         ]
         if blank:
             raise ValueError(

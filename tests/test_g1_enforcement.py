@@ -78,6 +78,8 @@ G1_REQUIRED_COVERAGE = {
             "test_a_sent_id_repeated_across_split_files_is_refused",
             "test_a_mistyped_config_key_is_rejected_not_silently_ignored",
             "test_a_config_missing_a_declared_key_is_rejected",
+            "test_a_config_section_replaced_by_a_scalar_is_rejected",
+            "test_a_deleted_language_keyed_section_is_rejected",
             "test_results_root_inside_the_data_root_is_refused",
         ),
     ),
@@ -174,6 +176,8 @@ G1_REQUIRED_COVERAGE = {
         REGISTRY,
         (
             "test_a_blank_required_field_is_refused",
+            "test_a_blank_source_urn_is_refused",
+            "test_a_sent_id_repeated_in_the_stream_is_refused",
             "test_a_bare_string_flags_value_is_refused",
             "test_a_non_string_flag_element_is_refused",
             "test_a_part_order_that_cannot_order_parts_is_refused",

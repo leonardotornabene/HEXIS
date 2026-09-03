@@ -163,9 +163,9 @@ def read_tokens(files, languages, *, staged=None) -> pd.DataFrame:
 
     `registry.enumerate_prefixes` is not called here — it consumes the same
     sentence stream to produce only the counts, and this pass needs the token rows
-    from it. Its two guarantees are kept: `doc_id` comes from
-    `registry.doc_id_from_sent_id`, and a `newdoc id` that contradicts the derived
-    prefix aborts the run.
+    from it. Its three guarantees are kept: `doc_id` comes from
+    `registry.doc_id_from_sent_id`, a `newdoc id` that contradicts the derived
+    prefix aborts the run, and so does a repeated `sent_id`.
     """
     records = []
     seen_sent_ids = {}
@@ -951,6 +951,11 @@ def main(argv=None) -> dict:
     # config and different code otherwise collide on run_id, and --force then
     # replaces evidence a different program produced. Placed before the date so
     # the stem reads mode / config / inputs / code / when.
+    # The component is HEAD alone: uncommitted work does not move it, so two runs
+    # of differing *uncommitted* code still collide. `_preflight` refuses that
+    # collision without --force and the manifest records `dirty` either way.
+    # Widening the run identity would change the artifact naming convention
+    # (§xiv), so the residue is submitted for ratification, not closed here.
     stem = f"{mode}_{sha[:12]}_{fingerprint[:12]}_{git['commit'][:12]}_{stamp}"
     run_id = f"audit_{stem}"
 

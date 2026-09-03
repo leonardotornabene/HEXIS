@@ -48,11 +48,6 @@ def resolve_config(overrides=None, base=None) -> dict:
     return _deep_merge(base, overrides or {})
 
 
-# Sections whose *keys* are data rather than schema: `primary_contrast` is keyed
-# by language, so its key set follows the corpus and cannot be fixed here.
-_OPEN_SECTIONS = frozenset({"corpus.primary_contrast"})
-
-
 def check_against_default(cfg: dict, *, reference: dict | None = None) -> None:
     """Reject a resolved config whose key set differs from the default's (§6.3).
 
@@ -67,7 +62,10 @@ def check_against_default(cfg: dict, *, reference: dict | None = None) -> None:
 
     Two levels only — top-level sections and their immediate keys. Below that the
     keys are values (regime lists, symbol maps) and a schema check would reject
-    legitimate data.
+    legitimate data — `corpus.primary_contrast` is keyed by language and its keys
+    are never inspected for that reason. It carried a named exemption until
+    2026-09-03; since the check never descends that far the exemption bought
+    nothing and only stopped the key *itself* from being required.
     """
     if reference is None:
         reference = load_config()
@@ -80,11 +78,15 @@ def check_against_default(cfg: dict, *, reference: dict | None = None) -> None:
             missing.append(section)
             continue
         want, have = reference[section], cfg[section]
-        if not isinstance(want, dict) or not isinstance(have, dict):
+        if not isinstance(want, dict):
+            continue
+        if not isinstance(have, dict):
+            # A declared section replaced by a scalar or a list has no keys to
+            # compare, and skipping it accepts the misparameterisation this
+            # function exists to refuse: every key it should carry is absent.
+            missing.extend(f"{section}.{key}" for key in sorted(want))
             continue
         for key in sorted(set(have) | set(want)):
-            if f"{section}.{key}" in _OPEN_SECTIONS:
-                continue
             if key not in want:
                 unknown.append(f"{section}.{key}")
             elif key not in have:

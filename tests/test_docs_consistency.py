@@ -38,9 +38,15 @@ def _checklist_items() -> list[int]:
 
 
 def _record_items() -> list[int]:
-    """Item numbers from the record's tables, in document order."""
+    """Item numbers from the record's decision tables, in document order.
+
+    Scoped above `## Verdetti`: that section is where each verdict is written out
+    in full, item number included, so an unscoped parse would eventually read a
+    verdict as a second declaration of the item it settles.
+    """
     text = RECORD.read_text(encoding="utf-8")
-    return [int(m.group(1)) for m in re.finditer(r"^\|\s*(\d+)\s*\|", text, re.M)]
+    tables = text.partition("\n## Verdetti")[0]
+    return [int(m.group(1)) for m in re.finditer(r"^\|\s*(\d+)\s*\|", tables, re.M)]
 
 
 def test_the_checklist_and_the_record_number_the_same_items():

@@ -180,12 +180,15 @@ assignment and is what blocks a canonical run.
    `flag:` typed for `flags:` fails loudly instead of vanishing (D55 §xiv,
    convention 12).
 
-   Accepted is not the same as validated, either: nothing checks that
-   `part_order` is an integer, present on every member of a merged group and
-   unique within it. That is correct only while nothing reads it, so the
-   constraint is listed as an implementation obligation alongside `sent_ord`
-   (D55 checklist B, item 13) rather than left to be noticed when `run_encode`
-   produces scrambled ranks.
+   Accepted is not the same as validated, and since 2026-09-03 it is
+   half-validated: `build_registry` now refuses a `part_order` that is not a
+   non-negative `int`, booleans included, since `isinstance(True, int)` is true in
+   Python. That is a **shape** guarantee, not a use — it still orders nothing,
+   because nothing reads it. What remains unchecked is exactly what only matters
+   once something does read it: that `part_order` is present on **every** member
+   of a merged group and **unique** within it. Both stay implementation
+   obligations alongside `sent_ord` (D55 checklist B, item 13), rather than being
+   left to be noticed when `run_encode` produces scrambled ranks.
 
 3. **Book-level prefixes standing as whole documents.** Herodotus `.1`,
    Thucydides `.1`, Diodorus `.11` are single books of much longer works, flagged
@@ -199,6 +202,14 @@ assignment and is what blocks a canonical run.
    size rule that removes Caesar cannot be applied consistently without gutting
    the Latin arm. Including it moves P2-Latin's floor from ≈0.036 to ≈0.0278
    (still above 0.025; §5.7's qualitative status is unchanged).
+
+   **What that does and does not mean** (stated 2026-09-03): including Caesar
+   changes the Latin document count and therefore the size of the Latin
+   enumeration, and nothing else. It is **not** evidence for or against either
+   side of the Greek A/B choice, which turns on whether PROSE_POST joins the
+   primary contrast (𝔻 = 7 vs 11) and is a question about the *Greek* arm alone.
+   The two decisions are independent and must be ruled on separately; the floor
+   figures above are consequences to weigh, not an argument for a verdict.
 
 5. **O8 — the Hymn's author block, and a missing registry field.** O2 is resolved
    at document level (one prefix, no duplication), but whether the Hymn is its own

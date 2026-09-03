@@ -186,14 +186,28 @@ edit was made.
 > **Every count is unchanged** — prose and artifacts only, no test and no library
 > behaviour — and it is re-run rather than transcribed because a figure carried
 > over untested is a figure nobody measured. The convention this block follows:
-> the attestation commit is the tip and names its parent, so a commit landing
-> after it puts the two out of step. **Owner ruling, 2026-09-03 — in force,
+> the attestation names the commit whose tree was actually measured, and that
+> commit is the tip unless the ruling below has carried the block forward.
+> (Corrected 2026-09-03: this sentence used to say the attestation commit *is*
+> the tip, which the docs-only ruling immediately below had already made false.)
+> **Owner ruling, 2026-09-03 — in force,
 > submitted for ratification as part of checklist item 17:** a commit that touches
 > no code, no test, no dependency and no artifact does **not** require a re-run;
 > the block is moved to the new tip and the counts carried over, saying so. The
 > boundary is mechanical, not editorial — anything outside `docs/`, `README.md`,
 > `CLAUDE.md` and `AGENTS.md` forces the re-run, and `git diff --stat` against the
-> attested commit decides it. Everything else still calls for a re-run, never a
+> attested commit decides it. **Correction submitted 2026-09-03, not yet ratified
+> (checklist item 17):** that boundary is too wide. `docs/` also holds executable
+> inputs and binding contracts — `docs/g1_registry_proposal.yaml` is read by the
+> pipeline and its digest enters the manifest, and `docs/01_MASTER_SPEC.md` and
+> `docs/02_DECISION_LOG.md` define what the tests must prove; `git diff --stat`
+> sees paths and line counts, never semantic inertia. The narrower rule submitted
+> here: a commit may carry the attestation forward only if it touches **no** file
+> under `src/`, `tests/` or `config/`, no lockfile, no artifact under `results/`,
+> and none of `docs/**/*.yaml`, `docs/01_MASTER_SPEC.md`,
+> `docs/02_DECISION_LOG.md`. Anything else forces the re-run. Until item 17 is
+> ratified both boundaries are recorded here, and the **narrower** one is the one
+> this session honoured. Everything else still calls for a re-run, never a
 > transcription. So this block may sit some commits behind the tip, and that is
 > not drift: the carried-over commits are exactly those between the attested
 > commit above and the tip, and the reader checks the carry-over was legitimate
@@ -243,6 +257,16 @@ edit was made.
 > It attests no gate: **G1 is not closed** — nothing is frozen, the registry is
 > unratified, and the evidence for its ratification is in
 > `docs/g1_D55_proposal.md` and `docs/g1_registry_proposal.md` (both PROPOSED).
+>
+> **What is applied and what is not** (stated here 2026-09-03, because naming
+> only conventions 12 and 13 above invites the reading that they are the only
+> ones in force). **All thirteen** §xiv software conventions are implemented and
+> in force on this branch, and all thirteen are submitted for ratification with
+> the rest of the package; 12 and 13 are singled out only because they are the
+> two that moved a test count. What is applied to nothing is the amendment's
+> *scientific* content: the A/B choice, every recomputed constant, the registry,
+> the alphabet and T\* contracts, and the freeze. No binding document has changed
+> and nothing is frozen. The D55 preamble states the same split at its head.
 >
 > Two gaps in the enforcement were closed in the process, each one level finer
 > than the last. First: `-m g0` selects only marked tests, so an incomplete

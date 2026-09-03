@@ -1095,9 +1095,19 @@ ratification.
 
 ## Documents this amendment touches, if ratified
 
-None of these has been edited. The list is exhaustive as far as a search for the
-superseded constants reaches (`462`, `2048`, `C(11,5)`, `C(8,2)`, `2^11`), plus
-the files below it that carry no constant but encode the same assumptions:
+**None of these has been edited to apply the amendment**, and no constant in any
+of them has changed. Several *have* gained a pointer saying that this amendment
+exists and is PROPOSED — `CLAUDE.md`, `AGENTS.md`, `README.md`,
+`docs/00_LEGGIMI_INDICE.md`, `docs/03_ROADMAP_OPERATIVA_IT.md`,
+`docs/04_AI_HANDOFF_PROMPT.md` and `docs/HANDOFF.md`; the rows below name each
+one. A pointer is not an application: it flags the superseded constant without
+replacing it, and it retires on ratification (item 24). Corrected 2026-09-03 —
+the sentence this replaces said "None of these has been edited", which the
+pointer commits had already falsified.
+
+The list is exhaustive as far as a search for the superseded constants reaches
+(`462`, `2048`, `C(11,5)`, `C(8,2)`, `2^11`), plus the files below it that carry
+no constant but encode the same assumptions:
 
 | file | what is stale |
 | --- | --- |

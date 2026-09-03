@@ -21,6 +21,7 @@ from pathlib import Path
 import pytest
 import yaml
 
+from hexis import registry
 from hexis.manifest import build_manifest
 from hexis.pipeline import run_audit
 
@@ -1014,3 +1015,17 @@ def test_the_full_contingency_ships_as_csv_and_is_hashed(corpus):
     for name in csvs:
         assert name in read_report(result)
     assert all(len(record["sha256"]) == 64 for record in manifest["artifacts"])
+
+
+def test_the_inventory_keeps_the_declared_registry_column_order(corpus):
+    """§2.3 declares the schema order and `build_registry` honours it; the table
+    the report publishes must not silently reorder it. `_inventory` drops
+    `n_tokens_retained` and re-merges it, which appends it last unless the
+    declared order is restored."""
+    report = read_report(invoke(corpus, "--overrides", str(corpus["complete"])))
+    after = report.split("## Document inventory", 1)[1].splitlines()
+    header = next(line for line in after if line.startswith("|"))
+
+    assert tuple(cell.strip() for cell in header.strip("|").split("|")) == (
+        registry.REGISTRY_COLUMNS
+    )

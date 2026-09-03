@@ -781,7 +781,9 @@ def _inventory(tokens, mapped, registry_frame) -> pd.DataFrame:
     if out["n_tokens_retained"].isna().any():
         missing = sorted(out.loc[out["n_tokens_retained"].isna(), "doc_id"])
         raise ValueError(f"n_tokens_retained is incomplete for {missing}")
-    return out
+    # The drop/merge above appends the refilled column last. §2.3's order is the
+    # schema, not a rendering preference, so it is restored rather than described.
+    return out[list(registry.REGISTRY_COLUMNS)]
 
 
 def _frame(rows, columns) -> pd.DataFrame:

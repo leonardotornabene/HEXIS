@@ -20,9 +20,11 @@ trained on the other. Everything is measured in bits.
 
 The hypothesis is not that poetry is more ordered, or simpler, or more
 predictable. Metrical constraint might plausibly produce any of these, or none.
-What will be reported is fixed in advance, whatever the outcome; and with eleven
-documents the power to detect small effects is limited, a limit declared in the
-design rather than discovered afterwards.
+What will be reported is fixed in advance, whatever the outcome; and with a
+corpus this small the power to detect small effects is limited, a limit declared
+in the design rather than discovered afterwards. (How small, exactly, is the
+subject of the open finding below: the specification says eleven documents, the
+audit of the pinned release finds seven.)
 
 **Full research proposal: [`HEXIS_research_proposal.pdf`](HEXIS_research_proposal.pdf)
 — written in Italian. An English summary is in preparation.**
@@ -91,9 +93,12 @@ What exists today is that written design and the G0 foundation of the software
 beneath it. The reader, raw-annotation mapping, prefix-level registry
 construction, sequence assembly under both boundary policies, exact
 randomization utilities, and reproducibility and overwrite safeguards are
-written and tested. The G1 audit and encoding stages that turn those pieces into
-a frozen registry, alphabet, and T*, as well as the context tree and the score
-functions that read it, remain declared interfaces without bodies. The tests
+written and tested, as is the G1 audit stage: it runs, and the evidence it
+produced over the pinned release is in `results/`, but it freezes nothing — a
+gate verdict needs a ratified registry, and there is none. The encoding stage
+that would turn those pieces into a frozen registry, alphabet, and T*, as well
+as the context tree and the score functions that read it, remain declared
+interfaces without bodies. The tests
 describe intended behaviour ahead of the code; G0 is formally closed, and the
 rest are switched on as their component is written. **No
 canonical context-tree fit has been run and no project results exist; synthetic

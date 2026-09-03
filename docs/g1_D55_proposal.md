@@ -37,8 +37,9 @@ two false `git.dirty: true` claims and the untracked-vs-ignored error below,
 retired the stale 142/17 in the commit recipe, added `docs/00_LEGGIMI_INDICE.md`
 and `docs/HANDOFF.md` to the touched-documents table, and added checklist items
 **24–25**. Item 24's own count was then found short in the same review — it read
-nine, the figure the citation search returns; `docs/HANDOFF.md` carries three of
-these statements, one of which cites no filename — and is corrected here to
+nine, one short of what the citation search returns, and four short of the true
+figure; `docs/HANDOFF.md` carries three of these statements, one of which cites
+no filename and so is invisible to that search — and is corrected here to
 **eleven**, and to **twelve** after the audit pass of 2026-09-03 added a
 statement of the same class to `HANDOFF.md`. Revised again **2026-09-03**, after an external review of the branch at
 `81f61ec`: the `--force` and provenance-binding designs written out in full under
@@ -1152,7 +1153,7 @@ no constant but encode the same assumptions:
 | `docs/04_AI_HANDOFF_PROMPT.md` | the enumeration constants quoted to a fresh agent — in **two** places: rule 8 of the bootstrap prompt and the `CLAUDE.md` template of §B, which must stay byte-identical to the root copies (item 25). Both pointers retire per item 24 |
 | `CLAUDE.md` | the "exact schemes" line (Greek 462 / 2048; Latin 28 / 256; author 20 / 64; Lysias-merged 56 / 256) — **and the pointer note added under it on 2026-08-17**, which says this amendment is PROPOSED and applied to nothing. Ratifying makes that note false, so it is replaced by the ratified constants in the same act; it exists only because these two files are loaded as standing instructions in every session, so a superseded constant left unflagged is re-derived indefinitely (owner-authorized, no value changed) |
 | `AGENTS.md` | the same line and the same note, mirrored — the two files are byte-identical below their first line, and any edit to one is an edit to both |
-| `README.md` | the design summary's document counts and constants — "eleven documents" six times, "twelve tragedies", the Greek and Latin prose counts, 2,048 / 462; at lines 116–125 they carry the O7 argument rather than decorate it. Plus the pointer added 2026-09-02, per item 24 |
+| `README.md` | the design summary's document counts and constants — "eleven documents" **five** times (six if "Eleven Greek documents" is read as the same phrase; recounted 2026-09-03, it had said six), "twelve tragedies", the Greek and Latin prose counts, 2,048 / 462; at lines 116–125 they carry the O7 argument rather than decorate it. Plus the pointer added 2026-09-02, per item 24 |
 | `docs/HANDOFF.md` | **added 2026-09-02; count revised 2026-09-03.** Its G1 status block declares this amendment PROPOSED in **four** separate places — the `-m g1` paragraph ("PROPOSED with the rest of the package", naming no filename, so no citation search finds it), the sentence placing the ratification evidence here "and in `docs/g1_registry_proposal.md` (both PROPOSED)", the closing open-finding paragraph, and the "What is applied and what is not" paragraph added 2026-09-03 (which likewise names no filename) — beside its statements that nothing is frozen and the registry is unratified. Ratification falsifies all of them at once (item 24). The gate attestation it carries is *not* affected: test counts are evidence measured at a commit, not a constant of the design |
 | `docs/implementation/specs/2026-08-13-g0-api-contract.md` | constants quoted in the ratified API contract — and, more than constants, **§5's semantic inventory check**: its reference set (§2.3) and its expectations (Greek HEX 5 / PROSE_CLASS 6, Latin HEX 2 / PROSE 6; 462 / 2048, 28 / 256, 56 / 256, 20 / 64) are exactly what this amendment replaces, so the check is unsatisfiable as written and must be re-pointed at the ratified registry before the freeze (§xvi) |
 | `src/hexis/stats/permutation.py:4` | module docstring: "Greek 2^11 = 2048 … Latin 2^8 = 256" |
@@ -1338,9 +1339,11 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
 
     **`--force` may leave a partially overwritten run — D5 of the external
     review, submitted 2026-09-03.** This is present behaviour and it is
-    deliberate: `_preflight` returns immediately under `--force`
-    (`run_audit.py:1086`), and the rollback in the `except BaseException:` arm is
-    skipped under `--force` too (`run_audit.py:1021`). The stated reason is sound
+    deliberate: `_preflight` returns immediately under `--force`, and the
+    rollback in `main`'s `except BaseException:` arm is skipped under `--force`
+    too (both in `run_audit.py`; cited by symbol because the line numbers these
+    two sentences carried went stale on this branch when an unrelated commit
+    shifted them by five). The stated reason is sound
     as far as it goes — without the preflight's proof that no destination existed,
     a destination may hold a *previous* run's artifact, and deleting it would
     destroy someone else's output. So a `--force` run that fails midway leaves
@@ -1363,7 +1366,7 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     writing path, which conventions 7–10 rest on; it needs its own g1 tests
     (failure before the renames, failure between two renames, and the manifest
     written last); and `destinations_of` grows a staging counterpart, so the
-    "one list used twice" invariant at `run_audit.py:1066` becomes one list used
+    "one list used twice" invariant of `destinations_of` becomes one list used
     three times. **Not implemented.** Ratification decides; an agent changing
     canonical evidence handling on its own initiative is the failure mode this
     package exists to prevent.
@@ -1601,10 +1604,11 @@ Two orders that do work:
    `X`; the tree is now clean) → on `X` run `-m g0`, **`-m g1`** (convention 13),
    the full suite and
    `uv lock --check` → **commit the re-attestation naming `X`**, replacing the
-   block in `docs/HANDOFF.md` (when this was written that block recorded 142/17;
-   the sequence was executed and `1680d3a` replaced it with a G0 selection of
-   **144**, `-m g1` at **95**, and a full suite of **239 passed, 17 skipped**) →
-   regenerate on the still-clean tree (the manifest samples `dirty: false`
+   block in `docs/HANDOFF.md` (the sequence has been executed several times since
+   this was written; the figures each pass recorded are in that block and its
+   superseded predecessors, and are deliberately not transcribed here — a count
+   copied into a second document goes stale in silence, which is why the block is
+   the only place they live) → regenerate on the still-clean tree (the manifest samples `dirty: false`
    **before** writing) → commit `results/`. The manifests then name the
    attestation commit, which is the first commit at which the code and its
    recorded evidence agree.

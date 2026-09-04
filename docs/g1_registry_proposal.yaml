@@ -239,7 +239,7 @@ phi1351.phi005.perseus-lat1.tb.xml:
   regime: PROSE_POST
   meter: prose
   period: imperial
-  flags: []
+  flags: [upstream_urn_conflict]
 phi1348.abo012.perseus-lat1.tb.xml:
   source_urn: urn:cts:latinLit:phi1348.abo012.perseus-lat1
   author: Suetonius

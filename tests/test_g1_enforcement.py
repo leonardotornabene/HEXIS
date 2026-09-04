@@ -1,4 +1,4 @@
-"""Mandatory G1 coverage inventory (D55 §xiv convention 13; PROPOSED).
+"""Mandatory G1 coverage inventory (D55 §xiv convention 13; ratified 2026-09-04).
 
 The repo-root conftest guarantees that no test *carrying* the `g1` marker is
 skipped, xfail, xpass or assertion-free. It guarantees nothing about which tests
@@ -44,6 +44,9 @@ G1_REQUIRED_COVERAGE = {
             "test_pre_audit_stamps_the_report_incomplete_and_withholds_every_verdict",
             "test_only_an_explicitly_ratified_file_produces_a_canonical_audit",
             "test_a_ratified_overrides_file_runs_canonically",
+            "test_canonical_mode_accepts_only_the_authoritative_registry_path",
+            "test_canonical_mode_requires_a_clean_repository",
+            "test_force_is_pre_audit_only",
             "test_pre_audit_names_the_documents_that_blocked_the_regime_aggregates",
             "test_pre_audit_with_a_complete_proposal_labels_regime_tables_provisional",
             "test_canonical_mode_with_a_complete_registry_evaluates_the_gates",
@@ -60,6 +63,7 @@ G1_REQUIRED_COVERAGE = {
             "test_an_incomplete_registry_still_validates_the_rows_it_has",
             "test_a_missing_overrides_file_is_not_an_empty_registry",
             "test_a_malformed_overrides_file_fails_with_its_path",
+            "test_duplicate_yaml_keys_are_rejected_at_any_registry_depth",
             "test_the_yaml_error_names_the_original_file_and_keeps_the_snippet",
             "test_an_unknown_override_field_is_rejected_not_dropped",
             "test_the_declared_schema_fields_are_all_accepted",
@@ -77,10 +81,15 @@ G1_REQUIRED_COVERAGE = {
             "test_mwt_and_empty_node_rows_never_reach_the_counts",
             "test_a_sent_id_repeated_across_split_files_is_refused",
             "test_a_mistyped_config_key_is_rejected_not_silently_ignored",
+            "test_non_string_config_keys_are_reported_as_unknown",
             "test_a_config_missing_a_declared_key_is_rejected",
             "test_a_config_section_replaced_by_a_scalar_is_rejected",
             "test_a_deleted_language_keyed_section_is_rejected",
+            "test_an_explicit_config_must_be_a_nonempty_mapping",
+            "test_duplicate_config_keys_are_rejected",
+            "test_g1_used_config_shapes_are_validated",
             "test_results_root_inside_the_data_root_is_refused",
+            "test_every_resolved_destination_stays_outside_both_raw_roots",
         ),
     ),
     "run identity, overwrite refusal and concurrent publication (§6.4, D46)": (
@@ -89,6 +98,7 @@ G1_REQUIRED_COVERAGE = {
             "test_rerunning_without_force_refuses_to_overwrite",
             "test_force_permits_the_rerun",
             "test_runs_differing_only_in_overrides_get_distinct_artifact_names",
+            "test_runs_differing_only_in_provenance_get_distinct_artifact_names",
             "test_the_two_modes_never_share_a_run_id",
             "test_the_run_id_distinguishes_two_code_revisions",
             "test_a_collision_on_any_output_leaves_no_partial_run",
@@ -102,6 +112,12 @@ G1_REQUIRED_COVERAGE = {
         AUDIT,
         (
             "test_manifest_and_sidecar_record_every_input_hash",
+            "test_verified_provenance_is_visible_in_report_and_manifest",
+            "test_canonical_mode_refuses_a_provenance_hash_mismatch",
+            "test_canonical_provenance_requires_the_exact_release_and_file_set",
+            "test_pre_audit_reports_a_provenance_mismatch_without_claiming_it_is_pinned",
+            "test_missing_provenance_blocks_canonical_but_is_reported_by_pre_audit",
+            "test_duplicate_provenance_rows_are_not_accepted_as_evidence",
             "test_a_conllu_appearing_mid_run_publishes_nothing",
             "test_a_removed_input_is_caught_too",
             "test_a_partially_written_artifact_is_rolled_back",
@@ -122,6 +138,7 @@ G1_REQUIRED_COVERAGE = {
             "test_every_csv_declares_its_own_status",
             "test_the_report_does_not_claim_prefixes_are_unmerged_when_they_are_merged",
             "test_the_label_free_report_does_not_promise_a_regime_contingency_it_lacks",
+            "test_declared_readings_do_not_make_a_deictic_empirical_claim",
             "test_alphabet_frames_keep_their_header_when_empty",
             "test_drop_rates_by_rule_are_reported_per_regime",
             "test_the_stage_never_writes_a_frozen_alphabet",
@@ -191,6 +208,9 @@ G1_REQUIRED_COVERAGE = {
             "test_a_doc_id_shared_by_two_languages_is_refused",
             "test_a_repeated_sent_ord_within_one_document_is_refused",
             "test_two_sentences_colliding_on_one_sent_ord_are_refused_at_construction",
+            "test_one_sent_id_cannot_map_to_two_sentence_ordinals",
+            "test_build_sequences_requires_sentence_identity_evidence",
+            "test_sentence_identity_and_ordinal_values_cannot_be_missing",
             "test_a_single_language_document_still_converts",
         ),
     ),
@@ -252,6 +272,10 @@ def test_g1_set_covers_every_mandatory_area(request):
     Running this file on its own always fails: the session has then collected no
     other g1 test. That is the documented behaviour, not a defect.
     """
+    assert len(G1_REQUIRED_COVERAGE) == 11, (
+        "the owner ratified exactly eleven G1 areas; changing that set requires "
+        "an explicit inventory amendment"
+    )
     missing = _missing_collected_coverage(request.session.items, G1_REQUIRED_COVERAGE)
     assert not missing, "incomplete mandatory G1 coverage: " + "; ".join(
         f"{area}: {reason}" for area, reason in sorted(missing.items())

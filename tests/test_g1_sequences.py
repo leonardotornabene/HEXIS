@@ -74,9 +74,11 @@ def test_two_sentences_colliding_on_one_sent_ord_are_refused_at_construction():
     tokens = pd.DataFrame(
         [
             # two distinct sentences, both numbered sent_ord 7 in doc alpha
-            {"language": "grc", "doc_id": "alpha", "sent_ord": 7, "token_ord": 0,
+            {"language": "grc", "doc_id": "alpha", "sent_id": "alpha@1",
+             "sent_ord": 7, "token_ord": 0,
              "symbol_id": 5, "kept": True},
-            {"language": "grc", "doc_id": "alpha", "sent_ord": 7, "token_ord": 0,
+            {"language": "grc", "doc_id": "alpha", "sent_id": "alpha@2",
+             "sent_ord": 7, "token_ord": 1,
              "symbol_id": 9, "kept": True},
         ]
     )
@@ -86,6 +88,57 @@ def test_two_sentences_colliding_on_one_sent_ord_are_refused_at_construction():
 
     assert "sent_ord" in str(caught.value)
     assert "alpha" in str(caught.value)
+
+
+def test_one_sent_id_cannot_map_to_two_sentence_ordinals():
+    tokens = pd.DataFrame(
+        [
+            {"language": "grc", "doc_id": "alpha", "sent_id": "alpha@1",
+             "sent_ord": 1, "token_ord": 0, "symbol_id": 5, "kept": True},
+            {"language": "grc", "doc_id": "alpha", "sent_id": "alpha@1",
+             "sent_ord": 2, "token_ord": 1, "symbol_id": 9, "kept": True},
+        ]
+    )
+
+    with pytest.raises(ValueError) as caught:
+        sequences.build_sequences(tokens)
+
+    assert "sent_id" in str(caught.value)
+    assert "alpha@1" in str(caught.value)
+
+
+def test_build_sequences_requires_sentence_identity_evidence():
+    tokens = pd.DataFrame(
+        [{"language": "grc", "doc_id": "alpha", "sent_ord": 1,
+          "token_ord": 0, "symbol_id": 5, "kept": True}]
+    )
+
+    with pytest.raises(ValueError) as caught:
+        sequences.build_sequences(tokens)
+
+    assert "sent_id" in str(caught.value)
+
+
+@pytest.mark.parametrize(
+    "column,value",
+    [("sent_id", None), ("sent_id", ""), ("sent_ord", None)],
+)
+def test_sentence_identity_and_ordinal_values_cannot_be_missing(column, value):
+    row = {
+        "language": "grc",
+        "doc_id": "alpha",
+        "sent_id": "alpha@1",
+        "sent_ord": 1,
+        "token_ord": 0,
+        "symbol_id": 5,
+        "kept": True,
+    }
+    row[column] = value
+
+    with pytest.raises(ValueError) as caught:
+        sequences.build_sequences(pd.DataFrame([row]))
+
+    assert column in str(caught.value)
 
 
 def test_a_single_language_document_still_converts():

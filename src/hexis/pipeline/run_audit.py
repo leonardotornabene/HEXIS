@@ -6,9 +6,11 @@ closing note.
 
 Two modes, one code path:
 
-* **canonical (default)** — every sentence must carry a registry assignment, and
-  the overrides file must declare ``_status: RATIFIED``; anything else aborts
-  (§3.3). This is the mode that produces the evidence for the G1 freeze.
+* **canonical (default)** — every sentence must carry a registry assignment;
+  the authoritative ``config/registry_overrides.yaml`` must declare
+  ``_status: RATIFIED``; the provenance record must match; Git must be clean;
+  and ``--force`` is forbidden. This is the mode that produces evidence for the
+  G1 freeze (§3.3).
 * **``--pre-audit``** — the explicit incomplete mode used before the registry is
   ratified. It stamps the report ``INCOMPLETE / PENDING_REGISTRY``, withholds both
   gate verdicts and computes no T*. Incompleteness is never reached by silent
@@ -26,17 +28,19 @@ import argparse
 import datetime
 import hashlib
 import tempfile
+from collections import Counter
 from contextlib import contextmanager
 from pathlib import Path
 
 import pandas as pd
-import yaml
 
 from hexis import alphabet, conllu_reader, registry
 from hexis.config import (
     check_against_default,
     config_hash,
     derive_seed,
+    load_config,
+    load_yaml,
     resolve_config,
 )
 from hexis.manifest import (
@@ -48,6 +52,8 @@ from hexis.manifest import (
 )
 
 ENTRY_POINT = "hexis.pipeline.run_audit"
+CANONICAL_OVERRIDES = Path("config/registry_overrides.yaml")
+CANONICAL_DATA_ROOT = Path("data/raw")
 
 RAW_TOKEN_COLUMNS = (
     "language",
@@ -88,6 +94,22 @@ def discover_files(data_root: Path) -> list[Path]:
     if not files:
         raise FileNotFoundError(f"no .conllu files under {data_root}")
     return files
+
+
+def check_output_locations(paths, *, data_root: Path) -> None:
+    """Reject every resolved destination inside either immutable raw-data root."""
+    roots = (
+        ("selected data root", Path(data_root).resolve()),
+        ("canonical data root", Path(CANONICAL_DATA_ROOT).resolve()),
+    )
+    for path in map(Path, paths):
+        resolved = path.resolve()
+        for label, root in roots:
+            if resolved == root or root in resolved.parents:
+                raise ValueError(
+                    f"output destination {path} resolves to {resolved}, inside the "
+                    f"{label} {root}: raw data is immutable"
+                )
 
 
 @contextmanager
@@ -250,19 +272,7 @@ def load_overrides(path: Path, source: Path | None = None) -> tuple[dict, dict]:
             f"overrides file {path} does not exist; an absent file is not an empty "
             "registry (§3.3)"
         )
-    try:
-        data = yaml.safe_load((source or path).read_text(encoding="utf-8"))
-    except yaml.YAMLError as exc:
-        # PyYAML names the origin "<unicode string>" when it is handed text, and
-        # repeats that name inside every error marker — so prefixing the real path
-        # leaves the message contradicting itself. Substituting it is enough, and
-        # unlike naming a stream it keeps PyYAML's source snippet and caret.
-        # The name substituted is the *original* path even when the bytes come
-        # from the staging copy: the copy is an implementation detail the operator
-        # cannot act on. A future PyYAML that stops emitting the placeholder makes
-        # this a no-op, and the prefix still names the file.
-        detail = str(exc).replace("<unicode string>", str(path))
-        raise ValueError(f"{path}: not valid YAML — {detail}") from exc
+    data = load_yaml(path, source=source)
     if data is None:
         data = {}
     if not isinstance(data, dict):
@@ -298,11 +308,18 @@ def check_ratification(metadata: dict, path: Path, *, pre_audit: bool) -> None:
     §3.3 requires assignments to be human-verified, which is a claim someone has
     to make rather than one to assume from silence.
 
-    The declaration travels inside the file, so the guarantee survives copying and
-    renaming.
+    The declaration is necessary but not sufficient: canonical authority is the
+    repository path on a clean revision. A copied self-declaration remains valid
+    pre-audit input but cannot produce canonical evidence.
     """
     if pre_audit:
         return
+    if path.resolve() != Path(CANONICAL_OVERRIDES).resolve():
+        raise ValueError(
+            f"canonical mode accepts only {CANONICAL_OVERRIDES} (resolved to "
+            f"{Path(CANONICAL_OVERRIDES).resolve()}), not {path.resolve()}; a "
+            "self-declared copy is pre-audit evidence, not the authoritative registry"
+        )
     status = metadata.get("_status")
     if status == "RATIFIED":
         return
@@ -386,14 +403,88 @@ def inputs_fingerprint(snapshot: dict[Path, str]) -> str:
     §6.1 names artifacts ``{stage}_{config-hash}_{date}``, which collides when two
     runs share a config and a date and differ only in the overrides file — the
     second would hit the overwrite refusal on the first one's report. Folding the
-    inputs into the name keeps distinct runs distinct. Declared extension to §6.1,
-    submitted for ratification with D55.
+    inputs into the name keeps distinct runs distinct. Ratified technical
+    extension to §6.1 (D55 checklist item 17, 2026-09-04).
 
     Takes the snapshot rather than re-hashing, so the identity of a run is derived
     from the same bytes its report is.
     """
     lines = sorted(f"{path}\t{digest}" for path, digest in snapshot.items())
     return hashlib.sha256("\n".join(lines).encode("utf-8")).hexdigest()
+
+
+def assess_provenance(
+    path: Path,
+    files,
+    snapshot: dict[Path, str],
+    *,
+    release: str,
+    source: Path | None,
+) -> dict:
+    """Compare the existing PROVENANCE.md tables with the bytes staged for this run."""
+    if source is None:
+        return {
+            "status": "missing",
+            "path": str(path),
+            "expected_release": release,
+            "problems": [f"provenance file is missing: {path}"],
+        }
+
+    release_rows = []
+    hash_rows = []
+    problems = []
+    for line in source.read_text(encoding="utf-8").splitlines():
+        if not line.startswith("|"):
+            continue
+        cells = [cell.strip().strip("`") for cell in line.strip().strip("|").split("|")]
+        if cells and cells[0] == "UD release tag (pinned, D03)":
+            release_rows.append(cells[1:])
+        elif cells and cells[0].endswith(".conllu"):
+            if len(cells) != 2 or len(cells[1]) != 64 or any(
+                char not in "0123456789abcdef" for char in cells[1].lower()
+            ):
+                problems.append(f"invalid SHA-256 for {cells[0]} in {path}")
+            else:
+                hash_rows.append((cells[0], cells[1].lower()))
+
+    if len(release_rows) != 1:
+        problems.append(
+            f"expected one UD release tag row in {path}, found {len(release_rows)}"
+        )
+    elif not release_rows[0] or any(value != release for value in release_rows[0]):
+        problems.append(
+            f"UD release declaration {release_rows[0]!r} does not match configured {release!r}"
+        )
+
+    repeated = sorted(name for name, count in Counter(name for name, _ in hash_rows).items() if count > 1)
+    if repeated:
+        problems.append(f"duplicate provenance row(s): {repeated}")
+    actual_names = [Path(file).name for file in files]
+    actual_repeated = sorted(
+        name for name, count in Counter(actual_names).items() if count > 1
+    )
+    if actual_repeated:
+        problems.append(f"input basenames are ambiguous: {actual_repeated}")
+
+    declared = dict(hash_rows)
+    actual = {Path(file).name: snapshot[Path(file)] for file in files}
+    for name in sorted(set(actual) - set(declared)):
+        problems.append(f"input is absent from provenance: {name}")
+    for name in sorted(set(declared) - set(actual)):
+        problems.append(f"pinned file was not read: {name}")
+    for name in sorted(set(actual) & set(declared)):
+        if actual[name] != declared[name]:
+            problems.append(
+                f"provenance digest mismatch for {name}: declared {declared[name]}, "
+                f"read {actual[name]}"
+            )
+
+    return {
+        "status": "verified" if not problems else "mismatch",
+        "path": str(path),
+        "expected_release": release,
+        "problems": problems,
+    }
 
 
 def _table(frame: pd.DataFrame, limit: int | None = None) -> str:
@@ -427,9 +518,24 @@ def render_report(context: dict) -> str:
         f"- Run id: `{context['run_id']}`",
         f"- Config SHA-256: `{context['config_sha256']}`",
         f"- Overrides file: `{context['overrides_path']}`",
-        f"- UD release (pinned, D03): {context['ud_release']}",
+        f"- Overrides SHA-256: `{context['overrides_sha256']}`",
+        (
+            f"- UD release (verified against provenance, D03): {context['ud_release']}"
+            if context["provenance"]["status"] == "verified"
+            else f"- UD release (declared by config; NOT VERIFIED): {context['ud_release']}"
+        ),
+        f"- Raw provenance: **{context['provenance']['status'].upper()}** "
+        f"(`{context['provenance']['path']}`)",
         "",
     ]
+
+    if context["provenance"]["problems"]:
+        parts += [
+            "## Raw provenance check",
+            "",
+            *(f"- {problem}" for problem in context["provenance"]["problems"]),
+            "",
+        ]
 
     if pre_audit:
         parts += [
@@ -482,9 +588,7 @@ def render_report(context: dict) -> str:
         "   (§1.4 — specificity check, chronological-robustness set), so an imbalance",
         "   there is evidence about the same annotation the primary contrast reads, and",
         "   D06's category is a property of the annotation rather than of one regime's",
-        "   role. This is the reading that can actually bind: the largest share anywhere",
-        "   below is in `OTHER_VERSE`, above both primary regimes — tragedy, not the epic",
-        "   invocations D06 anticipated, sits nearest the threshold. Under a primary",
+        "   role. This is the reading that can actually bind. Under a primary",
         "   contrast that excludes those regimes, a trigger there would still put D50's",
         "   caveat on every primary conclusion; that is accepted deliberately and is a",
         "   ratification question, not a code default.",
@@ -886,29 +990,37 @@ def main(argv=None) -> dict:
     parser.add_argument("--results-root", default="results", type=Path)
     parser.add_argument("--config", default=None, type=Path)
     parser.add_argument("--overrides", default="config/registry_overrides.yaml", type=Path)
+    parser.add_argument("--provenance", default="data/raw/PROVENANCE.md", type=Path)
     parser.add_argument(
         "--pre-audit",
         action="store_true",
         help="explicit incomplete mode: no gate verdict, no T*, nothing frozen",
     )
-    parser.add_argument("--force", action="store_true", help="overwrite existing artifacts")
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="pre-audit only: overwrite existing provisional artifacts",
+    )
     args = parser.parse_args(argv)
+
+    if args.force and not args.pre_audit:
+        raise ValueError("--force is allowed only with --pre-audit; canonical evidence is immutable")
 
     # Before git_state and before any write: the corpus is immutable and every
     # input is hashed into the run's identity, so artifacts landing inside it
     # corrupt both the data and the next run's fingerprint. Resolved on both
     # sides, so a symlink cannot walk in.
     data_root = args.data_root.resolve()
-    results_root = args.results_root.resolve()
-    if results_root == data_root or data_root in results_root.parents:
-        raise ValueError(
-            f"--results-root {results_root} is inside the data root {data_root}: "
-            "the corpus is immutable and is hashed into every run's identity"
-        )
+    check_output_locations([args.results_root], data_root=data_root)
 
     # Sampled before the first write: this stage's own artifacts land inside the
     # worktree, so asking git afterwards would report a dirtiness it just created.
     git = git_state()
+    if not args.pre_audit and git["dirty"]:
+        raise ValueError(
+            "canonical mode requires a clean Git worktree; commit or remove every "
+            "change, or use --pre-audit"
+        )
 
     cfg = resolve_config(base=_load_base(args.config))
     check_against_default(cfg)
@@ -921,7 +1033,26 @@ def main(argv=None) -> dict:
 
     # Read the bytes once, hash what was read, and parse a private copy of exactly
     # those bytes — so digest and content agree by construction, not by timing.
-    with staged_inputs([*files, args.overrides]) as (snapshot, staged):
+    if not args.provenance.exists() and not args.pre_audit:
+        raise FileNotFoundError(
+            f"provenance file {args.provenance} is missing; canonical mode cannot "
+            "claim the configured UD release"
+        )
+    input_paths = [*files, args.overrides]
+    if args.provenance.exists():
+        input_paths.append(args.provenance)
+    with staged_inputs(input_paths) as (snapshot, staged):
+        provenance = assess_provenance(
+            args.provenance,
+            files,
+            snapshot,
+            release=cfg["corpus"]["ud_release"],
+            source=staged.get(args.provenance),
+        )
+        if not args.pre_audit and provenance["status"] != "verified":
+            raise ValueError(
+                "canonical provenance check failed: " + "; ".join(provenance["problems"])
+            )
         tokens = read_tokens(files, set(cfg["corpus"]["languages"]), staged=staged)
         context = build_context(
             tokens,
@@ -931,6 +1062,8 @@ def main(argv=None) -> dict:
             pre_audit=args.pre_audit,
             overrides_source=staged[args.overrides],
         )
+        context["provenance"] = provenance
+        context["overrides_sha256"] = snapshot[args.overrides]
 
     verify_inputs_unchanged(snapshot, files=files, data_root=args.data_root)
 
@@ -947,15 +1080,9 @@ def main(argv=None) -> dict:
     # `entry_point` is the invocation, so the flag reaches every artifact's sidecar
     # too — a CSV separated from its filename still says which mode produced it.
     entry_point = f"{ENTRY_POINT} --pre-audit" if args.pre_audit else ENTRY_POINT
-    # The software is part of the run's identity too: same day, same data, same
-    # config and different code otherwise collide on run_id, and --force then
-    # replaces evidence a different program produced. Placed before the date so
-    # the stem reads mode / config / inputs / code / when.
-    # The component is HEAD alone: uncommitted work does not move it, so two runs
-    # of differing *uncommitted* code still collide. `_preflight` refuses that
-    # collision without --force and the manifest records `dirty` either way.
-    # Widening the run identity would change the artifact naming convention
-    # (§xiv), so the residue is submitted for ratification, not closed here.
+    # The repository revision is part of the identity: it is HEAD, not a content
+    # fingerprint. Canonical mode is clean and has no force path; pre-audits record
+    # their dirty flag and remain explicitly provisional.
     stem = f"{mode}_{sha[:12]}_{fingerprint[:12]}_{git['commit'][:12]}_{stamp}"
     run_id = f"audit_{stem}"
 
@@ -982,6 +1109,9 @@ def main(argv=None) -> dict:
     # to protect. Same for the reservation — the loser of a concurrent race must
     # not clean up the winner's output. Once both have passed, everything the
     # rollback touches is provably this run's own.
+    check_output_locations(
+        destinations_of(artifacts, args.results_root, run_id), data_root=data_root
+    )
     _preflight(artifacts, args.results_root, run_id, args.force)
     log_dir = reserve_run(args.results_root, run_id, args.force)
     try:
@@ -1008,10 +1138,11 @@ def main(argv=None) -> dict:
             ],
             git=git,
         )
-        # Declared additions to the D46 record (submitted for ratification with
-        # D55): the mode as a field, so no consumer has to parse it out of run_id.
+        # Ratified D46 record additions (D55 item 17): keep mode/status explicit
+        # so consumers need not recover them by parsing run_id.
         manifest["mode"] = mode
         manifest["status"] = status
+        manifest["provenance"] = provenance
         manifest_path = write_manifest(manifest, args.results_root, force=True)
     except BaseException:
         # Roll the run back over the **predetermined destinations**, not over a
@@ -1060,7 +1191,8 @@ def reserve_run(results_root: Path, run_id: str, force: bool) -> Path:
     except FileExistsError:
         raise FileExistsError(
             f"run_id {run_id!r} is already claimed at {log_dir}: a run with "
-            "identical inputs holds this identity. Pass --force to replace it (§6.4)."
+            "identical inputs holds this identity. Only a pre-audit may use "
+            "--force; canonical artifacts are immutable (§6.4)."
         ) from None
     return log_dir
 
@@ -1085,8 +1217,9 @@ def _preflight(artifacts, results_root: Path, run_id: str, force: bool) -> None:
     Writing progressively means a collision on a late output leaves the earlier
     ones behind: a failed run would still have replaced the CSVs of a previous one.
     Every destination — artifacts, their sidecars, the manifest — is checked up
-    front, so the run is all-or-nothing. `force` still overwrites, but then it does
-    so deliberately and completely.
+    front, so an unforced run is all-or-nothing. A forced pre-audit skips this
+    proof and may remain partial if a later write fails; canonical mode forbids
+    force.
     """
     if force:
         return
@@ -1104,7 +1237,7 @@ def _preflight(artifacts, results_root: Path, run_id: str, force: bool) -> None:
 def _load_base(path):
     if path is None:
         return None
-    return yaml.safe_load(Path(path).read_text(encoding="utf-8"))
+    return load_config(path)
 
 
 if __name__ == "__main__":

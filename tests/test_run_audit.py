@@ -1,7 +1,7 @@
 """The G1 audit stage: modes, artifacts, provenance (Spec §3.3, §6.1, §6.4; D46).
 
 Marked `g1`, never `g0` — the attested G0 selection is closed. The `g1` marker
-(D55 §xiv, convention 13; PROPOSED) puts these cases under the same enforcement
+(D55 §xiv, convention 13; ratified 2026-09-04) puts these cases under the same enforcement
 as G0: root `conftest.py` fails the run if any is skipped, `xfail`, `xpass`, or
 collected without an executed assertion. Canonical command:
 `uv run pytest -m g1 --strict-markers`. Hence the `as caught` idiom below —
@@ -14,6 +14,7 @@ over `data/raw/`: these tests must not depend on licensed data being present.
 Never delete or weaken a test to make it pass.
 """
 
+import hashlib
 import json
 import shutil
 from pathlib import Path
@@ -112,26 +113,53 @@ def config_with(**corpus_overrides):
 
 
 @pytest.fixture
-def corpus(tmp_path):
+def corpus(tmp_path, monkeypatch):
     """A mini treebank plus an empty and a complete overrides file."""
     data_root = tmp_path / "raw"
     (data_root / "UD_Mini").mkdir(parents=True)
-    (data_root / "UD_Mini" / "grc_mini-ud-train.conllu").write_text(MINI_GRC, encoding="utf-8")
-    (data_root / "UD_Mini" / "la_mini-ud-train.conllu").write_text(MINI_LA, encoding="utf-8")
+    grc = data_root / "UD_Mini" / "grc_mini-ud-train.conllu"
+    la = data_root / "UD_Mini" / "la_mini-ud-train.conllu"
+    grc.write_text(MINI_GRC, encoding="utf-8")
+    la.write_text(MINI_LA, encoding="utf-8")
 
     empty = tmp_path / "empty_overrides.yaml"
     empty.write_text("# no assignments yet\n", encoding="utf-8")
 
     def write(payload, name):
         path = tmp_path / name
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(yaml.safe_dump(payload), encoding="utf-8")
         return path
+
+    provenance = tmp_path / "PROVENANCE.md"
+
+    def refresh_provenance():
+        provenance.write_text(
+            "# Test provenance\n\n"
+            "| Field | UD_Mini |\n|---|---|\n"
+            "| UD release tag (pinned, D03) | r2.18 |\n\n"
+            "| file | sha256 |\n|---|---|\n"
+            + "".join(
+                f"| {path.name} | `{hashlib.sha256(path.read_bytes()).hexdigest()}` |\n"
+                for path in sorted(data_root.rglob("*.conllu"))
+            ),
+            encoding="utf-8",
+        )
+
+    refresh_provenance()
+    complete = write(ASSIGNMENTS, "config/registry_overrides.yaml")
+    monkeypatch.setattr(run_audit, "CANONICAL_OVERRIDES", complete.resolve(), raising=False)
+    monkeypatch.setattr(
+        run_audit, "git_state", lambda: {"commit": "a" * 40, "dirty": False}
+    )
 
     return {
         "data_root": data_root,
         "results_root": tmp_path / "results",
         "empty": empty,
-        "complete": write(ASSIGNMENTS, "proposal.yaml"),
+        "complete": complete,
+        "provenance": provenance,
+        "refresh_provenance": refresh_provenance,
         "write_overrides": write,
         "tmp_path": tmp_path,
     }
@@ -144,6 +172,8 @@ def invoke(corpus, *extra):
             str(corpus["data_root"]),
             "--results-root",
             str(corpus["results_root"]),
+            "--provenance",
+            str(corpus["provenance"]),
             *extra,
         ]
     )
@@ -246,7 +276,9 @@ ABSENT = object()
     [ABSENT, None, "PROPOSED", "", "ratified", "UNVERIFIED"],
     ids=["absent", "yaml-null", "PROPOSED", "empty", "wrong-case", "UNVERIFIED"],
 )
-def test_only_an_explicitly_ratified_file_produces_a_canonical_audit(corpus, status):
+def test_only_an_explicitly_ratified_file_produces_a_canonical_audit(
+    corpus, status, monkeypatch
+):
     """Ratification is opt-in. Silence is not consent, and neither is a typo.
 
     `ABSENT` is the case that matters most — an overrides file with no `_status`
@@ -259,6 +291,7 @@ def test_only_an_explicitly_ratified_file_produces_a_canonical_audit(corpus, sta
     else:
         payload["_status"] = status
     path = corpus["write_overrides"](payload, f"status_{id(status)}.yaml")
+    monkeypatch.setattr(run_audit, "CANONICAL_OVERRIDES", path.resolve())
     if status is None:
         assert "_status: null" in path.read_text(encoding="utf-8")
 
@@ -273,9 +306,45 @@ def test_a_ratified_overrides_file_runs_canonically(corpus):
     assert invoke(corpus, "--overrides", str(corpus["complete"]))["gates_evaluated"] is True
 
 
+def test_canonical_mode_accepts_only_the_authoritative_registry_path(corpus):
+    copy = corpus["write_overrides"](ASSIGNMENTS, "self_ratified_copy.yaml")
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--overrides", str(copy))
+
+    assert "config/registry_overrides.yaml" in str(caught.value)
+    assert invoke(corpus, "--pre-audit", "--overrides", str(copy))["has_registry"] is True
+
+
+def test_canonical_mode_requires_a_clean_repository(corpus, monkeypatch):
+    monkeypatch.setattr(
+        run_audit, "git_state", lambda: {"commit": "a" * 40, "dirty": True}
+    )
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--overrides", str(corpus["complete"]))
+
+    assert "clean" in str(caught.value).lower()
+    assert not corpus["results_root"].exists()
+
+
+def test_force_is_pre_audit_only(corpus, monkeypatch):
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--overrides", str(corpus["complete"]), "--force")
+
+    assert "--force" in str(caught.value)
+    monkeypatch.setattr(
+        run_audit, "git_state", lambda: {"commit": "a" * 40, "dirty": True}
+    )
+    assert invoke(
+        corpus, "--pre-audit", "--overrides", str(corpus["complete"]), "--force"
+    )["mode"] == "preaudit"
+
+
 def test_a_corpus_missing_a_configured_language_is_refused(corpus, tmp_path):
     """A treebank that is simply absent would yield a complete-looking half-audit."""
     (corpus["data_root"] / "UD_Mini" / "la_mini-ud-train.conllu").unlink()
+    corpus["refresh_provenance"]()
 
     for extra in ([], ["--pre-audit"]):
         with pytest.raises(ValueError, match="configured corpus language") as caught:
@@ -286,13 +355,15 @@ def test_a_corpus_missing_a_configured_language_is_refused(corpus, tmp_path):
         assert "'la'" in str(caught.value)
 
 
-def test_a_single_language_audit_is_possible_only_by_configuring_it(corpus):
+def test_a_single_language_audit_is_possible_only_by_configuring_it(corpus, monkeypatch):
     """The escape hatch is explicit configuration, not silent tolerance."""
     (corpus["data_root"] / "UD_Mini" / "la_mini-ud-train.conllu").unlink()
+    corpus["refresh_provenance"]()
     config = corpus["write_overrides"](config_with(languages=["grc"]), "grc_only.yaml")
     overrides = corpus["write_overrides"](
         assignments_with(**{"gamma.tb.xml": None}), "grc_only_registry.yaml"
     )
+    monkeypatch.setattr(run_audit, "CANONICAL_OVERRIDES", overrides.resolve())
 
     result = invoke(corpus, "--overrides", str(overrides), "--config", str(config))
     assert result["gates_evaluated"] is True
@@ -331,6 +402,25 @@ def test_a_malformed_overrides_file_fails_with_its_path(corpus, body, expected):
     assert "<unicode string>" not in str(caught.value)
 
 
+@pytest.mark.parametrize(
+    "body",
+    [
+        "_status: PROPOSED\n_status: RATIFIED\n",
+        "alpha.tb.xml:\n  author: Alpha\n  author: Other\n",
+    ],
+    ids=["top-level", "assignment-field"],
+)
+def test_duplicate_yaml_keys_are_rejected_at_any_registry_depth(corpus, body):
+    path = corpus["tmp_path"] / "duplicate.yaml"
+    path.write_text(body, encoding="utf-8")
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--pre-audit", "--overrides", str(path))
+
+    assert "duplicate" in str(caught.value).lower()
+    assert str(path) in str(caught.value)
+
+
 def test_the_yaml_error_names_the_original_file_and_keeps_the_snippet(corpus):
     """The staged copy is index-prefixed and lives in a temp dir that is gone by
     the time the operator reads the message, so the *original* path is the only
@@ -366,13 +456,14 @@ def test_an_unknown_override_field_is_rejected_not_dropped(corpus, field):
         assert "beta.tb.xml" in str(caught.value)
 
 
-def test_the_declared_schema_fields_are_all_accepted(corpus):
+def test_the_declared_schema_fields_are_all_accepted(corpus, monkeypatch):
     """`part_order` is declared in the G1 package (§viii) and read by nothing yet:
     the check must not turn "not implemented" into "not loadable"."""
     payload = assignments_with(
         **{"beta.tb.xml": {"source_urn": "urn:x", "flags": ["f"], "part_order": 12}}
     )
     path = corpus["write_overrides"](payload, "declared_fields.yaml")
+    monkeypatch.setattr(run_audit, "CANONICAL_OVERRIDES", path.resolve())
 
     assert invoke(corpus, "--overrides", str(path))["gates_evaluated"] is True
 
@@ -391,6 +482,8 @@ def test_an_empty_corpus_fails_instead_of_passing_every_gate(tmp_path):
                 "--data-root", str(tmp_path / "raw"),
                 "--results-root", str(tmp_path / "results"),
                 "--overrides", str(overrides),
+                "--provenance", str(tmp_path / "missing_PROVENANCE.md"),
+                "--pre-audit",
             ]
         )
 
@@ -427,7 +520,7 @@ def test_a_stale_override_is_fatal_in_both_modes(corpus):
         assert "--pre-audit does not excuse this" in str(caught.value)
 
 
-def test_merged_prefixes_are_folded_before_anything_is_counted(corpus):
+def test_merged_prefixes_are_folded_before_anything_is_counted(corpus, monkeypatch):
     """GATE-B and the retained-token column must be about documents, not prefixes."""
     merge = {"source_urn": "urn:cts:test:merged", "canonical_doc_id": "merged.tb.xml"}
     merged = assignments_with(
@@ -439,6 +532,7 @@ def test_merged_prefixes_are_folded_before_anything_is_counted(corpus):
         }
     )
     path = corpus["write_overrides"](merged, "merged.yaml")
+    monkeypatch.setattr(run_audit, "CANONICAL_OVERRIDES", path.resolve())
     report = read_report(invoke(corpus, "--overrides", str(path)))
 
     assert "merged.tb.xml" in report
@@ -527,6 +621,24 @@ def test_a_mistyped_config_key_is_rejected_not_silently_ignored(corpus):
     assert "context_tree.dmax" in str(caught.value)
 
 
+@pytest.mark.parametrize("location", ["top-level", "section", "contrast"])
+def test_non_string_config_keys_are_reported_as_unknown(corpus, location):
+    config = yaml.safe_load(REPO_CONFIG.read_text(encoding="utf-8"))
+    target = {
+        "top-level": config,
+        "section": config["alphabet"],
+        "contrast": config["corpus"]["primary_contrast"],
+    }[location]
+    target[1] = "unexpected"
+    bad = corpus["write_overrides"](config, "numeric_key_config.yaml")
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--config", str(bad), "--overrides", str(corpus["complete"]))
+
+    assert "unknown" in str(caught.value)
+    assert "1" in str(caught.value)
+
+
 def test_a_config_missing_a_declared_key_is_rejected(corpus):
     """The converse: a key the default declares and the file omits leaves the run
     taking a value the operator never saw in their own config."""
@@ -566,6 +678,60 @@ def test_a_deleted_language_keyed_section_is_rejected(corpus):
         invoke(corpus, "--config", str(bad), "--overrides", str(corpus["complete"]))
 
     assert "corpus.primary_contrast" in str(caught.value)
+
+
+@pytest.mark.parametrize("body", ["", "null\n", "[]\n"], ids=["empty", "null", "list"])
+def test_an_explicit_config_must_be_a_nonempty_mapping(corpus, body):
+    path = corpus["tmp_path"] / "explicit_config.yaml"
+    path.write_text(body, encoding="utf-8")
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--config", str(path), "--overrides", str(corpus["complete"]))
+
+    assert str(path) in str(caught.value)
+    assert "mapping" in str(caught.value)
+
+
+def test_duplicate_config_keys_are_rejected(corpus):
+    path = corpus["tmp_path"] / "duplicate_config.yaml"
+    path.write_text("seeds: {global: 1}\nseeds: {global: 2}\n", encoding="utf-8")
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--config", str(path), "--overrides", str(corpus["complete"]))
+
+    assert "duplicate" in str(caught.value).lower()
+    assert str(path) in str(caught.value)
+
+
+@pytest.mark.parametrize(
+    "section,key,value,expected",
+    [
+        ("corpus", "languages", [], "languages"),
+        ("corpus", "languages", ["grc", "grc"], "unique"),
+        ("corpus", "languages", ["grc", 3], "strings"),
+        ("corpus", "primary_contrast", {"la": ["HEX", "PROSE_ALL"]}, "grc"),
+        ("corpus", "primary_contrast", {"grc": ["HEX"], "la": ["HEX", "PROSE_ALL"]}, "two"),
+        ("alphabet", "upos_keep", ["NOUN", 3], "strings"),
+        ("alphabet", "upos_drop", ["PUNCT", None], "strings"),
+        ("alphabet", "deprel_keep", ["root", False], "strings"),
+        ("stats", "family", ["P1", 2], "strings"),
+        ("alphabet", "gate_a_threshold", "0.02", "numeric"),
+        ("seeds", "global", True, "integer"),
+        ("scores", "min_available_past", -1, "non-negative"),
+        ("scores", "learning_curve_T", [5000, "10000"], "integers"),
+    ],
+)
+def test_g1_used_config_shapes_are_validated(
+    corpus, section, key, value, expected
+):
+    config = yaml.safe_load(REPO_CONFIG.read_text(encoding="utf-8"))
+    config[section][key] = value
+    path = corpus["write_overrides"](config, f"bad_{section}_{key}.yaml")
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--config", str(path), "--overrides", str(corpus["complete"]))
+
+    assert expected in str(caught.value)
 
 
 def test_mwt_and_empty_node_rows_never_reach_the_counts(tmp_path):
@@ -614,6 +780,7 @@ def test_a_sent_id_repeated_across_split_files_is_refused(corpus):
     (corpus["data_root"] / "UD_Mini" / "grc_mini-ud-dev.conllu").write_text(
         _sentence("alpha.tb.xml@1", [("NOUN", "nsubj")]) + "\n", encoding="utf-8"
     )
+    corpus["refresh_provenance"]()
 
     with pytest.raises(ValueError) as caught:
         invoke(corpus, "--overrides", str(corpus["complete"]))
@@ -645,6 +812,37 @@ def test_results_root_inside_the_data_root_is_refused(corpus):
     assert "data root" in str(caught.value)
 
 
+def test_every_resolved_destination_stays_outside_both_raw_roots(corpus, monkeypatch):
+    inside_selected = corpus["data_root"] / "sneaky"
+    inside_selected.mkdir()
+    corpus["results_root"].mkdir()
+    (corpus["results_root"] / "tables").symlink_to(
+        inside_selected, target_is_directory=True
+    )
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--pre-audit", "--overrides", str(corpus["complete"]))
+
+    assert "destination" in str(caught.value)
+    assert list(inside_selected.iterdir()) == []
+
+    shutil.rmtree(corpus["results_root"])
+    canonical_raw = corpus["tmp_path"] / "canonical_raw"
+    canonical_raw.mkdir()
+    monkeypatch.setattr(run_audit, "CANONICAL_DATA_ROOT", canonical_raw)
+    with pytest.raises(ValueError) as caught:
+        invoke(
+            corpus,
+            "--pre-audit",
+            "--results-root",
+            str(canonical_raw / "results"),
+            "--overrides",
+            str(corpus["complete"]),
+        )
+
+    assert "canonical data root" in str(caught.value)
+
+
 def test_manifest_and_sidecar_record_every_input_hash(corpus):
     result = invoke(corpus, "--pre-audit", "--overrides", str(corpus["complete"]))
     manifest = json.loads(result["manifest_path"].read_text(encoding="utf-8"))
@@ -656,10 +854,103 @@ def test_manifest_and_sidecar_record_every_input_hash(corpus):
 
     inputs = {record["path"] for record in manifest["inputs"]}
     assert str(corpus["complete"]) in inputs
+    assert str(corpus["provenance"]) in inputs
     assert any(path.endswith("grc_mini-ud-train.conllu") for path in inputs)
     assert all(len(record["sha256"]) == 64 for record in manifest["inputs"])
     assert sidecar["run_id"] == manifest["run_id"]
     assert sidecar["entry_point"] == manifest["entry_point"]
+
+
+def test_verified_provenance_is_visible_in_report_and_manifest(corpus):
+    result = invoke(corpus, "--pre-audit", "--overrides", str(corpus["complete"]))
+    manifest = json.loads(result["manifest_path"].read_text(encoding="utf-8"))
+
+    assert manifest["provenance"]["status"] == "verified"
+    assert "Raw provenance: **VERIFIED**" in read_report(result)
+
+
+def test_canonical_mode_refuses_a_provenance_hash_mismatch(corpus):
+    text = corpus["provenance"].read_text(encoding="utf-8")
+    source = sorted(corpus["data_root"].rglob("*.conllu"))[0]
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    other = ("0" if digest[0] != "0" else "1") + digest[1:]
+    corpus["provenance"].write_text(text.replace(digest, other), encoding="utf-8")
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--overrides", str(corpus["complete"]))
+
+    assert "provenance" in str(caught.value).lower()
+    assert "grc_mini-ud-train.conllu" in str(caught.value)
+    assert not corpus["results_root"].exists()
+
+
+@pytest.mark.parametrize(
+    "defect", ["release", "release-label", "missing", "extra", "invalid-sha"]
+)
+def test_canonical_provenance_requires_the_exact_release_and_file_set(corpus, defect):
+    path = corpus["provenance"]
+    text = path.read_text(encoding="utf-8")
+    row = next(line for line in text.splitlines() if "grc_mini" in line)
+    if defect == "release":
+        text = text.replace("r2.18", "r9.99")
+    elif defect == "release-label":
+        text = text.replace("UD release tag (pinned, D03)", "UD release tag (copy)")
+    elif defect == "missing":
+        text = text.replace(row + "\n", "")
+    elif defect == "extra":
+        text += f"| absent-ud-train.conllu | `{'0' * 64}` |\n"
+    else:
+        text = text.replace(row, row.replace("`", "`not-a-digest`", 1))
+    path.write_text(text, encoding="utf-8")
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--overrides", str(corpus["complete"]))
+
+    assert "provenance" in str(caught.value).lower()
+    assert not corpus["results_root"].exists()
+
+
+def test_pre_audit_reports_a_provenance_mismatch_without_claiming_it_is_pinned(corpus):
+    text = corpus["provenance"].read_text(encoding="utf-8")
+    corpus["provenance"].write_text(text.replace("r2.18", "r9.99"), encoding="utf-8")
+    result = invoke(corpus, "--pre-audit", "--overrides", str(corpus["complete"]))
+    manifest = json.loads(result["manifest_path"].read_text(encoding="utf-8"))
+    report = read_report(result)
+
+    assert manifest["provenance"]["status"] == "mismatch"
+    assert "MISMATCH" in report
+    assert "UD release (pinned" not in report
+
+
+def test_missing_provenance_blocks_canonical_but_is_reported_by_pre_audit(corpus):
+    missing = corpus["tmp_path"] / "missing_PROVENANCE.md"
+
+    with pytest.raises(FileNotFoundError) as caught:
+        invoke(
+            corpus, "--provenance", str(missing), "--overrides", str(corpus["complete"])
+        )
+    assert "PROVENANCE" in str(caught.value)
+
+    result = invoke(
+        corpus,
+        "--pre-audit",
+        "--provenance",
+        str(missing),
+        "--overrides",
+        str(corpus["complete"]),
+    )
+    assert "MISSING" in read_report(result)
+
+
+def test_duplicate_provenance_rows_are_not_accepted_as_evidence(corpus):
+    text = corpus["provenance"].read_text(encoding="utf-8")
+    row = next(line for line in text.splitlines() if "grc_mini" in line)
+    corpus["provenance"].write_text(text + row + "\n", encoding="utf-8")
+
+    with pytest.raises(ValueError) as caught:
+        invoke(corpus, "--overrides", str(corpus["complete"]))
+
+    assert "duplicate" in str(caught.value).lower()
 
 
 def test_rerunning_without_force_refuses_to_overwrite(corpus):
@@ -689,6 +980,19 @@ def test_runs_differing_only_in_overrides_get_distinct_artifact_names(corpus):
     assert label_free["run_id"] != provisional["run_id"]
     assert label_free["report_path"].exists()
     assert provisional["report_path"].exists()
+
+
+def test_runs_differing_only_in_provenance_get_distinct_artifact_names(corpus):
+    first = invoke(corpus, "--pre-audit", "--overrides", str(corpus["complete"]))
+    provenance = corpus["provenance"]
+    provenance.write_text(
+        provenance.read_text(encoding="utf-8") + "\n<!-- audit note -->\n",
+        encoding="utf-8",
+    )
+    second = invoke(corpus, "--pre-audit", "--overrides", str(corpus["complete"]))
+
+    assert first["run_id"] != second["run_id"]
+    assert first["report_path"].exists() and second["report_path"].exists()
 
 
 def test_the_two_modes_never_share_a_run_id(corpus):
@@ -1070,6 +1374,13 @@ def test_the_label_free_report_does_not_promise_a_regime_contingency_it_lacks(co
 
     assert "cannot be produced: regimes come from the registry" in report
     assert "contingency_by_regime" not in report
+
+
+def test_declared_readings_do_not_make_a_deictic_empirical_claim(corpus):
+    report = read_report(invoke(corpus, "--pre-audit", "--overrides", str(corpus["empty"])))
+
+    assert "largest share anywhere below" not in report
+    assert "Exploratory regimes keep their firing power" in report
 
 
 def test_alphabet_frames_keep_their_header_when_empty():

@@ -3,7 +3,7 @@
 Marked `g1`, never `g0`: no D52(ii) mandatory-coverage area names these cases, and
 `tests/test_alphabet.py` carries the module-level `pytest.mark.g0` for §3.4's
 *mapping* — which is why they live in their own file. The `g1` marker (D55 §xiv,
-convention 13; PROPOSED) puts them under the same enforcement as G0: root
+convention 13; ratified 2026-09-04) puts them under the same enforcement as G0: root
 `conftest.py` fails the run if any of them is skipped, `xfail`, `xpass`, or
 collected without an executed assertion. Canonical command:
 `uv run pytest -m g1 --strict-markers`.

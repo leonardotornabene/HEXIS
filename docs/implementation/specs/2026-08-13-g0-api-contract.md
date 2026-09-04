@@ -142,7 +142,8 @@ frozen alphabet — and must be complete before the G1 freeze.
 
 ```python
 def build_sequences(tokens_with_sent_ord) -> pd.DataFrame
-    # columns: language, doc_id, sent_ord, symbols (list<int16>)   [§3.7]
+    # input includes sent_id as identity evidence; output columns:
+    # language, doc_id, sent_ord, symbols (list<int16>)            [§3.7]
 def extend_alphabet_bound(alphabet: Mapping[str, int]) -> dict[str, int]
 def to_model_input(sequences, *, doc_id, boundary, boundary_id=None) -> list[list[int]]
 ```
@@ -150,9 +151,10 @@ def to_model_input(sequences, *, doc_id, boundary, boundary_id=None) -> list[lis
 - `sequences.parquet` is always sentence-based and never contains `#`. P-BOUND is
   produced at run time (D52(x)).
 - P-RESET → one sequence per sentence. P-BOUND → a single stream per document
-  with exactly `n_sentences - 1` boundary symbols; documents are never
-  concatenated (`doc_id` is keyword-only and required, so "never spans
-  documents" is structural rather than a convention).
+  with exactly `n_sentences - 1` boundary symbols. `to_model_input` requires one
+  `doc_id`; the pipeline still has to invoke downstream block construction per
+  document, so "never spans documents" is a checked calling convention, not a
+  property of that signature alone.
 - All-dropped sentences remain rows with `symbols == []`; under P-BOUND this can
   produce adjacent boundary symbols, which is correct and not special-cased.
 - `extend_alphabet_bound` returns a new mapping with `#` at id `|A|`; all
@@ -167,6 +169,13 @@ ordinal is numeric inside a string, so `…@10` sorts before `…@3` and documen
 order would be silently scrambled. How `sent_ord` is computed — sentences of one
 document are spread across the UD split files, which D03 ignores — is an encode
 question resolved at G1. Tracked below.
+
+**Identity hardening ratified 2026-09-04.** `build_sequences` also requires the
+source `sent_id` long enough to verify both directions of the mapping
+`sent_id ↔ sent_ord` within `(language, doc_id)`. Without it, the grouping step
+can fuse two distinct sentences with disjoint token ordinals before any
+downstream uniqueness check can observe the collision. This guard does not
+choose the still-open rule that derives `sent_ord`.
 
 ## 4. Manifest extension (D52(x))
 

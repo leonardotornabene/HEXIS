@@ -27,15 +27,49 @@ def build_sequences(tokens_with_sent_ord: pd.DataFrame) -> pd.DataFrame:
     computed across the UD split files (which D03 ignores) is settled at G1 —
     which is why two sentences colliding on one `sent_ord` is refused here.
     """
-    # The guard belongs here, not downstream: the grouping below emits one row per
-    # (language, doc_id, sent_ord), so a collision is already fused — symbols
-    # interleaved by token_ord — by the time `to_model_input` could see it.
-    # ponytail: token_ord is the evidence the ratified G0 API contract puts in this
-    # frame; two fused sentences whose token_ord ranges happen to be disjoint stay
-    # invisible here, and seeing them needs `sent_id` in the frame, which is a G0
-    # contract amendment rather than a code change.
+    required = {
+        "language", "doc_id", "sent_id", "sent_ord", "token_ord", "symbol_id", "kept"
+    }
+    missing = sorted(required - set(tokens_with_sent_ord.columns))
+    if missing:
+        raise ValueError(f"sequence input is missing required column(s) {missing} (§3.7)")
+    invalid_sent_id = ~tokens_with_sent_ord["sent_id"].map(
+        lambda value: isinstance(value, str) and bool(value.strip())
+    )
+    if invalid_sent_id.any():
+        raise ValueError(
+            "sent_id must contain a nonempty string on every token row; missing "
+            "sentence identity makes the sent_id ↔ sent_ord check impossible (§3.7)"
+        )
+    if tokens_with_sent_ord["sent_ord"].isna().any():
+        raise ValueError(
+            "sent_ord must be present on every token row; a missing ordinal would "
+            "silently drop the sentence during grouping (§3.7)"
+        )
+
+    # `sent_id` is the evidence that must survive until this grouping boundary:
+    # afterwards two source sentences sharing an ordinal have already become one.
+    by_ordinal = tokens_with_sent_ord.groupby(
+        ["language", "doc_id", "sent_ord"], sort=True
+    )["sent_id"].nunique()
+    bad_ordinals = list(by_ordinal[by_ordinal > 1].index)
+    if bad_ordinals:
+        raise ValueError(
+            f"multiple sent_id values share (language, doc_id, sent_ord) at "
+            f"{bad_ordinals}: grouping would fuse distinct sentences (§3.5, §3.7)"
+        )
+    by_identity = tokens_with_sent_ord.groupby(
+        ["language", "doc_id", "sent_id"], sort=True
+    )["sent_ord"].nunique()
+    bad_ids = list(by_identity[by_identity > 1].index)
+    if bad_ids:
+        raise ValueError(
+            f"one sent_id maps to multiple sent_ord values at {bad_ids}: sentence "
+            "order is ambiguous (§3.5, §3.7)"
+        )
+
     duplicated = tokens_with_sent_ord.duplicated(
-        ["language", "doc_id", "sent_ord", "token_ord"]
+        ["language", "doc_id", "sent_id", "sent_ord", "token_ord"]
     )
     if duplicated.any():
         collided = sorted(
@@ -46,9 +80,8 @@ def build_sequences(tokens_with_sent_ord: pd.DataFrame) -> pd.DataFrame:
             )
         )
         raise ValueError(
-            f"repeated (doc_id, sent_ord, token_ord) at {collided}: two sentences "
-            "share one sent_ord, and grouping would fuse them into a single row "
-            "with their symbols interleaved by token_ord (§3.5)"
+            f"repeated token position at {collided}: grouping would duplicate a "
+            "symbol inside one sentence (§3.5)"
         )
 
     ordered = tokens_with_sent_ord.sort_values(["doc_id", "sent_ord", "token_ord"])

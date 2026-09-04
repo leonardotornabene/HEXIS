@@ -101,7 +101,8 @@ def test_a_non_string_flag_element_is_refused():
 def test_a_part_order_that_cannot_order_parts_is_refused(value):
     """`part_order` is declared-but-unread today, so nothing else would catch a
     value that cannot order anything. `True` is included because
-    `isinstance(True, int)` is True in Python."""
+    `isinstance(True, int)` is True in Python; `-1` because the owner ruled on
+    2026-09-04 that the shape stays non-negative until something reads it."""
     with pytest.raises(ValueError) as caught:
         registry.build_registry(PREFIX_COUNTS, _overrides(part_order=value))
 

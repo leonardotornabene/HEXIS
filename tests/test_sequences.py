@@ -17,9 +17,12 @@ BOUNDARY = "#"
 
 def tokens_frame(rows):
     """rows: (doc_id, sent_ord, token_ord, symbol_id, kept)"""
-    return pd.DataFrame(
+    frame = pd.DataFrame(
         rows, columns=["doc_id", "sent_ord", "token_ord", "symbol_id", "kept"]
     ).assign(language="grc")
+    return frame.assign(
+        sent_id=frame["doc_id"].astype(str) + "@" + frame["sent_ord"].astype(str)
+    )
 
 
 # doc A: two sentences; the second has a dropped token in the middle (gap closes).

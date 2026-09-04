@@ -148,7 +148,26 @@ edit was made.
 
 ---
 
-## G0 status — CLOSED AFTER PRE-MERGE REVIEW 2026-08-14
+## Current G0/G1 status — final technical attestation pending
+
+The owner ratified only checklist items **17–20 and 23–26** on 2026-09-04.
+Their implementation is being verified and the two provisional audit runs are
+being regenerated. No scientific item was decided: checklist items 1–16, 21–22
+and 27 remain open; the registry, alphabet and T\* remain unfrozen; no real-data
+model was fitted; G1 remains open until those scientific decisions are taken.
+
+The final attestation belongs here only after the substantive revision and the
+replacement artifacts have each been committed and all four checks have run on
+the clean artifact commit. Until that block replaces this paragraph, no count
+below is current evidence for the branch tip.
+
+### Superseded attestation trail
+
+Everything below is retained as dated history. Any present-tense statement in a
+quoted block is scoped to the commit named by that block; it does not override
+the current status above.
+
+## Historical G0 status — closed after pre-merge review 2026-08-14
 
 > The first pre-merge review reopened G0 after finding three uncovered contract
 > defects: out-of-order integer token IDs were accepted; registry overrides could

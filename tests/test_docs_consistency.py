@@ -24,6 +24,7 @@ from pathlib import Path
 DOCS = Path(__file__).parent.parent / "docs"
 PROPOSAL = DOCS / "g1_D55_proposal.md"
 RECORD = DOCS / "g1_ratification_record.md"
+ROOT = DOCS.parent
 
 CHECKLIST_HEADING = "## Decision checklist"
 
@@ -60,6 +61,16 @@ def _record_sections() -> dict[int, str]:
     text = RECORD.read_text(encoding="utf-8")
     tables = text.partition("\n## Verdetti")[0]
     return _walk(tables, r"^## ([ABC]) ", r"^\|\s*(\d+)\s*\|")
+
+
+def _record_statuses() -> dict[int, str]:
+    text = RECORD.read_text(encoding="utf-8").partition("\n## Verdetti")[0]
+    statuses = {}
+    for line in text.splitlines():
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if cells and cells[0].isdigit():
+            statuses[int(cells[0])] = cells[3]
+    return statuses
 
 
 def _walk(text: str, heading: str, item: str) -> dict[int, str]:
@@ -128,6 +139,27 @@ def test_the_item_numbers_are_a_gapless_run_from_one():
     cross-comparison would see."""
     checklist = set(_checklist_items())
 
-    assert checklist == set(range(1, max(checklist) + 1)), (
-        f"missing: {sorted(set(range(1, max(checklist) + 1)) - checklist)}"
+    expected = set(range(1, 28))
+    assert checklist == expected, (
+        f"missing: {sorted(expected - checklist)}; unexpected: {sorted(checklist - expected)}"
     )
+
+
+def test_only_the_owner_ratified_technical_items_are_closed():
+    statuses = _record_statuses()
+    technical = set(range(17, 21)) | set(range(23, 27))
+
+    assert {number for number, status in statuses.items() if status == "RATIFICATA"} == technical
+    assert {number for number, status in statuses.items() if status == "APERTA"} == (
+        set(range(1, 28)) - technical
+    )
+
+
+def test_the_three_standing_instruction_copies_are_identical():
+    template_doc = (DOCS / "04_AI_HANDOFF_PROMPT.md").read_text(encoding="utf-8")
+    fenced = template_doc.partition("````markdown\n")[2].partition("\n````")[0] + "\n"
+    claude = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+
+    assert fenced == claude
+    assert agents.splitlines(keepends=True)[1:] == claude.splitlines(keepends=True)[1:]

@@ -1,26 +1,27 @@
-# D55 — proposal, NOT applied
+# D55 — scientific proposal; technical substrate ratified
 
-**Status: PROPOSED.** Drafted to slot into `02_DECISION_LOG.md` §II after
-ratification. Two things are being proposed here, and they stand differently:
+**Status: scientific content PROPOSED; technical decisions ratified 2026-09-04.**
+Drafted to slot into `02_DECISION_LOG.md` §II after ratification. Two layers
+stand differently:
 
-- **Every scientific and governance item — §(i)–(xiii), §(xv)–(xvi) — is applied
+- **Every scientific item — §(i)–(xiii), §(xv)–(xvi) — is applied
   to nothing.** No value in `01_MASTER_SPEC.md`, `02_DECISION_LOG.md`,
   `CLAUDE.md`, `AGENTS.md`, `README.md` or `config/` has been changed, and no
   alphabet, registry or T\* is frozen. What some of those files, and the operative
   documents beside them, did receive between 2026-08-17 and 2026-09-02 is a
-  **pointer** — twelve statements across
-  seven files recording that this amendment exists and applies to nothing, so
+  **pointer** recording that this amendment exists and applies to nothing, so
   that a superseded constant is never re-derived as a description of the corpus.
   They change no figure, and they all retire in the act of ratification
   (checklist item 24). "Untouched" would be the tidier word and it would be
   false.
-- **The thirteen software conventions in §(xiv) are implemented**, because the evidence
+- **The technical choices in checklist 17–20 and 23–26 are ratified and
+  implemented on `g1/pre-audit`.** The thirteen conventions in §(xiv) are the
+  executable core, because the evidence
   in this document could not be produced without them: two audit runs that differ
   only in mode would otherwise overwrite each other, and an unratified registry
-  would otherwise be able to produce a canonical report. They are in force in the
-  pre-audit pipeline and are submitted here for ratification like everything else.
-  Ratifying them changes no result; rejecting them means changing the stage before
-  the canonical audit runs.
+  would otherwise be able to produce a canonical report. This ratification changes
+  no scientific value and freezes nothing. Binding Decision-Log amendments are
+  filed separately when the package is deposited (item 18).
 
 Prepared at the G1 pre-audit, 2026-08-15/16; revised 2026-08-17 after a full audit
 of the branch, which added §(xvi), took the GATE-A declared readings from three to
@@ -46,55 +47,37 @@ statement of the same class to `HANDOFF.md`. Revised again **2026-09-03**, after
 items 17 and 23, item 20 rewritten because the inventory it called deliberately
 undone was built that day, and checklist items **26–27** added — the
 `_status: RATIFIED` self-declaration, and the Tacitus URN conflict a verification
-pass over all thirty registry rows left unresolved. No figure below comes from a model
-(D30 intact — counts only, no fit).
+pass over all thirty registry rows left unresolved. Revised **2026-09-04** after
+the owner's technical ratification: provenance is enforced, canonical authority
+is bound to path plus clean repository revision, gate inventories and instruction
+copies are protected, and the attestation rule is closed. No figure below comes
+from a model (D30 intact — counts only, no fit).
 
 **Provenance, stated precisely.** Two classes of evidence, not one:
 
-1. **From the pre-audit reports**, with each set of numbers tied to the run that
-   produced it. Both runs share
-   `config_sha256 = 53f76d297774bba46042d97e6170b093fcef4833a4633633a7712192d14b2440`
-   (C0 as committed in `config/default.yaml`), and both manifests live at
-   `results/logs/<run_id>/manifest.json` carrying the SHA-256 of every input and
-   artifact.
+1. **From the two committed pre-audit runs**, with each set of numbers tied to
+   its manifest under `results/logs/<run_id>/manifest.json`. One run uses the
+   empty canonical overrides file to inventory raw prefixes; the other uses
+   `docs/g1_registry_proposal.yaml` to inventory the proposed documents. The
+   filenames, reports and manifests are the authority for their current hashes
+   and repository revision; duplicating those volatile identifiers here is the
+   stale-copy failure this review is closing.
 
-   A run is cited by the **stable half** of its identity, `{config_hash}_{inputs
-   fingerprint}` — what trails it moves whenever the artifacts are rebuilt, while
-   the fingerprint does not, because it is a digest of the inputs themselves.
-   Since 2026-09-03 two components trail it, not one: the **code revision** and
-   then the regeneration date, so a full id reads
-   `{mode}_{config}_{inputs}_{code}_{date}`. The revision was added because
-   without it two runs on the same day over the same data and config, produced by
-   different software, collide on `run_id` — and `--force` then replaces evidence
-   a different program produced.
+   A full id reads
+   `audit_{mode}_{config}_{inputs}_{revision}_{date}`. `revision` is Git HEAD,
+   not a content fingerprint. `inputs` covers every staged `.conllu` file, the
+   overrides file and `PROVENANCE.md`; the manifest records their individual
+   SHA-256 values as well. Both runs are provisional by construction and are
+   generated independently from clean worktrees at the same revision, so their
+   manifests record `mode: preaudit` and `git.dirty: false` without one run's
+   artifacts dirtying the other.
 
-   | run (stable identity) | overrides | what is read from it |
-   | --- | --- | --- |
-   | `preaudit_53f76d297774_75e8a4ae9993` | `config/registry_overrides.yaml` (empty) | the 18 + 12 raw-prefix enumeration; per-prefix sentence, raw and retained counts; per-prefix retention (min 80.8%); \|A_grc\| = 106 and \|A_la\| = 102 |
-   | `preaudit_53f76d297774_f389dca36708` | `docs/g1_registry_proposal.yaml` | the 29-document canonical inventory (Athenaeus merged); per-regime drop rates and restricted-position fractions; the per-regime excluded-DEPREL shares (max 1.28% grc / 1.11% la) |
-
-   The full id appends the revision that produced the artifacts and the day they
-   were last rebuilt. Neither is quoted here, deliberately: pinning them makes
-   this document stale on the next regeneration, and the commit sequence below
-   requires at least one more. Read them off the filenames in `results/tables/`.
-
-   **What is and is not reproducible, precisely.** Regenerating on the same day
-   reproduces the report, the CSVs and the sidecars **byte for byte** — verified.
-   The **manifest never does**, because it records `created_utc`, a wall-clock
-   timestamp; and across a day boundary the `run_id` changes, which changes the
-   filenames, the "Run id" line inside the report, and therefore the sidecars too.
-   Stable in every case are the counts and tables themselves and the
-   `{config_hash}_{fingerprint}` half of the identity — which is why runs are
-   cited by that half.
-
-   The T\* arithmetic of §(ix) and the learning-curve grids of §(x) are derived by
-   hand from the `n_tokens_retained` column of the **second** run, whose documents
-   are canonical. Both runs record `mode: preaudit` and **`git.dirty: false`**:
-   the flag is sampled **before** the run's own writes (§xiv, convention 11), and
-   each run was generated on a clean tree and committed before the next was
-   generated (`9fc5e0a`, `1168cee` — the pair regenerated on 2026-09-03, which
-   superseded `1680d3a` / `84a9319`). An earlier draft of this paragraph said
-   `true`, describing the sequence as planned rather than as executed.
+   The T\* arithmetic of §(ix) and the learning-curve grids of §(x) are derived
+   by hand from the `n_tokens_retained` column of the proposed-registry run.
+   Reports, tables and sidecars are deterministic for a fixed run id; manifests
+   additionally carry `created_utc`, so they are not byte-reproducible across
+   invocations. Scientific counts, not volatile filenames or timestamps, are
+   the evidence used below.
 2. **From evidence outside those reports**, and so cited on its own terms: the
    MWT count and UD commit SHAs (`data/raw/PROVENANCE.md`); the README-vs-data
    divergence (the treebank READMEs at the pinned commits); the `sent_ord`
@@ -711,10 +694,10 @@ the threshold is itself above it, so no merge can pull a document under 70%.
 If GATE-A does fire at the canonical audit, D50 governs: C0 stays the unique
 primary and no cells are added.
 
-### (xiv) Software conventions adopted to produce this evidence
+### (xiv) Ratified software conventions used to produce this evidence
 
-**Thirteen** conventions, all in force in the pre-audit pipeline and all submitted for
-ratification. Each exists because the evidence above could not be produced safely
+**Thirteen** conventions, ratified by the owner on 2026-09-04 and in force on
+this branch. Each exists because the evidence above could not be produced safely
 without it — none of them changes a number. Listed exhaustively, because earlier
 drafts of this section undercounted twice.
 
@@ -731,18 +714,18 @@ and stripping the only assert from another each turn `-m g1` red.
 | # | convention | what breaks without it |
 | --- | --- | --- |
 | 1 | mode in `run_id` and artifact names | pre-audit and canonical runs over identical inputs share a name |
-| 2 | input fingerprint in `run_id` and artifact names | two runs differing only in overrides collide |
+| 2 | input fingerprint **and repository revision (Git HEAD)** in `run_id` and artifact names | runs differing only in inputs or revision collide |
 | 3 | manifest `mode`/`status`, `entry_point` = the invocation | the mode is only recoverable by parsing a filename |
 | 4 | `status` column in every companion CSV | a table detached from name and sidecar looks canonical |
-| 5 | `_status: RATIFIED` required for a canonical audit | an unratified registry can produce gate verdicts |
+| 5 | canonical audit requires the authoritative `config/registry_overrides.yaml`, `_status: RATIFIED`, a clean Git tree and no `--force` | a self-declared copy or mutable working tree can produce canonical evidence |
 | 6 | `corpus.languages` treated as the corpus, not an allowlist | a missing treebank yields a complete-looking half-audit |
 | 7 | **inputs staged**: bytes read once, digest taken of what was read, parse consuming a private copy of those same bytes | edit → parse → restore publishes a report the manifest does not describe, and no before/after digest comparison can see it |
-| 8 | **re-verification before publishing** — digests re-checked and the data root re-globbed for files that *appeared* | a run whose sources moved underneath it describes a state that no longer exists |
+| 8 | **re-verification before publishing** plus comparison with the existing `PROVENANCE.md` tables | a run can describe bytes correctly while falsely calling them the pinned release |
 | 9 | **atomic `run_id` reservation** (exclusive `mkdir` of the log directory) | `_preflight` is check-then-act, so concurrent runs both pass it and both write |
-| 10 | **rollback over the predetermined destinations on failure**, released reservation, with `_preflight` and the reservation *outside* the guarded block | a write failing partway leaves a truncated artifact that no "what succeeded" record would catch — and a rollback that also covers the preflight deletes the very artifacts the refusal protects |
+| 10 | **rollback over the predetermined destinations on failure**; `--force` is pre-audit-only and explicitly may remain partial | a canonical write can become a mixed run, or rollback can delete evidence it did not create |
 | 11 | **git state sampled before the first write** (`manifest.git_state()` public, `build_manifest(git=…)`) | the stage writes into the worktree, so a sample taken at manifest-assembly time reports a dirtiness the run itself created |
-| 12 | **unknown override fields rejected** (`registry.KNOWN_OVERRIDE_FIELDS`), `part_order` listed as declared-but-unread | the required five are caught by their absence, but a mistyped *optional* key (`flag:` for `flags:`) was dropped without a trace and appeared in no artifact |
-| 13 | **`g1` marker + the same enforcement as G0** (`conftest.GATE_MARKERS`, `uv run pytest -m g1 --strict-markers`) | the G1 tests ran only inside the full suite, where a skipped one lowers the passed count by one, raises the skipped count by one, and stays green — the failure mode D52(iii) forbids for G0 and left open for G1. No figure is quoted here: `docs/HANDOFF.md`'s attestation block is the only place counts are recorded, and the pair that stood here until 2026-09-03 had already gone stale |
+| 12 | **YAML/config/registry trust-boundary validation**: duplicate keys, wrong shapes, unknown fields and invalid values rejected | a typo or duplicate silently changes or erases the configuration the manifest claims to identify |
+| 13 | **`g1` marker + G0 enforcement + normative live-collection inventory**, with both inventory files anchored by repo `conftest.py` | deleting a test file, marker or inventory silently shrinks a green gate |
 
 **Convention 12 changes a G0-attested contract, so it is gated like one.** It
 lives in `registry.build_registry`, whose mandatory-coverage area is
@@ -753,26 +736,13 @@ close. Two `g0`-marked tests were therefore added to `tests/test_registry.py` an
 **named in the inventory**, so deleting either turns the gate red rather than
 merely lowering a count (mutation-verified).
 
-**Two declared limits of the 2026-09-03 remediation guards** (owner-ruled the same
-day; recorded here so that neither is read as wider than it is).
-
-1. **The `--results-root` refusal is relative to the *declared* `--data-root`,
-   not to a literal `data/raw`.** The flag defaults to `data/raw`, so every
-   ordinary invocation is covered; re-pointing the corpus elsewhere and then
-   aiming the results at `data/raw` defeats it. That is a deliberate act of the
-   operator, and hardcoding the path would buy nothing the default does not
-   already give while fixing a repository layout in library code. The invariant
-   as enforced: **artifacts never land inside the corpus this run is reading.**
-2. **The code revision in `run_id` is HEAD alone.** Uncommitted work does not move
-   it, so two runs of differing *uncommitted* code still collide on the artifact
-   name. `_preflight` refuses that collision unless `--force` is passed, and the
-   manifest records `dirty` in either case, so the residual exposure is exactly:
-   dirty tree **and** `--force` **and** the same day, config, inputs and HEAD.
-   Widening the run identity would change the artifact naming convention, which
-   is a §xiv matter and therefore submitted rather than done — the conservative
-   reading of the ruling. Refusing to run on a dirty tree was the alternative and
-   was rejected: the test suite invokes the stage from the worktree, so it would
-   fail whenever the repository is mid-edit.
+**The two limits found on 2026-09-03 are closed.** Every resolved destination —
+artifact, sidecar and manifest — is checked against both the selected data root
+and the repository's canonical `data/raw`, including pre-existing symlinked
+subdirectories. The revision component remains Git HEAD and is named honestly as
+a repository revision. Canonical mode requires the tree clean and rejects
+`--force`; dirty and force-enabled executions are therefore possible only in the
+explicitly provisional pre-audit mode.
 
 **Consequence for the attestation, which was the owner's to complete.** Adding the
 G1 tests moved the G0 selection and the full-suite total apart (the gate count is
@@ -784,15 +754,11 @@ below and had its own commit there — it could not precede the commit it must
 name. It was executed on 2026-09-03 (`bbaf7e0`, and again after the audit pass
 that followed); the figures live only in that block.
 
-**Exception, declared:** conventions 9 and 10 do not apply under `--force`. Force
-skips the preflight, so a destination may hold a previous run's artifact and the
-proof that deletion is safe is absent — losing someone else's output is worse than
-leaving a partial one. Under `--force` a failed run leaves its partial state in
-place. **The exception stops there:** convention 8 in particular still holds under
-`--force` — a run whose inputs moved underneath it publishes nothing, whatever
-the operator asked to overwrite. (An earlier draft of this paragraph named
-conventions 8 and 9; that was an off-by-one left by splitting the old convention 7
-into staging and re-verification, and it described the code incorrectly.)
+**`--force` boundary.** It is rejected in canonical mode. In pre-audit it still
+skips overwrite preflight and rollback, because without proof that destinations
+were absent rollback could destroy prior output. A failed forced pre-audit may
+therefore leave a mixed or partial provisional run; input re-verification still
+applies and the mode/status remain visible in every artifact.
 
 **Two properties of the naming that the reader should not assume:**
 
@@ -812,9 +778,9 @@ regeneration reproduces the **report, the CSVs and the sidecars** byte for byte 
 but **never the manifest**, which carries `created_utc`, a wall-clock timestamp.
 Across a day boundary less still is stable: `run_id` carries the date, so the
 filenames change, the "Run id" line inside the report changes, and the sidecars
-follow. What survives both is everything downstream of the identity — the counts,
-the tables, the CSV bodies and the `{config_hash}_{fingerprint}` half of the name,
-which is why §"Provenance" cites runs by that half.
+follow. What survives both is the scientific content — the counts and table
+bodies. The provenance section therefore points to the committed manifests
+instead of copying any supposedly stable substring of their identifiers.
 
 §6.1 names artifacts `{stage}_{config-hash}_{date}`. That rule collides in two
 distinct ways here, and the second is the dangerous one:
@@ -825,14 +791,16 @@ distinct ways here, and the second is the dangerous one:
   decides them. Under §6.1 they would share a name, so `--force` would silently
   replace one with the other and the manifest could not say which it held.
 
-**Proposed name:** `audit_report_{mode}_{config_hash}_{inputs_fp}_{date}.md`,
+**Ratified name:**
+`audit_report_{mode}_{config_hash}_{inputs_fp}_{revision}_{date}.md`,
 with `mode ∈ {preaudit, canonical}` and `inputs_fp` a SHA-256 over the sorted
-`path\tsha256` lines of **every `.conllu` file and the overrides file**. The
+`path\tsha256` lines of **every `.conllu` file, the overrides file and the
+provenance record**. The
 resolved config is deliberately *not* in `inputs_fp`: it is not a file on disk
 but a merge result, and it already enters the name as `config_hash` and the
 manifest as `config_sha256`.
 
-**Proposed additions to the D46 record**, so no consumer has to parse the mode
+**Ratified additions to the D46 record**, so no consumer has to parse the mode
 back out of a filename: the manifest gains `mode` (`preaudit` | `canonical`) and
 `status` (`PROVISIONAL` | `CANONICAL`); `entry_point` becomes the actual
 invocation (`hexis.pipeline.run_audit --pre-audit`), which propagates the mode
@@ -840,7 +808,7 @@ into every artifact's sidecar; and every companion CSV carries a `status` column
 so a table detached from both its filename and its sidecar still cannot be
 mistaken for a canonical one.
 
-**Proposed reserved key in the overrides schema:** keys beginning with `_` are
+**Ratified reserved key in the overrides schema:** keys beginning with `_` are
 metadata, never document assignments. `_status` declares a file's ratification
 state, and a canonical audit requires `_status: RATIFIED` **explicitly** — an
 absent, empty or unrecognised value is refused. Ratification is opt-in: the
@@ -849,9 +817,9 @@ guarantee depend on a proposal's author remembering to mark it, and §3.3 requir
 assignments to be human-verified, which is a claim someone has to make rather than
 one to infer from silence. Ratifying the registry therefore has a mechanical step:
 copy the rows into `config/registry_overrides.yaml` and set `_status: RATIFIED`
-there.
+there. Canonical mode accepts no other path and also requires a clean Git tree.
 
-**Proposed corpus-completeness check:** `corpus.languages` is the corpus, not an
+**Ratified corpus-completeness check:** `corpus.languages` is the corpus, not an
 allowlist. A run whose data root lacks a configured language is refused in both
 modes, because a missing treebank yields an audit that is correct about what it
 saw and wrong about what it claims to be — and `--pre-audit` exists for registry
@@ -865,21 +833,21 @@ root minus `corpus.languages` catches an *unexpected* one (a file whose language
 is not configured is an error, not something to skip silently, since skipping is
 how half-audits are produced). The stage's error message says so.
 
-**Not proposed here:** binding the
-audit to the exact five files and SHA-256s of `data/raw/PROVENANCE.md`. That is
-the stronger check, it needs a machine-readable provenance format, and inventing
-one silently is exactly what this amendment exists to prevent — recorded as an
-open item below.
+**Ratified provenance binding:** the existing Markdown release row and SHA-256
+tables in `data/raw/PROVENANCE.md` are parsed directly; no second format is
+invented. Canonical mode refuses a missing record, release mismatch, duplicate,
+missing/extra basename or digest mismatch. Pre-audit reports the same comparison
+in report and manifest without turning it into a verdict.
 
-**Proposed provenance fix:** `manifest.git_state()` becomes public and
+**Ratified provenance fix:** `manifest.git_state()` is public and
 `build_manifest` accepts `git=`, so a stage can sample git **before** its first
 write. Artifacts must exist before they can be hashed, so the manifest is
 necessarily assembled after the stage has written into the worktree; sampling git
 at that point attributes the run's own untracked outputs to the tree it started
 from. The pre-audit runs now record the state that preceded them.
 
-All of the above are implemented and in force in the two pre-audit runs; submitted
-here for ratification.
+All of the above are implemented and ratified as technical process. They decide
+no registry row, scientific constant, alphabet or T\*.
 
 ---
 
@@ -1085,8 +1053,7 @@ and option B widens it, so ratifying either leaves it in a different state than 
 is in now, but amending it is not among the twelve.
 
 The conforming shape is one `Dnn-A1` per touched decision plus those two new
-entries. Presented as a ledger below so ratification is mechanical; **which route
-to take is the owner's call**, and there are two:
+entries. Two routes were presented:
 
 - **(a) File the ledger as separate entries** — `D04-A1` … `D51-A1`, plus `D55`
   and `D56`. **The option A/B decision is not new matter**: it changes the
@@ -1096,10 +1063,11 @@ to take is the owner's call**, and there are two:
   amendment protocol inside it, since the amendments share one cause and splitting
   them risks their being ratified apart.
 
-I recommend (a): the protocol says "no silent changes", and an omnibus makes each
-individual change harder to see. But the entries are interdependent — ratifying
-`D21-A1` without `D51-A1` would leave the plan incoherent — so (a) must be
-ratified as a single act even if filed as separate entries.
+The owner selected **route (a) on 2026-09-04** (checklist item 18): file separate
+entries, each with its own impact. The entries are interdependent — ratifying
+`D21-A1` without `D51-A1` would leave the plan incoherent — so the scientific
+entries must still be ratified as a single act even though they are filed
+separately. Route (b) is retained above only as the rejected alternative.
 
 ### Amendment ledger — draft `Dnn-A1` entries
 
@@ -1121,7 +1089,7 @@ ratification.
 | `D37-A1` *(option A only)* | "Total 13 cells. **Budget: ≈ 330 fits/cell** ≈ 10–20 laptop-minutes ⇒ ≈ 3–5 h total" — 330 = 11 docs × 3 fits × 10 seeds | 13 cells **unchanged**; budget recomputed to **≈ 210 fits/cell** (7 × 3 × 10) and the total scaled accordingly | D37 does not enumerate documents, so the cell count is untouched; what it freezes and what the corpus changes is the **fit budget**. Under option B, 11 × 3 × 10 = 330 stands and **no amendment is needed** |
 | `D43-A1` | tiers, floors and sidedness at 11 documents / 6 author blocks | recomputed floors with sidedness per §(iv), §(vii); D43(iv) Lysias clause removed | the corpus inventory |
 | `D44-A1` | O7 calibration on 11 pseudo-documents | 7 (option A) or 11 (option B) with the ratified size profile; P2 calibrated only at levels it can attain | §(xii) |
-| `D46-A1` | manifest fields as frozen | adds `mode`, `status`, pre-captured `git`, snapshot `inputs`; `entry_point` is the invocation | §(xiv) |
+| `D46-A1` | manifest fields as frozen | adds `mode`, `status`, pre-captured `git`, staged `inputs` including `PROVENANCE.md`, and the provenance-verification record; `entry_point` is the invocation; the run identity includes repository HEAD | §(xiv) |
 | `D51-A1` | T\* scope with expected binding condition "HEX minus Iliad" | T\* per §(ix); binding condition recorded as observed; learning-curve grid per §(x) | the binding condition moved to the prose side under option A |
 | **`D55`** (new) | — | the corpus finding, and §(xiv)'s conventions | not an amendment: a new question the corpus posed. The A/B decision itself belongs to `D04-A1`, since that is the entry that freezes the contrast |
 | `D43-A1` *(second clause, if `author_block` is adopted)* | author blocks named in prose by D43(v); the registry schema has only `author` | schema gains **`author_block`**, defaulting to `author` | `author` is bibliographic attribution; the author block is **D43(v)'s randomization unit**. One field for both would decide O8 by transcription (registry proposal, question 5). Belongs to D43, **not** D03: D03 governs the release pin, the splits and document derivation, and says nothing about author blocks. Schema impact on §2.3 / §3.3 |
@@ -1140,9 +1108,10 @@ replacing it, and it retires on ratification (item 24). Corrected 2026-09-03 —
 the sentence this replaces said "None of these has been edited", which the
 pointer commits had already falsified.
 
-The list is exhaustive as far as a search for the superseded constants reaches
-(`462`, `2048`, `C(11,5)`, `C(8,2)`, `2^11`), plus the files below it that carry
-no constant but encode the same assumptions:
+The current search scope combines the superseded constants (`462`, `2048`,
+`C(11,5)`, `C(8,2)`, `2^11`) with the files below that encode the same
+assumptions without quoting a constant. It is not a substitute for repeating the
+search at the ratification act (item 24).
 
 | file | what is stale |
 | --- | --- |
@@ -1150,13 +1119,13 @@ no constant but encode the same assumptions:
 | `docs/02_DECISION_LOG.md` | **D04** (the contrast and the composition it is frozen on), D20, D21, D24, **D25** (option B only), D33, D37, D43 (floors, and `author_block` if adopted), D44, D46, D51; the new `alphabet.json` decision (§xv); open items O1, O2, O4, O8; deferred node DN-2 |
 | `docs/00_LEGGIMI_INDICE.md` | **added 2026-09-02**, and it escaped the constant search because it carries no constant: points 1 and 2 of "Le scoperte di verifica che restano fondanti" assert E1 and E2 as *founding* verified facts. Also the pointer added under them, per item 24 |
 | `docs/03_ROADMAP_OPERATIVA_IT.md` | the G1 and G3 phase descriptions (11 pseudo-documents at O7); the placement of the linguistic touchpoint inside the G1 phase, if `D29-A1` is ratified; and the pointer at the head of FASE 1b, per item 24 |
-| `docs/04_AI_HANDOFF_PROMPT.md` | the enumeration constants quoted to a fresh agent — in **two** places: rule 8 of the bootstrap prompt and the `CLAUDE.md` template of §B, which must stay byte-identical to the root copies (item 25). Both pointers retire per item 24 |
+| `docs/04_AI_HANDOFF_PROMPT.md` | the enumeration constants quoted to a fresh agent in rule 8 of the bootstrap prompt and the `CLAUDE.md` template of §B, which must stay byte-identical to the root copies (item 25). Both pointers retire per item 24 |
 | `CLAUDE.md` | the "exact schemes" line (Greek 462 / 2048; Latin 28 / 256; author 20 / 64; Lysias-merged 56 / 256) — **and the pointer note added under it on 2026-08-17**, which says this amendment is PROPOSED and applied to nothing. Ratifying makes that note false, so it is replaced by the ratified constants in the same act; it exists only because these two files are loaded as standing instructions in every session, so a superseded constant left unflagged is re-derived indefinitely (owner-authorized, no value changed) |
 | `AGENTS.md` | the same line and the same note, mirrored — the two files are byte-identical below their first line, and any edit to one is an edit to both |
-| `README.md` | the design summary's document counts and constants — "eleven documents" **five** times (six if "Eleven Greek documents" is read as the same phrase; recounted 2026-09-03, it had said six), "twelve tragedies", the Greek and Latin prose counts, 2,048 / 462; at lines 116–125 they carry the O7 argument rather than decorate it. Plus the pointer added 2026-09-02, per item 24 |
-| `docs/HANDOFF.md` | **added 2026-09-02; count revised 2026-09-03.** Its G1 status block declares this amendment PROPOSED in **four** separate places — the `-m g1` paragraph ("PROPOSED with the rest of the package", naming no filename, so no citation search finds it), the sentence placing the ratification evidence here "and in `docs/g1_registry_proposal.md` (both PROPOSED)", the closing open-finding paragraph, and the "What is applied and what is not" paragraph added 2026-09-03 (which likewise names no filename) — beside its statements that nothing is frozen and the registry is unratified. Ratification falsifies all of them at once (item 24). The gate attestation it carries is *not* affected: test counts are evidence measured at a commit, not a constant of the design |
+| `README.md` | the design summary's document counts and constants (including "eleven documents", "twelve tragedies", the Greek and Latin prose counts, 2,048 / 462); the O7 design argument depends on them rather than merely displaying them. Plus the pointer added 2026-09-02, per item 24 |
+| `docs/HANDOFF.md` | its current-status and G1 history surfaces that call the scientific package PROPOSED, beside the statements that nothing is frozen and the registry is unratified. Ratification must update every surviving current surface found then (item 24); historical blocks remain scoped to their named commits. The gate attestation is separate evidence, not a design constant |
 | `docs/implementation/specs/2026-08-13-g0-api-contract.md` | constants quoted in the ratified API contract — and, more than constants, **§5's semantic inventory check**: its reference set (§2.3) and its expectations (Greek HEX 5 / PROSE_CLASS 6, Latin HEX 2 / PROSE 6; 462 / 2048, 28 / 256, 56 / 256, 20 / 64) are exactly what this amendment replaces, so the check is unsatisfiable as written and must be re-pointed at the ratified registry before the freeze (§xvi) |
-| `src/hexis/stats/permutation.py:4` | module docstring: "Greek 2^11 = 2048 … Latin 2^8 = 256" |
+| `src/hexis/stats/permutation.py` | module docstring: "Greek 2^11 = 2048 … Latin 2^8 = 256" |
 | `docs/01_MASTER_SPEC.md` §5.3 | "5–6 documents per group make these CIs crude" and "per-document dot displays (11 points, F3–F4)" — under option A one group holds **2** documents, where a between-document bootstrap is not crude but near-degenerate (resampling 2 with replacement has 3 distinct outcomes), and the dot plots carry 7 points |
 | `config/default.yaml` | `corpus.primary_contrast` (flat pair, `PROSE_ALL` not a label), `scores.t_star` (scalar, must be per language), `scores.learning_curve_T` (needs §(x)'s two-part reading) |
 | `config/registry_overrides.yaml` | empty; receives the ratified rows **and** `_status: RATIFIED` |
@@ -1302,84 +1271,30 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
 
 ### C. Repository and process governance — not scientific gates at all
 
-17. **The thirteen software conventions** of §(xiv), including the `--force` exception
-    and convention 13 (the `g1` gate, authorized 2026-08-17 and pending ratification
-    with the rest).
+17. **The thirteen software conventions are RATIFIED** (2026-09-04), including
+    the full G1 inventory and the following closed boundaries.
 
-    **Attestation discipline, added 2026-09-03 by owner ruling.** The block in
-    `docs/HANDOFF.md` names the commit whose tree was actually measured, and that
-    commit is the tip unless this ruling has carried the block forward — so a
-    commit landing after it otherwise puts the two out of step. Until 2026-09-03
-    the stated remedy was a re-run in every case. **It is now: a commit that touches no code, no test, no
-    dependency and no artifact does not require a re-run** — the attestation is
-    moved to the new tip and the counts carried over, saying so. The measured
-    price of the old rule was three full gate runs on 2026-09-02 for prose that
-    could not move a count; the risk of the new one is that "documentation only"
-    is a judgement, and a wrong one silently converts a re-attestation into the
-    transcription this file exists to forbid. The boundary is therefore
-    mechanical, not editorial: **anything outside `docs/`, `README.md`,
-    `CLAUDE.md` and `AGENTS.md` forces the re-run**, `git diff --stat` against the
-    attested commit decides it, and the carried-over block names the commit the
-    counts were actually measured at. Ratify with the conventions or reject; the
-    old rule is the safe fallback, only expensive.
+    **Attestation discipline.** Every commit after the measured commit requires
+    all four canonical checks again. There is one mechanical exception: exactly
+    one final administrative commit may modify only `docs/HANDOFF.md` to record
+    the counts measured on its parent. That block names the parent; any later
+    commit, including documentation, invalidates the carry and requires a new
+    run. This avoids both semantic path allowlists and the self-referential demand
+    to test a commit that can exist only after its own results are written.
 
-    **Correction submitted 2026-09-03 (external review):** that boundary is too
-    wide, and the version above is recorded as ruled rather than quietly
-    replaced. `docs/` is not prose-only. It holds
-    `docs/g1_registry_proposal.yaml`, an **executable input** the pipeline reads
-    and whose digest enters the manifest; and it holds `docs/01_MASTER_SPEC.md`
-    and `docs/02_DECISION_LOG.md`, which define what the tests must prove. A
-    `git diff --stat` sees paths and line counts, never semantic inertia. The
-    narrower rule submitted: a commit may carry the attestation forward only if
-    it touches **no** file under `src/`, `tests/` or `config/`, no lockfile, no
-    artifact under `results/`, and none of `docs/**/*.yaml`,
-    `docs/01_MASTER_SPEC.md`, `docs/02_DECISION_LOG.md`. Anything else forces the
-    re-run. Both boundaries are recorded in `docs/HANDOFF.md`; the narrower one is
-    the one the 2026-09-03 session honoured. Ratify one.
-
-    **`--force` may leave a partially overwritten run — D5 of the external
-    review, submitted 2026-09-03.** This is present behaviour and it is
-    deliberate: `_preflight` returns immediately under `--force`, and the
-    rollback in `main`'s `except BaseException:` arm is skipped under `--force`
-    too (both in `run_audit.py`; cited by symbol because the line numbers these
-    two sentences carried went stale on this branch when an unrelated commit
-    shifted them by five). The stated reason is sound
-    as far as it goes — without the preflight's proof that no destination existed,
-    a destination may hold a *previous* run's artifact, and deleting it would
-    destroy someone else's output. So a `--force` run that fails midway leaves
-    some destinations holding the new run's output, some holding the old run's,
-    and possibly one truncated. Every file still carries a sidecar, so nothing is
-    unlabelled — but the *set* is a mixture of two runs, and no artifact says so.
-
-    The reviewer's argument: canonical evidence must never be half-replaced, and
-    the mixture is not detectable from any single artifact. The concrete
-    alternative, fully specified so ratification is one reading: write the whole
-    run into a staging directory beside the destination, and **rename into place**
-    only once every artifact, sidecar and the manifest have been written. Rename
-    within one filesystem is atomic per path, so a failure before the renames
-    leaves the previous run entirely intact and a failure during them leaves a
-    prefix — which the manifest, renamed last, still adjudicates. `--force`
-    becomes atomic at the run level, and the rollback special case disappears
-    rather than being documented.
-
-    The cost, stated so it is not discovered later: it changes the artifact
-    writing path, which conventions 7–10 rest on; it needs its own g1 tests
-    (failure before the renames, failure between two renames, and the manifest
-    written last); and `destinations_of` grows a staging counterpart, so the
-    "one list used twice" invariant of `destinations_of` becomes one list used
-    three times. **Not implemented.** Ratification decides; an agent changing
-    canonical evidence handling on its own initiative is the failure mode this
-    package exists to prevent.
-18. **Route (a) or (b)** for filing the amendments (§Governance).
-19. **Whether `results/` is tracked or gitignored**, and the commit order
-    (§Committing this package). A Git question — with one half that is not
-    optional under either answer (added 2026-08-20): `data/processed/` is
-    gitignored, and its re-include exception for the frozen artifacts is noted for
-    G4/G5 while the artifacts it names are created at **G1**. That exception lands
-    with the freeze (§xv(4)).
-20. **The `g1` gate — decided and implemented (convention 13), ratification
-    pending with the rest.** The marker plus the enforcement it inherits from G0
-    is in force. **Sequencing, added 2026-08-20:** a mandatory-area inventory has
+    **Force boundary.** Canonical mode rejects `--force`; therefore canonical
+    evidence can never be partly replaced by that path. Pre-audit keeps `--force`
+    as an explicitly provisional operator escape hatch and may leave partial or
+    mixed output on failure. Atomic run-wide staging was not built because it is
+    unnecessary for canonical evidence once force is excluded there.
+18. **Amendment route — RATIFIED.** File separate entries, each with its own
+    explicit impact, and ratify the interdependent scientific entries as one act.
+19. **Artifact policy — RATIFIED.** `results/` remains tracked. The future frozen
+    artifacts under ignored `data/processed/` receive an explicit re-include
+    exception in the same commit that creates them (§xv(4)).
+20. **The `g1` gate — RATIFIED and implemented** (convention 13). The marker,
+    G0-style assertion enforcement and live-collection inventory are normative.
+    **Sequencing, added 2026-08-20:** a mandatory-area inventory has
     to exist *before* the canonical audit run, not after — after the freeze the
     gate has guarded nothing. That is the exact failure that reopened G0, where
     `-m g0` exited 0 with three mandatory areas at zero coverage.
@@ -1397,10 +1312,9 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     (`request.session.items`), not an AST approximation, so it measures the
     selection that actually ran.
 
-    What that does **not** do is supply the normative definition, and it must not
-    be read as one. The eleven areas are the current G1 set described, not a
-    decision about what G1 must cover; ratifying them is what would make the
-    inventory normative, and that is this item. Two consequences are already
+    The owner ratified those eleven areas as the normative G1 set on 2026-09-04.
+    Repository `conftest.py` also refuses to start if either the G0 or G1 inventory
+    file is missing or loses its module marker. Two consequences are
     load-bearing and are stated so nobody "fixes" them later: running
     `tests/test_g1_enforcement.py` **alone always fails**, by construction, since
     a session holding only that file has collected no other g1 test — the
@@ -1409,23 +1323,11 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     hard-coded and pinned by a named member of the attested 144-test G0 set, so
     generalising it would mean editing attested G0 code to serve G1.
 
-23. **Binding the audit's inputs to `PROVENANCE.md`** (new 2026-08-20; promoted
-    from the open items). Conventions 7–8 guarantee that a run describes the bytes
-    it read; nothing asserts that those bytes are the five `.conllu` files pinned
-    at r2.18. The record is not missing — the manifest carries every input digest
-    and `PROVENANCE.md` carries the declared ones — only the comparison is manual.
-    The freeze is not blocked by this; the question is whether the canonical run
-    should refuse to proceed when the two disagree. Recommended: yes, and before
-    the canonical run, since that is the run whose inputs get frozen.
-
-    **Restated 2026-09-03 (external review, its D7), with the design specified so
-    ratification is one reading.** The reviewer's framing is sharper than the
-    paragraph above: the manifest records *what was read*, and **nothing asserts
-    that what was read is the pinned r2.18 release**. Those are different claims,
-    and only the first is currently made. A corpus silently replaced between runs
-    produces a manifest that is internally perfect and externally false.
-
-    The design. `data/raw/PROVENANCE.md` already carries the two UD commit SHAs
+23. **Binding the audit's inputs to `PROVENANCE.md` — RATIFIED and implemented**
+    (new 2026-08-20). The original gap was that the manifest proved only what a
+    run read, not that those bytes were the pinned r2.18 release. The
+    implementation uses `data/raw/PROVENANCE.md`'s existing Markdown tables:
+    it already carries the two UD commit SHAs
     and the SHA-256 of each of the five `.conllu` files, and `inputs_fingerprint`
     already computes a per-file digest of the bytes actually read — so the
     comparison needs no new hashing, only a declared parse of the provenance file
@@ -1433,67 +1335,21 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     file whose digest differs and every pinned file the run did not read;
     **pre-audit mode reports rather than refuses**, in the report and in the
     manifest, consistent with pre-audit withholding every verdict. The
-    prerequisite the open-items list already names stands: `PROVENANCE.md` is
-    prose today, so it needs a machine-readable block before the five files and
-    their digests can be enforced — that is part of what is being ratified here,
-    not an obstacle discovered afterwards.
+    parser also rejects duplicate hash rows and a release-tag mismatch. The
+    provenance file itself is staged, hashed into the run identity and listed in
+    the manifest. No duplicate machine-readable block was added.
 
-    **Not implemented**, deliberately: what a canonical run must refuse to do is a
-    ratification question, and the format of `PROVENANCE.md` is fixed by the same
-    act.
+24. **The documentary scope of the ratification act — RATIFIED.** The eventual
+    scientific act must, in the same commit, retire every deferral pointer it
+    makes false and update every derived constant or instruction copy. The known
+    surfaces are `CLAUDE.md`, `AGENTS.md`, `README.md`,
+    `docs/00_LEGGIMI_INDICE.md`, `docs/03_ROADMAP_OPERATIVA_IT.md`,
+    `docs/04_AI_HANDOFF_PROMPT.md` and `docs/HANDOFF.md`; this list is a search
+    scope, not a manually maintained occurrence count. A survivor is a defect of
+    the ratification act, not later tidying.
 
-24. **The documentary scope of the ratification act** (new 2026-09-02; count
-    revised 2026-09-03). **Twelve
-    statements across seven files** declare this amendment PROPOSED and applied to
-    nothing, and **ratification makes every one of them false in the same
-    instant**: `CLAUDE.md`, `AGENTS.md`, `docs/03_ROADMAP_OPERATIVA_IT.md` and
-    `README.md` once each; `docs/04_AI_HANDOFF_PROMPT.md`
-    twice (rule 8 of the bootstrap prompt, and the `CLAUDE.md` template of §B);
-    `docs/00_LEGGIMI_INDICE.md` twice (the pointer, and the working-documents
-    table row — which also states the checklist's item count, so it goes stale
-    whenever this list grows, as it did today); and `docs/HANDOFF.md` **four
-    times** — the open-finding paragraph at the end of the G1 block, the sentence
-    placing the ratification evidence in this file "and
-    `docs/g1_registry_proposal.md` (both PROPOSED)", the `-m g1` paragraph,
-    which calls convention 13 of §xiv "PROPOSED with the rest of the package",
-    and — **added 2026-09-03 by the commit that revised this very item, and not
-    counted until the audit pass caught it** — the "What is applied and what is
-    not" paragraph, which says all thirteen conventions are *submitted for
-    ratification* and that the amendment's scientific content is *applied to
-    nothing*. That is the fifth trap: this item's own scope grows under the
-    branch that maintains it.
-    Item 18 fixes the *form* of the filing; this fixes its *scope*. Recommended:
-    the act that ratifies is the act that retires all twelve and installs the
-    ratified figures, and a survivor is a defect of that act rather than tidying
-    to be done later.
-
-    Five traps for whoever executes it, each one already sprung. **Do not work
-    from a file list:** the table above was wrong once, omitting
-    `00_LEGGIMI_INDICE.md`, which carries no constant and so escaped the constant
-    search while asserting E1 and E2 as *founding* verified facts. **Do not grep
-    the heading:** the pointers are worded four ways ("a pointer, not an
-    amendment", "a pointer, not a correction", "un puntatore, non un
-    emendamento", "Deferral clause"). **Do not grep the claim either:** it is
-    worded four ways too, and `README.md` additionally wraps "applied to /
-    nothing" across a blockquote-marked line break. Measured 2026-09-02: a plain
-    phrase search returns **6 of 11**, and a whitespace-normalised one that also
-    joins the following line returns **9 of 11** — the wrap is recoverable, the
-    wording variance is not. The same measurement read 8 of 9 while this item's
-    own count was nine. The best handle is the
-    citation `g1_D55_proposal.md` — but, the fourth trap, **it does not catch them
-    all.** It **under-selects**: the `-m g1` paragraph of `HANDOFF.md` declares the
-    package PROPOSED while naming only `D55 §xiv`, so the citation search returns
-    ten of eleven and the eleventh surfaces only by reading the file. **Every
-    ratio in this paragraph was measured on 2026-09-02 against a denominator of
-    eleven; the twelfth statement postdates the measurement and cites no filename
-    either, so the citation search now returns ten of twelve.** It was also
-    thought to over-select, on the ground that `HANDOFF.md` and `00` cite the file
-    for other reasons; they do not — every one of those ten citations is a
-    statement this act must retire. Both errors ran the same way, and this item's
-    own first count, on 2026-09-02, was nine because of them. Triage a
-    superset by hand, and do not treat an empty grep as an empty file.
-25. **Whether anything should enforce that the three standing-instruction copies
-    stay identical** (new 2026-09-02). `CLAUDE.md`, `AGENTS.md` and the template
+25. **The three standing-instruction copies stay identical — RATIFIED and
+    enforced** (new 2026-09-02). `CLAUDE.md`, `AGENTS.md` and the template
     in §B of `04` are one text in three places; `AGENTS.md` differs by design only
     in its first line. On 2026-09-02 the `04` template was found drifted from the
     live file on the D36/D52(v) bullet **and** carrying the falsified constants
@@ -1501,12 +1357,12 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     calls "da allegare in ogni sessione AI" would regenerate a `CLAUDE.md`
     presenting them as description. That is the only defect in this package that
     had an execution path. The three are byte-identical again as of `d8b8052`.
-    The question is whether a check should hold them so, or whether it stays a
-    habit; a test comparing the three is cheap, and the cost of having one is
-    that `04` and the two root files become a single editing unit.
+    `tests/test_docs_consistency.py` now compares the template and `CLAUDE.md`
+    byte for byte and requires `AGENTS.md` to differ only in its first line.
 
-26. **`_status: RATIFIED` is a self-declaration, not proof of ratification** (new
-    2026-09-03; external review, its D6). Canonical mode proceeds only when the
+26. **Canonical registry authority — RATIFIED and implemented** (new 2026-09-03;
+    external review, its D6). `_status: RATIFIED` remains necessary but is not
+    sufficient. Canonical mode proceeds only when the
     overrides file it was given carries `_status: RATIFIED`. That key is inside
     the file it certifies, so **any** file can assert it: copying
     `docs/g1_registry_proposal.yaml`, changing one word and typing `RATIFIED` at
@@ -1514,36 +1370,12 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
     artifact contradicts it. The manifest faithfully records the digest of
     whatever was read; it does not know which digest you ratified.
 
-    The whole design space, so this is one reading and not a research task:
-
-    - **α — pin canonical mode to the default overrides path**
-      (`config/registry_overrides.yaml`). **Not implementable as things stand:**
-      that file is comment-only, so canonical mode would become impossible until
-      the freeze, and roughly fifteen canonical call sites in the g1 tests pass a
-      custom `--overrides` by design. Rejecting α is not a preference; it is a
-      fact about the tree.
-    - **β — require the file's basename.** Theatre: a copy renamed is a copy
-      ratified. It raises the cost of the accident by one `mv` and gives a false
-      sense that the question is closed.
-    - **γ — record the ratified digest outside the file. Recommended.** The
-      ratification act names a SHA-256 (in the Decision Log entry, or in
-      `config/`), and canonical mode compares it against the digest the pipeline
-      **already computes** for the overrides input. A file that edits itself into
-      `RATIFIED` then fails, because the thing it cannot forge is a digest
-      recorded elsewhere. Cost: the digest is fixed by the ratification act, so
-      any later correction to the registry is a new act — which is the intended
-      property, not a side effect.
-    - **δ — leave it as a declaration.** Defensible *only* while `--pre-audit`
-      withholds every verdict and nothing is frozen, which describes today and
-      stops describing the moment the freeze happens.
-
-    **The zero-risk increment, available immediately and deliberately not taken:**
-    the overrides digest is *already* in the input snapshot and in
-    `manifest["inputs"]`; only the **report header** omits it, so a reader holding
-    the report alone cannot see which registry produced it. Adding it there is
-    presentation, not policy, and it does not decide α/β/γ/δ. It is still an
-    **artifact-bytes change**, so it waits for ratification with the rest rather
-    than being slipped in as tidying.
+    The owner selected the repository path
+    `config/registry_overrides.yaml`, a clean Git tree and canonical `--force`
+    refusal. The report and manifest expose the overrides digest and repository
+    revision. This gives repository traceability, not a cryptographic proof of
+    human intent; the ratification record remains the authority that tells the
+    owner when to populate the canonical path.
 
 ## Open items this amendment does not close
 
@@ -1560,9 +1392,6 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
   linguistic supervisor's.
 - **Latin family membership** (§vi) — own family of 2, or joined to the Greek
   family of 4.
-- **Binding the audit to `PROVENANCE.md`** (§xiv) — needs a machine-readable
-  provenance format before the exact five files and SHA-256s can be enforced.
-  Promoted to a decision on 2026-08-20: **checklist 23**.
 - **`sent_ord` and `part_order`** (§viii) — the rule is proposed, not implemented,
   and neither is the `part_order` constraint that goes with it (mandatory,
   integer, unique within a merged group). Nothing in the audit or the freeze reads
@@ -1576,64 +1405,18 @@ same thing**, and an earlier draft of this checklist wrongly said they did.
   by hand in §(i)–(iii); the mechanized form is re-pointed at the ratified registry
   and must pass before the freeze. Not a Decision-Log amendment, so it carries no
   ledger row — which is precisely why it needed naming here.
-- **A normative definition of the G1 test set** — the `g1` gate exists
-  (convention 13), but no decision says which behaviours it must cover, so it
-  enforces discipline over whatever is marked rather than over a mandated set.
-  The D52(ii) analogue for G1 is a Decision-Log matter if it is wanted at all.
-
 ## Committing this package — the order matters
 
-Both manifests here record `git.dirty: false` — the outcome of the order below,
-not its premise. Before that order was executed the flag read `true`, honestly
-rather than self-inflictedly (it is sampled before the run's own writes — §xiv,
-convention 11), because the generator, its tests and these documents were
-uncommitted. A naive "commit, then regenerate" does **not** clear it: `results/`
-is tracked, so the regenerated artifacts make the tree dirty again the moment
-they are written.
+`results/` is tracked. Commit code, tests and documents first (revision `X`), then
+run all four checks on a clean `X`. Generate the label-free and proposed-registry
+pre-audits in **two disposable clean worktrees at that same revision**. This keeps
+both manifests on one Git revision with `dirty: false`; generating them serially
+in the branch worktree would let the first run's new tracked artifacts dirty the
+second.
 
-Two orders that do work:
-
-1. **Three commits: code, attestation, artifacts.** The attestation cannot come
-   first, because `docs/HANDOFF.md` requires it to be measured "on a clean tree"
-   and recorded "together with its commit" — and before the code is committed the
-   tree is not clean and that commit does not yet exist. The repository's own
-   precedent is the right order: `180e05c` (code) then `56ad331`
-   (*docs: re-attest G0 after inventory hardening*), which names it.
-
-   Remove `results/` entirely → **commit generator, tests and documents** (call it
-   `X`; the tree is now clean) → on `X` run `-m g0`, **`-m g1`** (convention 13),
-   the full suite and
-   `uv lock --check` → **commit the re-attestation naming `X`**, replacing the
-   block in `docs/HANDOFF.md` (the sequence has been executed several times since
-   this was written; the figures each pass recorded are in that block and its
-   superseded predecessors, and are deliberately not transcribed here — a count
-   copied into a second document goes stale in silence, which is why the block is
-   the only place they live) → regenerate on the still-clean tree (the manifest samples `dirty: false`
-   **before** writing) → commit `results/`. The manifests then name the
-   attestation commit, which is the first commit at which the code and its
-   recorded evidence agree.
-
-   **One commit per run — found by executing this sequence on 2026-08-17, and it
-   is not a detail.** With `results/` tracked, only the *first* regenerated run
-   sees a clean tree: the second samples git after the first has written into the
-   worktree and records `git.dirty: true`. That flag would then report a
-   dirtiness caused by a **sibling artifact of the same package**, which is the
-   same distortion convention 11 exists to remove — one step removed. So each run
-   is generated and committed before the next is generated, and the two manifests
-   name different commits by construction (currently `9fc5e0a` and `1168cee`). The
-   alternative that removes the problem structurally is gitignoring `results/`,
-   which is the open question below — **ignored**, not merely untracked:
-   `manifest.git_state()` reads `git status --porcelain`, which lists untracked
-   files as `??` and would therefore still report dirty. Ignored files do not
-   appear there, so every run of a batch would sample `dirty: false` from the
-   same commit.
-2. **Regenerate in a clean worktree.** Same first two commits; then check the
-   attestation commit out in a fresh worktree with no `results/`, regenerate
-   there, copy the artifacts back and commit them.
-
-Either way the artifacts must be **removed, not merely overwritten**, before the
-first commit: leaving the current ones in place carries a manifest that names a
-commit predating the code that made it. Whether `results/` should be tracked at
-all, or gitignored like `data/interim` and `data/processed`, is itself a question
-for ratification — D28 permits publishing derived statistics, so tracking them is
-allowed, not required.
+Replace the superseded artifacts with the two complete new sets and commit them
+as revision `Y`. Run all four checks again on clean `Y`. Exactly one final commit
+may then modify only `docs/HANDOFF.md` to record the counts measured on `Y`; it
+must name `Y`. Any later change invalidates that carry and requires all four
+checks again. No canonical artifact is generated here: the registry and the
+scientific decisions remain unratified.

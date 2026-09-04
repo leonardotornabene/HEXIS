@@ -1,16 +1,17 @@
 # G1 — registro delle ratifiche
 
-**Stato: nulla è ratificato.** Questo file è il posto unico dove si registrano le
-decisioni man mano che vengono prese, una alla volta. Non è un documento di
+**Stato: ratificate le sole voci tecniche 17–20 e 23–26; tutte le decisioni
+scientifiche restano aperte.** Questo file è il posto unico dove si registrano le
+decisioni man mano che vengono prese. Non è un documento di
 evidenza e non ne duplica il contenuto: ogni riga porta un'etichetta e un numero,
 e l'autorità su numeri e argomenti resta il checklist di
 `docs/g1_D55_proposal.md` (con `docs/g1_registry_proposal.md` per le 30 righe).
 
-**Regola.** Una decisione registrata qui **non è applicata a nulla**.
-`01_MASTER_SPEC.md`, `02_DECISION_LOG.md` e `config/` restano intatti finché il
-pacchetto non viene depositato come **atto unico** (voce 18: rotta (a) separata o
-(b) omnibus). Fino ad allora questo file è l'unico posto in cui una ratifica
-esiste, ed è ciò da cui si scriveranno le voci `Dnn-A1`.
+**Regola.** Le ratifiche tecniche del 4 settembre sono applicate al ramo
+`g1/pre-audit`; non modificano costanti, registro, alfabeto o T\*. Le decisioni
+scientifiche registrate qui non si applicano finché i rispettivi emendamenti non
+sono depositati. `01_MASTER_SPEC.md`, `02_DECISION_LOG.md` e i valori scientifici
+in `config/` restano quindi intatti; la voce 18 impone emendamenti separati.
 
 **Sostituisce** `HEXIS_foglio_ratifica_G1.pdf` (18 agosto 2026, `g1/pre-audit` @
 `61d6496`), archiviato fuori albero — sha256
@@ -29,15 +30,15 @@ voci `Dnn-A1` che ne discendono saranno in inglese come il resto del Decision Lo
 
 ## Ordine consigliato
 
+Il blocco tecnico 17–20 e 23–26 è concluso. Per ciò che resta:
+
 1. **Voce 21 per prima** — decide se le voci 1–7 si prendono oggi o dopo il
    supervisore linguistico. È l'unica che riordina tutte le altre, e costa nulla.
-2. **Blocco tecnico, indipendente da A/B:** 8, 9, 10, 11, 17, 18, 19, 20, 23, 24,
-   25. Sblocca tutto il lavoro implementativo (contratto `freeze_alphabet`,
-   `t_star`, semantic inventory check, governance) senza toccare una costante
-   scientifica. La 24 va presa **con** la 18: quella decide la forma del deposito,
-   questa il suo perimetro.
+2. **Voci 8–11** — contratti del freeze e letture GATE-A, ancora scientifici o
+   accoppiati al contenuto ratificato.
 3. **Voce 1** — con il supervisore se la 21 dice «prima», da sola se dice «dopo».
-4. **Voci 2–7** — il registro e ciò che ci sta attaccato.
+4. **Voce 27, poi 2–7** — prima si dispone il conflitto URN di Tacito, poi si può
+   ratificare l'intero registro che lo contiene.
 5. **Sezione B** — dopo il freeze, ai gate che la richiedono.
 
 ---
@@ -47,7 +48,7 @@ voci `Dnn-A1` che ne discendono saranno in inglese come il resto del Decision Lo
 | # | decisione | dipende da | stato | verdetto | data |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Contrasto primario greco: opzione **A**, **B** o **route A\*** (A + interruttore condizionale su O7, entrambi i T\* congelati) | 21 · reciproca con 16 sotto A\* | APERTA | — | — |
-| 2 | Il registro: tutte e 30 le righe (regime, `meter`, `period`, `flags`, `source_urn`) | 21 | APERTA | — | — |
+| 2 | Il registro: tutte e 30 le righe (regime, `meter`, `period`, `flags`, `source_urn`) | 21 · 27 | APERTA | — | — |
 | 3 | Cesare, *De bello Gallico* — regime (proposto PROSE_CLASS) | 21 | APERTA | — | — |
 | 4 | Ateneo 12+13 — merge, **e con esso il vincolo `part_order`** | 21 | APERTA | — | — |
 | 5 | Libri singoli (Erodoto 1, Tucidide 1, Diodoro 11) come documenti interi | 21 | APERTA | — | — |
@@ -58,7 +59,7 @@ voci `Dnn-A1` che ne discendono saranno in inglese come il resto del Decision Lo
 | 10 | `t_star`: firma proposta e le due chiavi di `config/default.yaml` | — | APERTA | — | — |
 | 11 | Semantic inventory check — contro cosa si confronta (+ quarta attesa: ambito dell'alfabeto) | — | APERTA | — | — |
 | 21 | Touchpoint del supervisore linguistico **prima** del freeze (`D29-A1`) | — | APERTA | — | — |
-| 27 | Tacito `phi1351.phi005`: URN ed etichetta dell'opera non possono essere entrambi giusti — Perseus dice *Annales*, il README del treebank dice *Historiae*. **(a)** tenere l'URN trascritto e registrare il conflitto · **(b)** correggere a phi004 · **(c)** trattenere la riga per il supervisore linguistico (**consigliata**) | 2 · 21 | APERTA | — | — |
+| 27 | Tacito `phi1351.phi005`: il testo è *Historiae*, ma Perseus assegna phi005 agli *Annales*. **(a)** tenere l'URN upstream e il flag · **(b)** correggere `source_urn` a phi004 · **(c)** trattenere la riga per il supervisore linguistico (**consigliata**) | 21 | APERTA | — | — |
 
 ## B — bloccano gate successivi, non il freeze
 
@@ -75,19 +76,37 @@ voci `Dnn-A1` che ne discendono saranno in inglese come il resto del Decision Lo
 
 | # | decisione | dipende da | stato | verdetto | data |
 | --- | --- | --- | --- | --- | --- |
-| 17 | Le tredici convenzioni software (§xiv), eccezione `--force` inclusa **+ la disciplina di ri-attestazione: nessun re-run per i commit solo-documentali** (deciso dal proprietario il 3 set 2026, in vigore, da ratificare qui) | — | APERTA | — | — |
-| 18 | Rotta (a) voci separate o (b) omnibus, per depositare gli emendamenti | — | APERTA | — | — |
-| 19 | `results/` tracciato o ignorato **+** eccezione `.gitignore` per gli artefatti congelati | — | APERTA | — | — |
-| 20 | Gate `g1`: inventario di copertura obbligatoria — **costruito il 3 set 2026** (`tests/test_g1_enforcement.py`, undici aree, verificate contro la collection viva di pytest); resta da ratificare se quelle undici aree sono la definizione normativa dell'insieme G1 | — | APERTA | — | — |
-| 23 | Legare gli input dell'audit a `PROVENANCE.md` | — | APERTA | — | — |
-| 24 | Ambito documentale dell'atto di ratifica: le **dodici** dichiarazioni su **sette** file che la ratifica rende false nello stesso istante (undici fino al 3 set 2026: la dodicesima è nata dallo stesso ramo che mantiene questa voce) | 18 | APERTA | — | — |
-| 25 | Se qualcosa debba imporre l'identità delle tre copie delle istruzioni permanenti (`CLAUDE.md`, `AGENTS.md`, template di `04` §B) | — | APERTA | — | — |
-| 26 | `_status: RATIFIED` è un'autodichiarazione del file, non prova della ratifica: **α** ancorare al path di default (non implementabile) · **β** imporre il basename (teatro) · **γ** registrare il digest ratificato fuori dal file (**consigliata**) · **δ** lasciarla com'è | 2 · 18 | APERTA | — | — |
+| 17 | Convenzioni software §xiv, `--force` solo pre-audit e disciplina di ri-attestazione stretta | — | RATIFICATA | Canonico pulito e senza `--force`; ogni commit sostanziale richiede i gate, salvo un unico commit amministrativo solo-HANDOFF | 2026-09-04 |
+| 18 | Rotta per depositare gli emendamenti | — | RATIFICATA | Voci separate, ciascuna con il proprio impatto | 2026-09-04 |
+| 19 | `results/` e artefatti congelati | — | RATIFICATA | `results/` resta tracciato; eccezione `.gitignore` esplicita per i futuri artefatti congelati | 2026-09-04 |
+| 20 | Gate `g1`: inventario di copertura obbligatoria | — | RATIFICATA | Le undici aree correnti sono normative; i due file-inventario sono ancorati dal `conftest.py` di repository | 2026-09-04 |
+| 23 | Legare gli input dell'audit a `PROVENANCE.md` | — | RATIFICATA | Canonico blocca assenza o mismatch; pre-audit li espone nel report e manifest | 2026-09-04 |
+| 24 | Ambito documentale dell'atto di ratifica | 18 | RATIFICATA | L'atto che muta lo stato scientifico aggiorna nello stesso commit ogni puntatore e copia derivata ancora applicabile | 2026-09-04 |
+| 25 | Identità delle tre copie delle istruzioni permanenti | — | RATIFICATA | Test byte-per-byte; in `AGENTS.md` differisce soltanto la prima riga | 2026-09-04 |
+| 26 | Autorità del registro canonico | 2 · 18 | RATIFICATA | Solo `config/registry_overrides.yaml`, su commit Git pulito; `_status` resta necessario ma non sufficiente | 2026-09-04 |
 
 ---
 
 ## Verdetti
 
-*(vuoto: nessuna decisione presa. Ogni verdetto va qui per esteso — voce, scelta,
-motivazione a verbale se il foglio ne chiede una, data — e la riga corrispondente
-sopra passa da APERTA a RATIFICATA.)*
+Il 4 settembre 2026 il proprietario ha approvato la sanatura tecnica integrale,
+senza autorizzare alcuna scelta scientifica:
+
+- **17:** ratificate le convenzioni tecniche come riscritte in §xiv. Il canonico
+  richiede commit pulito e rifiuta `--force`; il pre-audit può forzare ma dichiara
+  il rischio di stato parziale. Ogni commit sostanziale richiede un nuovo run;
+  solo un commit finale che modifica esclusivamente `docs/HANDOFF.md` può riportare
+  i conteggi misurati sul proprio genitore.
+- **18:** scelta la rotta a emendamenti separati.
+- **19:** `results/` resta versionato; l'eccezione per i futuri artefatti congelati
+  sarà esplicita e contestuale al freeze.
+- **20:** l'inventario G1 corrente è normativo e i file-inventario G0/G1 non possono
+  essere rimossi o smarcati lasciando verde il gate.
+- **23:** il Markdown esistente di `PROVENANCE.md` è l'ancora; nessun nuovo formato.
+- **24:** il futuro atto scientifico deve aggiornare nello stesso commit tutti i
+  puntatori e documenti derivati che esso rende falsi; nessun conteggio manuale di
+  occorrenze costituisce prova di completezza.
+- **25:** le tre copie delle istruzioni sono vincolate da test.
+- **26:** l'autorità canonica deriva dal path di repository e dal commit pulito
+  registrato nel manifest. Non si attribuisce al path una prova crittografica di
+  intenzione umana che non possiede.

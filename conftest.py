@@ -1,7 +1,10 @@
 """Repository-level enforcement for the pytest gate selections (D45/D52(iii))."""
 
 import ast
+import importlib.util
 from pathlib import Path
+
+import pytest
 
 pytest_plugins = ["pytester"]
 
@@ -9,9 +12,13 @@ pytest_plugins = ["pytester"]
 # no test in a gate selection may be skipped, xfail, xpass, or collected without
 # an effective assertion, and the enforcement must not depend on reading the
 # pytest summary by eye. `g1` extends the same mechanics to the G1 audit tests
-# (D55 §xiv, convention 13; PROPOSED). The rule is identical for both, so the
+# (D55 §xiv, convention 13; ratified 2026-09-04). The rule is identical for both, so the
 # marker name is data here rather than a second implementation.
 GATE_MARKERS = ("g0", "g1")
+GATE_INVENTORIES = {
+    "g0": "test_g0_enforcement.py",
+    "g1": "test_g1_enforcement.py",
+}
 
 _ASSERTED: set[str] = set()
 _COLLECTION_SKIPPED: set[str] = set()
@@ -23,11 +30,43 @@ _ROOT = Path()
 def pytest_configure(config):
     global _ROOT
     _ROOT = Path(config.rootpath)
+    # Only the HEXIS repository has this trust anchor. Pytester copies this
+    # conftest into synthetic projects, which must remain free to define tiny gates.
+    if (_ROOT / "src" / "hexis").is_dir():
+        for marker, filename in GATE_INVENTORIES.items():
+            path = _ROOT / "tests" / filename
+            if not path.is_file() or not _declares_module_marker(path, marker):
+                raise pytest.UsageError(
+                    f"{path}: missing or unmarked {marker} inventory anchor"
+                )
     for configured in config.getini("testpaths") or ["."]:
         test_root = _ROOT / configured
         if test_root.is_dir():
-            for cache in test_root.rglob("*-pytest-*.pyc"):
-                cache.unlink(missing_ok=True)
+            for source in test_root.rglob("*.py"):
+                cache = Path(importlib.util.cache_from_source(str(source)))
+                if cache.parent.is_dir():
+                    for compiled in cache.parent.glob(f"{source.stem}.*.pyc"):
+                        compiled.unlink(missing_ok=True)
+
+
+def _declares_module_marker(path: Path, marker: str) -> bool:
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    for node in tree.body:
+        if not isinstance(node, ast.Assign) or not any(
+            isinstance(target, ast.Name) and target.id == "pytestmark"
+            for target in node.targets
+        ):
+            continue
+        return any(
+            isinstance(part, ast.Attribute)
+            and part.attr == marker
+            and isinstance(part.value, ast.Attribute)
+            and part.value.attr == "mark"
+            and isinstance(part.value.value, ast.Name)
+            and part.value.value.id == "pytest"
+            for part in ast.walk(node.value)
+        )
+    return False
 
 
 def pytest_sessionstart(session):

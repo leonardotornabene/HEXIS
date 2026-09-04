@@ -52,12 +52,12 @@ The seven catalogue-only rows are the ones most worth a second pair of eyes. Two
 of them matter beyond their own identity: the **Hymn** carries O2/O8, and the
 **Athenaeus** pair carries the merge that turns 30 prefixes into 29 documents.
 
-Counts are from the label-free pre-audit run, cited by the stable half of its
-identity — `preaudit_53f76d297774_75e8a4ae9993` — because what trails it in a
-`run_id` (since 2026-09-03 the code revision, then the regeneration date) moves
-whenever the artifacts are rebuilt, while the fingerprint does not. It
-enumerates raw prefixes (18 grc +
-12 la, totals reconciling with §2.2); the merge in question 1 below is what turns
+Counts are from the committed label-free pre-audit run. Its current report and
+manifest under `results/` are the authority for the complete run id, input
+fingerprint and repository revision; copying those volatile identifiers here
+would create a second value that goes stale on regeneration. The run enumerates
+raw prefixes (18 grc + 12 la, totals reconciling with §2.2); the merge in
+question 1 below is what turns
 30 of them into 29 documents.
 
 **URN level.** The tables and the YAML both give the **edition-level** URN — the
@@ -142,9 +142,9 @@ mechanical, licence-safe and reproducible by anyone with the pinned release:
    witness a two-way disagreement needs.
 
 **Latin — 11 of 12 rows corroborated.** `UD_Latin-Perseus/README.md` declares
-eleven works, and eleven of the twelve proposed labels appear in it verbatim
-(allowing the README's own *Phaerus* for Phaedrus and *Life of Augustus* for
-*Divus Augustus*). The twelfth is **Caesar**, which the README does not declare
+eleven works, and eleven of the twelve proposed labels agree at work level after
+normalising explicit title variants (the README's *Phaerus* for Phaedrus and
+*Life of Augustus* for *Divus Augustus*). The twelfth is **Caesar**, which the README does not declare
 at all — the already-recorded E2 contradiction, now confirmed from the opposite
 direction: it is not that we mislabelled a declared work, it is that a prefix is
 present that the release does not announce.
@@ -176,35 +176,36 @@ Three witnesses, and they do not agree:
 
 | witness | says |
 | --- | --- |
-| this proposal (line 105) and `docs/g1_registry_proposal.yaml:235` | `phi1351.phi005` **=** *Historiae* |
+| the inventory row above and YAML key `phi1351.phi005.perseus-lat1.tb.xml` | `phi1351.phi005` **=** *Historiae* |
 | Perseus catalogue | `phi1351.`**`phi005`** = ***Annales***; `phi1351.`**`phi004`** = ***Historiae*** |
-| `UD_Latin-Perseus/README.md:39` | the release contains Tacitus, ***Historiae*** |
+| the Tacitus entry in `UD_Latin-Perseus/README.md` | the release contains Tacitus, ***Historiae*** |
 
 The two claims in our row are separable and can be wrong independently:
 
-- **`work: Historiae`** is corroborated by the treebank's own README and is the
-  claim least likely to be wrong.
+- **`work: Historiae`** is corroborated by the treebank's own README and by a
+  local, non-reproduced comparison with *Historiae* 1.1; this identifies the work
+  without publishing treebank text (D28).
 - **`source_urn: phi1351.phi005.perseus-lat1`** is transcribed from the `sent_id`
   prefix the release itself carries, and the catalogue says that number names a
   different work.
 
-So the likeliest reading is that **the treebank inherited a wrong URN** — the
-text is *Historiae*, carried under the identifier of the *Annales*. The opposite
-reading, that the URN is right and both the README and our label are wrong,
-requires two independent errors instead of one.
+The local comparison settles the work identity: the text is *Historiae*. It does
+not settle the registry policy: the raw prefix still says `phi005`, while the
+catalogue assigns that URN to the *Annales*. The YAML row is therefore left
+unchanged and now carries `flags: [upstream_urn_conflict]` rather than silently
+presenting both fields as compatible.
 
-**It is not corrected here, and the incipit test that would settle it is barred
-by D28.** Establishing which of the two is wrong is a claim about the *treebank*,
-not about our registry, and either resolution has a cost the owner must choose:
+**The URN is not corrected here.** Either resolution has a cost the owner must choose:
 changing `source_urn` makes the registry disagree with the raw `doc_id` it is
 derived from, while leaving it makes the registry cite a URN for a work it does
 not contain. The raw `doc_id` is preserved either way — it is the join key and
 must never be edited to match a correction.
 
-**Recommended disposal, for the linguistic supervisor (`D29-A1`):** verify
-against a printed edition, which is outside D39's citation restriction only if
-the registry cites it, and record the outcome as a ratified correction with its
-own evidence. Until then the row stands, marked UNRESOLVED.
+**Recommended disposal, for the linguistic supervisor (`D29-A1`):** decide
+whether `source_urn` records the upstream identifier as received or a corrected
+work identifier. If a printed edition is cited in the project, it must first be
+entered in the D39 source registry. Until then the row stands, explicitly marked
+UNRESOLVED.
 
 ---
 
@@ -272,9 +273,12 @@ assignment and is what blocks a canonical run.
    convention 12).
 
    Accepted is not the same as validated, and since 2026-09-03 it is
-   half-validated: `build_registry` now refuses a `part_order` that is not a
-   non-negative `int`, booleans included, since `isinstance(True, int)` is true in
-   Python. That is a **shape** guarantee, not a use — it still orders nothing,
+   half-validated: `build_registry` refuses a `part_order` that is not a
+   **non-negative** `int` (booleans included, since `isinstance(True, int)` is
+   true in Python). The 2026-09-04 review proposed dropping the lower bound, on
+   the ground that a negative integer still defines an order; **the owner refused
+   the relaxation the same day** — the bound stays until something actually reads
+   the field. That is a **shape** guarantee, not a use — it still orders nothing,
    because nothing reads it. What remains unchecked is exactly what only matters
    once something does read it: that `part_order` is present on **every** member
    of a merged group and **unique** within it. Both stay implementation

@@ -1,29 +1,33 @@
 {
   "artifacts": [
     {
-      "path": "results/tables/audit_report_preaudit_53f76d297774_75e8a4ae9993_9fc5e0a43450_2026-09-03.md",
-      "sha256": "4479f305c20d6400d4ffb027efb8035a9e7f6b41d3d029a361ef7c2cc75e6346"
+      "path": "results/tables/audit_report_preaudit_53f76d297774_1096e1d24582_fb53084b6d6a_2026-09-04.md",
+      "sha256": "98e4c857e855ba922913007077716bb8eeaf692bb46d0cf8022a434d109cf814"
     },
     {
-      "path": "results/tables/alphabet_inventory_preaudit_53f76d297774_75e8a4ae9993_9fc5e0a43450_2026-09-03.csv",
+      "path": "results/tables/alphabet_inventory_preaudit_53f76d297774_1096e1d24582_fb53084b6d6a_2026-09-04.csv",
       "sha256": "372f33b8746b4666f8217493e17c2169e86f3e1bc05f0900bd88fc8c39dd0cc4"
     },
     {
-      "path": "results/tables/contingency_by_document_preaudit_53f76d297774_75e8a4ae9993_9fc5e0a43450_2026-09-03.csv",
+      "path": "results/tables/contingency_by_document_preaudit_53f76d297774_1096e1d24582_fb53084b6d6a_2026-09-04.csv",
       "sha256": "1bb137a0cc97eaf620e1f003386f604d0a4314d4bff1d65ec3a2cb1a9c0718c1"
     }
   ],
   "config_sha256": "53f76d297774bba46042d97e6170b093fcef4833a4633633a7712192d14b2440",
-  "created_utc": "2026-09-03T13:07:29.630063+00:00",
+  "created_utc": "2026-09-04T12:35:49.365731+00:00",
   "entry_point": "hexis.pipeline.run_audit --pre-audit",
   "git": {
-    "commit": "9fc5e0a434509e1c9c0b4c7f4e35c98dc01be528",
+    "commit": "fb53084b6d6a12a76639aeab098b81dd7368063c",
     "dirty": false
   },
   "inputs": [
     {
       "path": "config/registry_overrides.yaml",
       "sha256": "0058d0975598330e8155191dbd1864a9d009453f60b59c16c84468a13a91d646"
+    },
+    {
+      "path": "data/raw/PROVENANCE.md",
+      "sha256": "a4aee27efec91a073563fba90a739153242683c90286c6cee7b623f59fdcb53a"
     },
     {
       "path": "data/raw/UD_Ancient_Greek-Perseus/grc_perseus-ud-dev.conllu",
@@ -57,7 +61,13 @@
     "pyyaml": "6.0.3",
     "scipy": "1.18.0"
   },
-  "run_id": "audit_preaudit_53f76d297774_75e8a4ae9993_9fc5e0a43450_2026-09-03",
+  "provenance": {
+    "expected_release": "r2.18",
+    "path": "data/raw/PROVENANCE.md",
+    "problems": [],
+    "status": "verified"
+  },
+  "run_id": "audit_preaudit_53f76d297774_1096e1d24582_fb53084b6d6a_2026-09-04",
   "seed": 2469255195,
   "status": "PROVISIONAL"
 }

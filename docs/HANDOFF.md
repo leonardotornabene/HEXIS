@@ -148,18 +148,68 @@ edit was made.
 
 ---
 
-## Current G0/G1 status — final technical attestation pending
+## Current G0/G1 status — attested at `d024cd5` on 2026-09-04
 
-The owner ratified only checklist items **17–20 and 23–26** on 2026-09-04.
-Their implementation is being verified and the two provisional audit runs are
-being regenerated. No scientific item was decided: checklist items 1–16, 21–22
-and 27 remain open; the registry, alphabet and T\* remain unfrozen; no real-data
-model was fitted; G1 remains open until those scientific decisions are taken.
+The owner ratified only checklist items **17–20 and 23–26** on 2026-09-04, and
+only their technical content. No scientific item was decided: checklist items
+1–16, 21–22 and 27 remain open; the registry, alphabet and T\* remain unfrozen;
+no real-data model was fitted; **G1 remains open** until those scientific
+decisions are taken. `docs/g1_D55_proposal.md` and `docs/g1_registry_proposal.*`
+stay PROPOSED and are applied to nothing.
 
-The final attestation belongs here only after the substantive revision and the
-replacement artifacts have each been committed and all four checks have run on
-the clean artifact commit. Until that block replaces this paragraph, no count
-below is current evidence for the branch tip.
+Two commits carry the ratified work. `fb53084` is the substantive revision:
+duplicate-key and empty-config refusal in `load_yaml`/`load_config`, the
+bidirectional `sent_id ↔ sent_ord` guard sited before the fusing `groupby`,
+raw-provenance verification against `data/raw/PROVENANCE.md` (release row plus
+the SHA-256 table, hashed into the inputs fingerprint), resolved-destination
+containment refusing any output path inside a data root, canonical mode refusing
+a dirty worktree or a non-canonical overrides file, `--force` refused outside
+`--pre-audit`, the `.pyc` purge repaired via `importlib.util.cache_from_source`,
+and both gate inventories anchored by `pytest.UsageError`. `d024cd5` replaces
+the two 2026-09-03 pre-audit artifact sets with runs regenerated at `fb53084`
+from disposable worktrees verified clean before and after; every scientific
+count is unchanged and all five CSV tables — two from the defaults run, three
+from the overrides run — are byte-identical to the ones they replace. The
+message of `d024cd5` miscounts them as "three … and … four"; the tables are the
+files, and the files are unchanged. The two Markdown reports differ only in the
+run-identity block, the artifact filenames, the Tacitus `flags` cell, and the
+deletion of one sentence of static template prose that asserted a data-dependent
+fact — that `OTHER_VERSE` carries the largest excluded-DEPREL share —
+unconditionally, in a template that also renders runs where no regime is
+assigned at all.
+
+**Attestation of record — commit `d024cd5`, working tree clean before and
+after every command:**
+
+```
+uv run pytest -m g0 --strict-markers  →  144 passed, 200 deselected  (exit 0)
+uv run pytest -m g1 --strict-markers  →  172 passed, 172 deselected  (exit 0)
+uv run pytest                         →  327 passed,  17 skipped     (exit 0)
+uv lock --check                       →  Resolved 23 packages        (exit 0)
+uv run python -V                      →  Python 3.12.13
+```
+
+344 tests are collected: 144 `g0`, 172 `g1`, 28 unmarked (17 skipped G3
+scaffolds plus 11 documentation and inventory-anchor tests). The `g0` and `g1`
+selections are disjoint. The G1 count rose from the 129 attested at `93f2425`
+because the ratified items added tests, not because any earlier test was
+weakened or removed.
+
+The provisional artifacts of record are the two `--pre-audit` runs:
+
+```
+audit_preaudit_53f76d297774_1096e1d24582_fb53084b6d6a_2026-09-04   (defaults)
+audit_preaudit_53f76d297774_cbeffa78b04e_fb53084b6d6a_2026-09-04   (--overrides docs/g1_registry_proposal.yaml)
+```
+
+Both are marked `status: PROVISIONAL`, carry `provenance.status: verified`
+against `data/raw/PROVENANCE.md` at release `r2.18`, and were produced at
+`git.commit fb53084…` with `git.dirty false`. Neither carries a gate verdict
+and neither computes T\*: a pre-audit is deliberately incomplete by contract.
+The Tacitus row now carries `flags: [upstream_urn_conflict]`; that records
+checklist item 27, it does not resolve it.
+
+Nothing here has been merged or pushed.
 
 ### Superseded attestation trail
 

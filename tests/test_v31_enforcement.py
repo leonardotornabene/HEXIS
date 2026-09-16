@@ -19,6 +19,7 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                               'test_stream_order_does_not_change_the_frozen_model',
                               'test_evaluation_never_mutates_the_frozen_model',
                               'test_extreme_log_prior_keeps_both_weights',
+                              'test_stop_saturation_keeps_a_finite_split_weight',
                               'test_saturation_is_distinct_from_a_forced_leaf',
                               'test_generator_fixture_matches_the_historical_script',
                               'test_small_synthetic_battery_meets_plan_thresholds',

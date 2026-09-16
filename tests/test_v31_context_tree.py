@@ -281,6 +281,20 @@ def test_extreme_log_prior_keeps_both_weights():
     assert abs(root['log_split'] - expected_split) <= 1e-12
 
 
+def test_stop_saturation_keeps_a_finite_split_weight():
+    """§6.5: past ~37 nats the stop weight rounds to 1 and `1 - stop` loses the other weight."""
+    rng = np.random.default_rng(11)
+    model = fitted([rng.integers(0, 11, size=2000).tolist()], m=11, depth=4)
+    root = model.inspect(())
+    assert root['delta'] > 37.0
+    assert math.exp(root['log_stop']) == 1.0 and 1.0 - math.exp(root['log_stop']) == 0.0
+    assert math.isfinite(root['log_split']) and root['log_split'] < -37.0
+    assert abs(root['log_split'] - stop_and_split(root['delta'])[1]) <= 1e-12
+    mixture = model.mixture([1, 2, 3, 4])
+    assert mixture.weights[0][1] == 1.0
+    assert abs(sum(weight for _, weight in mixture.weights) + mixture.unseen_mass - 1.0) <= 1e-12
+
+
 def test_saturation_is_distinct_from_a_forced_leaf():
     model = fitted([[0, 1, 2, 3]*400], m=4, depth=3)
     root = model.inspect(())

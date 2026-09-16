@@ -36,3 +36,22 @@ def test_test_inventory_explicitly_tracks_future_obligations():
     assert 'PENDING' in text
     assert 'inventory_only' in text
     assert 'test_bootstrap_holm.py' in text
+
+
+def test_all_preserved_v21_documents_match_the_original_hash_inventory():
+    history=ROOT/'docs/history/v2.1'
+    records=json.loads((history/'SHA256SUMS.json').read_text())
+    assert len(records)==10
+    for name,record in records.items():
+        assert hashlib.sha256((history/name).read_bytes()).hexdigest()==record['sha256'],name
+
+
+def test_pipeline_does_not_import_candidates_or_inferential_utilities():
+    import ast
+    for path in (ROOT/'src/hexis/pipeline').glob('*.py'):
+        tree=ast.parse(path.read_text())
+        imports=[]
+        for node in ast.walk(tree):
+            if isinstance(node,ast.Import):imports.extend(a.name for a in node.names)
+            elif isinstance(node,ast.ImportFrom):imports.append(node.module or '')
+        assert not any(name.startswith(('candidates','hexis.stats')) for name in imports),path

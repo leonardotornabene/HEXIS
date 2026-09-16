@@ -1,4 +1,6 @@
-"""Alphabet mapping: total function over raw (UPOS, DEPREL) (Spec §3.4, App. A; D05–D09).
+"""Versioned alphabet mapping: HEXIS 3.1 validates and globally merges ADV/PART.
+
+Explicit v2.1 configurations retain historical D05–D09 behavior for archived tests.
 
 Return shape and configuration coupling per the ratified G0 API contract
 (docs/implementation/specs/2026-08-13-g0-api-contract.md), which closes the
@@ -66,7 +68,15 @@ def strip_subtype(deprel: str) -> str:
     return deprel.lower().split(":")[0]
 
 
-def _alphabet_policy(cfg: Mapping) -> tuple[Mapping, str, str]:
+def _alphabet_policy(cfg: Mapping, variant=None) -> tuple[Mapping, str, str]:
+    if cfg.get("spec_version") == "HEXIS-3.1":
+        variant = variant or "ud23"
+        if variant not in {"ud23", "ud23_oth", "upos_only"}:
+            raise ValueError(f"unknown alphabet variant {variant!r}")
+        rep = cfg["representation"]
+        return {"upos_map": rep["source_map_before_retention"],
+                "upos_keep": rep["source_upos_keep_before_merge"],
+                "deprel_keep": rep["deprel_keep"]}, variant, "oth" if variant == "ud23_oth" else "drop"
     section = cfg["alphabet"]
     cell = (section["variant"], section["excluded_deprel_policy"])
     if cell not in CANONICAL_ALPHABET_CELLS:
@@ -77,8 +87,10 @@ def _alphabet_policy(cfg: Mapping) -> tuple[Mapping, str, str]:
     return section, *cell
 
 
-def map_token(upos_raw: str, deprel_raw: str, cfg: Mapping) -> MappedToken:
-    """Total mapping of one raw token to a symbol or a drop decision (Spec §3.4 steps 1–5).
+def map_token(upos_raw: str, deprel_raw: str, cfg: Mapping, *, variant=None) -> MappedToken:
+    """Map one token. HEXIS 3.1 rejects unknown source UPOS and merges ADV/PART.
+
+    The following totality rule describes explicit historical v2.1 configurations.
 
     Order of operations is normative: strip subtype (D07); PROPN→NOUN (D08); UPOS
     retain/drop (D05); deprel_base retain / excluded-deprel policy drop|oth
@@ -90,7 +102,14 @@ def map_token(upos_raw: str, deprel_raw: str, cfg: Mapping) -> MappedToken:
     the observed token set — and therefore the evaluated positions — stays
     identical to C0 and the cell localizes the DEPREL information (D42(ii)).
     """
-    section, variant, policy = _alphabet_policy(cfg)
+    section, variant, policy = _alphabet_policy(cfg, variant)
+    active = cfg.get("spec_version") == "HEXIS-3.1"
+    if active:
+        from hexis.conllu_reader import UD_UPOS_TAGS
+        if not isinstance(upos_raw, str) or upos_raw not in UD_UPOS_TAGS:
+            raise ValueError(f"UPOS {upos_raw!r} is not a source UD tag")
+        if not isinstance(deprel_raw, str) or not deprel_raw.strip() or deprel_raw == "_":
+            raise ValueError(f"DEPREL {deprel_raw!r} is empty")
 
     deprel_base = strip_subtype(deprel_raw)
     upos = section["upos_map"].get(upos_raw, upos_raw)
@@ -98,6 +117,8 @@ def map_token(upos_raw: str, deprel_raw: str, cfg: Mapping) -> MappedToken:
     if upos not in section["upos_keep"]:
         return MappedToken(upos, deprel_base, False, None, "upos_excluded")
 
+    if active and (deprel_base in section["deprel_keep"] or policy == "oth"):
+        upos = cfg["representation"]["map_after_retention"].get(upos, upos)
     if deprel_base in section["deprel_keep"]:
         symbol = upos if variant == "upos_only" else f"{upos}:{deprel_base}"
         return MappedToken(upos, deprel_base, True, symbol, None)
@@ -112,7 +133,7 @@ def map_token(upos_raw: str, deprel_raw: str, cfg: Mapping) -> MappedToken:
     )
 
 
-def map_tokens(tokens, cfg) -> pd.DataFrame:
+def map_tokens(tokens, cfg, *, variant=None) -> pd.DataFrame:
     """Apply §3.4 to a whole raw token table, adding the §3.7 derived columns.
 
     In: `language, doc_id, sent_id, token_ord, upos_raw, deprel_raw`.
@@ -130,7 +151,7 @@ def map_tokens(tokens, cfg) -> pd.DataFrame:
     """
     frame = tokens.copy()
     decisions = {
-        pair: map_token(pair[0], pair[1], cfg)
+        pair: map_token(pair[0], pair[1], cfg, variant=variant)
         for pair in frame[["upos_raw", "deprel_raw"]].drop_duplicates().itertuples(
             index=False, name=None
         )
@@ -171,7 +192,8 @@ def _available_past(frame: pd.DataFrame) -> pd.Series:
 def observed_alphabet(tokens, cfg, *, language: str) -> dict[str, int]:
     """The alphabet observed in a mapped token table: `{symbol: id}` (§3.4).
 
-    Ids run 0..|A|-1 by **descending pooled frequency**, ties broken by the symbol
+    HEXIS 3.1 IDs are lexicographic. Historical v2.1 IDs run 0..|A|-1 by
+    **descending pooled frequency**, ties broken by the symbol
     string so the mapping is a function of the data alone and not of row order.
 
     §4.1 defines |A| as the frozen alphabet size for the **(language, variant)**
@@ -192,7 +214,7 @@ def observed_alphabet(tokens, cfg, *, language: str) -> dict[str, int]:
             "alphabets are never pooled (§4.1)"
         )
     counts = tokens.loc[tokens["kept"], "symbol"].value_counts()
-    ranked = sorted(counts.items(), key=lambda item: (-item[1], item[0]))
+    ranked = sorted(counts.items(), key=(lambda item: item[0]) if cfg.get("spec_version") == "HEXIS-3.1" else (lambda item: (-item[1], item[0])))
     return {symbol: index for index, (symbol, _) in enumerate(ranked)}
 
 

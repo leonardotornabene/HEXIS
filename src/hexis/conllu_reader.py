@@ -1,5 +1,6 @@
 """CoNLL-U streaming reader (Spec §3.2, §6.2; D54/D54-A1)."""
 
+import re
 from pathlib import Path
 from typing import Iterator
 
@@ -60,15 +61,38 @@ def iter_sentences(path: Path) -> Iterator[conllu.TokenList]:
     The yielded object is derived and filtered — not a re-serializable image of
     the source sentence (D54(ii)(f)).
     """
+    path = Path(path)
     with path.open(encoding="utf-8") as handle:
-        sentences = conllu.parse_incr(handle)
-        while True:
+        for block in conllu.parse_sentences(handle):
+            metadata = {}
+            rows = []
+            for line in block.splitlines():
+                if line.startswith("#"):
+                    key, separator, value = line[1:].partition("=")
+                    key, value = key.strip(), value.strip()
+                    if separator and key in ("sent_id", "newdoc id"):
+                        if key in metadata:
+                            raise ParseError(path, metadata.get("sent_id"), None, f"duplicate metadata {key}")
+                        metadata[key] = value
+                else:
+                    rows.append(line)
+            sid = metadata.get("sent_id")
+            if not sid:
+                raise ParseError(path, None, None, "sent_id is mandatory and nonempty")
+            for line in rows:
+                cols = line.split("\t")
+                raw_id = cols[0]
+                token_id = int(raw_id) if raw_id.isdigit() else None
+                if len(cols) != 10:
+                    raise ParseError(path, sid, token_id, f"expected 10 columns, got {len(cols)}")
+                if not re.fullmatch(r"[1-9][0-9]*(?:[-.][1-9][0-9]*)?", raw_id):
+                    raise ParseError(path, sid, token_id, f"invalid raw ID {raw_id!r}")
+                if token_id is not None and (not cols[1] or cols[1] == "_" or not cols[6].isdigit()):
+                    raise ParseError(path, sid, token_id, "FORM and nonnegative integer HEAD are required")
             try:
-                sentence = next(sentences)
-            except StopIteration:
-                return
+                sentence = conllu.parse(block)[0]
             except ParseException as exc:
-                raise ParseError(path, None, None, f"conllu rejected the source: {exc}") from exc
+                raise ParseError(path, sid, None, f"conllu rejected the source: {exc}") from exc
             yield _validated(path, sentence)
 
 

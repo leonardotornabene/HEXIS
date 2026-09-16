@@ -24,7 +24,7 @@ import yaml
 
 from hexis import registry
 from hexis.manifest import build_manifest
-from hexis.pipeline import run_audit
+from hexis.pipeline import legacy_audit as run_audit
 
 pytestmark = pytest.mark.g1
 
@@ -32,7 +32,7 @@ ENTRY_POINT_FOR_TEST = "hexis.pipeline.run_audit"
 
 # `--config` is resolved by walking up from the working directory, so the one test
 # that changes directory has to name it explicitly.
-REPO_CONFIG = Path(__file__).resolve().parents[1] / "config" / "default.yaml"
+REPO_CONFIG = Path(__file__).resolve().parents[1] / "config/history/v2.1/default.yaml"
 
 _T = "\t"
 

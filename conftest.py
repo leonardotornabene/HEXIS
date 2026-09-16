@@ -14,10 +14,11 @@ pytest_plugins = ["pytester"]
 # pytest summary by eye. `g1` extends the same mechanics to the G1 audit tests
 # (D55 §xiv, convention 13; ratified 2026-09-04). The rule is identical for both, so the
 # marker name is data here rather than a second implementation.
-GATE_MARKERS = ("g0", "g1")
+GATE_MARKERS = ("g0", "g1", "v31")
 GATE_INVENTORIES = {
     "g0": "test_g0_enforcement.py",
     "g1": "test_g1_enforcement.py",
+    "v31": "test_v31_enforcement.py",
 }
 
 _ASSERTED: set[str] = set()

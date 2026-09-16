@@ -8,20 +8,21 @@ import pytest
 ROOT_CONFTEST = Path(__file__).resolve().parents[1] / "conftest.py"
 
 
-@pytest.mark.parametrize("marker", ["g0", "g1"])
+@pytest.mark.v31
+@pytest.mark.parametrize("marker", ["g0", "g1", "v31"])
 @pytest.mark.parametrize("broken", ["missing", "unmarked"])
 def test_repository_gate_rejects_a_missing_or_unmarked_inventory(
     pytester, marker, broken
 ):
     pytester.makeconftest(ROOT_CONFTEST.read_text(encoding="utf-8"))
     pytester.makepyprojecttoml(
-        '[tool.pytest.ini_options]\nmarkers = ["g0: gate", "g1: gate"]\n'
+        '[tool.pytest.ini_options]\nmarkers = ["g0: gate", "g1: gate", "v31: active"]\n'
         'testpaths = ["tests"]\nenable_assertion_pass_hook = true\n'
     )
     (pytester.path / "src" / "hexis").mkdir(parents=True)
     tests = pytester.path / "tests"
     tests.mkdir()
-    for current in ("g0", "g1"):
+    for current in ("g0", "g1", "v31"):
         if current == marker and broken == "missing":
             continue
         mark = "" if current == marker else f"import pytest\npytestmark = pytest.mark.{current}\n"

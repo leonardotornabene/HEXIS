@@ -1,0 +1,238 @@
+{
+  "status": "PASS",
+  "date": "2026-09-12",
+  "python": "3.12.14",
+  "numpy": "2.3.5",
+  "fragment_census": {
+    "contributions": 840,
+    "fragment_count": 671,
+    "internal_start_count": 563,
+    "fragment_tokens": 7406,
+    "direct_context_targets": 3477,
+    "total_training_tokens": 7462560,
+    "fragment_length_range": [
+      1,
+      94
+    ],
+    "direct_context_fraction": 0.0004659259021032997
+  },
+  "whole_sentence_ablation": [
+    {
+      "held_block_key": "1a32cf6857284fff7c7f006f8d0cd4ab15a047af7a4bcd5613d1fd50789dd4ee",
+      "training_tokens": 53258,
+      "minimum_block_tokens": 8854,
+      "original": {
+        "n_eval": 7227,
+        "ce": 4.367556872935444,
+        "root_ce": 4.785567368555462,
+        "gain": 0.418010495620018,
+        "weighted_depth": 1.1431566003739562,
+        "mean_matched_depth": 3.4620174346201744,
+        "unseen_branch_weight": 0.0017383379597287296
+      },
+      "shuffled": {
+        "n_eval": 7227,
+        "ce": 4.678872844487155,
+        "root_ce": 4.678872844487155,
+        "gain": 0.0,
+        "weighted_depth": 0.0,
+        "mean_matched_depth": 3.049398090493981,
+        "unseen_branch_weight": 0.0
+      },
+      "Q": 0.418010495620018,
+      "delta_Q_vs_exact_budget": -0.000158046071707163
+    },
+    {
+      "held_block_key": "209ee9f27c82f31d31eb16124569039d7847ed327f3a0f2b5c4eae048347e621",
+      "training_tokens": 53245,
+      "minimum_block_tokens": 8865,
+      "original": {
+        "n_eval": 46634,
+        "ce": 4.721900693586106,
+        "root_ce": 4.989852916099413,
+        "gain": 0.26795222251330764,
+        "weighted_depth": 1.0258200998475966,
+        "mean_matched_depth": 3.0529870909636747,
+        "unseen_branch_weight": 0.0021123348656252013
+      },
+      "shuffled": {
+        "n_eval": 46634,
+        "ce": 5.026949407926683,
+        "root_ce": 5.026949407926683,
+        "gain": 0.0,
+        "weighted_depth": 0.0,
+        "mean_matched_depth": 2.7988592014410085,
+        "unseen_branch_weight": 0.0
+      },
+      "Q": 0.26795222251330764,
+      "delta_Q_vs_exact_budget": -0.00015934390114102914
+    },
+    {
+      "held_block_key": "4352f04fcfd7cbe580caddf69f309034ffb967d5d1bc8a8e809498de5bf8d329",
+      "training_tokens": 53261,
+      "minimum_block_tokens": 8868,
+      "original": {
+        "n_eval": 16691,
+        "ce": 4.266236855823619,
+        "root_ce": 4.709498246078435,
+        "gain": 0.44326139025481576,
+        "weighted_depth": 1.1701240040723835,
+        "mean_matched_depth": 3.5307051704511414,
+        "unseen_branch_weight": 0.002237716871845638
+      },
+      "shuffled": {
+        "n_eval": 16691,
+        "ce": 4.607343159260037,
+        "root_ce": 4.607343159260037,
+        "gain": 0.0,
+        "weighted_depth": 0.0,
+        "mean_matched_depth": 3.1010724342460008,
+        "unseen_branch_weight": 0.0
+      },
+      "Q": 0.44326139025481576,
+      "delta_Q_vs_exact_budget": -3.9265306565616775e-06
+    },
+    {
+      "held_block_key": "89f0804afded8e7a0f4e1b507030d5ef4ecaf17e422c8b2969bd6b23e62818e6",
+      "training_tokens": 53247,
+      "minimum_block_tokens": 8849,
+      "original": {
+        "n_eval": 12946,
+        "ce": 4.436145685772345,
+        "root_ce": 4.815712048920472,
+        "gain": 0.3795663631481257,
+        "weighted_depth": 1.1384147717016961,
+        "mean_matched_depth": 3.4009732735980225,
+        "unseen_branch_weight": 0.002178021779742244
+      },
+      "shuffled": {
+        "n_eval": 12946,
+        "ce": 4.695256283985896,
+        "root_ce": 4.695256283985896,
+        "gain": 0.0,
+        "weighted_depth": 0.0,
+        "mean_matched_depth": 3.0380812606210412,
+        "unseen_branch_weight": 0.0
+      },
+      "Q": 0.3795663631481257,
+      "delta_Q_vs_exact_budget": -0.0001584609091970779
+    },
+    {
+      "held_block_key": "c4c0c7eaeca0d61d2e53f4f0642bfa382e91dd28b470d2f4da2ba8539fe0e7f7",
+      "training_tokens": 53269,
+      "minimum_block_tokens": 8872,
+      "original": {
+        "n_eval": 6375,
+        "ce": 4.858916227930502,
+        "root_ce": 5.148495412577449,
+        "gain": 0.2895791846469476,
+        "weighted_depth": 1.0055893628484935,
+        "mean_matched_depth": 3.08643137254902,
+        "unseen_branch_weight": 0.0017042106002764068
+      },
+      "shuffled": {
+        "n_eval": 6375,
+        "ce": 5.2139354835722695,
+        "root_ce": 5.2139354835722695,
+        "gain": 0.0,
+        "weighted_depth": 0.0,
+        "mean_matched_depth": 2.7454117647058824,
+        "unseen_branch_weight": 0.0
+      },
+      "Q": 0.2895791846469476,
+      "delta_Q_vs_exact_budget": -5.6838265931780096e-05
+    },
+    {
+      "held_block_key": "d91dad02f8da03cf6702fa7edec531da5e56f526f466e2f04180f2a23a1cf315",
+      "training_tokens": 53267,
+      "minimum_block_tokens": 8862,
+      "original": {
+        "n_eval": 12334,
+        "ce": 4.050307492517289,
+        "root_ce": 4.532636104101717,
+        "gain": 0.4823286115844276,
+        "weighted_depth": 1.0144671687240818,
+        "mean_matched_depth": 3.7670666450462136,
+        "unseen_branch_weight": 0.00029871954484014227
+      },
+      "shuffled": {
+        "n_eval": 12334,
+        "ce": 4.434366158572757,
+        "root_ce": 4.434366158572757,
+        "gain": 0.0,
+        "weighted_depth": 0.0,
+        "mean_matched_depth": 3.2225555375385113,
+        "unseen_branch_weight": 0.0
+      },
+      "Q": 0.4823286115844276,
+      "delta_Q_vs_exact_budget": 0.0006850654409510937
+    },
+    {
+      "held_block_key": "ef8134329970f595ef9ccf4198217affef5c01fa243d5bf4e59ee6daebb04e1d",
+      "training_tokens": 53247,
+      "minimum_block_tokens": 8853,
+      "original": {
+        "n_eval": 6901,
+        "ce": 4.268074611324989,
+        "root_ce": 4.803554249624468,
+        "gain": 0.5354796382994792,
+        "weighted_depth": 1.1609218836990458,
+        "mean_matched_depth": 3.5190552093899434,
+        "unseen_branch_weight": 0.002301092065067993
+      },
+      "shuffled": {
+        "n_eval": 6901,
+        "ce": 4.676785465358888,
+        "root_ce": 4.676785465358888,
+        "gain": 0.0,
+        "weighted_depth": 0.0,
+        "mean_matched_depth": 3.0472395305028255,
+        "unseen_branch_weight": 0.0
+      },
+      "Q": 0.5354796382994792,
+      "delta_Q_vs_exact_budget": -2.6614526998813837e-05
+    }
+  ],
+  "max_abs_delta_Q": 0.0006850654409510937,
+  "training_fraction_counterexample": [
+    {
+      "orientation": "same_group_dissimilar",
+      "own_fraction": 0.16666666666666666,
+      "G_original": 0.5244846381937902,
+      "G_shuffled": 5.103617567760356e-10,
+      "Q": 0.5244846376834285
+    },
+    {
+      "orientation": "same_group_dissimilar",
+      "own_fraction": 0.5,
+      "G_original": 0.5200142946092878,
+      "G_shuffled": 1.9834449929779234e-09,
+      "Q": 0.5200142926258429
+    },
+    {
+      "orientation": "same_group_similar",
+      "own_fraction": 0.16666666666666666,
+      "G_original": 0.5050829395266363,
+      "G_shuffled": 1.0053787782692607e-09,
+      "Q": 0.5050829385212575
+    },
+    {
+      "orientation": "same_group_similar",
+      "own_fraction": 0.5,
+      "G_original": 0.5202612016937678,
+      "G_shuffled": -6.3359423963388575e-09,
+      "Q": 0.5202612080297102
+    }
+  ],
+  "finite_iid_counterexample": {
+    "root_stop_weight": 0.8077541262311253,
+    "gain": 0.00019463978087780668
+  },
+  "real_fits": 14,
+  "synthetic_fits": 9,
+  "limitations": [
+    "Ablation uses C0 seed 0 only; no bound on full-study effects.",
+    "Toy group labels carry no linguistic semantics; counterexample disproves a universal directional claim only.",
+    "No final group contrast or scientific gate certification."
+  ]
+}

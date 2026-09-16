@@ -1,0 +1,15 @@
+{
+  "date": "2026-09-15",
+  "repository_commit": "852644b6917790877c7b2ca5df2e76b17829d87c",
+  "sha256": {
+    "/Users/leonardoTornabene/Desktop/HEXIS_piano_integrale_v3_2026-09-11.md": "83fed73f273c0552281a7180b101f944c84577b100c43e5a738d95cb85ebab38",
+    "/Users/leonardoTornabene/Desktop/HEXIS_3.0.1_revisione_metodologica.md": "1933f09967ecff9b006077a5ed97710b7a467b1c6f9ccc14f38bd3d5f99e186b",
+    "/Users/leonardoTornabene/.codex/attachments/74e30dc0-3390-4556-89b5-7a954c50c3e8/pasted-text.txt": "3943183d462d294ff59622c5e078c0e9336d3905f2f25050fc5258cf53bbce9d",
+    "/Users/leonardoTornabene/Desktop/HEXIS_allegati_operativi_v3_2026-09-11.zip": "6f2e5935b0d0bd70e98028414d085f74e1bd617fc5e293c0b61c8b99a266db8f",
+    "/Users/leonardoTornabene/Projects/hexis/uv.lock": "33db43b00bcb21ab12aedf6dcc4257764770bff0115dc0d1dfab6e5ea89876bf"
+  },
+  "package_hashes_checked": 33,
+  "historical_hashes_checked": 103,
+  "hash_mismatches": 0,
+  "new_real_data_fits": 0
+}

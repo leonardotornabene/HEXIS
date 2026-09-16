@@ -1,0 +1,74 @@
+{
+  "decision_id": "V3-001",
+  "revision": "3.0.1",
+  "status": "PROPOSED_RECORD_NOT_DEPOSITED_IN_GIT",
+  "repository_commit": "852644b6917790877c7b2ca5df2e76b17829d87c",
+  "legacy_rule": "no real-data model fits before gate G2",
+  "authorization": {
+    "source": "User instructions in this conversation authorizing model-change feasibility checks and real-data testing in isolation, then integral plan and revision",
+    "activity_date_from_session": "2026-09-11",
+    "exact_consent_timestamp": null,
+    "scope": "Isolated feasibility checks; repository unchanged; not retroactive passage of G2",
+    "revision_consent_date": "2026-09-12",
+    "revision_scope": "Plan and operational annexes; repository implementation excluded",
+    "git_deposit_date": null
+  },
+  "campaigns": [
+    {
+      "id": "prior_main_and_sensitivity",
+      "date_from_session": "2026-09-11",
+      "real_fits": 203,
+      "detail": "140 C0 plus 63 sensitivity",
+      "evidence": "verifiche_CTW_precedenti.zip: pilot_*.json and completion.json"
+    },
+    {
+      "id": "prior_order_control",
+      "date_from_session": "2026-09-11",
+      "real_fits": 14,
+      "detail": "7 paired original/shuffled folds",
+      "evidence": "verifiche_CTW_precedenti.zip: shuffle_results.json"
+    },
+    {
+      "id": "v3_contract_initial",
+      "date_from_session": "2026-09-11",
+      "real_fits": 16,
+      "probe_evaluations": 84,
+      "evidence": "history/allegati_v3_0_originali.zip: contract_validation.json"
+    },
+    {
+      "id": "review_checks_and_version_comparison",
+      "date_from_session": "2026-09-12",
+      "detail": "Review-stage fragment ablation, synthetic counterexamples and 7-fold version comparisons; repeated for archived reproducible output during revision",
+      "evidence": "revision_validation.json; numpy_2_3_5_validation.json; numpy_2_5_1_validation.json"
+    },
+    {
+      "id": "revision_packaged_ablation",
+      "date_from_session": "2026-09-12",
+      "real_fits": 14,
+      "synthetic_fits": 9,
+      "evidence": "revision_validation.json"
+    },
+    {
+      "id": "revision_packaged_numpy_comparison",
+      "date_from_session": "2026-09-12",
+      "real_fits": 14,
+      "detail": "7 original fits per version; shuffle ledgers also compared",
+      "evidence": "numpy_comparison.json and per-version JSON"
+    },
+    {
+      "id": "revision_contract_rerun",
+      "date_from_session": "2026-09-12",
+      "real_fits": 16,
+      "probe_evaluations": 84,
+      "numpy": "2.5.1",
+      "evidence": "contract_validation.json"
+    }
+  ],
+  "accounting_notes": [
+    "203 is the count of one historical real-fit campaign, not all invocations in the session.",
+    "Review-stage checks and later packaged repetitions overlap by design; do not sum descriptive campaign records as independent evidence.",
+    "Additional visible reruns in session are validation repeats, not independent scientific replicates; no unsupported exact grand total is asserted.",
+    "The exact authorization timestamp and future Git deposit date are not fabricated.",
+    "No V0-V3 gate certificate or final group contrast is issued by this record."
+  ]
+}

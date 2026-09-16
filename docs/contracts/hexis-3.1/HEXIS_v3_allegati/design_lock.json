@@ -1,0 +1,12 @@
+{
+  "status": "READY_FOR_V0_DEPOSIT_NOT_A_GATE_CERTIFICATE",
+  "spec_version": "HEXIS-3.0.1",
+  "date": "2026-09-12",
+  "design_file": "hexis_v3_design.json",
+  "design_sha256": "d3a4124a8e906680ee22bb7428c7f4d530f983f6667503c4430432dc44aa81f2",
+  "plan_file": "HEXIS_piano_integrale_v3_2026-09-11.md",
+  "plan_sha256": "83fed73f273c0552281a7180b101f944c84577b100c43e5a738d95cb85ebab38",
+  "repository_reference_commit": "852644b6917790877c7b2ca5df2e76b17829d87c",
+  "v0_deposit_commit": null,
+  "note": "Version and ratify any later analytical change; do not silently regenerate this record."
+}

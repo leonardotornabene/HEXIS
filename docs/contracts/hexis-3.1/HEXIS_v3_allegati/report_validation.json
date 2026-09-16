@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "scope": "synthetic manifest fixtures only; not V0-V3 certification or final campaign execution",
+  "checks": [
+    "complete_synthetic_fixture",
+    "missing_fits",
+    "duplicate_fits",
+    "failed_fits",
+    "missing_probes",
+    "duplicate_probes",
+    "failed_probes",
+    "missing_roots",
+    "duplicate_roots",
+    "failed_roots",
+    "missing_cell",
+    "unexpected_seed",
+    "stale_campaign",
+    "missing_V0",
+    "stale_V0",
+    "missing_V1",
+    "stale_V1",
+    "missing_V2",
+    "stale_V2",
+    "missing_V3",
+    "stale_V3",
+    "stale_design_sha256",
+    "stale_lock_sha256",
+    "unverified_artifact_reference",
+    "corrupted_bytes",
+    "missing_bytes"
+  ]
+}

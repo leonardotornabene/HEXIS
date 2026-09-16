@@ -14,3 +14,6 @@ data/raw/*
 # that D28 does publish (alphabet.json, scores/ tables, figures).
 data/interim/
 data/processed/
+
+# Local v3.1 corpus derivatives; publication is separate.
+results/hexis31/

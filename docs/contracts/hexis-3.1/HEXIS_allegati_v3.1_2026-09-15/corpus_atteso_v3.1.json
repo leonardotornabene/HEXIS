@@ -1,0 +1,1253 @@
+{
+  "spec_version": "HEXIS-3.1",
+  "representation_version": "hexis-3.1-adv-part-1",
+  "status": "FINAL_PLAN_NOT_APPLIED",
+  "source_hashes": [
+    {
+      "file": "grc_perseus-ud-dev.conllu",
+      "sha256": "7899f809fc250404839694330b9db25f79a5b1f20cfa12e6dc3a368a4ec7cd22"
+    },
+    {
+      "file": "grc_perseus-ud-test.conllu",
+      "sha256": "e18d47c395c0ec8da678fb5e315ce6d90133e88c25ed2a55bc72a2a66e6254d5"
+    },
+    {
+      "file": "grc_perseus-ud-train.conllu",
+      "sha256": "d7471c9b91bcd975848fa5d9b65c31f1fc48a597ed3667796968a82c6d098a7e"
+    }
+  ],
+  "expected": {
+    "raw_tokens": 202989,
+    "raw_sentences": 13919,
+    "source_prefixes": 18,
+    "canonical_documents": 17,
+    "primary_documents": 11,
+    "inventory_only_documents": 6,
+    "blocks": 7,
+    "HEX_blocks": 2,
+    "PROSE_ALL_blocks": 5,
+    "alphabet_sizes": {
+      "ud23": 100,
+      "ud23_oth": 105,
+      "upos_only": 11
+    },
+    "primary_tokens": {
+      "ud23": 154300,
+      "ud23_oth": 154947,
+      "upos_only": 154300
+    },
+    "primary_eligible": {
+      "ud23": 109108,
+      "ud23_oth": 109716,
+      "upos_only": 109108
+    },
+    "inventory_only_tokens": {
+      "ud23": 22275,
+      "ud23_oth": 22623,
+      "upos_only": 22275
+    },
+    "inventory_only_potential_eligible": {
+      "ud23": 12769,
+      "ud23_oth": 13062,
+      "upos_only": 12769
+    },
+    "cells": 6,
+    "model_pairs": 490,
+    "models": 980,
+    "technical_pairs": 42,
+    "technical_models": 84,
+    "probe_evaluations": 0,
+    "C0_paired_position_rows": 2182160,
+    "all_cells_theoretical_position_rows": 7643640,
+    "paired_document_band_rows_C0": 440,
+    "paired_document_band_rows_sensitivities": 1100,
+    "logical_document_arm_rows_before_bands": 1540
+  },
+  "documents": [
+    {
+      "doc_id": "tlg0003.tlg001.perseus-grc1.1.tb.xml",
+      "regime": "PROSE_CLASS",
+      "raw": 10396,
+      "sentences": 532,
+      "kept": {
+        "ud23_oth": 9353,
+        "ud23": 9346,
+        "upos_only": 9346
+      },
+      "eligible": {
+        "ud23_oth": 7234,
+        "ud23": 7227,
+        "upos_only": 7227
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 941,
+        "ADP": 687,
+        "ADV": 1478,
+        "AUX": 135,
+        "CCONJ": 500,
+        "DET": 1199,
+        "INTJ": 8,
+        "NOUN": 1843,
+        "PRON": 660,
+        "PUNCT": 1035,
+        "SCONJ": 155,
+        "VERB": 1755
+      },
+      "raw_lemma_gar_by_upos": {
+        "ADV": 82
+      },
+      "max_sentence": {
+        "ud23": 104,
+        "ud23_oth": 104,
+        "upos_only": 104
+      },
+      "role": "primary",
+      "dependence_block": "THUCYDIDES"
+    },
+    {
+      "doc_id": "tlg0007.tlg004.perseus-grc1.tb.xml",
+      "regime": "PROSE_POST",
+      "raw": 5044,
+      "sentences": 248,
+      "kept": {
+        "ud23_oth": 4486,
+        "ud23": 4481,
+        "upos_only": 4481
+      },
+      "eligible": {
+        "ud23_oth": 3497,
+        "ud23": 3493,
+        "upos_only": 3493
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 470,
+        "ADP": 285,
+        "ADV": 628,
+        "AUX": 60,
+        "CCONJ": 252,
+        "DET": 649,
+        "INTJ": 5,
+        "NOUN": 926,
+        "NUM": 21,
+        "PRON": 234,
+        "PUNCT": 553,
+        "SCONJ": 81,
+        "VERB": 880
+      },
+      "raw_lemma_gar_by_upos": {
+        "ADV": 54
+      },
+      "max_sentence": {
+        "ud23": 50,
+        "ud23_oth": 50,
+        "upos_only": 50
+      },
+      "role": "primary",
+      "dependence_block": "PLUTARCH"
+    },
+    {
+      "doc_id": "tlg0007.tlg015.perseus-grc1.tb.xml",
+      "regime": "PROSE_POST",
+      "raw": 4943,
+      "sentences": 251,
+      "kept": {
+        "ud23_oth": 4407,
+        "ud23": 4403,
+        "upos_only": 4403
+      },
+      "eligible": {
+        "ud23_oth": 3411,
+        "ud23": 3408,
+        "upos_only": 3408
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 362,
+        "ADP": 265,
+        "ADV": 631,
+        "AUX": 57,
+        "CCONJ": 261,
+        "DET": 630,
+        "INTJ": 2,
+        "NOUN": 986,
+        "PRON": 225,
+        "PUNCT": 534,
+        "SCONJ": 51,
+        "VERB": 939
+      },
+      "raw_lemma_gar_by_upos": {
+        "ADV": 51
+      },
+      "max_sentence": {
+        "ud23": 85,
+        "ud23_oth": 85,
+        "upos_only": 85
+      },
+      "role": "primary",
+      "dependence_block": "PLUTARCH"
+    },
+    {
+      "doc_id": "tlg0008.tlg001.perseus-grc1.tb.xml",
+      "regime": "PROSE_POST",
+      "raw": 26245,
+      "sentences": 1630,
+      "kept": {
+        "ud23_oth": 23231,
+        "ud23": 23133,
+        "upos_only": 23133
+      },
+      "eligible": {
+        "ud23_oth": 16786,
+        "ud23": 16691,
+        "upos_only": 16691
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 2275,
+        "ADP": 1776,
+        "ADV": 3136,
+        "AUX": 356,
+        "CCONJ": 836,
+        "DET": 3045,
+        "INTJ": 46,
+        "NOUN": 5720,
+        "NUM": 16,
+        "PRON": 1397,
+        "PUNCT": 2964,
+        "SCONJ": 408,
+        "VERB": 4266,
+        "X": 4
+      },
+      "raw_lemma_gar_by_upos": {
+        "ADV": 170
+      },
+      "max_sentence": {
+        "ud23": 70,
+        "ud23_oth": 70,
+        "upos_only": 70
+      },
+      "role": "primary",
+      "dependence_block": "ATHENAEUS"
+    },
+    {
+      "doc_id": "tlg0011.tlg001.perseus-grc2.tb.xml",
+      "regime": "OTHER_VERSE",
+      "raw": 5229,
+      "sentences": 431,
+      "kept": {
+        "ud23_oth": 4302,
+        "ud23": 4224,
+        "upos_only": 4224
+      },
+      "eligible": {
+        "ud23_oth": 2674,
+        "ud23": 2610,
+        "upos_only": 2610
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 632,
+        "ADP": 158,
+        "ADV": 328,
+        "AUX": 41,
+        "CCONJ": 159,
+        "DET": 181,
+        "INTJ": 53,
+        "NOUN": 801,
+        "NUM": 6,
+        "PART": 425,
+        "PRON": 445,
+        "PUNCT": 874,
+        "SCONJ": 99,
+        "VERB": 1027
+      },
+      "raw_lemma_gar_by_upos": {
+        "PART": 57
+      },
+      "max_sentence": {
+        "ud23": 46,
+        "ud23_oth": 46,
+        "upos_only": 46
+      },
+      "role": "inventory_only",
+      "dependence_block": null
+    },
+    {
+      "doc_id": "tlg0011.tlg002.perseus-grc2.tb.xml",
+      "regime": "OTHER_VERSE",
+      "raw": 4299,
+      "sentences": 391,
+      "kept": {
+        "ud23_oth": 3618,
+        "ud23": 3573,
+        "upos_only": 3573
+      },
+      "eligible": {
+        "ud23_oth": 2115,
+        "ud23": 2076,
+        "upos_only": 2076
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 576,
+        "ADP": 159,
+        "ADV": 272,
+        "AUX": 40,
+        "CCONJ": 151,
+        "DET": 149,
+        "INTJ": 32,
+        "NOUN": 706,
+        "NUM": 6,
+        "PART": 346,
+        "PRON": 316,
+        "PUNCT": 648,
+        "SCONJ": 62,
+        "VERB": 835,
+        "X": 1
+      },
+      "raw_lemma_gar_by_upos": {
+        "PART": 63
+      },
+      "max_sentence": {
+        "ud23": 35,
+        "ud23_oth": 35,
+        "upos_only": 35
+      },
+      "role": "inventory_only",
+      "dependence_block": null
+    },
+    {
+      "doc_id": "tlg0011.tlg003.perseus-grc1.tb.xml",
+      "regime": "OTHER_VERSE",
+      "raw": 5319,
+      "sentences": 490,
+      "kept": {
+        "ud23_oth": 4428,
+        "ud23": 4364,
+        "upos_only": 4364
+      },
+      "eligible": {
+        "ud23_oth": 2558,
+        "ud23": 2503,
+        "upos_only": 2503
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 716,
+        "ADP": 160,
+        "ADV": 427,
+        "AUX": 33,
+        "CCONJ": 119,
+        "DET": 157,
+        "INTJ": 31,
+        "NOUN": 835,
+        "NUM": 3,
+        "PART": 448,
+        "PRON": 452,
+        "PUNCT": 859,
+        "SCONJ": 67,
+        "VERB": 1011,
+        "X": 1
+      },
+      "raw_lemma_gar_by_upos": {
+        "PART": 80
+      },
+      "max_sentence": {
+        "ud23": 33,
+        "ud23_oth": 34,
+        "upos_only": 33
+      },
+      "role": "inventory_only",
+      "dependence_block": null
+    },
+    {
+      "doc_id": "tlg0011.tlg004.perseus-grc1.tb.xml",
+      "regime": "OTHER_VERSE",
+      "raw": 5600,
+      "sentences": 520,
+      "kept": {
+        "ud23_oth": 4648,
+        "ud23": 4571,
+        "upos_only": 4571
+      },
+      "eligible": {
+        "ud23_oth": 2680,
+        "ud23": 2610,
+        "upos_only": 2610
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 625,
+        "ADP": 168,
+        "ADV": 419,
+        "AUX": 66,
+        "CCONJ": 194,
+        "DET": 217,
+        "INTJ": 41,
+        "NOUN": 743,
+        "NUM": 4,
+        "PART": 512,
+        "PRON": 572,
+        "PUNCT": 908,
+        "SCONJ": 77,
+        "VERB": 1051,
+        "X": 3
+      },
+      "raw_lemma_gar_by_upos": {
+        "PART": 85
+      },
+      "max_sentence": {
+        "ud23": 39,
+        "ud23_oth": 41,
+        "upos_only": 39
+      },
+      "role": "inventory_only",
+      "dependence_block": null
+    },
+    {
+      "doc_id": "tlg0011.tlg005.perseus-grc2.tb.xml",
+      "regime": "OTHER_VERSE",
+      "raw": 5239,
+      "sentences": 528,
+      "kept": {
+        "ud23_oth": 4334,
+        "ud23": 4259,
+        "upos_only": 4259
+      },
+      "eligible": {
+        "ud23_oth": 2389,
+        "ud23": 2331,
+        "upos_only": 2331
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 593,
+        "ADP": 156,
+        "ADV": 407,
+        "AUX": 45,
+        "CCONJ": 177,
+        "DET": 166,
+        "INTJ": 51,
+        "NOUN": 672,
+        "NUM": 2,
+        "PART": 482,
+        "PRON": 462,
+        "PUNCT": 854,
+        "SCONJ": 103,
+        "VERB": 1069
+      },
+      "raw_lemma_gar_by_upos": {
+        "PART": 84
+      },
+      "max_sentence": {
+        "ud23": 42,
+        "ud23_oth": 42,
+        "upos_only": 42
+      },
+      "role": "inventory_only",
+      "dependence_block": null
+    },
+    {
+      "doc_id": "tlg0012.tlg001.perseus-grc1.tb.xml",
+      "regime": "HEX",
+      "raw": 79890,
+      "sentences": 6003,
+      "kept": {
+        "ud23_oth": 69770,
+        "ud23": 69327,
+        "upos_only": 69327
+      },
+      "eligible": {
+        "ud23_oth": 45927,
+        "ud23": 45515,
+        "upos_only": 45515
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 9336,
+        "ADP": 3850,
+        "ADV": 6289,
+        "AUX": 500,
+        "CCONJ": 1997,
+        "DET": 328,
+        "INTJ": 113,
+        "NOUN": 17054,
+        "NUM": 108,
+        "PART": 9884,
+        "PRON": 5156,
+        "PUNCT": 9991,
+        "SCONJ": 696,
+        "VERB": 14572,
+        "X": 16
+      },
+      "raw_lemma_gar_by_upos": {
+        "PART": 526
+      },
+      "max_sentence": {
+        "ud23": 58,
+        "ud23_oth": 58,
+        "upos_only": 58
+      },
+      "role": "primary",
+      "dependence_block": "HOMERIC_TRADITION"
+    },
+    {
+      "doc_id": "tlg0013.tlg002.perseus-grc1.tb.xml",
+      "regime": "HEX",
+      "raw": 2061,
+      "sentences": 166,
+      "kept": {
+        "ud23_oth": 1777,
+        "ud23": 1761,
+        "upos_only": 1761
+      },
+      "eligible": {
+        "ud23_oth": 1135,
+        "ud23": 1119,
+        "upos_only": 1119
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 283,
+        "ADP": 82,
+        "ADV": 196,
+        "AUX": 11,
+        "CCONJ": 211,
+        "DET": 5,
+        "NOUN": 485,
+        "PRON": 126,
+        "PUNCT": 284,
+        "SCONJ": 45,
+        "VERB": 333
+      },
+      "raw_lemma_gar_by_upos": {
+        "ADV": 13
+      },
+      "max_sentence": {
+        "ud23": 57,
+        "ud23_oth": 57,
+        "upos_only": 57
+      },
+      "role": "primary",
+      "dependence_block": "HOMERIC_TRADITION"
+    },
+    {
+      "doc_id": "tlg0016.tlg001.perseus-grc1.1.tb.xml",
+      "regime": "PROSE_CLASS",
+      "raw": 19575,
+      "sentences": 1092,
+      "kept": {
+        "ud23_oth": 17349,
+        "ud23": 17301,
+        "upos_only": 17301
+      },
+      "eligible": {
+        "ud23_oth": 12994,
+        "ud23": 12946,
+        "upos_only": 12946
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 1675,
+        "ADP": 1005,
+        "ADV": 2487,
+        "AUX": 368,
+        "CCONJ": 779,
+        "DET": 2167,
+        "INTJ": 31,
+        "NOUN": 3675,
+        "NUM": 45,
+        "PRON": 1458,
+        "PUNCT": 2190,
+        "SCONJ": 276,
+        "VERB": 3414,
+        "X": 5
+      },
+      "raw_lemma_gar_by_upos": {
+        "ADV": 147
+      },
+      "max_sentence": {
+        "ud23": 53,
+        "ud23_oth": 53,
+        "upos_only": 53
+      },
+      "role": "primary",
+      "dependence_block": "HERODOTUS"
+    },
+    {
+      "doc_id": "tlg0020.tlg001.perseus-grc1.tb.xml",
+      "regime": "HEX",
+      "raw": 4610,
+      "sentences": 273,
+      "kept": {
+        "ud23_oth": 4034,
+        "ud23": 4023,
+        "upos_only": 4023
+      },
+      "eligible": {
+        "ud23_oth": 2955,
+        "ud23": 2945,
+        "upos_only": 2945
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 710,
+        "ADP": 226,
+        "ADV": 185,
+        "AUX": 17,
+        "CCONJ": 164,
+        "DET": 15,
+        "INTJ": 2,
+        "NOUN": 1315,
+        "NUM": 12,
+        "PART": 590,
+        "PRON": 184,
+        "PUNCT": 574,
+        "SCONJ": 21,
+        "VERB": 595
+      },
+      "raw_lemma_gar_by_upos": {
+        "PART": 17
+      },
+      "max_sentence": {
+        "ud23": 152,
+        "ud23_oth": 152,
+        "upos_only": 152
+      },
+      "role": "primary",
+      "dependence_block": "HESIODIC_TRADITION"
+    },
+    {
+      "doc_id": "tlg0020.tlg002.perseus-grc1.tb.xml",
+      "regime": "HEX",
+      "raw": 3725,
+      "sentences": 283,
+      "kept": {
+        "ud23_oth": 3197,
+        "ud23": 3189,
+        "upos_only": 3189
+      },
+      "eligible": {
+        "ud23_oth": 2084,
+        "ud23": 2077,
+        "upos_only": 2077
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 492,
+        "ADP": 168,
+        "ADV": 256,
+        "AUX": 31,
+        "CCONJ": 87,
+        "DET": 22,
+        "INTJ": 1,
+        "NOUN": 801,
+        "NUM": 5,
+        "PART": 496,
+        "PRON": 173,
+        "PUNCT": 527,
+        "SCONJ": 34,
+        "VERB": 632
+      },
+      "raw_lemma_gar_by_upos": {
+        "PART": 27
+      },
+      "max_sentence": {
+        "ud23": 33,
+        "ud23_oth": 33,
+        "upos_only": 33
+      },
+      "role": "primary",
+      "dependence_block": "HESIODIC_TRADITION"
+    },
+    {
+      "doc_id": "tlg0020.tlg003.perseus-grc1.tb.xml",
+      "regime": "HEX",
+      "raw": 2403,
+      "sentences": 182,
+      "kept": {
+        "ud23_oth": 2077,
+        "ud23": 2070,
+        "upos_only": 2070
+      },
+      "eligible": {
+        "ud23_oth": 1359,
+        "ud23": 1353,
+        "upos_only": 1353
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 336,
+        "ADP": 120,
+        "ADV": 133,
+        "AUX": 10,
+        "CCONJ": 62,
+        "DET": 10,
+        "INTJ": 3,
+        "NOUN": 588,
+        "NUM": 2,
+        "PART": 300,
+        "PRON": 116,
+        "PUNCT": 323,
+        "SCONJ": 13,
+        "VERB": 387
+      },
+      "raw_lemma_gar_by_upos": {
+        "PART": 10
+      },
+      "max_sentence": {
+        "ud23": 37,
+        "ud23_oth": 37,
+        "upos_only": 37
+      },
+      "role": "primary",
+      "dependence_block": "HESIODIC_TRADITION"
+    },
+    {
+      "doc_id": "tlg0060.tlg001.perseus-grc3.11.tb.xml",
+      "regime": "PROSE_POST",
+      "raw": 16882,
+      "sentences": 733,
+      "kept": {
+        "ud23_oth": 15266,
+        "ud23": 15266,
+        "upos_only": 15266
+      },
+      "eligible": {
+        "ud23_oth": 12334,
+        "ud23": 12334,
+        "upos_only": 12334
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 1391,
+        "ADP": 1331,
+        "ADV": 1647,
+        "AUX": 90,
+        "CCONJ": 701,
+        "DET": 2871,
+        "NOUN": 3764,
+        "PRON": 564,
+        "PUNCT": 1615,
+        "SCONJ": 100,
+        "VERB": 2807,
+        "X": 1
+      },
+      "raw_lemma_gar_by_upos": {
+        "ADV": 93
+      },
+      "max_sentence": {
+        "ud23": 61,
+        "ud23_oth": 61,
+        "upos_only": 61
+      },
+      "role": "primary",
+      "dependence_block": "DIODORUS"
+    },
+    {
+      "doc_id": "tlg0085.tlg001.perseus-grc2.tb.xml",
+      "regime": "OTHER_VERSE",
+      "raw": 1529,
+      "sentences": 166,
+      "kept": {
+        "ud23_oth": 1293,
+        "ud23": 1284,
+        "upos_only": 1284
+      },
+      "eligible": {
+        "ud23_oth": 646,
+        "ud23": 639,
+        "upos_only": 639
+      },
+      "empty": {
+        "ud23_oth": 0,
+        "ud23": 0,
+        "upos_only": 0
+      },
+      "raw_upos": {
+        "ADJ": 213,
+        "ADP": 53,
+        "ADV": 98,
+        "AUX": 15,
+        "CCONJ": 45,
+        "DET": 20,
+        "INTJ": 5,
+        "NOUN": 338,
+        "PART": 144,
+        "PRON": 93,
+        "PUNCT": 230,
+        "SCONJ": 11,
+        "VERB": 263,
+        "X": 1
+      },
+      "raw_lemma_gar_by_upos": {
+        "PART": 13
+      },
+      "max_sentence": {
+        "ud23": 25,
+        "ud23_oth": 25,
+        "upos_only": 25
+      },
+      "role": "inventory_only",
+      "dependence_block": null
+    }
+  ],
+  "blocks": [
+    {
+      "block": "HOMERIC_TRADITION",
+      "docs": [
+        "tlg0012.tlg001.perseus-grc1.tb.xml",
+        "tlg0013.tlg002.perseus-grc1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 71088,
+        "ud23_oth": 71547,
+        "upos_only": 71088
+      },
+      "eligible": {
+        "ud23": 46634,
+        "ud23_oth": 47062,
+        "upos_only": 46634
+      },
+      "sentences": 6169,
+      "block_key": "209ee9f27c82f31d31eb16124569039d7847ed327f3a0f2b5c4eae048347e621",
+      "group": "HEX"
+    },
+    {
+      "block": "HESIODIC_TRADITION",
+      "docs": [
+        "tlg0020.tlg001.perseus-grc1.tb.xml",
+        "tlg0020.tlg002.perseus-grc1.tb.xml",
+        "tlg0020.tlg003.perseus-grc1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 9282,
+        "ud23_oth": 9308,
+        "upos_only": 9282
+      },
+      "eligible": {
+        "ud23": 6375,
+        "ud23_oth": 6398,
+        "upos_only": 6375
+      },
+      "sentences": 738,
+      "block_key": "c4c0c7eaeca0d61d2e53f4f0642bfa382e91dd28b470d2f4da2ba8539fe0e7f7",
+      "group": "HEX"
+    },
+    {
+      "block": "HERODOTUS",
+      "docs": [
+        "tlg0016.tlg001.perseus-grc1.1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 17301,
+        "ud23_oth": 17349,
+        "upos_only": 17301
+      },
+      "eligible": {
+        "ud23": 12946,
+        "ud23_oth": 12994,
+        "upos_only": 12946
+      },
+      "sentences": 1092,
+      "block_key": "89f0804afded8e7a0f4e1b507030d5ef4ecaf17e422c8b2969bd6b23e62818e6",
+      "group": "PROSE_ALL"
+    },
+    {
+      "block": "THUCYDIDES",
+      "docs": [
+        "tlg0003.tlg001.perseus-grc1.1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 9346,
+        "ud23_oth": 9353,
+        "upos_only": 9346
+      },
+      "eligible": {
+        "ud23": 7227,
+        "ud23_oth": 7234,
+        "upos_only": 7227
+      },
+      "sentences": 532,
+      "block_key": "1a32cf6857284fff7c7f006f8d0cd4ab15a047af7a4bcd5613d1fd50789dd4ee",
+      "group": "PROSE_ALL"
+    },
+    {
+      "block": "ATHENAEUS",
+      "docs": [
+        "tlg0008.tlg001.perseus-grc1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 23133,
+        "ud23_oth": 23231,
+        "upos_only": 23133
+      },
+      "eligible": {
+        "ud23": 16691,
+        "ud23_oth": 16786,
+        "upos_only": 16691
+      },
+      "sentences": 1630,
+      "block_key": "4352f04fcfd7cbe580caddf69f309034ffb967d5d1bc8a8e809498de5bf8d329",
+      "group": "PROSE_ALL"
+    },
+    {
+      "block": "DIODORUS",
+      "docs": [
+        "tlg0060.tlg001.perseus-grc3.11.tb.xml"
+      ],
+      "kept": {
+        "ud23": 15266,
+        "ud23_oth": 15266,
+        "upos_only": 15266
+      },
+      "eligible": {
+        "ud23": 12334,
+        "ud23_oth": 12334,
+        "upos_only": 12334
+      },
+      "sentences": 733,
+      "block_key": "d91dad02f8da03cf6702fa7edec531da5e56f526f466e2f04180f2a23a1cf315",
+      "group": "PROSE_ALL"
+    },
+    {
+      "block": "PLUTARCH",
+      "docs": [
+        "tlg0007.tlg004.perseus-grc1.tb.xml",
+        "tlg0007.tlg015.perseus-grc1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 8884,
+        "ud23_oth": 8893,
+        "upos_only": 8884
+      },
+      "eligible": {
+        "ud23": 6901,
+        "ud23_oth": 6908,
+        "upos_only": 6901
+      },
+      "sentences": 499,
+      "block_key": "ef8134329970f595ef9ccf4198217affef5c01fa243d5bf4e59ee6daebb04e1d",
+      "group": "PROSE_ALL"
+    }
+  ],
+  "raw_upos": {
+    "DET": 11831,
+    "ADV": 19017,
+    "ADP": 10649,
+    "PRON": 12633,
+    "CCONJ": 6695,
+    "ADJ": 21626,
+    "VERB": 35836,
+    "NOUN": 41252,
+    "AUX": 1875,
+    "PUNCT": 24963,
+    "SCONJ": 2299,
+    "INTJ": 424,
+    "NUM": 230,
+    "X": 32,
+    "PART": 13627
+  },
+  "raw_relations": {
+    "det": 11812,
+    "advmod": 29467,
+    "case": 10683,
+    "nmod": 21682,
+    "cc": 10242,
+    "conj": 8994,
+    "csubj": 453,
+    "obl": 12433,
+    "root": 13919,
+    "cop": 1863,
+    "punct": 24963,
+    "obj": 17532,
+    "acl": 1493,
+    "xcomp": 5591,
+    "nsubj": 13221,
+    "amod": 1212,
+    "advcl": 9676,
+    "mark": 2810,
+    "iobj": 1450,
+    "ccomp": 1384,
+    "appos": 373,
+    "discourse": 374,
+    "vocative": 1045,
+    "parataxis": 102,
+    "nummod": 201,
+    "orphan": 2,
+    "nsubj:outer": 1,
+    "aux": 11
+  },
+  "raw_relation_upos": {
+    "det": {
+      "DET": 11812
+    },
+    "advmod": {
+      "ADV": 18138,
+      "ADJ": 1634,
+      "CCONJ": 919,
+      "DET": 15,
+      "PART": 8761
+    },
+    "case": {
+      "ADP": 10599,
+      "SCONJ": 17,
+      "CCONJ": 3,
+      "ADV": 52,
+      "NOUN": 10,
+      "VERB": 1,
+      "PART": 1
+    },
+    "nmod": {
+      "PRON": 1626,
+      "NOUN": 6917,
+      "VERB": 1375,
+      "ADJ": 11581,
+      "ADV": 162,
+      "ADP": 7,
+      "X": 11,
+      "SCONJ": 1,
+      "CCONJ": 1,
+      "PART": 1
+    },
+    "cc": {
+      "CCONJ": 5316,
+      "ADV": 55,
+      "PART": 4851,
+      "ADP": 4,
+      "SCONJ": 16
+    },
+    "conj": {
+      "ADJ": 738,
+      "VERB": 5297,
+      "PRON": 108,
+      "NOUN": 2765,
+      "ADV": 70,
+      "NUM": 12,
+      "CCONJ": 1,
+      "AUX": 1,
+      "ADP": 1,
+      "X": 1
+    },
+    "csubj": {
+      "VERB": 453
+    },
+    "obl": {
+      "NOUN": 9371,
+      "ADJ": 745,
+      "PRON": 2184,
+      "VERB": 114,
+      "ADV": 12,
+      "NUM": 3,
+      "X": 3,
+      "CCONJ": 1
+    },
+    "root": {
+      "ADJ": 387,
+      "VERB": 13225,
+      "NOUN": 215,
+      "PRON": 54,
+      "ADV": 19,
+      "DET": 1,
+      "ADP": 10,
+      "X": 6,
+      "NUM": 2
+    },
+    "cop": {
+      "AUX": 1863
+    },
+    "punct": {
+      "PUNCT": 24963
+    },
+    "obj": {
+      "PRON": 4138,
+      "NOUN": 11160,
+      "ADJ": 1810,
+      "ADV": 406,
+      "ADP": 7,
+      "CCONJ": 1,
+      "X": 5,
+      "NUM": 3,
+      "PART": 2
+    },
+    "acl": {
+      "VERB": 1390,
+      "NOUN": 82,
+      "PRON": 19,
+      "ADV": 2
+    },
+    "xcomp": {
+      "ADJ": 1967,
+      "VERB": 2843,
+      "NOUN": 664,
+      "PRON": 91,
+      "ADV": 19,
+      "DET": 3,
+      "SCONJ": 1,
+      "NUM": 2,
+      "X": 1
+    },
+    "nsubj": {
+      "NOUN": 8323,
+      "ADJ": 1040,
+      "PRON": 3671,
+      "VERB": 172,
+      "ADV": 7,
+      "NUM": 4,
+      "ADP": 1,
+      "X": 3
+    },
+    "amod": {
+      "ADJ": 1212
+    },
+    "advcl": {
+      "ADJ": 199,
+      "VERB": 9370,
+      "NOUN": 86,
+      "PRON": 10,
+      "NUM": 3,
+      "ADV": 7,
+      "ADP": 1
+    },
+    "mark": {
+      "SCONJ": 2264,
+      "CCONJ": 453,
+      "ADP": 19,
+      "ADV": 64,
+      "PART": 10
+    },
+    "iobj": {
+      "PRON": 692,
+      "NOUN": 648,
+      "ADJ": 110
+    },
+    "ccomp": {
+      "VERB": 1384
+    },
+    "appos": {
+      "VERB": 98,
+      "NOUN": 237,
+      "PRON": 11,
+      "ADJ": 27
+    },
+    "discourse": {
+      "INTJ": 374
+    },
+    "vocative": {
+      "NOUN": 771,
+      "ADJ": 173,
+      "VERB": 17,
+      "PRON": 27,
+      "INTJ": 50,
+      "ADV": 4,
+      "X": 2,
+      "PART": 1
+    },
+    "parataxis": {
+      "VERB": 97,
+      "ADJ": 3,
+      "PRON": 2
+    },
+    "nummod": {
+      "NUM": 201
+    },
+    "orphan": {
+      "NOUN": 2
+    },
+    "nsubj:outer": {
+      "NOUN": 1
+    },
+    "aux": {
+      "AUX": 11
+    }
+  },
+  "base_relation_count": 27,
+  "full_relation_label_count": 28,
+  "source_prefix_sentences": {
+    "tlg0003.tlg001.perseus-grc1.1.tb.xml": 532,
+    "tlg0007.tlg004.perseus-grc1.tb.xml": 248,
+    "tlg0007.tlg015.perseus-grc1.tb.xml": 251,
+    "tlg0008.tlg001.perseus-grc1.12.tb.xml": 649,
+    "tlg0008.tlg001.perseus-grc1.13.tb.xml": 981,
+    "tlg0011.tlg001.perseus-grc2.tb.xml": 431,
+    "tlg0011.tlg002.perseus-grc2.tb.xml": 391,
+    "tlg0011.tlg003.perseus-grc1.tb.xml": 490,
+    "tlg0011.tlg004.perseus-grc1.tb.xml": 520,
+    "tlg0011.tlg005.perseus-grc2.tb.xml": 528,
+    "tlg0012.tlg001.perseus-grc1.tb.xml": 6003,
+    "tlg0013.tlg002.perseus-grc1.tb.xml": 166,
+    "tlg0016.tlg001.perseus-grc1.1.tb.xml": 1092,
+    "tlg0020.tlg001.perseus-grc1.tb.xml": 273,
+    "tlg0020.tlg002.perseus-grc1.tb.xml": 283,
+    "tlg0020.tlg003.perseus-grc1.tb.xml": 182,
+    "tlg0060.tlg001.perseus-grc3.11.tb.xml": 733,
+    "tlg0085.tlg001.perseus-grc2.tb.xml": 166
+  },
+  "retention_note": "Mapping ADV/PART changes symbols only; kept/eligible/empty/max_sentence are unchanged within each variant. inventory_only eligibility is census only, never scoring."
+}

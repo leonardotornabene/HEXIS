@@ -1,0 +1,9 @@
+{
+  "decision_count": 30,
+  "local_links": "PASS",
+  "fences": "PASS",
+  "corpus_recount_script": "PASS",
+  "synthetic_cases_passed": 25,
+  "real_data_fits": 0,
+  "canonical_repository_modified": false
+}

@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "python": "3.12.14",
+  "numpy": "2.5.1",
+  "folds": 7,
+  "training_contributions": 42,
+  "ledger_and_shuffle_sha256": "c44ed1837e5ce1b18f8cd2f0bad5e43860354d0f3e8db63884888095cb914a8b",
+  "model_and_scores_sha256": "a4656ec24fe71eaa40e3a4e1dd8d3d7762e5630c73572f1e3e96eba86e11c817",
+  "scope": "C0 seed 0; does not certify the complete dependency stack"
+}

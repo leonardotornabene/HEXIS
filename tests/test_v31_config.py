@@ -1,0 +1,81 @@
+"""V0: frozen contracts, strict application projection and historical isolation."""
+import copy
+import json
+import shutil
+from pathlib import Path
+
+import pytest
+import yaml
+
+from hexis.config import load_config, load_v31_config, resolve_config
+from hexis.contracts import BUNDLE, load_contracts, validate_projection
+
+pytestmark = pytest.mark.v31
+
+
+def test_deposit_and_application_projection_match():
+    bundle = load_contracts()
+    cfg = load_v31_config()
+    assert cfg['spec_version'] == 'HEXIS-3.1'
+    assert cfg['cells'] == bundle['design']['cells']
+    assert cfg['registry'] == bundle['design']['registry']
+    assert bundle['expected']['expected'] == bundle['report']['expected']
+    assert [cell['m'] for cell in cfg['cells']] == [100, 100, 100, 100, 105, 11]
+
+
+@pytest.mark.parametrize('value', [True, 8.0, -1, float('nan'), float('inf'), '8'])
+def test_schema_refuses_wrong_numeric_types_and_values(value):
+    cfg = load_v31_config()
+    cfg['cells'][0]['D'] = value
+    with pytest.raises(ValueError, match='cells') as exc:
+        validate_projection(cfg, load_contracts()['design'])
+    assert 'D' in str(exc.value)
+
+
+@pytest.mark.parametrize('change', ['extra', 'missing', 'seed', 'cell', 'block', 'retired'])
+def test_application_contract_rejects_drift(change):
+    cfg = load_v31_config()
+    if change == 'extra': cfg['unknown'] = 1
+    if change == 'missing': del cfg['rng']
+    if change == 'seed': cfg['cells'][0]['seeds'].append(0)
+    if change == 'cell': cfg['cells'].append(copy.deepcopy(cfg['cells'][0]))
+    if change == 'block': cfg['blocks'][0]['docs'].append('unknown')
+    if change == 'retired': cfg['context_tree'] = {'k_min': 2}
+    with pytest.raises(ValueError) as exc:
+        validate_projection(cfg, load_contracts()['design'])
+    assert str(exc.value)
+
+
+def test_yaml_rejects_duplicate_keys_and_registry_drift(tmp_path):
+    cfg = tmp_path / 'config.yaml'
+    cfg.write_text('spec_version: HEXIS-3.1\nspec_version: HEXIS-3.1\n')
+    with pytest.raises(ValueError, match='duplicate') as exc:
+        load_v31_config(cfg)
+    assert str(cfg) in str(exc.value)
+    registry = tmp_path / 'registry.yaml'
+    registry.write_text('spec_version: HEXIS-3.1\nregistry: []\n')
+    with pytest.raises(ValueError, match='registry') as exc:
+        load_v31_config(registry_path=registry)
+    assert str(exc.value)
+
+
+@pytest.mark.parametrize('fault', ['altered', 'missing', 'extra'])
+def test_deposit_refuses_altered_missing_extra_contracts(tmp_path, fault):
+    root = tmp_path / 'deposit'
+    shutil.copytree(BUNDLE.parent, root)
+    bundle = root / BUNDLE.name
+    path = bundle / 'alphabets_v3.1.json'
+    if fault == 'altered': path.write_text('{}')
+    if fault == 'missing': path.unlink()
+    if fault == 'extra': (bundle / 'extra.json').write_text('{}')
+    with pytest.raises(ValueError) as exc:
+        load_contracts(bundle)
+    assert str(exc.value)
+
+
+def test_legacy_executors_refuse_active_config():
+    cfg = load_config()
+    assert cfg['spec_version'] == 'HEXIS-3.1'
+    with pytest.raises(ValueError, match='historical') as exc:
+        resolve_config(base=cfg)
+    assert '3.1' in str(exc.value)

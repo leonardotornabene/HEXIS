@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "checks": [
+    "JSD_disjoint_1",
+    "JSD_identical_0",
+    "JSD_symmetry",
+    "JSD_contribution_sum",
+    "shared_zero_support",
+    "token_weight_within_block",
+    "equal_block_weight_between_groups",
+    "four_term_Q",
+    "eligible_weight_secondary",
+    "kept_count_is_different_estimand",
+    "weighted_four_term_Q",
+    "reject_invalid_eligible_counts"
+  ]
+}

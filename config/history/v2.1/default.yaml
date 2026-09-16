@@ -1,0 +1,24 @@
+seeds: {global: 20260706}            # per-analysis seed = global XOR crc32(analysis_id)
+corpus:
+  ud_release: "r2.18"
+  languages: [grc, la]
+  primary_contrast: {grc: [HEX, PROSE_CLASS], la: [HEX, PROSE_ALL]}
+alphabet:
+  variant: ud23                      # ud23 | ud23_oth | upos_only
+  upos_keep: [ADJ, ADP, ADV, AUX, CCONJ, DET, NOUN, NUM, PART, PRON, SCONJ, VERB]
+  upos_drop: [PUNCT, X, INTJ, SYM]
+  upos_map:  {PROPN: NOUN}
+  deprel_keep: [root, nsubj, csubj, obj, iobj, ccomp, xcomp, obl, advcl, advmod, acl,
+                amod, appos, det, nummod, nmod, case, mark, aux, cop, cc, conj, parataxis]
+  excluded_deprel_policy: drop       # drop | oth
+  gate_a_threshold: 0.02
+sequence: {boundary: reset}          # reset | bound
+context_tree: {d_max: 8, beta: 0.5, k_min: 2, gamma: 0.0, select: monotone}
+scores:
+  t_star: null                       # fixed at G1 per language; recorded here
+  n_seeds: 20
+  min_available_past: 4              # D35 position restriction for gain/depth
+  learning_curve_T: [5000, 10000, 20000]
+stats: {alpha: 0.05, family: [P1, P2], boot_B: 2000}
+latin: {d_max: 6, matched_subsamples_B: 100}
+blocks: {n_block: 1000, min_frac: 0.5}   # descriptive F7 only (D34)

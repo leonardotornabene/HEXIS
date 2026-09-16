@@ -10,7 +10,11 @@ import dataclasses
 import pytest
 
 from hexis import alphabet, conllu_reader
-from hexis.config import resolve_config
+from hexis.config import resolve_config as _resolve_config, load_legacy_config
+
+
+def resolve_config(overrides=None):
+    return _resolve_config(overrides, base=load_legacy_config())
 
 pytestmark = pytest.mark.g0
 

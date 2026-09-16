@@ -1,0 +1,199 @@
+{
+  "spec_version": "HEXIS-3.1",
+  "status": "FINAL_PLAN_NOT_APPLIED",
+  "model_key": [
+    "run_id",
+    "cell",
+    "held_block_key",
+    "seed",
+    "arm"
+  ],
+  "pair_key": [
+    "run_id",
+    "cell",
+    "held_block_key",
+    "seed"
+  ],
+  "document_band_key": [
+    "run_id",
+    "cell",
+    "held_block_key",
+    "seed",
+    "doc_id",
+    "past_band"
+  ],
+  "position_key": [
+    "run_id",
+    "cell",
+    "held_block_key",
+    "seed",
+    "slot_uid"
+  ],
+  "expected": {
+    "raw_tokens": 202989,
+    "raw_sentences": 13919,
+    "source_prefixes": 18,
+    "canonical_documents": 17,
+    "primary_documents": 11,
+    "inventory_only_documents": 6,
+    "blocks": 7,
+    "HEX_blocks": 2,
+    "PROSE_ALL_blocks": 5,
+    "alphabet_sizes": {
+      "ud23": 100,
+      "ud23_oth": 105,
+      "upos_only": 11
+    },
+    "primary_tokens": {
+      "ud23": 154300,
+      "ud23_oth": 154947,
+      "upos_only": 154300
+    },
+    "primary_eligible": {
+      "ud23": 109108,
+      "ud23_oth": 109716,
+      "upos_only": 109108
+    },
+    "inventory_only_tokens": {
+      "ud23": 22275,
+      "ud23_oth": 22623,
+      "upos_only": 22275
+    },
+    "inventory_only_potential_eligible": {
+      "ud23": 12769,
+      "ud23_oth": 13062,
+      "upos_only": 12769
+    },
+    "cells": 6,
+    "model_pairs": 490,
+    "models": 980,
+    "technical_pairs": 42,
+    "technical_models": 84,
+    "probe_evaluations": 0,
+    "C0_paired_position_rows": 2182160,
+    "all_cells_theoretical_position_rows": 7643640,
+    "paired_document_band_rows_C0": 440,
+    "paired_document_band_rows_sensitivities": 1100,
+    "logical_document_arm_rows_before_bands": 1540
+  },
+  "position_persistence_cells": [
+    "C0"
+  ],
+  "position_columns": [
+    "slot_uid",
+    "original_symbol_id",
+    "shuffled_symbol_id",
+    "shuffled_origin_slot_uid",
+    "loss_ctw_original",
+    "loss_root_original",
+    "loss_ctw_shuffled",
+    "loss_root_shuffled",
+    "unseen_mass_original",
+    "unseen_mass_shuffled",
+    "resolved_mean_original",
+    "resolved_mean_shuffled"
+  ],
+  "position_float_dtype": "float64",
+  "paired_aggregate_all_cells": {
+    "bands": [
+      "4_7",
+      "ge8"
+    ],
+    "empty_rows_required": true,
+    "fields": [
+      "n",
+      "sum_loss_ctw_original",
+      "sum_loss_root_original",
+      "sum_loss_ctw_shuffled",
+      "sum_loss_root_shuffled"
+    ],
+    "per_arm_diagnostics": [
+      "sum_resolved_valid",
+      "resolved_valid_count",
+      "resolved_null_count_by_reason",
+      "sum_unseen_mass",
+      "sum_observed_mass_by_length",
+      "root_unseen_target_count",
+      "implicit_unseen_branch_encounter_count"
+    ],
+    "shuffle": [
+      "changed_symbol_slot_count",
+      "total_slot_count",
+      "changed_symbol_eligible_slot_count",
+      "eligible_slot_count"
+    ]
+  },
+  "model_diagnostics": [
+    "node_count_by_structural_depth",
+    "support_histogram_1_2to4_5to9_10plus_by_depth",
+    "root_observed_symbol_count",
+    "root_unseen_symbol_count",
+    "root_stop",
+    "delta_root_nats_stop_minus_split",
+    "fit_seconds",
+    "evaluation_seconds",
+    "peak_rss"
+  ],
+  "null_rules": {
+    "empty_band": "n=0; sums=0; CE/G/Q/means=null; reason=empty_bucket",
+    "no_resolved_mass": "n>0 and resolved_valid_count=0; mean=null; reason=no_resolved_mass",
+    "forced_root_delta": "D=0; delta_root=null; reason=forced_leaf"
+  },
+  "diagnostic_means": {
+    "L": "sum_resolved_valid/resolved_valid_count",
+    "unseen": "sum_unseen_mass/n",
+    "observed_mass_per_length": "sum_observed_mass_by_length/n"
+  },
+  "C0_reconstruction_from_positions": [
+    "CE",
+    "G",
+    "Q",
+    "resolved_mean_sums_and_valid_counts",
+    "unseen_mass_sums"
+  ],
+  "other_diagnostics_verification": [
+    "emitted_summary_consistency",
+    "deterministic_replication"
+  ],
+  "sensitivity_verification": [
+    "exact_key_sets",
+    "counts",
+    "sum_additivity",
+    "diagnostics",
+    "deterministic_replication"
+  ],
+  "slot_join_before_aggregation": "one_to_one_exact_set_equality",
+  "figures": [
+    "corpus_annotation",
+    "block_document_profiles",
+    "sensitivities_two_weights",
+    "R1",
+    "supports_mixture_masses"
+  ],
+  "manifest": [
+    "contract_data_registry_alphabet_code_lock_hashes",
+    "rng_version",
+    "scientific_keys",
+    "artifact_list_hashes_sizes_schemas_counts",
+    "checks_and_evidence_context",
+    "external_environment_metadata"
+  ],
+  "checks": [
+    "no_missing_extra_duplicate_keys",
+    "bytes_match_manifest",
+    "schemas_counts_denominators_match_contract",
+    "roles_allow_scoring",
+    "four_loss_identity",
+    "all_R1_variants_pairs_centroids_contributions",
+    "atomic_writes_and_validated_resume",
+    "complete_before_final_contrasts"
+  ],
+  "pipeline_entrypoints": [
+    "run_audit",
+    "run_encode",
+    "run_tree_validation",
+    "run_descriptive",
+    "run_report"
+  ],
+  "scientific_results_available": false
+}

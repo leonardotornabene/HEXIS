@@ -1,0 +1,28 @@
+{
+  "spec_version": "HEXIS-3.1",
+  "decision_id": "V3-001",
+  "source": "UD_Ancient_Greek-Perseus",
+  "release": "r2.18",
+  "commit": "37837c7a3c592c9563f8c51cc63344b87247f8a5",
+  "files": [
+    {
+      "file": "grc_perseus-ud-dev.conllu",
+      "sha256": "7899f809fc250404839694330b9db25f79a5b1f20cfa12e6dc3a368a4ec7cd22"
+    },
+    {
+      "file": "grc_perseus-ud-test.conllu",
+      "sha256": "e18d47c395c0ec8da678fb5e315ce6d90133e88c25ed2a55bc72a2a66e6254d5"
+    },
+    {
+      "file": "grc_perseus-ud-train.conllu",
+      "sha256": "d7471c9b91bcd975848fa5d9b65c31f1fc48a597ed3667796968a82c6d098a7e"
+    }
+  ],
+  "raw_policy": "immutable; only the exact three Greek CoNLL-U files enter the active pipeline",
+  "historical_provenance": {
+    "path": "data/raw/PROVENANCE.md",
+    "sha256": "a4aee27efec91a073563fba90a739153242683c90286c6cee7b623f59fdcb53a",
+    "status": "preserved, not active configuration"
+  },
+  "acquisition_script": "scripts/reacquire_raw_data.sh is local, untracked, preserved and not canonical"
+}

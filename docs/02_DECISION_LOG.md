@@ -1,3 +1,23 @@
+# Decision Log attivo — HEXIS 3.1
+
+## V3-001 — Adozione della v3.1 e prima tranche V0–V1
+
+**Data del deposito: 2026-09-16. Stato: ADOTTATA per le nuove esecuzioni.** Fonte di autorizzazione: richiesta dell'utente nella sessione corrente di implementare il piano definitivo V0–V1. Non si attribuiscono a questa richiesta autorizzazioni pregresse o attività V2–V5.
+
+Il [piano v3.1](contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md) e i contratti depositati costituiscono l'unica autorità attiva. Il [record esterno](V3-001-deposit.json) identifica tutti i byte; gli stati originari `FINAL_PLAN_NOT_APPLIED` e `V0_deposit: null` nei materiali restano intatti e descrivono la consegna precedente. L'atto presente ne adotta il contenuto senza modificare ciò che i digest identificano. Il commit di deposito sarà riferito dal manifest successivo, senza autoriferimento.
+
+Per la v3.1 sono **non applicabili**: inferenza P1/P2, latino, O7 come blocco operativo, costanti permutazionali, G0–G7 e relativo ordine, sensitività precedenti, sign-stability, selettore Rissanen/penalità, sequenze con SEP/#, chunk e modelli di riferimento. Sono sostituiti dai §§3–14 della v3.1: greco, sette blocchi, CTW congelato, due bracci, sei celle, target j≥4, RNG SHA-256, checklist V0–V5. Non si dichiara O7 risolto né G2 superato nel progetto v2.1.
+
+Restano: bit/log base 2, test prima del codice, controlli rigorosi e determinismo, raw immutabili, nessun import da candidates, core senza etichette/annotazione separata, nessuna nuova dipendenza o fonte bibliografica implicita. Le nuove soglie A/B sono diagnostiche. I 17 skip storici non costituiscono accettazione attiva: gli obblighi futuri sono esplicitamente PENDING nell'[inventario](TEST_INVENTORY.md).
+
+Storia epistemica: sono stati osservati pilot reali; questo è un protocollo prospettico dopo sviluppo, non una preregistrazione antecedente ai dati. La copertura verificata e i limiti sono nel §2 del piano e nel verdetto depositato. Il resoconto `contracts/hexis-3.1/HEXIS_v3_allegati/authorization_and_experiments.json` è fonte delle autorizzazioni pregresse **con la verificabilità lì dichiarata**: non è un consenso originale indipendentemente verificato; non si ricostruiscono date/orari mancanti. I 25 esiti sintetici archiviati sono evidenze storiche, non accettazione del futuro CTW canonico. Nessun nuovo fit reale è autorizzato da questa tranche.
+
+D01–D54 sono conservate integralmente qui sotto. [D55](g1_D55_proposal.md) resta PROPOSED, applicata a nulla nella v2.1; le [ratifiche tecniche G1](g1_ratification_record.md) conservano esattamente gli stati originari. Il proposal PDF e README di backup sono storici; la riscrittura del proposal e la pubblicazione rimangono separate.
+
+---
+
+## Archivio normativo v2.1 — non autorità per nuove esecuzioni
+
 # PROJECT HEXIS — DECISION LOG
 
 Version 2.1 — 2026-07-21. Binding companion to `01_MASTER_SPEC.md` v2.1. Supersedes v2.0 (2026-07-06); v1.0 (2026-07-05) is superseded and is not deposited in this repository (O9, resolved 2026-08-13). Format: **Q** question · **D** decision · **R** rationale · **Status** (FROZEN | GATED:G1 | SUPERSEDED by Dnn | AMENDED by Dnn) · ★ = declared deviation from / extension of the research proposal. Amendment protocol: changing a FROZEN entry requires a new `D{n}-A1` entry recording old value, new value, reason, date, and impact on already-computed results (re-run or retired). **No silent changes.**

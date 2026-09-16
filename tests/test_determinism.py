@@ -29,7 +29,7 @@ def test_seed_derivation_matches_spec_formula():
 
 @pytest.mark.g0
 def test_load_config_reads_frozen_defaults():
-    cfg = load_config()
+    cfg = load_config(Path(__file__).resolve().parents[1] / "config/history/v2.1/default.yaml")
     assert cfg["seeds"]["global"] == 20260706
     assert cfg["blocks"]["n_block"] == 1000
     assert cfg["blocks"]["min_frac"] == 0.5

@@ -83,6 +83,8 @@ def load_config(path=None) -> dict:
             f"{path}: a configuration must be a nonempty mapping, not "
             f"{type(data).__name__}"
         )
+    if data.get("spec_version") == "HEXIS-3.1":
+        return load_v31_config(path)
     return data
 
 
@@ -100,6 +102,8 @@ def resolve_config(overrides=None, base=None) -> dict:
     """Deep-merge ``overrides`` into ``base`` (default config) without mutating either."""
     if base is None:
         base = load_config()
+    if base.get("spec_version") == "HEXIS-3.1":
+        raise ValueError("historical resolve_config cannot interpret HEXIS-3.1; use load_v31_config")
     return _deep_merge(base, overrides or {})
 
 
@@ -122,8 +126,10 @@ def check_against_default(cfg: dict, *, reference: dict | None = None) -> None:
     2026-09-03; since the check never descends that far the exemption bought
     nothing and only stopped the key *itself* from being required.
     """
+    if cfg.get("spec_version") == "HEXIS-3.1":
+        raise ValueError("historical executor cannot interpret HEXIS-3.1")
     if reference is None:
-        reference = load_config()
+        reference = load_legacy_config()
     unknown, missing = [], []
     for section in sorted(set(cfg) | set(reference), key=repr):
         if section not in reference:
@@ -230,3 +236,20 @@ def config_hash(cfg: dict) -> str:
 def derive_seed(analysis_id: str, global_seed: int) -> int:
     """Per-analysis seed = global XOR crc32(analysis_id) (§6.3)."""
     return global_seed ^ (zlib.crc32(analysis_id.encode("utf-8")) & 0xFFFFFFFF)
+
+
+def load_v31_config(path=None, *, registry_path=None) -> dict:
+    """Load the exact active analytical projection and independently check registry."""
+    from hexis.contracts import ROOT, load_contracts, validate_projection, compare
+    path = Path(path) if path is not None else ROOT / 'config/default.yaml'
+    registry_path = Path(registry_path) if registry_path is not None else ROOT / 'config/registry_overrides.yaml'
+    design = load_contracts()['design']
+    cfg = load_yaml(path)
+    validate_projection(cfg, design)
+    compare(load_yaml(registry_path), {'spec_version': 'HEXIS-3.1', 'registry': design['registry']}, str(registry_path))
+    return cfg
+
+
+def load_legacy_config():
+    """Explicit historical v2.1 fixture; never a new scientific run default."""
+    return load_config(Path(__file__).resolve().parents[2] / 'config/history/v2.1/default.yaml')

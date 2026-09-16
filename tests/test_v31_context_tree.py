@@ -194,7 +194,13 @@ def test_zero_depth_is_a_forced_root_leaf():
     (lambda: fitted([[0], [1, -1]], m=4, depth=2), 'stream 1 position 1'),
     (lambda: fitted([[0, 1.0]], m=4, depth=2), 'stream 0 position 1'),
     (lambda: fitted([[0, True]], m=4, depth=2), 'stream 0 position 1'),
-    (lambda: fitted([[0, 1]], m=4, depth=2).predict_proba([2, 9]), 'history position 1'),
+    (lambda: fitted([[0, 1]], m=4, depth=2).predict_proba([2, 9]),
+     'history (within the last 2 symbols) position 1'),
+    # tail-only validation is intentional (kept unchanged); the leading 5s sit outside the
+    # last-2-symbols window and are never checked, but the reported position of the symbol
+    # that IS checked must be absolute in the full history (3), not relative to the tail (1).
+    (lambda: fitted([[0, 1]], m=4, depth=2).predict_proba([5, 5, 2, 9]),
+     'history (within the last 2 symbols) position 3'),
     (lambda: fitted([[0, 1]], m=4, depth=2).evaluate([[0, 1]], min_available_past=-1), 'min_available_past'),
     (lambda: CTW(CTWParams.from_rho(m=4, depth=2, a=0.5, rho=0.5)).predict_proba([0]), 'fit'),
     (lambda: fitted([[0, 1]], m=4, depth=2).fit([[0]]), 'frozen'),
@@ -323,6 +329,13 @@ def test_generator_fixture_matches_the_historical_script():
     assert ast.dump(ours['generate']) == ast.dump(historical['generate'])
     assert validation.generate('lag2', 12, 3, 2)[0] == [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1]
     assert validation.generate('lag2', 12, 3, 2)[1] == 0.4689955935892812
+
+
+def test_analytic_pass_pins_the_corrected_iid_threshold():
+    """§12.1 fixes |CE-2| <= 0.02 for iid; the historical script's 0.03 must not silently
+    come back (a 0.025 deviation passes at 0.03 but must fail at the plan's 0.02)."""
+    assert validation.analytic_pass('iid', 4, 2.025, 2.0) is False
+    assert validation.analytic_pass('iid', 4, 2.019, 2.0) is True
 
 
 @pytest.fixture(scope='module')

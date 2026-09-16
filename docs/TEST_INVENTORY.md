@@ -69,4 +69,4 @@ Le parti PENDING della tabella restano tali; V0–V1 non promuove T05–T30 inte
 - Batteria eseguita da `hexis.pipeline.run_tree_validation`: 25 piccoli sintetici tutti entro le soglie
   della tabella §12.1 (**`iid` m=4 alla soglia 0,02 del piano, non allo 0,03 dello script storico**) e
   nove casi di stress m106 con deficit registrato, senza criterio di superamento dell'oracle.
-- Suite completa dopo T10–T16: **455 passed, 17 skipped storici**. T05–T09 e T17–T30 restano PENDING.
+- Suite completa dopo T10–T16: **456 passed, 17 skipped storici**. T05–T09 e T17–T30 restano PENDING.

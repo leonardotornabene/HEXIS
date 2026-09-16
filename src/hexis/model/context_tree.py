@@ -21,13 +21,6 @@ import numpy as np
 BOS = -1  # context-only symbol; never an outcome (design representation.bos_context_only)
 
 
-def _log1pexp(value: float) -> float:
-    """log(1 + exp(value)), i.e. logaddexp(0, value), without overflow."""
-    if value > 0.0:
-        return value + math.log1p(math.exp(-value))
-    return math.log1p(math.exp(value))
-
-
 def _is_int(value) -> bool:
     return isinstance(value, (int, np.integer)) and not isinstance(value, bool)
 
@@ -184,7 +177,7 @@ class CTW:
         root, depth = self._root, self.params.depth
         m, a = self.params.m, self.params.a
         ma = m * a
-        uniform, log2 = 1.0 / m, math.log(2.0)
+        uniform = 1.0 / m
         # ponytail: one mixture per distinct context, rebuilt per call so nothing
         # is cached across models; drop the memo if evaluation ever needs per-node output.
         memo = {}
@@ -204,8 +197,8 @@ class CTW:
                 q = unseen * uniform
                 for counts, total, weight in path:
                     q += weight * (counts.get(target, 0) + a) / (total + ma)
-                ctw_bits -= math.log(q) / log2
-                root_bits -= math.log((root.counts.get(target, 0) + a) / (root.total + ma)) / log2
+                ctw_bits -= math.log2(q)
+                root_bits -= math.log2((root.counts.get(target, 0) + a) / (root.total + ma))
                 n += 1
         if n == 0:
             raise ValueError(f'evaluate: no target with min_available_past={min_available_past}')
@@ -272,22 +265,26 @@ class CTW:
         if not self._fitted:
             raise ValueError('model is not fitted: call fit() before prediction')
 
-    def _validated(self, symbols, where) -> list:
+    def _validated(self, symbols, where, offset=0) -> list:
         m = self.params.m
         values = []
         for position, value in enumerate(symbols):
             if not _is_int(value) or not 0 <= value < m:
-                raise ValueError(f'{where} position {position}: symbol {value!r} outside [0, {m})')
+                raise ValueError(f'{where} position {position + offset}: symbol {value!r} outside [0, {m})')
             values.append(int(value))
         return values
 
     def _history(self, history) -> list:
-        """The last D symbols decide the path; positions are numbered inside that tail."""
+        """Only the last D symbols decide the path, so only that tail is validated (a full
+        evaluation run passes 100k-symbol prefixes); the reported error position is still
+        absolute in the full history, not relative to the validated tail."""
         self._require_fitted()
         depth = self.params.depth
         if depth == 0:
             return []
-        return self._validated(history[-depth:], 'history')
+        tail = history[-depth:]
+        return self._validated(tail, f'history (within the last {depth} symbols)',
+                                offset=max(0, len(history) - depth))
 
     def _mixture(self, history):
         """Walk the frozen path: [(node, lambda, lexical length)] and the unseen mass."""
@@ -326,8 +323,8 @@ class CTW:
             u = log_rho + node.log_e
             v = log_split_prior + children
             node.delta = delta = u - v
-            node.log_stop = -_log1pexp(-delta)
-            node.log_split = -_log1pexp(delta)
+            node.log_stop = -np.logaddexp(0.0, -delta)
+            node.log_split = -np.logaddexp(0.0, delta)
             node.log_w = u - node.log_stop  # = logaddexp(u, v), from the same two contributions
             return node.log_w
 

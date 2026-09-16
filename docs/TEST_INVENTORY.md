@@ -50,3 +50,14 @@ nessuno skip/xfail/xpass. Il confronto col contratto non sostituisce test del fu
 
 Le quattro fixture CTW depositate sono identificate, non eseguite in V0–V1.
 I 17 skip storici restano visibili nella suite completa, mai conteggiati come accettazione.
+
+## Evidenze V0–V1 concluse
+
+- `test_v31_config.py`: deposito, proiezione campo/tipo, YAML duplicati, parametri ritirati, isolamento storico.
+- `test_v31_corpus.py`: T01–T04, coordinate/ordine numerico/parti, maschere/reset/target, A/B diagnostiche e corruzioni semantiche.
+- `test_v31_persistence.py`: integrità dei tre input, snapshot, identità, round-trip, collisioni/concorrenza, interruzione, corruzione e schema del manifest.
+- `test_v31_docs.py`: autorità attiva, digest del deposito e delle dieci copie storiche, assenza di import inferenziali/candidates nella pipeline.
+- `test_v31_enforcement.py` e `test_gate_inventory_anchor.py`: inventario nominale confrontato con la raccolta effettiva, assert eseguiti, rifiuto di skip/xfail/test vuoti e ancore assenti.
+
+Accettazione sul codice V1 `7afdd3a`: **88 passed, zero skip**. Suite completa: **411 passed, 17 skipped storici**.
+Le parti PENDING della tabella restano tali; V0–V1 non promuove T05–T30 integralmente a completati.

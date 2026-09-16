@@ -14,13 +14,13 @@ nessuno skip/xfail/xpass. Il confronto col contratto non sostituisce test del fu
 | T07 | PARZIALE V1 | Ordine sorgente; invarianza comportamentale core PENDING V2 |
 | T08 | PENDING V2 | RNG/campione/shuffle |
 | T09 | PARZIALE V1 | Stream/reset; partizione CTW/BOS PENDING V2 |
-| T10 | PENDING V2 | Enumerazione CTW indipendente |
-| T11 | PENDING V2 | Normalizzazione/parametri/input del core |
-| T12 | PENDING V2 | Identità prequenziale/integrata |
-| T13 | PENDING V2 | Modello congelato |
-| T14 | PENDING V2 | Log-prior e saturazione |
-| T15 | PENDING V2 | 25 sintetici eseguiti sul CTW canonico |
-| T16 | PENDING V2 | Stress storico m106 |
+| T10 | V2 | Enumerazione indipendente degli alberi ammessi contro evidenza, peso di radice e predizione |
+| T11 | V2 | Normalizzazione, supporto raro/ignoto, training vuoto, D=0, m100/105/11, input rigorosi |
+| T12 | V2 | Identità prequenziale/integrata pre-update; invarianza all'ordine degli stream |
+| T13 | V2 | Conteggi/evidenze/pesi/fingerprint invariati dalla valutazione |
+| T14 | V2 | Prior estremo in log, due pesi da δ, saturazione distinta dalle foglie forzate |
+| T15 | V2 | 25 sintetici alle soglie §12.1 sul CTW canonico; violazione → exit non zero |
+| T16 | V2 | Stress storico m106: esecuzione, normalizzazione, supporti, deficit registrato |
 | T17 | PENDING V2 | Multinsiemi, slot e provenienza shuffle |
 | T18 | PENDING V2 | Eterogeneità e dipendenza |
 | T19 | PENDING V2 | Q a quattro termini |
@@ -61,3 +61,12 @@ I 17 skip storici restano visibili nella suite completa, mai conteggiati come ac
 
 Accettazione sul codice V1 `7afdd3a`: **88 passed, zero skip**. Suite completa: **411 passed, 17 skipped storici**.
 Le parti PENDING della tabella restano tali; V0–V1 non promuove T05–T30 integralmente a completati.
+
+## Evidenze V2 — nucleo CTW (T10–T16)
+
+- `test_v31_context_tree.py`: oracolo di enumerazione indipendente, partizione BOS, normalizzazione e
+  input del core, identità prequenziale, modello congelato, numerica dei due pesi, batteria §12.1.
+- Batteria eseguita da `hexis.pipeline.run_tree_validation`: 25 piccoli sintetici tutti entro le soglie
+  della tabella §12.1 (**`iid` m=4 alla soglia 0,02 del piano, non allo 0,03 dello script storico**) e
+  nove casi di stress m106 con deficit registrato, senza criterio di superamento dell'oracle.
+- Suite completa dopo T10–T16: **455 passed, 17 skipped storici**. T05–T09 e T17–T30 restano PENDING.

@@ -1,19 +1,21 @@
-# Handoff HEXIS 3.1 — V3-001 — tranche V0–V1 conclusa
+# Handoff HEXIS 3.1 — V3-001 — tranche V0–V2 conclusa
 
-**V0–V1 completati; V2–V5 non attestati; nessun nuovo fit reale.** Stato verificato il 16 settembre 2026. Ramo locale: `codex/hexis31-v0-v1`.
+**V0–V2 completati; V3–V5 non attestati; nessun nuovo fit reale.** Stato V0–V1 verificato il 16 settembre 2026, stato V2 il 17 settembre 2026. Ramo locale: `codex/hexis31-v0-v1`.
 
 ## Revisioni e autorità
 
 - Base verificata: `852644b6917790877c7b2ca5df2e76b17829d87c`.
 - V0, deposito e migrazione normativa: `e98fb8edde91e821c415e26f33b7bdeb549b50ba`.
 - V1, corpus e persistenza: `7afdd3a4f87341110b0f15a77179febe9075ee9b`.
+- V0+V1, attestazione documentale: `b607cef434ffa8698cb2e4ca0387d2b759a18862`.
+- V2, core e protocollo, quattro milestone chiusi in sequenza: `105c0aae26f4eb9b54267e02ee45f5449e565ac6`, `3119517da223940cc51eabaef096508c33c6ec03`, `e9c8c96e4573fb9585f4250ce38f47d5cc3a2998`, `de8ea5d576c415aa6bc082186b8ce649271a664b`.
 - L'aggiornamento finale di questo handoff è documentale; il manifest identifica il commit produttore sopra, senza autoriferimenti.
 
 Autorità: [specifica attiva](01_MASTER_SPEC.md), [V3-001](02_DECISION_LOG.md) e piano/JSON byte-identificati in `contracts/hexis-3.1/`. Il [record esterno del deposito](V3-001-deposit.json) conserva i digest; nessun byte normativo o atteso è stato aggiornato per far passare i controlli. Verificati 8 digest della consegna, 14 verdetto/evidenze, 33 file del pacchetto storico, 103 dell'archivio interno e le quattro fixture CTW. Le fixture non sono state eseguite come programmi storici.
 
 Le dieci copie v2.1 sono confrontate con gli originali tramite [inventario SHA-256](history/v2.1/SHA256SUMS.json). D01–D54, D55 proposto, ratifiche tecniche G1, proposal e materiali precedenti conservano il loro stato storico. Le fonti/limitazioni delle autorizzazioni pregresse restano in V3-001 e nel §2 del piano; nessun G2 retroattivo.
 
-## Comandi e risultati effettivamente eseguiti
+## Comandi e risultati effettivamente eseguiti (V0–V1)
 
 ```bash
 uv lock --check
@@ -28,7 +30,7 @@ Tutti exit 0. L'interprete `.venv` è l'ambiente Python 3.12 gestito e sincroniz
 
 Le verifiche includono errori localizzati di parsing, input mancanti/extra/alterati e cambiati durante il run, record riordinati e coordinate numeriche, Ateneo XII/XIII, frasi vuote sintetiche, unknown UPOS pubblico, mapping globale e sottotipi, maschere C0/UPOS, inventari esclusivi, denominatori A/B, assert eseguiti e raccolta nominale, round-trip, corruzioni a cardinalità invariata, collisioni e scritture interrotte. Atomicità mediante temporanei nella destinazione e pubblicazione esclusiva con hard link; manifest sostituito atomicamente per ultimo. Questa scelta tecnica impedisce overwrite anche in una collisione fra controllo e pubblicazione.
 
-## Esecuzioni reali e identità
+## Esecuzioni reali e identità (V1)
 
 Identità comune: `a04db5ca9bdfec4e9444fc01745c7210862eaebe5654bb8046b545bfbe154d42`.
 
@@ -54,8 +56,32 @@ Riconteggio esatto: **202.989 token sorgente, 13.919 frasi, 18 prefissi, 17 docu
 
 La provenienza attiva è in [data/provenance_v31.json](../data/provenance_v31.json), fuori da raw. Tre input greci e commit sorgente `37837c7a3c592c9563f8c51cc63344b87247f8a5` verificati. Raw greci/latini, provenienza storica, risultati precedenti e script locale preservati. I derivati reali sono locali/ignorati da Git; nessuna pubblicazione dei dati. `v1-development` conserva una prova tecnica precedente sotto una diversa identità, non è il run consegnato.
 
+## Comandi e risultati effettivamente eseguiti (V2)
+
+```bash
+uv lock --check
+uv run pytest -q
+uv run pytest -m v31 -q
+```
+
+Rieseguiti sul codice `de8ea5d`, tutti exit 0. `uv lock --check`: 23 pacchetti risolti, lock invariato. Suite completa: **543 passed, 17 skipped**, i medesimi scaffold storici di V0–V1. Accettazione attiva: **220 passed, 340 deselected, zero skip**. Il criterio §14 per V2 — «Test esatti/sintetici e controlli pertinenti T01–T23/T26 superati, senza skip» — è soddisfatto: l'[inventario](TEST_INVENTORY.md) porta T05–T23 e T26 a V2, e T01–T04 restano coperti da V1.
+
+I quattro milestone sono stati scritti test-first e revisionati singolarmente: nucleo CTW, numerica dei due pesi e batteria §12.1 congelata (T10–T16); campionamento, identità RNG contro il vettore §12.2 e controllo d'ordine accoppiato (T05–T09, T17, T18); quattro perdite, aggregazioni nelle due pesature, diagnostiche e R1 (T19–T23); persistenza scientifica, manifest `hexis-scientific-manifest-1`, CLI, ripresa e i ritiri §13.2 (T26). Le evidenze per ID sono nell'inventario, non duplicate qui.
+
+## V2 non produce esecuzioni reali
+
+V2 non ha una sezione di esecuzioni reali e identità, e non per omissione: per disegno non esegue campagne e non pubblica artefatti scientifici. `results/hexis31/` contiene ancora soltanto le directory V1 già attestate; nessun manifest scientifico reale esiste. Il piano §14 fissa il confine: «I nuovi fit reali iniziano soltanto nella prova integrata, dopo V0–V2 nel nuovo percorso autorizzato». Il criterio di completamento di V2 è quindi la copertura di test, non un run.
+
+CTW, quattro punteggi, diagnostiche, R1 e persistenza scientifica sono verificati su fixture interamente sintetiche o analitiche: alfabeti giocattolo m=2…5, frasi giocattolo, tre e sette blocchi, tre documenti, due celle e un seme. Le due CLI descrittive esigono `--fixture`, rifiutano la proiezione analitica depositata e registrano `checks.scientific = False`: la campagna giocattolo non è leggibile come risultato.
+
+Un solo contatto col corpus reale resta in V2, ed è di campionamento, non di modello: `tests/test_v31_sampling.py` ricostruisce il corpus V1 dai tre input greci per verificare, su sei celle × sette fold, che nessun documento held-out e nessun `inventory_only` entri nel training e che il ledger sia quello dichiarato. Nessun modello vi è fittato, esattamente come nei test corpus di V1.
+
 ## Obblighi residui
 
-L'[inventario T01–T30](TEST_INVENTORY.md) distingue copertura completa V1 e parti ancora PENDING. V2 deve implementare CTW, sampling/RNG/shuffle, core comportamentalmente indipendente dalle etichette, quattro perdite, diagnostiche, R1 e resume, con fixture esatte e 25 sintetici alle soglie congelate. V3 resta la prova reale tecnica dopo V0–V2: 42 coppie/84 modelli. V4 resta la campagna 490 coppie/980 identità. V5 resta ricostruzione, rigenerazione prefissata, due pesature e cinque figure. Nessuno di questi risultati è anticipato dai conteggi V1.
+L'[inventario T01–T30](TEST_INVENTORY.md) distingue la copertura V0–V2 dalle parti ancora PENDING. V2 è concluso: CTW, sampling/RNG/shuffle, core comportamentalmente indipendente dalle etichette, quattro perdite, diagnostiche, R1 e resume esistono e sono coperti, con le fixture esatte e i 25 sintetici alle soglie congelate. Restano PENDING la parte modellistica di T24 e T29, T25 in V4, T27 e T30 in V5.
+
+V3 resta la prossima tranche e non è aperta da questo handoff: un seme (0) per tutte le sei celle, misure risorse, freeze di codice e ambiente, per **42 coppie / 84 modelli tecnici**, finiti/coerenti, zero probe e schema finale verificato. V4 resta la campagna **490 coppie / 980 identità di modello**. V5 resta report, cinque figure, due pesature, ripresa e rigenerazione prefissata. Nessuno di questi risultati è anticipato dai conteggi V0–V2, che non contengono alcun fit reale.
+
+Il README resta fermo allo stato V0–V1 e ora sottostima l'implementazione: dice che CTW, campionamento/shuffle, score, R1 e report appartengono a «V2–V5, non attestati» e che la ripresa modellistica è rinviata a V2. Il suo riallineamento non è stato fatto qui perché `tests/test_v31_docs.py` pinna la stringa `V2–V5` nel README e il §17.2 vuole nel README soltanto comandi verificati: `run_descriptive` e `run_report` oggi girano solo sotto `--fixture`. Va deciso insieme a V3, quando quei comandi avranno una prova reale.
 
 Riscrittura del proposal e pubblicazione sono attività separate. Il vecchio [handoff v2.1](history/v2.1/HANDOFF.md) è conservato integralmente.

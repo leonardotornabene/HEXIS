@@ -1,7 +1,7 @@
 # Inventario test HEXIS 3.1 — V3-001
 
 Accettazione attiva: marker `v31`; raccolta effettiva obbligatoria, assert eseguiti,
-nessuno skip/xfail/xpass. Il confronto col contratto non sostituisce test del futuro CTW.
+nessuno skip/xfail/xpass. Il confronto col contratto non sostituisce i test del CTW.
 
 | ID | Stato V0–V1 | Copertura / obbligo residuo |
 |---|---|---|
@@ -46,7 +46,7 @@ nessuno skip/xfail/xpass. Il confronto col contratto non sostituisce test del fu
 | test_permutation.py, test_bootstrap_holm.py, test_blocks.py | MANTENUTI utility storiche funzionanti, senza import nella pipeline descrittiva |
 | test_g0_enforcement.py, test_g1_enforcement.py, test_gate_inventory_anchor.py | MANTENUTI controlli storici; medesimo enforcement esteso a v31 |
 | test_docs_consistency.py | MANTENUTO allineamento storia G1 e copie istruzioni |
-| test_context_tree.py, test_tree_slices.py, test_scores.py, test_null_calibration.py | Scaffold storico, escluso dall'accettazione v31. Selettore/slices/inferenza RITIRATI; CTW, quattro score e core label-free da SOSTITUIRE con T09–T23 |
+| test_context_tree.py, test_tree_slices.py, test_scores.py, test_null_calibration.py | Scaffold storico, escluso dall'accettazione v31. Selettore/slices/inferenza RITIRATI; CTW, quattro score e core label-free SOSTITUITI nell'attivo da T09–T23 |
 
 Le quattro fixture CTW depositate sono identificate, non eseguite in V0–V1.
 I 17 skip storici restano visibili nella suite completa, mai conteggiati come accettazione.
@@ -169,3 +169,9 @@ Le parti PENDING della tabella restano tali; V0–V1 non promuove T05–T30 inte
 - Le cinque figure del §11.6 restano fuori da V2: `viz/plots.py` non è toccato e il report non scrive
   alcuna figura (T27/T30 restano PENDING V5).
 - Suite completa dopo T26: **543 passed, 17 skipped storici**.
+
+Accettazione sul codice V2 `de8ea5d`: **220 passed, 340 deselected, zero skip**. Suite completa:
+**543 passed, 17 skipped storici**; `uv lock --check` invariato su 23 pacchetti. I conteggi
+intermedi delle sezioni precedenti sono istantanee prese al termine di ciascun milestone, prima
+dei rispettivi commit di correzione della review; solo i due conteggi di questa riga descrivono
+il codice V2 chiuso. Le parti PENDING V4/V5 della tabella restano tali.

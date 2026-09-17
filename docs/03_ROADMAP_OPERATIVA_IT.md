@@ -6,7 +6,7 @@ Il [contratto depositato](contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-0
 |---|---|---|
 | V0 | Deposito, autorità, configurazione, registro e test | COMPLETATO — e98fb8e |
 | V1 | Corpus, mapping, audit, coordinate e persistenza | COMPLETATO — 7afdd3a |
-| V2 | CTW, RNG/campione/shuffle, quattro perdite, diagnostiche, R1, resume | PENDING |
+| V2 | CTW, RNG/campione/shuffle, quattro perdite, diagnostiche, R1, resume | COMPLETATO — de8ea5d |
 | V3 | Seme 0, sei celle, sette fold: 42 coppie/84 modelli; freeze | PENDING |
 | V4 | 490 coppie/980 modelli; tutte le celle/semi/bracci | PENDING |
 | V5 | Report, cinque figure, due pesi, rigenerazione e completezza | PENDING |

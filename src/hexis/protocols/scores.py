@@ -67,6 +67,10 @@ def score_streams(original, shuffled, *, model_original, model_shuffled,
     if len(original) != len(shuffled):
         raise ValueError(f'{len(original)} original streams against {len(shuffled)} shuffled: '
                          'the two arms come from one sample and must be paired')
+    names = [stream['sent_id'] for stream in original]
+    if len(set(names)) != len(names):
+        raise ValueError('the scored streams repeat a sent_id: every sentence or fragment is one '
+                         'stream, and its diagnostics must not be silently merged')
     depth = model_original.params.depth
     if depth != model_shuffled.params.depth:
         raise ValueError(f'the two arms carry different depths ({depth} and '
@@ -129,8 +133,9 @@ def aggregate(positions, keys=()) -> pd.DataFrame:
 def roll_up(sums, keys=()) -> pd.DataFrame:
     """§11.5: a total is the sum of the disjoint band rows, not a third population."""
     columns = [column for column in SUM_COLUMNS if column in sums.columns]
+    counts = {column: 'int64' for column in COUNT_COLUMNS if column in columns}
     if not keys:
-        return sums[columns].sum().to_frame().T.astype({column: 'int64' for column in COUNT_COLUMNS})
+        return sums[columns].sum().to_frame().T.astype(counts)
     return sums.groupby(list(keys), sort=True, as_index=False)[columns].sum()
 
 

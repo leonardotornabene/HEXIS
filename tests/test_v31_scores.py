@@ -150,6 +150,9 @@ def test_slots_are_paired_one_to_one_and_a_mismatch_is_refused():
     with pytest.raises(ValueError, match='0 eligible|no eligible'):
         scores.score_streams([stream('short@1', [0, 1, 2])], [stream('short@1', [2, 1, 0], origin=[2, 1, 0])],
                              model_original=original, model_shuffled=shuffled)
+    with pytest.raises(ValueError, match='sent_id'):  # never merge two streams into one record
+        scores.score_streams(test + test[:1], test_shuffled + test_shuffled[:1],
+                             model_original=original, model_shuffled=shuffled)
 
 
 # --- T18 residual: no universal G_R = 0 ---------------------------------------

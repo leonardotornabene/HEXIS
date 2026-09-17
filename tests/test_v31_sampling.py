@@ -341,6 +341,14 @@ def test_streams_survive_the_parquet_round_trip_of_the_corpus_artifact(tmp_path)
     assert not isinstance(restored['symbols'].iloc[0], list)
     assert sampling.sample_fold(restored, variant='ud23', blocks=FIXTURE_BLOCKS, held_block='held',
                                 q=FIXTURE['q'], seed=0).to_csv(index=False) == fixture_fold().to_csv(index=False)
+    # a categorical sorts by its category order, which the file's dictionary does
+    # not have to agree with: the universe must follow the values regardless
+    pool = pd.concat([frame([5, 8], doc='a'), frame([4, 7], doc='b', first_slot=13)], ignore_index=True)
+    blocks = {'ab': ['a', 'b'], 'held': ['held']}
+    reversed_categories = pool.astype({'doc_id': pd.CategoricalDtype(['b', 'a']), 'sent_id': 'category'})
+    assert list(reversed_categories['doc_id'].cat.categories) == ['b', 'a']
+    assert fixture_fold(sequences=reversed_categories, blocks=blocks, q=12).to_csv(index=False) == \
+        fixture_fold(sequences=pool, blocks=blocks, q=12).to_csv(index=False)
     streams = sampling.sample_streams(fixture_fold(), restored, 'ud23')
     assert streams == sampling.sample_streams(fixture_fold(), FIXTURE_FRAME, 'ud23')
     assert [item['symbols'] for item in streams] == [[10, 11, 12, 13, 14], [50, 51, 52, 53, 54, 55, 56],

@@ -50,6 +50,18 @@ def _rng(seed: int) -> np.random.Generator:
     return np.random.Generator(np.random.PCG64(seed))
 
 
+def _canonical(sentences) -> pd.DataFrame:
+    """§5.2 step 1, sorted on the values of the key, not on a dtype artefact.
+
+    `doc_id` and `sent_id` come back from a parquet round trip as categoricals,
+    and a categorical sorts by its category order — which the dictionary of the
+    file does not guarantee to be the lexicographic one. Getting this wrong
+    would reorder the permutation universe and silently change every sample.
+    """
+    keys = sentences[list(SENTENCE_KEY)].astype({'doc_id': str, 'sent_id': str}).reset_index(drop=True)
+    return sentences.iloc[keys.sort_values(list(SENTENCE_KEY)).index]
+
+
 def block_key(docs) -> str:
     """SHA-256 of the canonical JSON of the sorted member list (§5.3).
 
@@ -103,7 +115,7 @@ def sample_block(sentences, q, *, seed, held, block) -> list:
     """
     if isinstance(q, bool) or not isinstance(q, (int, np.integer)) or q < 1:
         raise ValueError(f'q={q}: the token budget must be a positive integer')
-    rows = sentences.sort_values(list(SENTENCE_KEY))
+    rows = _canonical(sentences)
     lengths = [int(value) for value in rows['encoded_length']]
     if sum(lengths) < q:
         raise ValueError(f'block {block}: q={q} exceeds the {sum(lengths)} encoded tokens '
@@ -194,8 +206,8 @@ def evaluation_streams(sequences, *, variant, docs, block) -> list:
     Test sentences are never subsampled, so the interval is 0/length — the one
     `shuffle_eval` derives from (§5.3).
     """
-    frame = sequences[sequences['variant'].eq(variant) & sequences['role'].eq('primary')
-                      & sequences['doc_id'].isin(list(docs))].sort_values(list(SENTENCE_KEY))
+    frame = _canonical(sequences[sequences['variant'].eq(variant) & sequences['role'].eq('primary')
+                                 & sequences['doc_id'].isin(list(docs))])
     return [{'sent_id': str(row.sent_id), 'block_key': _key(block, 'block'), 'start': 0,
              'end': int(row.encoded_length), 'symbols': [int(symbol) for symbol in row.symbols],
              'slot_uids': [int(slot) for slot in row.slot_uids]}

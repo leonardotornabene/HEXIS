@@ -2,7 +2,7 @@
 
 Studio descrittivo dell'ordine entro frase delle annotazioni morfosintattiche nel corpus finito greco UD Perseus r2.18. La decisione [V3-001](docs/02_DECISION_LOG.md) adotta il [contratto completo](docs/01_MASTER_SPEC.md).
 
-V0–V1 completati e verificati: deposito normativo, configurazione rigorosa, audit e codifica reali. I nove artefatti sono stati riprodotti identici byte per byte in due directory distinte. CTW, campionamento/shuffle, score, R1 e report della campagna appartengono a **V2–V5**, non attestati. Nessun risultato finale e nessun nuovo fit reale in questa tranche.
+V0–V1 completati e verificati: deposito normativo, configurazione rigorosa, audit e codifica reali. I nove artefatti sono stati riprodotti identici byte per byte in due directory distinte. V2 completato e attestato su fixture sintetiche/analitiche: CTW, campionamento/shuffle, punteggi, diagnostiche, R1 e persistenza scientifica. Fit reali, campagna, report e figure appartengono a **V3–V5**, non attestati. Nessun risultato finale e nessun nuovo fit reale in questa tranche.
 
 Comandi operativi, dalla radice della repository (la destinazione iniziale deve essere nuova):
 
@@ -13,7 +13,7 @@ uv run python -m hexis.pipeline.run_encode --config config/default.yaml --data-r
 
 `run_encode` può anche creare direttamente un nuovo run, includendo l'audit. Un secondo avvio dello stesso stadio è rifiutato; la ripresa modellistica è rinviata a V2. Un solo manifest registra gli stadi e distingue `corpus_complete` da `scientific_complete`.
 
-Python 3.12 via uv, dipendenze e lock conservati. `uv run pytest -m v31` seleziona l'accettazione attiva; `uv run pytest` comprende anche la suite storica e i suoi scaffold esplicitamente pendenti. Risultati verificati: **88 test attivi senza skip; 411 passed e 17 skip storici nella suite completa**. Gli skip storici non attestano il nuovo software. [Inventario test](docs/TEST_INVENTORY.md), [roadmap](docs/03_ROADMAP_OPERATIVA_IT.md), [handoff](docs/HANDOFF.md).
+Python 3.12 via uv, dipendenze e lock conservati. `uv run pytest -m v31` seleziona l'accettazione attiva; `uv run pytest` comprende anche la suite storica e i suoi scaffold esplicitamente pendenti. Risultati verificati: **220 test attivi senza skip; 543 passed e 17 skip storici nella suite completa**. Gli skip storici non attestano il nuovo software. [Inventario test](docs/TEST_INVENTORY.md), [roadmap](docs/03_ROADMAP_OPERATIVA_IT.md), [handoff](docs/HANDOFF.md).
 
 Il corpus include 17 documenti censiti: 11 primari in sette blocchi, sei solo inventario. Alfabeto accorpato ADV/PART, varianti 100/105/11. Target con almeno quattro predecessori nella frase; regimi sorgente separati dal gruppo del report.
 

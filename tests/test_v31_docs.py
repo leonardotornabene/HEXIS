@@ -17,7 +17,10 @@ def test_active_authority_and_instructions_are_aligned():
         assert 'V3-001' in text, name
         assert '3.1' in text, name
     assert (ROOT/'AGENTS.md').read_bytes() == (ROOT/'CLAUDE.md').read_bytes()
-    assert 'V2–V5' in (ROOT/'README.md').read_text()
+    readme = (ROOT/'README.md').read_text()
+    assert '**V3–V5**, non attestati' in readme
+    assert 'V2–V5' not in readme
+    assert 'V2 completato e attestato' in readme
 
 
 def test_history_and_deposit_are_byte_preserved():

@@ -421,6 +421,27 @@ def test_arm_diagnostics_keep_the_document_dimension_the_loss_sums_carry(tmp_pat
     assert (merged['n'] == merged['n_document']).all()
 
 
+def test_report_refuses_a_document_silently_dropped_from_document_scores(tmp_path):
+    # §14.2 step 3 names a document/band key family beside pair/model. Without checking it,
+    # a document contributing zero eligible slots (every sentence shorter than
+    # min_available_past=4) is silently missing from document_scores.csv — scores.aggregate
+    # keeps only the doc_ids present in the scored positions — while arm_diagnostics.csv still
+    # carries it at n=0, because score_streams pre-seeds a total for every evaluated sent_id
+    # before it ever walks an eligible position. Nothing else cross-checks the two tables.
+    blocks = {'ALPHA': (['a', 'short'], 'HEX'), 'BETA': (['b'], 'PROSE_ALL')}
+    lengths = {**LENGTHS, 'short': [3, 3]}  # both sentences shorter than min_available_past
+    config, corpus, output = campaign(tmp_path, blocks=blocks, lengths=lengths)
+    describe(config, corpus, output, '--cell', 'all')
+    with pytest.raises(ValueError, match='document_band') as exc:
+        report(config, corpus, output)
+    assert 'short' in str(exc.value) and 'document_scores.csv' in str(exc.value)
+    # expected_keys() itself: both bands, str doc_id, one entry per (cell, seed, doc).
+    expected = run_report.expected_keys(yaml.safe_load(config.read_text()))['document_band']
+    key = sampling.block_key(['a', 'short'])
+    assert {('C0', key, 0, 'short', '4_7'), ('C0', key, 0, 'short', 'ge8'),
+           ('tiny', key, 0, 'short', '4_7'), ('tiny', key, 0, 'short', 'ge8')} <= set(expected)
+
+
 def test_report_refuses_an_incomplete_campaign_and_any_inventory_only_score(tmp_path):
     config, corpus, output = campaign(tmp_path)
     describe(config, corpus, output, '--cell', 'C0')

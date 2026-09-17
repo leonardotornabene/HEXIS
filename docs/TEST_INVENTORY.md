@@ -168,4 +168,4 @@ Le parti PENDING della tabella restano tali; V0–V1 non promuove T05–T30 inte
   errore esplicito; `model/lexicon.py` e `blocks.py` non sono importati dal percorso descrittivo.
 - Le cinque figure del §11.6 restano fuori da V2: `viz/plots.py` non è toccato e il report non scrive
   alcuna figura (T27/T30 restano PENDING V5).
-- Suite completa dopo T26: **541 passed, 17 skipped storici**.
+- Suite completa dopo T26: **543 passed, 17 skipped storici**.

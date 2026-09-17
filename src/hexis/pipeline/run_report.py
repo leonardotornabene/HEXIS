@@ -71,29 +71,61 @@ def check_evidence(evidence, contract):
 
 
 def expected_keys(cfg) -> dict:
-    """Step 3: the keys the contract asks for, generated from the contract itself."""
+    """Step 3: the keys the contract asks for, generated from the contract itself.
+
+    `document_band` covers both bands of every primary document of the evaluated
+    (held-out) block, for every seed of every cell — the family §14.2 step 3 names
+    beside the 490 pair-keys/980 model-keys ones, with expected cardinalities
+    `paired_document_band_rows_C0`/`..._sensitivities` in `report_contract_v3.1.json`.
+    """
     blocks = scientific_run.block_keys_of(cfg)
-    pair, model = [], []
+    members = scientific_run.blocks_of(cfg)
+    pair, model, document_band = [], [], []
     for cell in cfg['cells']:
         for name in sorted(blocks):
             for seed in cell['seeds']:
                 key = (cell['id'], blocks[name], int(seed))
                 pair.append(key)
                 model.extend((*key, arm) for arm in cell['arms'])
-    return {'pair': pair, 'model': model}
+                document_band.extend((*key, str(doc), band) for doc in members[name]
+                                     for band in scores.BANDS)
+    return {'pair': pair, 'model': model, 'document_band': document_band}
 
 
-def check_keys(cfg, produced):
-    """Step 3: set equality against the contract, duplicates detected before the sets."""
+def check_keys(cfg, produced=None, *, docs=None, arm=None):
+    """Step 3: set equality against the contract, duplicates detected before the sets.
+
+    `produced` is the manifest's own pair/model key lists, checked as soon as they
+    are read. `docs`/`arm` are the document_scores.csv/arm_diagnostics.csv frames:
+    they exist only once the partitions are aggregated, so the document/band
+    family is checked in a second call once those two frames are built.
+    `scores.aggregate` keeps only the documents actually present in the scored
+    positions, while `score_streams` pre-seeds a total for every evaluated
+    `sent_id` before it ever walks an eligible position — a document contributing
+    zero eligible slots silently vanishes from the first table and not the
+    second, and nothing else cross-checks them (§14.2 step 3).
+    """
     expected = expected_keys(cfg)
-    published = scientific_run.key_sets(produced)
-    for kind in ('pair', 'model'):
-        missing = sorted(set(expected[kind]) - published[kind])
-        unexpected = sorted(published[kind] - set(expected[kind]))
-        if missing or unexpected:
-            raise ValueError(f'{kind} key set differs from the contract: missing {missing[:4]}, '
-                             f'unexpected {unexpected[:4]} ({len(missing)} and {len(unexpected)} '
-                             'in total)')
+    if produced is not None:
+        published = scientific_run.key_sets(produced)
+        for kind in ('pair', 'model'):
+            missing = sorted(set(expected[kind]) - published[kind])
+            unexpected = sorted(published[kind] - set(expected[kind]))
+            if missing or unexpected:
+                raise ValueError(f'{kind} key set differs from the contract: missing {missing[:4]}, '
+                                 f'unexpected {unexpected[:4]} ({len(missing)} and {len(unexpected)} '
+                                 'in total)')
+    if docs is not None:
+        band = set(expected['document_band'])
+        for name, frame in (('document_scores.csv', docs), ('arm_diagnostics.csv', arm)):
+            present = {(row.cell, row.held_block_key, int(row.seed), str(row.doc_id), row.past_band)
+                      for row in frame.itertuples()}
+            missing = sorted(band - present)
+            unexpected = sorted(present - band)
+            if missing or unexpected:
+                raise ValueError(f'document_band key set differs from the contract in {name}: '
+                                 f'missing {missing[:4]}, unexpected {unexpected[:4]} '
+                                 f'({len(missing)} and {len(unexpected)} in total)')
 
 
 def read_partitions(output, manifest) -> list:
@@ -357,6 +389,8 @@ def main(argv=None):
     steps.append(4)
     docs = document_scores(records)
     check_roles(docs, frames['documents.csv'])
+    arm = arm_diagnostics(records)
+    check_keys(cfg, docs=docs, arm=arm)
     tables = r1_tables(cfg, coordinates)
     steps.append(5)
     for record in positional:
@@ -374,7 +408,7 @@ def main(argv=None):
                    'contrasts.csv': contrasts, 'seed_summaries.csv': seed_summaries(contrasts),
                    'sensitivity_pairs.csv': sensitivity_pairs(contrasts),
                    'model_diagnostics.csv': model_diagnostics(records),
-                   'arm_diagnostics.csv': arm_diagnostics(records)})
+                   'arm_diagnostics.csv': arm})
     steps.append(6)
     if sorted(tables) != sorted(TABLES):
         raise ValueError(f'report: {sorted(set(tables) ^ set(TABLES))} is not a declared table')

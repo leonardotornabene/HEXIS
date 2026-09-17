@@ -30,7 +30,7 @@ nessuno skip/xfail/xpass. Il confronto col contratto non sostituisce test del fu
 | T23 | V2 | R1 |
 | T24 | PARZIALE V1 | Censimento dei sei inventory_only; assenza training/scoring finale PENDING V5 |
 | T25 | PENDING V4 | Uguaglianza 490/980 chiavi modello/coppia |
-| T26 | PARZIALE V1 | Atomicità/corruzione corpus; resume modellistico PENDING V2 |
+| T26 | V2 | Atomicità/interruzione, resume, corruzione, duplicati e chiavi extra: corpus (V1) e stage scientifico (V2) |
 | T27 | PENDING V5 | Ricostruzione score/diagnostiche e figure |
 | T28 | V0–V1 | Pipeline senza candidates/inferenza; accettazione senza skip |
 | T29 | PARZIALE V1 | Identità/round-trip corpus; CE/riproduzione modelli PENDING V5 |
@@ -132,3 +132,40 @@ Le parti PENDING della tabella restano tali; V0–V1 non promuove T05–T30 inte
   **una sola JSD dei centroidi**, numericamente distinta dalla media delle JSD di coppia
   (0,19507 contro 0,19689 sulla fixture).
 - Suite completa dopo T23: **501 passed, 17 skipped storici**.
+
+## Evidenze V2 — persistenza scientifica, manifest e ripresa (T26)
+
+- `test_v31_descriptive.py`: campagna giocattolo (tre documenti, alfabeto m=5, due blocchi, due celle,
+  un seme) pubblicata in un corpus V1 temporaneo e guidata dalle vere CLI. **Nessun fit sul corpus
+  greco**: il freeze dei fit reali fino a V3 vale anche qui, e il file resta eseguibile senza `data/raw`.
+- Il contratto giocattolo **non è** la proiezione analitica depositata: entrambe le CLI esigono
+  `--fixture` e lo rifiutano sulla configurazione depositata, e il report registra
+  `checks.scientific = False`. La campagna sintetica non è leggibile come risultato.
+- Manifest `hexis-scientific-manifest-1` distinto da `hexis-corpus-manifest-1`: `corpus_run` resta
+  chiuso e ne sono importate senza modifiche solo le utility agnostiche al formato
+  (`write_artifact`, `artifact_record`, `_read_json`, `check_destination`, `_code_identity`).
+- Atomicità: scrittura in temporaneo dentro la destinazione, round-trip di ogni artefatto, hard-link
+  dei soli file nuovi, `os.replace` del manifest **per ultimo**, rollback su eccezione. Un'eccezione a
+  metà scrittura lascia i byte del manifest precedente intatti; un hard-link orfano sopravvissuto a un
+  kill rende il run invalido e blocca la ripresa finché non è rimosso.
+- Ripresa: una partizione si riusa solo con identità, byte/hash, schema, cardinalità e chiavi
+  coincidenti. Rifiutate una configurazione cambiata (`run_contract.configuration`), un corpus cambiato
+  (`run_contract.alphabets`) e un'identità del codice cambiata (`run_contract.code`); una ripresa senza
+  lavoro residuo è un no-op, non una seconda pubblicazione; lo stage `report` chiude il run.
+- Corruzione e chiavi: cinque guasti sugli artefatti (byte riscritti, parquet troncato, file assente,
+  cardinalità falsificata nel manifest, `run_id` falsificato) e otto sul manifest (chiave JSON
+  duplicata, valore non finito, campo ignoto, campo mancante, chiave modello duplicata, chiave modello
+  extra, artefatto extra sul disco, stage ignoto) sono tutti rilevati, e nessuno di essi è riusabile
+  con `--resume`.
+- Determinismo: la stessa campagna in due destinazioni produce artefatti **byte per byte identici** e
+  manifest uguali in tutto tranne `metadata` — timestamp, macchina, percorsi e risorse sono metadati
+  esterni, fuori da `run_id` e dai semi (§11.3).
+- Validatore del report (§14.2): i sei passi sono eseguiti in ordine e registrati in `checks.steps`;
+  una campagna incompleta, uno scoring `inventory_only`, un'evidenza registrata sotto altro codice/lock
+  e una seconda emissione sono rifiutati prima di scrivere qualunque tabella.
+- Ritiri §13.2 verificati come comportamento: `run_confirmatory`, `run_null_calibration`,
+  `run_reference`, `run_latin` e `run_sensitivity` dichiarano il ritiro nella docstring ed escono con
+  errore esplicito; `model/lexicon.py` e `blocks.py` non sono importati dal percorso descrittivo.
+- Le cinque figure del §11.6 restano fuori da V2: `viz/plots.py` non è toccato e il report non scrive
+  alcuna figura (T27/T30 restano PENDING V5).
+- Suite completa dopo T26: **541 passed, 17 skipped storici**.

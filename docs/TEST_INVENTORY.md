@@ -27,7 +27,7 @@ nessuno skip/xfail/xpass. Il confronto col contratto non sostituisce test del fu
 | T20 | V2 | Aggregazioni/due pesi |
 | T21 | V2 | Sensibilità accoppiate |
 | T22 | V2 | Masse/supporti/L_resolved |
-| T23 | PENDING V2 | R1 |
+| T23 | V2 | R1 |
 | T24 | PARZIALE V1 | Censimento dei sei inventory_only; assenza training/scoring finale PENDING V5 |
 | T25 | PENDING V4 | Uguaglianza 490/980 chiavi modello/coppia |
 | T26 | PARZIALE V1 | Atomicità/corruzione corpus; resume modellistico PENDING V2 |
@@ -117,3 +117,18 @@ Le parti PENDING della tabella restano tali; V0–V1 non promuove T05–T30 inte
   ritirato ma non rimosso (§11.1 ne conserva nome e confine label-free); il confine attivo 3.1 è
   `score_streams` (senza etichette) più `contrasts` (unica fase che legge il gruppo).
 - Suite completa dopo T18–T22: **498 passed, 17 skipped storici**.
+
+## Evidenze V2 — R1 (T23)
+
+- `test_v31_r1.py`: fixture proprie (sette blocchi giocattolo, m=5), indipendenti dal resto di V2 —
+  R1 non usa CTW, campione né semi (§8.3).
+- Simmetria, diagonale zero, range [0,1] bit con il limite superiore **raggiunto esattamente** su
+  distribuzioni disgiunte (`0 log 0 = 0` senza NaN), zero esatto su distribuzioni coincidenti e somma
+  dei contributi per simbolo uguale alla JSD entro 1e-15.
+- `block_counts` conta **tutti** i token trattenuti della variante, anche i primi quattro slot non
+  eleggibili; `r_b=(n+0,5)/(N+0,5m)` confrontato elemento per elemento, con massa positiva anche per
+  un simbolo mai osservato nel blocco.
+- Matrice 7×7 e 21 coppie coerenti fra loro; centroidi come media uniforme dei blocchi del gruppo e
+  **una sola JSD dei centroidi**, numericamente distinta dalla media delle JSD di coppia
+  (0,19507 contro 0,19689 sulla fixture).
+- Suite completa dopo T23: **501 passed, 17 skipped storici**.

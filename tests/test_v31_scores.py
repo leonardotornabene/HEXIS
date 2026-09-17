@@ -155,6 +155,32 @@ def test_slots_are_paired_one_to_one_and_a_mismatch_is_refused():
                              model_original=original, model_shuffled=shuffled)
 
 
+def test_score_streams_refuses_an_alphabet_size_mismatch():
+    """A smaller-alphabet arm paired with a larger one would misindex CE_0/CE_CTW silently."""
+    small = model([[0, 1, 0, 1, 0, 1]], m=2, depth=4)
+    large = model([[0, 1, 2, 3, 0, 1, 2, 3]], m=4, depth=4)
+    original = stream('fixture@1', [0, 1, 0, 1, 0, 1])
+    shuffled = stream('fixture@1', [1, 0, 1, 0, 1, 0], origin=[1, 0, 3, 2, 5, 4])
+    with pytest.raises(ValueError) as excinfo:
+        scores.score_streams([original], [shuffled], model_original=small, model_shuffled=large)
+    assert 'alphabet' in str(excinfo.value)
+
+
+def test_score_streams_refuses_a_negative_min_available_past():
+    """Mirrors CTW.evaluate's own guard on the identical parameter (context_tree.py)."""
+    trained = model([[0, 1, 0, 1, 0, 1]], m=2, depth=4)
+    original = stream('fixture@1', [0, 1, 0, 1, 0, 1])
+    shuffled = stream('fixture@1', [1, 0, 1, 0, 1, 0], origin=[1, 0, 3, 2, 5, 4])
+    with pytest.raises(ValueError) as excinfo:
+        scores.score_streams([original], [shuffled], model_original=trained, model_shuffled=trained,
+                             min_available_past=-1)
+    assert 'min_available_past' in str(excinfo.value)
+    with pytest.raises(ValueError) as excinfo:
+        scores.score_streams([original], [shuffled], model_original=trained, model_shuffled=trained,
+                             min_available_past=2.5)
+    assert 'min_available_past' in str(excinfo.value)
+
+
 # --- T18 residual: no universal G_R = 0 ---------------------------------------
 
 def test_shuffled_gain_is_not_automatically_zero_on_a_heterogeneous_pool():
@@ -208,6 +234,27 @@ def test_losses_sum_through_documents_blocks_and_groups():
     assert bands.loc[('HEX', '4_7'), 'n'] + bands.loc[('HEX', 'ge8'), 'n'] == blocks.loc['HEX', 'n']
     assert (bands.loc[('HEX', '4_7'), 'sum_loss_ctw_original']
             + bands.loc[('HEX', 'ge8'), 'sum_loss_ctw_original']) == pytest.approx(13.0)
+
+
+def test_roll_up_casts_count_columns_to_int64_in_both_branches():
+    """§11.5: the keyless total and the keyed groupby must agree on dtype, not
+    just value, even when handed a sums frame whose counts are not already
+    int64 (e.g. one that did not pass through `aggregate`)."""
+    sums = pd.DataFrame({
+        'block': ['H', 'H', 'P'],
+        'n': pd.array([4.0, 5.0, 3.0], dtype='float64'),
+        'changed_symbol_eligible_slot_count': pd.array([1.0, 2.0, 0.0], dtype='float64'),
+        'eligible_slot_count': pd.array([4.0, 5.0, 3.0], dtype='float64'),
+        'sum_loss_ctw_original': [3.0, 1.0, 2.0], 'sum_loss_root_original': [5.0, 5.0, 4.0],
+        'sum_loss_ctw_shuffled': [4.0, 2.0, 3.0], 'sum_loss_root_shuffled': [5.0, 5.0, 4.0]})
+
+    totaled = scores.roll_up(sums)
+    for column in scores.COUNT_COLUMNS:
+        assert totaled[column].dtype == np.int64, column
+
+    by_block = scores.roll_up(sums, ('block',))
+    for column in scores.COUNT_COLUMNS:
+        assert by_block[column].dtype == np.int64, column
 
 
 def test_both_weightings_report_four_components_and_agree_on_d_q():

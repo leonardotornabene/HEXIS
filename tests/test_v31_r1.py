@@ -99,6 +99,18 @@ def test_smoothed_counts_of_the_seven_blocks_and_their_matrix():
         r1.block_counts(coordinates(), BLOCKS | {'GHOST': ['nowhere']}, variant='toy', m=M)
 
 
+def test_matrix_orders_blocks_alphabetically_like_pairs_regardless_of_insertion_order():
+    """§8.3: the 7x7 matrix and the 21-pair list must agree on block order by construction."""
+    blocks = distributions()
+    insertion_order = list(reversed(blocks))
+    assert insertion_order != sorted(blocks)  # the fixture is deliberately not alphabetical
+
+    reordered = {name: blocks[name] for name in insertion_order}
+    matrix = r1.matrix(reordered)
+    assert list(matrix.index) == sorted(blocks)
+    assert list(matrix.columns) == sorted(blocks)
+
+
 def test_group_centroids_are_not_the_mean_of_the_pairwise_divergences():
     """§8.3: uniform block means first, then one JSD of the two centroids."""
     blocks = distributions()

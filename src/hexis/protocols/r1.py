@@ -58,7 +58,7 @@ def jsd(p, q) -> float:
 
 def matrix(distributions) -> pd.DataFrame:
     """The block matrix of one variant: symmetric, zero on the diagonal (§8.3)."""
-    names = list(distributions)
+    names = sorted(distributions)
     values = np.zeros((len(names), len(names)), dtype='float64')
     for left, right in itertools.combinations(range(len(names)), 2):
         values[left, right] = values[right, left] = jsd(distributions[names[left]],

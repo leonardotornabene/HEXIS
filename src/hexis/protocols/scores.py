@@ -64,6 +64,9 @@ def score_streams(original, shuffled, *, model_original, model_shuffled,
     §11.4 fields, and one row per (sent_id, band, arm) with the §9.3 record —
     both bands always, so an empty one is a zero row and never an absence.
     """
+    is_int = isinstance(min_available_past, (int, np.integer)) and not isinstance(min_available_past, bool)
+    if not is_int or min_available_past < 0:
+        raise ValueError(f'min_available_past={min_available_past!r}: must be an int >= 0')
     if len(original) != len(shuffled):
         raise ValueError(f'{len(original)} original streams against {len(shuffled)} shuffled: '
                          'the two arms come from one sample and must be paired')
@@ -75,6 +78,10 @@ def score_streams(original, shuffled, *, model_original, model_shuffled,
     if depth != model_shuffled.params.depth:
         raise ValueError(f'the two arms carry different depths ({depth} and '
                          f'{model_shuffled.params.depth}): one cell fits both')
+    m = model_original.params.m
+    if m != model_shuffled.params.m:
+        raise ValueError(f'the two arms carry different alphabet sizes ({m} and '
+                         f'{model_shuffled.params.m}): one cell fits both')
     models = {'original': model_original, 'shuffled': model_shuffled}
     roots = {arm: model.root_distribution() for arm, model in models.items()}
     observed = {arm: set(model.inspect(())['counts']) for arm, model in models.items()}
@@ -136,7 +143,7 @@ def roll_up(sums, keys=()) -> pd.DataFrame:
     counts = {column: 'int64' for column in COUNT_COLUMNS if column in columns}
     if not keys:
         return sums[columns].sum().to_frame().T.astype(counts)
-    return sums.groupby(list(keys), sort=True, as_index=False)[columns].sum()
+    return sums.groupby(list(keys), sort=True, as_index=False)[columns].sum().astype(counts)
 
 
 def ce_gain_q(sums) -> pd.DataFrame:

@@ -383,17 +383,34 @@ def test_each_sentence_or_fragment_is_one_reset_stream_without_separators(fold, 
         sampling.sample_streams(fixture_fold(), FIXTURE_FRAME.iloc[:4], 'ud23')
 
 
+def test_sample_streams_refuses_a_ledger_cut_from_a_shorter_variant():
+    """A ledger carries no `variant` field by design (`upos_only` legitimately reuses C0's ledger
+    byte for byte, §5.2). The overrun check alone cannot catch a `ud23` ledger silently applied to
+    `ud23_oth`, whose sentences are never shorter (`oth` keeps every relation instead of dropping
+    the unlisted ones): a non-fragment row must span the whole encoded sentence, not a shorter
+    prefix of a longer one."""
+    ledger = pd.DataFrame([{'block': 'fixture', 'block_key': FIXTURE_KEY, 'held': HELD_KEY, 'seed': 0,
+                            'sent_id': 'fixture@1', 'doc_id': 'fixture', 'part_order': 0, 'source_ordinal': 1,
+                            'start': 0, 'end': 5, 'fragment': False, 'sample_subseed': '0', 'fragment_subseed': ''}],
+                          columns=list(sampling.LEDGER_COLUMNS))
+    ud23 = frame([5])  # fixture@1: 5 encoded symbols in ud23, the row this ledger was cut from
+    oth = ud23.assign(variant='ud23_oth', encoded_length=7, symbols=[list(range(7))],
+                      slot_uids=[list(range(7))])  # ud23_oth keeps 2 more tokens for this sentence
+    with pytest.raises(ValueError, match='fixture@1'):
+        sampling.sample_streams(ledger, oth, 'ud23_oth')
+    # the legitimate reuse — identical lengths, e.g. a C0 ledger against upos_only — still works
+    same = ud23.assign(variant='upos_only')
+    streams = sampling.sample_streams(ledger, same, 'upos_only')
+    assert streams[0]['symbols'] == ud23.loc[0, 'symbols']
+
+
 # --- T17: what the shuffle preserves ------------------------------------------
 
-def test_shuffle_preserves_length_multiset_mask_and_root_counts(arms, corpus):
+def test_shuffle_preserves_length_multiset_mask_and_root_counts(arms):
     original, shuffled = arms
-    names = corpus['alphabets.json']['ud23']['symbols']
     for before, after in zip(original, shuffled):
-        assert len(after['symbols']) == len(before['symbols'])
+        assert len(after['symbols']) == len(before['symbols'])  # length fixes the mask too: same eligible count
         assert Counter(after['symbols']) == Counter(before['symbols'])
-        assert max(0, len(after['symbols']) - 4) == max(0, len(before['symbols']) - 4)  # same mask
-        # the whole composite moves: no UPOS/DEPREL recombination can appear
-        assert {names[symbol] for symbol in after['symbols']} <= {names[symbol] for symbol in before['symbols']}
     assert Counter(chain.from_iterable(item['symbols'] for item in shuffled)) == \
         Counter(chain.from_iterable(item['symbols'] for item in original))  # identical root counts
     assert [item['symbols'] for item in shuffled] != [item['symbols'] for item in original]
@@ -410,6 +427,24 @@ def test_slot_identity_is_distinct_from_the_provenance_of_the_moved_token(arms):
         moved += sum(1 for slot, source in zip(after['slot_uids'], after['source_slot_uids']) if slot != source)
     assert moved > 0
     assert all('source_slot_uids' not in item for item in original)  # the original arm is untouched
+
+
+def test_shuffle_records_the_symbol_change_rate_with_an_explicit_denominator():
+    """§7: "Registrare quota di slot con simbolo diverso, con denominatore esplicito; le frasi
+    costanti possono restare identiche." Both small cases are hand-verifiable without knowing the
+    drawn permutation: a constant stream can only ever come back identical, and with a single odd
+    symbol among constants, only that symbol's own slot and the slot it lands on can ever change."""
+    constant = stream([5, 5, 5, 5])
+    after = sampling.shuffle_streams([constant], seed=0, held=HELD_KEY, purpose='shuffle_train')[0]
+    assert after['symbols'] == constant['symbols']  # permuting equal values changes no slot
+    assert (after['changed_count'], after['total_count']) == (0, 4)
+
+    one_odd = stream([0, 0, 0, 1], sid='x@2')
+    after = sampling.shuffle_streams([one_odd], seed=0, held=HELD_KEY, purpose='shuffle_train')[0]
+    assert after['total_count'] == 4
+    assert after['changed_count'] == sum(1 for before, moved in zip(one_odd['symbols'], after['symbols'])
+                                         if before != moved)  # independently recomputed from the two arrays
+    assert after['changed_count'] in (0, 2)  # the lone 1 either lands back home, or swaps with one 0
 
 
 # --- T18: the control is not innocuous ----------------------------------------

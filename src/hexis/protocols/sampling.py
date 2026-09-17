@@ -180,7 +180,12 @@ def sample_streams(ledger, sequences, variant) -> list:
 
     Streams are never concatenated and there is no separator outcome: the
     excluded part of a cut sentence supplies no history (§6.2). Materialising a
-    ledger against sentences it was not cut from is refused, not truncated.
+    ledger against sentences it was not cut from is refused, not truncated —
+    including a ledger cut from a shorter variant (the ledger carries no
+    `variant` field by design, §5.2, so an overrun check alone cannot catch a
+    `ud23` ledger silently applied to `ud23_oth`, whose sentences are never
+    shorter: a non-fragment row must span the whole encoded sentence, not a
+    truncated prefix of a longer one).
     """
     frame = sequences[sequences['variant'].eq(variant)]
     symbols = dict(zip(frame['sent_id'], frame['symbols']))
@@ -193,6 +198,10 @@ def sample_streams(ledger, sequences, variant) -> list:
         if row.end > len(encoded):
             raise ValueError(f'{row.sent_id}: the ledger interval [{row.start},{row.end}) exceeds '
                              f'the {len(encoded)} encoded symbols of variant {variant!r}')
+        if not row.fragment and (row.start != 0 or row.end - row.start != len(encoded)):
+            raise ValueError(f'{row.sent_id}: a non-fragment ledger row must span the whole '
+                             f'{len(encoded)}-symbol encoded sentence of variant {variant!r}, got '
+                             f'[{row.start},{row.end}) — this ledger looks cut from a different variant')
         streams.append({'sent_id': row.sent_id, 'block_key': row.block_key, 'start': int(row.start),
                         'end': int(row.end),
                         'symbols': [int(symbol) for symbol in encoded[row.start:row.end]],
@@ -222,6 +231,12 @@ def shuffle_streams(streams, *, seed, held, purpose) -> list:
     step 6). UPOS and DEPREL are never separated: a symbol is one integer here
     and nothing in this module decodes it. Each stream derives its own
     generator, so reordering the streams cannot change any of them (§5.3).
+
+    `changed_count`/`total_count` record §7's "quota di slot con simbolo
+    diverso, con denominatore esplicito": how many slots hold a different
+    symbol after the shuffle, out of the stream's length. A constant
+    sentence can come back identical (`changed_count == 0`) even though every
+    slot's provenance still moved.
     """
     if purpose not in ('shuffle_train', 'shuffle_eval'):
         raise ValueError(f'purpose={purpose!r}: the order control is shuffle_train or shuffle_eval')
@@ -233,8 +248,11 @@ def shuffle_streams(streams, *, seed, held, purpose) -> list:
         order = generator(purpose, seed=seed, held=held, block=stream['block_key'],
                           sid=stream['sent_id'], start=stream['start'],
                           end=stream['end']).permutation(len(stream['symbols']))
-        shuffled.append(stream | {'symbols': [stream['symbols'][index] for index in order],
-                                  'source_slot_uids': [stream['slot_uids'][index] for index in order]})
+        moved = [stream['symbols'][index] for index in order]
+        changed = sum(1 for before, after in zip(stream['symbols'], moved) if before != after)
+        shuffled.append(stream | {'symbols': moved,
+                                  'source_slot_uids': [stream['slot_uids'][index] for index in order],
+                                  'changed_count': changed, 'total_count': len(moved)})
     return shuffled
 
 

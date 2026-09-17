@@ -23,7 +23,7 @@ nessuno skip/xfail/xpass. Il confronto col contratto non sostituisce test del fu
 | T16 | V2 | Stress storico m106: esecuzione, normalizzazione, supporti, deficit registrato |
 | T17 | V2 | Lunghezza, multinsieme, maschera e conteggi di radice conservati; slot distinto dalla provenienza |
 | T18 | PARZIALE V2 | Controesempi prefissati di dipendenza interna e di pool eterogeneo al livello del campione; il divario in G/Q sugli stessi controesempi richiede i modelli (PENDING con T19) |
-| T19 | PENDING V2 | Q a quattro termini |
+| T19 | PENDING V2 | Q a quattro termini; chiude anche il residuo T18 (controesempio G/Q sul pool eterogeneo) |
 | T20 | PENDING V2 | Aggregazioni/due pesi |
 | T21 | PENDING V2 | Sensibilità accoppiate |
 | T22 | PENDING V2 | Masse/supporti/L_resolved |

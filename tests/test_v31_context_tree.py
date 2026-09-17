@@ -341,7 +341,7 @@ def test_analytic_pass_pins_the_corrected_iid_threshold():
 @pytest.fixture(scope='module')
 def battery(tmp_path_factory):
     path = tmp_path_factory.mktemp('battery')/'synthetic_results.json'
-    code = validation.main(['--out', str(path)])
+    code = validation.main(['--config', str(ROOT/'config/default.yaml'), '--out', str(path)])
     return code, json.loads(path.read_text())
 
 
@@ -378,6 +378,62 @@ def test_validation_stage_exits_non_zero_when_a_threshold_fails(monkeypatch, tmp
     assert json.loads(path.read_text())['analytic_pass'] is False
     assert validation.exit_code(rows) == 1
     assert validation.exit_code([{**rows[0], 'ce': 2.0, 'analytic_pass': True}]) == 0
+
+
+def test_validation_cli_rejects_configuration_drift_before_running(tmp_path):
+    import yaml
+    cfg = yaml.safe_load((ROOT/'config/default.yaml').read_text())
+    cfg['cells'][0]['D'] = 9
+    path = tmp_path/'invalid.yaml'
+    path.write_text(yaml.safe_dump(cfg))
+    with pytest.raises(ValueError) as exc:
+        validation.main(['--config', str(path), '--out', str(tmp_path/'results.json')])
+    assert str(exc.value)
+    assert not (tmp_path/'results.json').exists()
+
+
+@pytest.mark.parametrize('alias', [False, True])
+def test_validation_output_refuses_raw_including_symlinks(tmp_path, monkeypatch, alias):
+    directory = ROOT/'data/raw'
+    if alias:
+        link = tmp_path/'raw-alias'
+        link.symlink_to(directory, target_is_directory=True)
+        directory = link
+    monkeypatch.setattr(validation, 'run_battery', lambda: pytest.fail('raw accepted before fit'))
+    with pytest.raises(ValueError) as exc:
+        validation.main(['--out', str(directory/'validation-fixture.json'), '--force'])
+    assert 'raw' in str(exc.value)
+    assert not (directory/'validation-fixture.json').exists()
+
+
+def test_validation_publication_refuses_a_racing_writer(tmp_path, monkeypatch):
+    path = tmp_path/'result.json'
+
+    def raced():
+        path.write_bytes(b'other writer\n')
+        return []
+
+    monkeypatch.setattr(validation, 'run_battery', raced)
+    with pytest.raises(FileExistsError) as exc:
+        validation.main(['--out', str(path)])
+    assert str(exc.value)
+    assert path.read_bytes() == b'other writer\n'
+
+
+def test_validation_forced_publication_is_atomic_on_write_failure(tmp_path, monkeypatch):
+    path = tmp_path/'result.json'
+    path.write_bytes(b'previous validation\n')
+    monkeypatch.setattr(validation, 'run_battery', lambda: [])
+
+    def interrupted(*args):
+        raise OSError('interrupted writing validation')
+
+    monkeypatch.setattr(validation, 'write_artifact', interrupted, raising=False)
+    with pytest.raises(OSError, match='interrupted') as exc:
+        validation.main(['--out', str(path), '--force'])
+    assert str(exc.value)
+    assert path.read_bytes() == b'previous validation\n'
+    assert list(tmp_path.iterdir()) == [path]
 
 
 def test_historical_m106_stress_records_execution_and_oracle_gap(battery):

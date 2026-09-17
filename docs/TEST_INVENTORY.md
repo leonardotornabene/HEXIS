@@ -3,7 +3,7 @@
 Accettazione attiva: marker `v31`; raccolta effettiva obbligatoria, assert eseguiti,
 nessuno skip/xfail/xpass. Il confronto col contratto non sostituisce i test del CTW.
 
-| ID | Stato V0–V1 | Copertura / obbligo residuo |
+| ID | Stato V0–V2 | Copertura / obbligo residuo |
 |---|---|---|
 | T01 | V1 | Input/hash, sent_id, 18 prefissi/17 documenti |
 | T02 | V1 | Conteggi documento/blocco e intero corpus |
@@ -113,9 +113,11 @@ Le parti PENDING della tabella restano tali; V0–V1 non promuove T05–T30 inte
 - T22: R come somma diretta (mai `1-unseen_mass`), masse+unseen=1 entro 1e-12, L_resolved null con
   motivo `no_resolved_mass` a training vuoto e 0,0 su foglia forzata D=0; media come somma dei validi
   diviso il conteggio valido; fascia vuota con n=0, somme additive 0 e CE/G/Q null `empty_bucket`.
-- Le firme v2.1 `pooled_score_core`/`annotate_scores` restano in `protocols/scores.py` come scaffold
-  ritirato ma non rimosso (§11.1 ne conserva nome e confine label-free); il confine attivo 3.1 è
-  `score_streams` (senza etichette) più `contrasts` (unica fase che legge il gruppo).
+- Il confine pubblico attivo è `pooled_score_core` (slot accoppiati, quattro perdite,
+  nessuna etichetta) più `annotate_scores` (join col registro senza alterare gli score).
+  `score_streams` resta un alias della stessa implementazione. I test di firma in
+  `test_scores.py` sono adeguati al vocabolario 3.1 e inclusi nell'accettazione attiva;
+  gli scaffold inferenziali dello stesso file restano storici.
 - Suite completa dopo T18–T22: **498 passed, 17 skipped storici**.
 
 ## Evidenze V2 — R1 (T23)
@@ -138,8 +140,8 @@ Le parti PENDING della tabella restano tali; V0–V1 non promuove T05–T30 inte
 - `test_v31_descriptive.py`: campagna giocattolo (tre documenti, alfabeto m=5, due blocchi, due celle,
   un seme) pubblicata in un corpus V1 temporaneo e guidata dalle vere CLI. **Nessun fit sul corpus
   greco**: il freeze dei fit reali fino a V3 vale anche qui, e il file resta eseguibile senza `data/raw`.
-- Il contratto giocattolo **non è** la proiezione analitica depositata: entrambe le CLI esigono
-  `--fixture` e lo rifiutano sulla configurazione depositata, e il report registra
+- Il contratto giocattolo **non è** la proiezione analitica depositata: per esso entrambe le CLI
+  esigono `--fixture` e lo rifiutano sulla configurazione depositata, e il report registra
   `checks.scientific = False`. La campagna sintetica non è leggibile come risultato.
 - Manifest `hexis-scientific-manifest-1` distinto da `hexis-corpus-manifest-1`: `corpus_run` resta
   chiuso e ne sono importate senza modifiche solo le utility agnostiche al formato
@@ -162,7 +164,9 @@ Le parti PENDING della tabella restano tali; V0–V1 non promuove T05–T30 inte
   esterni, fuori da `run_id` e dai semi (§11.3).
 - Validatore del report (§14.2): i sei passi sono eseguiti in ordine e registrati in `checks.steps`;
   una campagna incompleta, uno scoring `inventory_only`, un'evidenza registrata sotto altro codice/lock
-  e una seconda emissione sono rifiutati prima di scrivere qualunque tabella.
+  e una seconda emissione sono rifiutati prima di scrivere qualunque tabella. Le fixture
+  registrano V0/V1; il report reale richiede anche V2/V3. Il loro deposito nel manifest
+  resta parte della futura integrazione V3, non è attestato dalla campagna giocattolo.
 - Ritiri §13.2 verificati come comportamento: `run_confirmatory`, `run_null_calibration`,
   `run_reference`, `run_latin` e `run_sensitivity` dichiarano il ritiro nella docstring ed escono con
   errore esplicito; `model/lexicon.py` e `blocks.py` non sono importati dal percorso descrittivo.
@@ -173,5 +177,32 @@ Le parti PENDING della tabella restano tali; V0–V1 non promuove T05–T30 inte
 Accettazione sul codice V2 `de8ea5d`: **220 passed, 340 deselected, zero skip**. Suite completa:
 **543 passed, 17 skipped storici**; `uv lock --check` invariato su 23 pacchetti. I conteggi
 intermedi delle sezioni precedenti sono istantanee prese al termine di ciascun milestone, prima
-dei rispettivi commit di correzione della review; solo i due conteggi di questa riga descrivono
-il codice V2 chiuso. Le parti PENDING V4/V5 della tabella restano tali.
+dei rispettivi commit di correzione della review; questi due conteggi descrivono la prima chiusura
+V2, prima della ripresa documentata sotto. Le parti PENDING V4/V5 della tabella restano tali.
+
+## Ripresa V2 — collegamenti e persistenza, 2026-09-17
+
+- T19/T20/T28: API pubbliche operative `pooled_score_core` e `annotate_scores`; score e
+  diagnostiche byte-identici cambiando le etichette, fingerprint congelato e join che
+  rifiuta chiavi duplicate/mancanti/null e sovrascrittura dei punteggi.
+- T26: pubblicazione atomica dopo ciascuna coppia. Interruzione prima del secondo fit,
+  ripresa delle coppie residue e confronto con una nuova esecuzione indipendente;
+  stessi artefatti byte per byte. Selezione del solo seme 0, rifiuto del report
+  incompleto e completamento successivo senza cambiare `run_id` o rifittare le coppie presenti.
+- T06/T26/T29: `sample_ledger__<sha256>.json` per campione distinto, referenziato dalle
+  coppie e riusato senza overwrite; hash, cardinalità e riferimenti verificati anche
+  durante resume. Rigenerazione sintetica del fingerprint originale dal ledger riletto.
+- T21/T26: confronto degli insiemi di slot con le coordinate prima di scartare i
+  vettori delle sensibilità; errori rilevati anche a cardinalità invariata.
+- T15/T16/T26: `run_tree_validation --config` valida la proiezione depositata;
+  output atomico, rifiuto della collisione con un altro scrittore e protezione dei
+  raw anche attraverso symlink e con `--force`.
+- La raccolta nominale in `test_v31_enforcement.py` include tutte queste nuove verifiche.
+  Nessun test scientifico atteso, soglia, seme, dato raw o byte contrattuale modificato.
+  Sono sostituiti soltanto gli attesi delle firme del protocollo v2.1, come registrato
+  nella nota di esecuzione V3-001; il confine senza etichette resta obbligatorio.
+
+Accettazione dopo la ripresa: **240 passed, 338 deselected, zero skip**.
+Suite completa: **561 passed, 17 skipped storici**. Lock invariato, 23 pacchetti.
+I 20 casi attivi aggiunti comprendono 18 nuovi casi e i due test di firma
+preesistenti; la revisione integrale e V3–V5 restano fuori da questa attestazione.

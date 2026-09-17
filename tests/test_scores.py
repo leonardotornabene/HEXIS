@@ -1,6 +1,8 @@
 """Score-function tests (Spec §7; G0 boundary contract, G3 scoring behavior).
 
-The D52 scoring-boundary signatures are real G0 assertions. The analytic,
+The D52 label-free/annotation boundary is retained under the active v3.1 API
+(V3-001, §11.1); the retired protocol-(c) argument vocabulary is superseded.
+The analytic,
 restriction, and byte-identity cases remain Phase-0 placeholders for G3 and
 must never be deleted or weakened.
 """
@@ -16,17 +18,18 @@ SKIP = pytest.mark.skip(reason="Fase 0 scaffold — implement at gate G3 per Spe
 
 
 @pytest.mark.g0
+@pytest.mark.v31
 def test_pooled_score_core_has_label_free_signature():
     core = getattr(scores, "pooled_score_core", None)
     assert core is not None
 
     signature = inspect.signature(core)
     assert tuple(signature.parameters) == (
-        "sequences",
-        "alphabet",
-        "cfg",
-        "rng",
-        "doc_ids",
+        "original",
+        "shuffled",
+        "model_original",
+        "model_shuffled",
+        "min_available_past",
     )
     assert set(signature.parameters).isdisjoint(
         {"registry", "regime", "author", "work"}
@@ -35,12 +38,13 @@ def test_pooled_score_core_has_label_free_signature():
 
 
 @pytest.mark.g0
+@pytest.mark.v31
 def test_annotate_scores_has_d52_signature():
     annotate = getattr(scores, "annotate_scores", None)
     assert annotate is not None
 
     signature = inspect.signature(annotate)
-    assert tuple(signature.parameters) == ("scores", "ledger", "registry")
+    assert tuple(signature.parameters) == ("scores", "registry", "on")
     assert signature.return_annotation is pd.DataFrame
 
 

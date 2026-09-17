@@ -91,6 +91,47 @@ def positions_frame(rows):
 
 # --- T19: the four terms of Q --------------------------------------------------
 
+def test_public_core_and_annotation_keep_scores_independent_of_labels():
+    trained = model([[0, 1] * 8], m=2)
+    original = stream('a@1', [0, 1, 0, 1, 0, 1])
+    shuffled = stream('a@1', [1, 0, 1, 0, 1, 0], origin=[1, 0, 3, 2, 5, 4])
+    before = trained.fingerprint()
+    positions, diagnostics = scores.pooled_score_core(
+        [original], [shuffled], model_original=trained, model_shuffled=trained)
+    registry = pd.DataFrame({'sent_id': ['a@1'], 'regime': ['HEX'], 'group': ['HEX']})
+    annotated = scores.annotate_scores(positions, registry, on='sent_id')
+    relabelled = registry.assign(regime='PROSE_POST', group='PROSE_ALL')
+    changed = scores.annotate_scores(positions, relabelled, on='sent_id')
+    assert annotated['group'].tolist() == ['HEX', 'HEX']
+    assert changed['group'].tolist() == ['PROSE_ALL', 'PROSE_ALL']
+    pd.testing.assert_frame_equal(annotated[positions.columns], positions)
+    pd.testing.assert_frame_equal(changed[positions.columns], positions)
+    again, again_diagnostics = scores.pooled_score_core(
+        [original | {'regime': 'OTHER_VERSE'}], [shuffled | {'group': 'anything'}],
+        model_original=trained, model_shuffled=trained)
+    assert positions.to_csv(index=False) == again.to_csv(index=False)
+    assert diagnostics.to_csv(index=False) == again_diagnostics.to_csv(index=False)
+    assert trained.fingerprint() == before
+    assert set(positions).isdisjoint({'regime', 'group'})
+
+
+@pytest.mark.parametrize('fault', ['duplicate', 'missing', 'null', 'overwrite'])
+def test_annotation_refuses_ambiguous_missing_or_overwriting_registry(fault):
+    fixed = pd.DataFrame({'doc_id': ['a', 'b'], 'q': [0.1, -0.2]})
+    registry = pd.DataFrame({'doc_id': ['a', 'b'], 'group': ['HEX', 'PROSE_ALL']})
+    if fault == 'duplicate':
+        registry = pd.concat([registry, registry.iloc[:1]], ignore_index=True)
+    elif fault == 'missing':
+        registry = registry.iloc[:1]
+    elif fault == 'null':
+        registry.loc[1, 'doc_id'] = None
+    else:
+        registry['q'] = 99.0
+    with pytest.raises(ValueError) as exc:
+        scores.annotate_scores(fixed, registry)
+    assert str(exc.value)
+    assert fixed['q'].tolist() == [0.1, -0.2]
+
 def test_four_term_q_reproduces_the_archived_sign_inversion():
     """§7: the shortcut CE_CTW_R − CE_CTW_O can even flip the sign of Q."""
     trained = model([[0] * 6 + [1] * 2], m=2)

@@ -25,7 +25,7 @@ from hexis.protocols import r1, scores
 
 KEY_COLUMNS = ('cell', 'variant', 'held_block', 'held_block_key', 'seed')
 RECORD_FIELDS = (*KEY_COLUMNS, 'q', 'depth', 'm', 'a_per_symbol', 'rho', 'min_available_past',
-                 'arms', 'ledger_sha256', 'training', 'fragments', 'shuffle', 'models',
+                 'arms', 'ledger_sha256', 'ledger_rows', 'sample_ledger', 'training', 'fragments', 'shuffle', 'models',
                  'document_sums', 'arm_diagnostics', 'positions')
 TABLES = ('document_scores.csv', 'block_pairs.csv', 'aggregation_weights.csv', 'contrasts.csv',
           'seed_summaries.csv', 'sensitivity_pairs.csv', 'model_diagnostics.csv',
@@ -57,9 +57,10 @@ def check_deposit(contract, deposited: bool) -> bool:
     return deposited
 
 
-def check_evidence(evidence, contract):
-    """Step 2: the V0–V1 evidence of this manifest, under the code and lock of this run."""
-    missing = [step for step in scientific_run.EVIDENCE_STEPS if step not in evidence]
+def check_evidence(evidence, contract, *, scientific=False):
+    """Step 2: real reports require V0–V3; V2 toy runs verify only their recorded evidence."""
+    required = ('V0', 'V1', 'V2', 'V3') if scientific else scientific_run.EVIDENCE_STEPS
+    missing = [step for step in required if step not in evidence]
     if missing:
         raise ValueError(f'evidence: {missing} is not recorded in this manifest; a written PASS '
                          'is not the proof it stands for')
@@ -218,8 +219,10 @@ def group_contrasts(blocks, groups) -> pd.DataFrame:
 def aggregation_weights(blocks, training, groups) -> pd.DataFrame:
     """§11.5: the weight each block carries under both weightings, with its training quota."""
     rows = []
+    registry = pd.DataFrame({'held_block': list(groups), 'group': list(groups.values())})
+    annotated = scores.annotate_scores(blocks, registry, on='held_block')
     for aggregation in scores.AGGREGATIONS:
-        frame = blocks.assign(aggregation=aggregation, group=blocks['held_block'].map(groups))
+        frame = annotated.assign(aggregation=aggregation)
         frame['weight'] = 1.0 if aggregation == scores.AGGREGATIONS[0] else frame['n'].astype(float)
         shares = frame.groupby(['cell', 'seed', 'group'])['weight'].transform('sum')
         rows.append(frame.assign(share=frame['weight'] / shares))
@@ -377,7 +380,7 @@ def main(argv=None):
     steps = []
     scientific = check_deposit(contract, deposited)
     steps.append(1)
-    check_evidence(prior['evidence'], contract)
+    check_evidence(prior['evidence'], contract, scientific=scientific)
     steps.append(2)
     check_keys(cfg, prior['keys'])
     steps.append(3)

@@ -8,15 +8,16 @@ which adopt docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md
 and its byte-identified JSON contracts. Text governs semantics; JSON fixes values.
 Do not silently deviate or regenerate expectations to make tests pass.
 
-Current scope V0–V1: normative migration, Greek corpus audit and encoding only.
-V2–V5 are not attested. No new real model fits before V3 after V0–V2.
+V0–V2 are completed: normative migration, Greek corpus audit/encoding and
+core/protocol verified on synthetic fixtures. V3–V5 are not attested.
+Stop for review before V3; no new real model fits in this tranche.
 The old v2.1 P1/P2 inference, Latin, O7 blocker, permutation constants, sign-stability,
 old sensitivities and gates G0–G7 are historical, not resolved retroactively.
 D01–D54, proposed D55 and technical G1 ratifications retain their historical status.
 
 Tests first; never weaken a still-valid property. Active acceptance: pytest -m v31,
-actual collection coverage, executed asserts, no skip/xfail. Future CTW/core/RNG
-obligations remain PENDING in docs/TEST_INVENTORY.md. Use Python 3.12 via uv;
+actual collection coverage, executed asserts, no skip/xfail. The remaining
+V3–V5 obligations are tracked in docs/TEST_INVENTORY.md. Use Python 3.12 via uv;
 keep dependencies and uv.lock. No print in library code or candidates imports.
 
 Three pinned Greek CoNLL-U only; recombine numeric source coordinates, not splits.
@@ -27,7 +28,7 @@ then frozen lexicographic IDs: ud23/ud23_oth/upos_only = 100/105/11.
 UPOS shares the exact C0 mask; OTH has its own population. Sentence streams reset,
 including empty streams; target j≥4. No SEP, EOS, UNK or cross-sentence history.
 
-Future instrument: frozen CTW, four losses, Q and G in bits, two declared weights,
+Implemented instrument: frozen CTW, four losses, Q and G in bits, two declared weights,
 R1 descriptive only. No inference. Core label-free; labels via annotate_scores.
 No extra model-complexity penalty. RNG per deposited SHA-256 contract, not old CRC32.
 

@@ -54,10 +54,16 @@ def run_pair(cfg, frames, cell, held, seed):
                                 rho=cell['rho'])
     models = {arm: CTW(params).fit([stream['symbols'] for stream in train[arm]])
               for arm in scores.ARMS}
-    positions, arms = scores.score_streams(evaluated['original'], evaluated['shuffled'],
+    positions, arms = scores.pooled_score_core(evaluated['original'], evaluated['shuffled'],
                                            model_original=models['original'],
                                            model_shuffled=models['shuffled'],
                                            min_available_past=cfg['min_available_past'])
+    coordinates = frames['coordinates.parquet']
+    eligible = coordinates[coordinates['variant'].eq(variant)
+                           & coordinates['doc_id'].astype(str).isin(blocks[held])
+                           & coordinates['eligible'].astype(bool)]
+    # §11.5 applies to every cell before the sensitivity vectors are discarded.
+    scores.pair_positions(positions[['slot_uid']], eligible[['slot_uid']])
     frame = sequences[sequences['variant'].eq(variant)]
     documents = dict(zip(frame['sent_id'].astype(str), frame['doc_id'].astype(str)))
     positions = positions.assign(doc_id=positions['sent_id'].map(documents))
@@ -74,12 +80,13 @@ def run_pair(cfg, frames, cell, held, seed):
         streams=('sent_id', 'size'), tokens=('tokens', 'sum'))
     pool = available_tokens(sequences, blocks, variant)
     training['available'] = [pool[name] for name in training['block']]
+    sample_ledger = scientific_run.records(ledger)
     record = {
         'cell': cell['id'], 'variant': variant, 'held_block': held, 'held_block_key': held_key,
         'seed': int(seed), 'q': int(cell['q']), 'depth': depth, 'm': int(cell['m']),
         'a_per_symbol': float(cell['a_per_symbol']), 'rho': float(cell['rho']),
         'min_available_past': int(cfg['min_available_past']), 'arms': list(scores.ARMS),
-        'ledger_sha256': digest(scientific_run.records(ledger)),
+        'ledger_sha256': digest(sample_ledger), 'sample_ledger': sample_ledger,
         'ledger_rows': int(len(ledger)),
         'training': scientific_run.records(training),
         'fragments': scientific_run.records(sampling.fragment_metrics(ledger, depth)),
@@ -107,6 +114,8 @@ def main(argv=None):
     parser.add_argument('--corpus-dir', type=Path, required=True)
     parser.add_argument('--output-dir', type=Path, required=True)
     parser.add_argument('--cell', default='all', help="'all' or one declared cell id")
+    parser.add_argument('--seed', type=int, choices=(0,),
+                        help='select only the declared seed 0 for the incomplete V3 trial')
     parser.add_argument('--resume', action='store_true',
                         help='re-use validated partitions of the same identity (§11.7)')
     parser.add_argument('--fixture', action='store_true',
@@ -115,6 +124,11 @@ def main(argv=None):
     started = time.perf_counter()
     cfg, _ = scientific_run.load_projection(args.config, args.fixture)
     cells = scientific_run.select_cells(cfg, args.cell)
+    if args.seed is not None:
+        missing = [cell['id'] for cell in cells if args.seed not in cell['seeds']]
+        if missing:
+            raise ValueError(f'seed {args.seed} is not declared for cells {missing}')
+    scientific_run.check_destination(args.output_dir, args.corpus_dir)
     corpus, frames = scientific_run.load_corpus(args.corpus_dir)
     contract = scientific_run.run_contract(cfg, corpus)
     evidence = scientific_run.evidence(contract, args.corpus_dir, corpus)
@@ -123,37 +137,49 @@ def main(argv=None):
     if prior:
         compare(contract, prior['run_contract'], 'run_contract')
         compare(evidence, prior['evidence'], 'evidence')
-    published = set(prior['artifacts']) if prior else set()
     resumable = {tuple(key) for key in prior['keys']['pair']} if prior else set()
     blocks = scientific_run.block_keys_of(cfg)
     keys = {'pair': [], 'model': []}
-    artifacts, reused = {}, []
-    for cell in cells:
-        for held in sorted(blocks):
-            for seed in cell['seeds']:
-                key = [cell['id'], blocks[held], int(seed)]
-                keys['pair'].append(key)
-                keys['model'].extend([*key, arm] for arm in cell['arms'])
-                name = scientific_run.pair_name(*key)
-                if args.resume and tuple(key) in resumable and name in published:
-                    reused.append(name)
-                    continue
-                record, vectors = run_pair(cfg, frames, cell, held, seed)
-                artifacts[name] = record
-                if vectors is not None:
-                    artifacts[scientific_run.positions_name(*key)] = vectors
-    checks = {'reused_partitions': len(reused), 'published_partitions': len(artifacts) - len(
-        [name for name in artifacts if name.startswith('positions__')]),
-        'positions_cell': POSITION_CELL,
-        'cells': sorted({cell['id'] for cell in cells} | set(
-            prior['checks'].get('cells', []) if prior else []))}
-    checks['new_model_fits'] = 2 * checks['published_partitions']
-    body = {'keys': scientific_run.union_keys(prior, keys), 'checks': checks, 'evidence': evidence,
-            'metadata': scientific_run.stage_metadata('descriptive', corpus_dir=args.corpus_dir,
-                                                      output_dir=args.output_dir, started=started,
-                                                      selection=args.cell, resume=args.resume)}
-    manifest = scientific_run.publish_stage(args.output_dir, 'descriptive', artifacts, contract,
-                                            body, resume=args.resume, corpus_dir=args.corpus_dir)
+    selected = [(cell, held, seed) for cell in cells for held in sorted(blocks)
+                for seed in cell['seeds'] if args.seed is None or seed == args.seed]
+    reused = sum((cell['id'], blocks[held], int(seed)) in resumable
+                 for cell, held, seed in selected)
+    checks = {'reused_partitions': reused, 'published_partitions': 0, 'new_model_fits': 0,
+              'positions_cell': POSITION_CELL,
+              'cells': sorted({cell['id'] for cell in cells} | set(
+                  prior['checks'].get('cells', []) if prior else []))}
+    manifest = prior
+
+    def publish(artifacts):
+        body = {'keys': scientific_run.union_keys(manifest, keys), 'checks': checks,
+                'evidence': evidence,
+                'metadata': scientific_run.stage_metadata(
+                    'descriptive', corpus_dir=args.corpus_dir, output_dir=args.output_dir,
+                    started=started, selection=args.cell, seed=args.seed, resume=args.resume)}
+        return scientific_run.publish_stage(
+            args.output_dir, 'descriptive', artifacts, contract, body,
+            resume=args.resume or manifest is not None, corpus_dir=args.corpus_dir)
+
+    for cell, held, seed in selected:
+        key = [cell['id'], blocks[held], int(seed)]
+        if tuple(key) in resumable:
+            continue
+        record, vectors = run_pair(cfg, frames, cell, held, seed)
+        ledger = record['sample_ledger']
+        record['sample_ledger'] = scientific_run.ledger_name(record['ledger_sha256'])
+        artifacts = {scientific_run.pair_name(*key): record, record['sample_ledger']: ledger}
+        if vectors is not None:
+            artifacts[scientific_run.positions_name(*key)] = vectors
+        keys['pair'].append(key)
+        keys['model'].extend([*key, arm] for arm in cell['arms'])
+        checks['published_partitions'] += 1
+        checks['new_model_fits'] += len(cell['arms'])
+        # §11.4: publish each pair before fitting the next; keep only one vector in memory.
+        # ponytail: publication revalidates prior artifacts; optimize only after V3 measurements.
+        manifest = publish(artifacts)
+        del artifacts, record, vectors, ledger
+    if not checks['published_partitions']:
+        manifest = publish({})
     scientific_run.validate_run(args.output_dir)
     return manifest
 

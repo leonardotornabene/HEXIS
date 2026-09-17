@@ -16,6 +16,24 @@ D01–D54 sono conservate integralmente qui sotto. [D55](g1_D55_proposal.md) res
 
 ---
 
+## V3-001 — Nota di esecuzione V2, 2026-09-17
+
+La richiesta corrente dell'utente autorizza la ripresa e il completamento del piano
+V2 sul ramo `codex/hexis31-v0-v1`, con revisione integrale successiva e arresto prima
+di V3. Questa fonte è distinta dalla richiesta V0–V1 del deposito: non le si
+attribuiscono retroattivamente nuove autorizzazioni. Nessun fit reale, pubblicazione
+o cambiamento dei byte normativi è incluso nella ripresa.
+
+Il §11.1 è applicato conservando i nomi pubblici `pooled_score_core` e
+`annotate_scores` con API per gli slot accoppiati e per l'annotazione del registro.
+Le firme a cinque/tre argomenti del protocollo v2.1 sono sostituite, insieme ai
+relativi attesi di firma; resta verificato il vincolo valido di indipendenza dalle
+etichette, ora anche comportamentalmente. Questo adeguamento tecnico attua
+V3-001 e non ratifica G0/D52 retroattivamente. Evidenze e limite V3–V5
+nell'[handoff](HANDOFF.md) e nell'[inventario](TEST_INVENTORY.md).
+
+---
+
 ## Archivio normativo v2.1 — non autorità per nuove esecuzioni
 
 # PROJECT HEXIS — DECISION LOG

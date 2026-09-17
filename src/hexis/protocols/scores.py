@@ -3,7 +3,7 @@
 The core is label-free (§11.1): it pairs the two arms on the eligible slot and
 returns losses, masses and sums keyed by `sent_id`/`slot_uid`. No regime, group
 or display name reaches it — the caller maps a sentence to its document before
-aggregating, and `contrasts` is the only stage that reads a group.
+aggregating. `annotate_scores` introduces registry labels after scoring.
 
 Q always needs its four terms (§7): the two roots are the same training
 distribution but not the same test population, so `CE_CTW_R - CE_CTW_O` is not Q
@@ -56,8 +56,8 @@ def _require_paired(left, right, index):
                          f'{len(left["symbols"])} and {len(right["symbols"])}')
 
 
-def score_streams(original, shuffled, *, model_original, model_shuffled,
-                  min_available_past=MIN_AVAILABLE_PAST):
+def pooled_score_core(original, shuffled, *, model_original, model_shuffled,
+                      min_available_past=MIN_AVAILABLE_PAST) -> tuple[pd.DataFrame, pd.DataFrame]:
     """The four losses of §8.1 per eligible slot, with the §9.3 sums per arm and band.
 
     Returns `(positions, arm_diagnostics)`: one row per eligible slot with the
@@ -120,6 +120,30 @@ def score_streams(original, shuffled, *, model_original, model_shuffled,
     return positions, pd.DataFrame(arm_rows)
 
 
+# Existing v3.1 callers use the same implementation, with no second scoring path.
+score_streams = pooled_score_core
+
+
+def annotate_scores(scores, registry, *, on='doc_id') -> pd.DataFrame:
+    """§11.1: attach registry columns to fixed scores by their explicit identity.
+
+    Document, sentence or block identity can be used; the registry must contain
+    exactly one non-null record per key and must never replace a score column.
+    """
+    for name, frame in (('scores', scores), ('registry', registry)):
+        if not frame.columns.is_unique or on not in frame or frame[on].isna().any():
+            raise ValueError(f'{name}: unique columns and non-null {on!r} are required')
+    if not registry[on].is_unique:
+        raise ValueError(f'registry: duplicate {on!r}')
+    overlap = (set(scores.columns) & set(registry.columns)) - {on}
+    if overlap:
+        raise ValueError(f'registry: refusing to overwrite fixed columns {sorted(overlap)}')
+    missing = set(scores[on]) - set(registry[on])
+    if missing:
+        raise ValueError(f'registry: missing {on!r} for {sorted(missing)}')
+    return scores.join(registry.set_index(on), on=on, how='left', validate='many_to_one')
+
+
 def aggregate(positions, keys=()) -> pd.DataFrame:
     """§8.2 sums per (keys, band); every key keeps both bands, empty ones at zero."""
     keys = list(keys)
@@ -165,7 +189,7 @@ def ce_gain_q(sums) -> pd.DataFrame:
 def contrasts(blocks, groups) -> pd.DataFrame:
     """§8.2: group means and the HEX - PROSE_ALL contrast under both weightings.
 
-    The one stage that reads a label (§11.1). Weights are eligible targets of the
+    Labels enter through annotate_scores (§11.1). Weights are eligible targets of the
     variant, never raw or kept tokens; `D_Q = D_G_O - D_G_R` is verified here.
     """
     frame = blocks.set_index('block') if 'block' in blocks.columns else blocks
@@ -176,7 +200,10 @@ def contrasts(blocks, groups) -> pd.DataFrame:
     invalid = [block for block in frame.index[frame[columns].isna().any(axis=1)]]
     if invalid:
         raise ValueError(f'{sorted(invalid)}: a block without a score cannot enter a contrast')
-    label = np.array([groups[block] for block in frame.index])
+    registry = pd.DataFrame({'block': list(groups), 'group': list(groups.values())})
+    frame = annotate_scores(frame.rename_axis('block').reset_index(), registry,
+                            on='block').set_index('block')
+    label = frame['group'].to_numpy()
     rows = []
     for aggregation in AGGREGATIONS:
         weights = (pd.Series(1.0, index=frame.index) if aggregation == AGGREGATIONS[0]
@@ -221,26 +248,12 @@ def pair_positions(left, right, *, on='slot_uid', suffixes=('_left', '_right')) 
 
 
 # --- retired v2.1 scaffold ----------------------------------------------------
-# Not part of HEXIS 3.1. The names and signatures stay because §11.1 keeps the
-# label-free `pooled_score_core` contract and the `annotate_scores` boundary, and
-# the G0 signature tests pin them; the v3.1 boundary above is `score_streams`
-# (label-free) and `contrasts` (the only label-aware stage).
+# Not part of HEXIS 3.1. The retained core and annotation names above implement
+# §11.1; the protocol-(b)/(c) orchestration and learning curves below are retired.
 
 
 def delta_ce_scores(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame:
     """Retired with protocol (b) (v2.1 Spec §4.2; not in the 3.1 design)."""
-    raise NotImplementedError
-
-
-def pooled_score_core(
-    sequences, alphabet, cfg, rng, doc_ids
-) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Protocol-(c) label-free core returning scores and sampling ledger (D52)."""
-    raise NotImplementedError
-
-
-def annotate_scores(scores, ledger, registry) -> pd.DataFrame:
-    """Attach registry fields to fixed scores: the label-aware stage (D52; §11.1)."""
     raise NotImplementedError
 
 

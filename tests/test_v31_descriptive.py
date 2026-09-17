@@ -167,6 +167,41 @@ def test_persisted_positions_carry_exactly_the_plan_columns_and_every_eligible_s
     assert set(frame['slot_uid']) == set(eligible['slot_uid'])
 
 
+def test_every_pair_persists_its_exact_sampling_ledger(tmp_path):
+    config, corpus, output = campaign(tmp_path)
+    manifest = describe(config, corpus, output)
+    sequences = pd.read_parquet(corpus/'sequences.parquet')
+    for name in manifest['artifacts']:
+        if not name.startswith('pair__'):
+            continue
+        record = json.loads((output/name).read_text())
+        ledger_path = output/record['sample_ledger']
+        ledger_rows = json.loads(ledger_path.read_text())
+        assert digest(ledger_rows) == record['ledger_sha256']
+        assert len(ledger_rows) == record['ledger_rows']
+        ledger = pd.DataFrame(ledger_rows)
+        assert int((ledger['end'] - ledger['start']).sum()) == record['q']
+        streams = sampling.sample_streams(ledger, sequences, record['variant'])
+        from hexis.model.context_tree import CTW, CTWParams
+        rebuilt = CTW(CTWParams.from_rho(m=record['m'], depth=record['depth'],
+                                          a=record['a_per_symbol'], rho=record['rho'])).fit(
+                                              [stream['symbols'] for stream in streams])
+        assert rebuilt.fingerprint() == record['models']['original']['fingerprint']
+
+
+@pytest.mark.parametrize('fault', ['changed_key', 'duplicate_key'])
+def test_sensitivity_checks_coordinate_slot_sets_before_discarding_vectors(tmp_path, fault):
+    config = yaml.safe_load(toy_config(tmp_path).read_text())
+    frames = toy_frames()
+    coords = frames['coordinates.parquet']
+    rows = coords.index[coords['doc_id'].eq('a') & coords['eligible']]
+    coords.loc[rows[-1], 'slot_uid'] = (99999 if fault == 'changed_key'
+                                       else coords.loc[rows[0], 'slot_uid'])
+    with pytest.raises(ValueError, match='slot') as exc:
+        run_descriptive.run_pair(config, frames, config['cells'][1], 'ALPHA', 0)
+    assert str(exc.value)
+
+
 def test_a_cell_selection_leaves_the_other_cells_unpublished(tmp_path):
     config, corpus, output = campaign(tmp_path)
     manifest = describe(config, corpus, output, '--cell', 'tiny')
@@ -174,6 +209,65 @@ def test_a_cell_selection_leaves_the_other_cells_unpublished(tmp_path):
     with pytest.raises(ValueError, match='unknown cell') as exc:
         describe(config, corpus, tmp_path / 'other', '--cell', 'q_half')
     assert 'q_half' in str(exc.value)
+
+
+def test_seed_zero_trial_resumes_to_full_campaign_without_changing_identity(tmp_path):
+    config, corpus, output = campaign(tmp_path, cells=[cell('C0', q=12, seeds=(0, 1)),
+                                                       cell('tiny', q=6, seeds=(0, 1))])
+    first = describe(config, corpus, output, '--cell', 'all', '--seed', '0')
+    assert len(first['keys']['pair']) == 4
+    assert {key[2] for key in first['keys']['pair']} == {0}
+    before = {name: (output / name).read_bytes() for name in first['artifacts']}
+    with pytest.raises(ValueError, match='key') as exc:
+        report(config, corpus, output)
+    assert str(exc.value)
+    complete = describe(config, corpus, output, '--resume')
+    assert len(complete['keys']['pair']) == 8 and len(complete['keys']['model']) == 16
+    assert complete['run_id'] == first['run_id']
+    assert complete['checks']['reused_partitions'] == 4
+    assert complete['checks']['new_model_fits'] == 8
+    assert all((output / name).read_bytes() == data for name, data in before.items())
+    assert report(config, corpus, output)['checks']['scientific'] is False
+
+
+def test_seed_selection_refuses_undeclared_seed_before_loading_corpus(tmp_path):
+    config = toy_config(tmp_path, cells=[cell('C0', q=12, seeds=(1,))])
+    with pytest.raises(ValueError, match='seed') as exc:
+        describe(config, tmp_path / 'absent-corpus', tmp_path / 'output', '--seed', '0')
+    assert 'C0' in str(exc.value)
+    assert not (tmp_path / 'output').exists()
+
+
+def test_interrupted_fit_keeps_completed_pairs_and_resume_matches_fresh_run(tmp_path, monkeypatch):
+    config, corpus, output = campaign(tmp_path)
+    real_pair = run_descriptive.run_pair
+    completed = []
+
+    def interrupted(*args):
+        if completed:
+            raise RuntimeError('interrupted between pairs')
+        result = real_pair(*args)
+        completed.append(result[0])
+        return result
+
+    monkeypatch.setattr(run_descriptive, 'run_pair', interrupted)
+    with pytest.raises(RuntimeError, match='between pairs') as exc:
+        describe(config, corpus, output)
+    assert str(exc.value)
+    partial = scientific_run.validate_run(output)
+    assert len(partial['keys']['pair']) == 1 and len(partial['keys']['model']) == 2
+    before = {name: (output / name).read_bytes() for name in partial['artifacts']}
+    monkeypatch.setattr(run_descriptive, 'run_pair', real_pair)
+    resumed = describe(config, corpus, output, '--resume')
+    assert resumed['checks']['reused_partitions'] == 1
+    assert resumed['checks']['new_model_fits'] == 6
+    assert all((output / name).read_bytes() == data for name, data in before.items())
+    fresh_dir = tmp_path / 'fresh'
+    fresh = describe(config, corpus, fresh_dir)
+    assert resumed['run_id'] == fresh['run_id']
+    assert resumed['artifacts'] == fresh['artifacts']
+    assert all((output / name).read_bytes() == (fresh_dir / name).read_bytes()
+               for name in fresh['artifacts'])
 
 
 def test_the_fixture_declaration_is_required_and_refused_for_the_deposit(tmp_path):
@@ -235,7 +329,8 @@ def test_resume_refuses_a_changed_contract_or_a_changed_corpus(tmp_path, monkeyp
     assert 'code' in str(rewritten.value)
 
 
-@pytest.mark.parametrize('fault', ['bytes', 'truncated', 'missing', 'rows', 'identity'])
+@pytest.mark.parametrize('fault', ['bytes', 'truncated', 'missing', 'rows', 'identity',
+                                   'ledger_reference'])
 def test_a_corrupted_partition_is_detected_and_never_reused(tmp_path, fault):
     config, corpus, output = campaign(tmp_path)
     manifest = describe(config, corpus, output, '--cell', 'C0')
@@ -254,6 +349,12 @@ def test_a_corrupted_partition_is_detected_and_never_reused(tmp_path, fault):
         else:
             broken['artifacts'][record]['rows'] = 99
         (output / 'manifest.json').write_text(json.dumps(broken))
+    if fault == 'ledger_reference':
+        pair = json.loads((output / record).read_text())
+        pair['ledger_sha256'] = '0' * 64
+        (output / record).write_text(json.dumps(pair))
+        manifest['artifacts'][record] = corpus_run.artifact_record(output / record)
+        (output / 'manifest.json').write_text(json.dumps(manifest))
     with pytest.raises(ValueError) as exc:
         scientific_run.validate_run(output)
     assert str(exc.value)
@@ -492,6 +593,15 @@ def test_evidence_must_be_recorded_under_the_code_and_lock_of_this_run(tmp_path)
     with pytest.raises(ValueError, match='evidence') as drifted:
         run_report.check_evidence(stale, manifest['run_contract'])
     assert 'code' in str(drifted.value)
+
+
+def test_real_report_requires_v2_and_v3_evidence_as_well_as_corpus(tmp_path):
+    config, corpus, output = campaign(tmp_path)
+    manifest = describe(config, corpus, output)
+    with pytest.raises(ValueError, match='V2.*V3') as exc:
+        run_report.check_evidence(manifest['evidence'], manifest['run_contract'], scientific=True)
+    assert 'evidence' in str(exc.value)
+    assert not (output/'contrasts.csv').exists()
 
 
 # --- the retired v2.1 entry points --------------------------------------------

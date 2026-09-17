@@ -49,14 +49,9 @@ MANIFEST_FIELDS = {'schema_version': str, 'run_id': str, 'run_contract': dict,
 KEY_WIDTH = {'pair': 3, 'model': 4}  # §11.3: (cell, held_block_key, seed[, arm])
 PROJECTION_FIELDS = ('spec_version', 'representation', 'min_available_past', 'rng', 'cells',
                      'blocks', 'registry', 'R1')
-# §14.2 step 2 names V0–V3; this validator requires V0 and V1 alone, because they are the only
-# two `evidence()` below can record from bytes it verified in this process. V2
-# (`run_tree_validation`) publishes no manifest this reader can check, and V3 — the integrated
-# trial — is not implemented in this plan at all. Widening this tuple is the last step of
-# implementing one of them, never a separate decision:
-# `test_evidence_must_be_recorded_under_the_code_and_lock_of_this_run` pins the tuple against what
-# a published run actually carries, so a stage that starts recording V2 fails there until the
-# tuple follows.
+# Evidence this runner can record from verified bytes. The real report separately
+# requires V0–V3 (§14.2): these two records alone never authorize scientific output.
+# Recording the V2 acceptance and actual V3 integration evidence remains a V3 task.
 EVIDENCE_STEPS = ('V0', 'V1')
 
 
@@ -198,6 +193,10 @@ def positions_name(cell, block_key, seed) -> str:
     return f'positions__{cell}__{block_key}__s{seed}.parquet'
 
 
+def ledger_name(sha256) -> str:
+    return f'sample_ledger__{sha256}.json'
+
+
 def key_sets(keys) -> dict:
     """Detect duplicates *before* turning the lists into sets (§14.2 step 3)."""
     if set(keys) != set(KEY_WIDTH):
@@ -303,6 +302,19 @@ def validate_run(output, *, locked=False) -> dict:
             if Path(name).name != name or (output / name).is_symlink():
                 raise ValueError(f'{name}: unsafe artifact name or symlink')
             compare(artifact_record(output / name), record, f'artifact/{name}')
+        ledgers = set()
+        for key in keys['pair']:
+            pair = _read_json(output / pair_name(*key))
+            name = ledger_name(pair['ledger_sha256'])
+            if pair['sample_ledger'] != name or name not in manifest['artifacts']:
+                raise ValueError(f'{pair_name(*key)}: missing or mismatched sample ledger')
+            ledger = _read_json(output / name)
+            if digest(ledger) != pair['ledger_sha256'] or len(ledger) != pair['ledger_rows']:
+                raise ValueError(f'{name}: ledger digest or cardinality mismatch')
+            ledgers.add(name)
+        listed_ledgers = {name for name in manifest['artifacts'] if name.startswith('sample_ledger__')}
+        if listed_ledgers != ledgers:
+            raise ValueError('manifest: sample ledger artifacts do not match the pair references')
         return manifest
     except (OSError, KeyError, TypeError, json.JSONDecodeError, pd.errors.ParserError,
             pa.ArrowException) as exc:

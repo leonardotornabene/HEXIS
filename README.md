@@ -11,9 +11,11 @@ uv run python -m hexis.pipeline.run_audit --config config/default.yaml --data-ro
 uv run python -m hexis.pipeline.run_encode --config config/default.yaml --data-root data/raw/UD_Ancient_Greek-Perseus --output-dir results/hexis31/new-run
 ```
 
-`run_encode` può anche creare direttamente un nuovo run, includendo l'audit. Un secondo avvio dello stesso stadio è rifiutato; la ripresa dello stadio scientifico è implementata e attestata su fixture sintetiche (V2). Un solo manifest registra gli stadi e distingue `corpus_complete` da `scientific_complete`.
+`run_encode` può anche creare direttamente un nuovo run, includendo l'audit. Un secondo avvio dello stesso stadio è rifiutato. Il manifest del corpus distingue `corpus_complete` da `scientific_complete`; lo stadio descrittivo ha un proprio run con un solo manifest, partizioni per coppia e ledger identificati dall'hash. La ripresa è verificata su fixture sintetiche, anche dopo un'interruzione fra coppie.
 
-Python 3.12 via uv, dipendenze e lock conservati. `uv run pytest -m v31` seleziona l'accettazione attiva; `uv run pytest` comprende anche la suite storica e i suoi scaffold esplicitamente pendenti. Risultati verificati: **220 test attivi senza skip; 543 passed e 17 skip storici nella suite completa**. Gli skip storici non attestano il nuovo software. [Inventario test](docs/TEST_INVENTORY.md), [roadmap](docs/03_ROADMAP_OPERATIVA_IT.md), [handoff](docs/HANDOFF.md).
+La batteria sintetica è eseguibile con `uv run python -m hexis.pipeline.run_tree_validation --config config/default.yaml`. Le CLI descrittive accettano la configurazione depositata; `--fixture` serve soltanto alle configurazioni giocattolo. La selezione `--seed 0` è implementata per la futura prova V3, ma **questa tranche si ferma per revisione prima di V3**. Il report reale richiederà nel manifest anche le evidenze di accettazione V2 e integrazione V3.
+
+Python 3.12 via uv, dipendenze e lock conservati. `uv run pytest -m v31` seleziona l'accettazione attiva; `uv run pytest` comprende anche la suite storica e i suoi scaffold esplicitamente pendenti. Risultati verificati: **240 test attivi senza skip; 561 passed e 17 skip storici nella suite completa**. Gli skip storici non attestano il nuovo software. [Inventario test](docs/TEST_INVENTORY.md), [roadmap](docs/03_ROADMAP_OPERATIVA_IT.md), [handoff](docs/HANDOFF.md).
 
 Il corpus include 17 documenti censiti: 11 primari in sette blocchi, sei solo inventario. Alfabeto accorpato ADV/PART, varianti 100/105/11. Target con almeno quattro predecessori nella frase; regimi sorgente separati dal gruppo del report.
 

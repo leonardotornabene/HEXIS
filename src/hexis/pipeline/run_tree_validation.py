@@ -13,12 +13,16 @@ own pass flags contradict the §12.1 table (see THRESHOLD below).
 """
 import argparse
 import math
+import os
+import tempfile
 from pathlib import Path
 
 import numpy as np
 
-from hexis.contracts import canonical_json, load_contracts
+from hexis.contracts import ROOT, load_contracts
+from hexis.config import load_v31_config
 from hexis.model.context_tree import CTW, CTWParams
+from hexis.pipeline.corpus_run import check_destination, write_artifact
 
 # §12.1 table. The historical script hardcodes 0.03 for iid/order1/lag2/variable
 # and 0.02 only for cycle; the plan text, which governs semantics (§0), fixes
@@ -112,15 +116,26 @@ def exit_code(rows):
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description='HEXIS 3.1 frozen synthetic CTW battery (§12.1)')
+    parser.add_argument('--config', type=Path, help='validate the deposited analytical projection')
     parser.add_argument('--out', type=Path, help='write the battery results as JSON')
     parser.add_argument('--force', action='store_true', help='overwrite an existing --out')
     args = parser.parse_args(argv)
+    load_v31_config(args.config)
+    if args.out is not None:
+        check_destination(args.out, ROOT/'data/raw')
     if args.out is not None and args.out.exists() and not args.force:
         raise ValueError(f'{args.out}: exists; pass --force to overwrite')
     rows = run_battery()
     code = exit_code(rows)
     if args.out is not None:
-        args.out.write_bytes(canonical_json({'rows': rows, 'analytic_pass': code == 0}) + b'\n')
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix='.validation-', dir=args.out.parent) as temporary:
+            path = Path(temporary)/'result.json'
+            write_artifact(path, {'rows': rows, 'analytic_pass': code == 0})
+            if args.force:
+                os.replace(path, args.out)
+            else:
+                os.link(path, args.out)
     return code
 
 

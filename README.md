@@ -11,7 +11,7 @@ uv run python -m hexis.pipeline.run_audit --config config/default.yaml --data-ro
 uv run python -m hexis.pipeline.run_encode --config config/default.yaml --data-root data/raw/UD_Ancient_Greek-Perseus --output-dir results/hexis31/new-run
 ```
 
-`run_encode` può anche creare direttamente un nuovo run, includendo l'audit. Un secondo avvio dello stesso stadio è rifiutato; la ripresa modellistica è rinviata a V2. Un solo manifest registra gli stadi e distingue `corpus_complete` da `scientific_complete`.
+`run_encode` può anche creare direttamente un nuovo run, includendo l'audit. Un secondo avvio dello stesso stadio è rifiutato; la ripresa dello stadio scientifico è implementata e attestata su fixture sintetiche (V2). Un solo manifest registra gli stadi e distingue `corpus_complete` da `scientific_complete`.
 
 Python 3.12 via uv, dipendenze e lock conservati. `uv run pytest -m v31` seleziona l'accettazione attiva; `uv run pytest` comprende anche la suite storica e i suoi scaffold esplicitamente pendenti. Risultati verificati: **220 test attivi senza skip; 543 passed e 17 skip storici nella suite completa**. Gli skip storici non attestano il nuovo software. [Inventario test](docs/TEST_INVENTORY.md), [roadmap](docs/03_ROADMAP_OPERATIVA_IT.md), [handoff](docs/HANDOFF.md).
 

@@ -22,11 +22,11 @@ nessuno skip/xfail/xpass. Il confronto col contratto non sostituisce test del fu
 | T15 | V2 | 25 sintetici alle soglie §12.1 sul CTW canonico; violazione → exit non zero |
 | T16 | V2 | Stress storico m106: esecuzione, normalizzazione, supporti, deficit registrato |
 | T17 | V2 | Lunghezza, multinsieme, maschera e conteggi di radice conservati; slot distinto dalla provenienza |
-| T18 | PARZIALE V2 | Controesempi prefissati di dipendenza interna e di pool eterogeneo al livello del campione; il divario in G/Q sugli stessi controesempi richiede i modelli (PENDING con T19) |
-| T19 | PENDING V2 | Q a quattro termini; chiude anche il residuo T18 (controesempio G/Q sul pool eterogeneo) |
-| T20 | PENDING V2 | Aggregazioni/due pesi |
-| T21 | PENDING V2 | Sensibilità accoppiate |
-| T22 | PENDING V2 | Masse/supporti/L_resolved |
+| T18 | V2 | Controesempi di dipendenza interna e di pool eterogeneo al livello del campione e in G/Q: G_R non nullo con due modelli fittati |
+| T19 | V2 | Q a quattro termini; controesempio archiviato d'inversione del segno riprodotto sul CTW canonico |
+| T20 | V2 | Aggregazioni/due pesi |
+| T21 | V2 | Sensibilità accoppiate |
+| T22 | V2 | Masse/supporti/L_resolved |
 | T23 | PENDING V2 | R1 |
 | T24 | PARZIALE V1 | Censimento dei sei inventory_only; assenza training/scoring finale PENDING V5 |
 | T25 | PENDING V4 | Uguaglianza 490/980 chiavi modello/coppia |
@@ -90,3 +90,30 @@ Le parti PENDING della tabella restano tali; V0–V1 non promuove T05–T30 inte
   (l'identità della frase non è la chiave: `@10` precede `@2` in ordine lessicografico) e contro la
   copertura completa degli offset ammessi; il ledger regge il round-trip parquet dell'artefatto V1.
 - Suite completa dopo T05–T09/T17–T18: **486 passed, 17 skipped storici**.
+
+## Evidenze V2 — punteggi e diagnostiche (T18 residuo, T19–T22)
+
+- `test_v31_scores.py`: fixture interamente sintetiche (alfabeti m=2..5, frasi giocattolo, tre blocchi).
+  **Nessun fit sul corpus greco**: il freeze dei fit reali fino a V3 vale anche per i test.
+- T19: il controesempio archiviato di `diagnostics_validation.json` (Q≈0,7134571524694422, scorciatoia
+  `CE_CTW_R−CE_CTW_O`≈−0,6650544707842875, differenza di radice ≈1,3785116232537296) è **riprodotto dal
+  CTW canonico** entro 1e-9 bit passando per `score_streams`/`aggregate`/`ce_gain_q`: il segno della
+  scorciatoia è opposto a quello di Q. Sul percorso completo §7 le quattro CE per slot coincidono con
+  `CTW.evaluate` alle stesse tolleranze, e gli slot dei due bracci sono verificati uno-a-uno.
+- T18 (residuo): pool eterogeneo a due dialetti fittato sui due bracci — G_R = 0,817 bit, Q = −0,216
+  mentre G_O = 0,601: assumere G_R=0 sbaglierebbe anche il segno. Quota di slot cambiati 18/44 letta
+  da `changed_count`/`total_count` dello shuffle, non ricalcolata.
+- T20: perdite→documenti→blocchi→gruppi su lunghezze diseguali; la CE di blocco è somma/target
+  (13/3), non media delle medie documentali (5,5); il totale è la somma delle due fasce disgiunte.
+  Le due pesature restituiscono le quattro CE, G_O, G_R e Q, e `D_Q = D_G_O − D_G_R` è verificato
+  in `contrasts` per entrambe; un blocco senza score interrompe il contrasto.
+- T21: dieci semi per cella, aggregazione **per seme prima** delle cinque statistiche (SD con S−1,
+  null a S=1); il join accoppiato rifiuta duplicati e insiemi di slot diversi — il caso OTH, dove la
+  popolazione di target cambia, non viene allineato per lunghezza uguale.
+- T22: R come somma diretta (mai `1-unseen_mass`), masse+unseen=1 entro 1e-12, L_resolved null con
+  motivo `no_resolved_mass` a training vuoto e 0,0 su foglia forzata D=0; media come somma dei validi
+  diviso il conteggio valido; fascia vuota con n=0, somme additive 0 e CE/G/Q null `empty_bucket`.
+- Le firme v2.1 `pooled_score_core`/`annotate_scores` restano in `protocols/scores.py` come scaffold
+  ritirato ma non rimosso (§11.1 ne conserva nome e confine label-free); il confine attivo 3.1 è
+  `score_streams` (senza etichette) più `contrasts` (unica fase che legge il gruppo).
+- Suite completa dopo T18–T22: **498 passed, 17 skipped storici**.

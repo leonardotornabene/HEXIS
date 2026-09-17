@@ -47,19 +47,22 @@ def cell(identifier, *, q, D=2, a=0.5, seeds=(0,)):
             'seeds': list(seeds), 'arms': ['original', 'shuffled'], 'a_per_symbol': a, 'm': M}
 
 
-def toy_config(tmp_path, *, cells=None, name='fixture.yaml'):
+def toy_config(tmp_path, *, cells=None, blocks=None, name='fixture.yaml'):
     """A minuscule analytical projection: two cells, two blocks, one seed, two arms."""
-    blocks = [{'block': name_, 'docs': docs, 'group': group, 'block_key': sampling.block_key(docs)}
-              for name_, (docs, group) in sorted(BLOCKS.items())]
+    blocks = BLOCKS if blocks is None else blocks
+    declared = [{'block': name_, 'docs': docs, 'group': group,
+                 'block_key': sampling.block_key(docs)}
+                for name_, (docs, group) in sorted(blocks.items())]
+    registry = [{'canonical_doc_id': doc, 'role': 'primary', 'dependence_block': name_}
+                for name_, (docs, _) in sorted(blocks.items()) for doc in docs]
     cfg = {'spec_version': 'HEXIS-3.1-fixture',
            'representation': {'version': 'toy-1'},
            'min_available_past': 4,
            'rng': {'version': 'hexis-v3-rng-1'},
            'cells': cells if cells is not None else [cell('C0', q=12), cell('tiny', q=6)],
-           'blocks': blocks,
-           'registry': [{'canonical_doc_id': 'a', 'role': 'primary', 'dependence_block': 'ALPHA'},
-                        {'canonical_doc_id': 'b', 'role': 'primary', 'dependence_block': 'BETA'},
-                        {'canonical_doc_id': 'z', 'role': 'inventory_only', 'dependence_block': None}],
+           'blocks': declared,
+           'registry': [*registry, {'canonical_doc_id': 'z', 'role': 'inventory_only',
+                                    'dependence_block': None}],
            'R1': {'variants': [VARIANT], 'a_per_symbol': 0.5}}
     path = tmp_path / name
     path.write_text(yaml.safe_dump(cfg, sort_keys=True), encoding='utf-8')
@@ -107,9 +110,9 @@ def toy_corpus(tmp_path, *, lengths=None, alphabets='1' * 64):
     return directory
 
 
-def campaign(tmp_path, *, cells=None, lengths=None, alphabets='1' * 64, out='run'):
+def campaign(tmp_path, *, cells=None, blocks=None, lengths=None, alphabets='1' * 64, out='run'):
     corpus = toy_corpus(tmp_path, lengths=lengths, alphabets=alphabets)
-    config = toy_config(tmp_path, cells=cells)
+    config = toy_config(tmp_path, cells=cells, blocks=blocks)
     return config, corpus, tmp_path / out
 
 
@@ -387,6 +390,37 @@ def test_report_reconstructs_documents_blocks_and_groups_from_the_persisted_posi
     assert int(total['n'].sum()) == int(rebuilt['n'].sum())
 
 
+def test_arm_diagnostics_keep_the_document_dimension_the_loss_sums_carry(tmp_path):
+    # §11.5 keeps the §9.3 summaries beside the document/band loss sums, and §14.3 counts
+    # 1.540 logical rows = documents x (cell,seed) x arms, before the bands. A block holding
+    # two documents is what tells the two granularities apart: summing the document dimension
+    # away here would be irreversible for the five cells that persist no positions.
+    blocks = {'ALPHA': (['a', 'c'], 'HEX'), 'BETA': (['b'], 'PROSE_ALL')}
+    config, corpus, output = campaign(tmp_path, blocks=blocks, lengths={**LENGTHS, 'c': [9, 8]})
+    describe(config, corpus, output, '--cell', 'all')
+    report(config, corpus, output)
+    frame = pd.read_csv(output / 'arm_diagnostics.csv')
+    keys = ['cell', 'held_block_key', 'seed', 'doc_id', 'arm', 'past_band']
+    assert not frame.duplicated(subset=keys).any()
+    cells, seeds = 2, 1
+    evaluated = sum(len(docs) for docs, _ in blocks.values())  # each block is held once
+    assert len(frame) == cells * seeds * evaluated * len(scores.ARMS) * len(scores.BANDS) == 24
+    alpha = frame[frame['held_block'].eq('ALPHA')]
+    assert set(alpha['doc_id']) == {'a', 'c'}
+    # The two documents of the held block carry their own targets, not one shared block row.
+    counts = alpha[alpha['cell'].eq('C0') & alpha['arm'].eq('original')].set_index(
+        ['doc_id', 'past_band'])['n']
+    assert counts.loc[('a', '4_7')] == 16 and counts.loc[('c', '4_7')] == 8
+    assert counts.loc[('a', 'ge8')] == 4 and counts.loc[('c', 'ge8')] == 1
+    # Every summary lines up with the document/band row of the same key, one arm at a time.
+    documents = pd.read_csv(output / 'document_scores.csv')
+    merged = frame.merge(documents[[*run_report.KEY_COLUMNS, 'doc_id', 'past_band', 'n']],
+                         on=[*run_report.KEY_COLUMNS, 'doc_id', 'past_band'],
+                         suffixes=('', '_document'), validate='many_to_one')
+    assert len(merged) == len(frame)
+    assert (merged['n'] == merged['n_document']).all()
+
+
 def test_report_refuses_an_incomplete_campaign_and_any_inventory_only_score(tmp_path):
     config, corpus, output = campaign(tmp_path)
     describe(config, corpus, output, '--cell', 'C0')
@@ -424,7 +458,11 @@ def test_report_refuses_a_second_emission_and_a_partition_added_after_it(tmp_pat
 def test_evidence_must_be_recorded_under_the_code_and_lock_of_this_run(tmp_path):
     config, corpus, output = campaign(tmp_path)
     manifest = describe(config, corpus, output, '--cell', 'all')
-    assert set(manifest['evidence']) >= {'V0', 'V1'}
+    # §14.2 step 2 names V0-V3; this validator requires V0 and V1, the two a run records for
+    # itself. The pin is deliberate and is held against what a published run actually carries,
+    # so a stage that begins recording V2 fails here until EVIDENCE_STEPS follows it.
+    assert scientific_run.EVIDENCE_STEPS == ('V0', 'V1')
+    assert set(manifest['evidence']) == set(scientific_run.EVIDENCE_STEPS)
     assert manifest['evidence']['V1']['code'] == digest(manifest['run_contract']['code'])
     with pytest.raises(ValueError, match='evidence') as exc:
         run_report.check_evidence({'V0': manifest['evidence']['V0']}, manifest['run_contract'])

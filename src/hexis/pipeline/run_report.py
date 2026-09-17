@@ -39,11 +39,17 @@ CENTROID_COLUMNS = ('variant', 'group_a', 'group_b', 'blocks_a', 'blocks_b', 'js
 
 # --- the six steps -------------------------------------------------------------
 
-def check_deposit(path, cfg, contract, deposited: bool) -> bool:
-    """Step 1: deposited bytes, plan/lock and the analytical projection of the configuration."""
+def check_deposit(contract, deposited: bool) -> bool:
+    """Step 1: the deposited bytes of the analytical contracts and of the plan named by the lock.
+
+    The configuration is verified before this step and not inside it:
+    `scientific_run.load_projection` refuses a configuration that is not the deposited
+    analytical projection unless `--fixture` is declared, and `main` compares this run's
+    whole `run_contract` — `configuration` digest included — with the published one. A
+    comparison here against `contract['configuration']` would only restate the digest this
+    same call built from this same configuration, and could never fail.
+    """
     contracts = load_contracts()
-    if digest(cfg) != contract['configuration']:
-        raise ValueError(f'{path}: this configuration is not the one the run was published under')
     if deposited:
         compare(contract['analytical_contracts'], contracts['lock']['contracts'],
                 'analytical_contracts')
@@ -261,7 +267,11 @@ def model_diagnostics(records) -> pd.DataFrame:
 
 
 def arm_diagnostics(records) -> pd.DataFrame:
-    """§9.3 per arm and band: the sums, with the means each over its own denominator."""
+    """§9.3 per document, arm and band: the sums, each mean over its own denominator.
+
+    The document dimension is the one the loss sums carry (§11.5), so step 4 reads
+    `entrambe le fasce per documento` from these rows directly.
+    """
     frames = []
     for record in records:
         frame = pd.DataFrame(record['arm_diagnostics']).assign(
@@ -271,7 +281,7 @@ def arm_diagnostics(records) -> pd.DataFrame:
                                    unseen_mass_mean=[value['unseen'] for value in means],
                                    reason=[value['reason'] for value in means]))
     frame = pd.concat(frames, ignore_index=True)
-    leading = [*KEY_COLUMNS, 'arm', 'past_band']
+    leading = [*KEY_COLUMNS, 'doc_id', 'arm', 'past_band']
     return frame[[*leading, *[name for name in frame.columns if name not in leading]]]
 
 
@@ -333,7 +343,7 @@ def main(argv=None):
     scientific_run.check_stage_open(args.output_dir, 'report', prior, resume=False)
     compare(contract, prior['run_contract'], 'run_contract')
     steps = []
-    scientific = check_deposit(args.config, cfg, contract, deposited)
+    scientific = check_deposit(contract, deposited)
     steps.append(1)
     check_evidence(prior['evidence'], contract)
     steps.append(2)

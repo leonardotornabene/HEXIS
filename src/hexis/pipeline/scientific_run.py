@@ -49,7 +49,15 @@ MANIFEST_FIELDS = {'schema_version': str, 'run_id': str, 'run_contract': dict,
 KEY_WIDTH = {'pair': 3, 'model': 4}  # §11.3: (cell, held_block_key, seed[, arm])
 PROJECTION_FIELDS = ('spec_version', 'representation', 'min_available_past', 'rng', 'cells',
                      'blocks', 'registry', 'R1')
-EVIDENCE_STEPS = ('V0', 'V1')  # what this run verifies for itself; V2–V3 are added by their stages
+# §14.2 step 2 names V0–V3; this validator requires V0 and V1 alone, because they are the only
+# two `evidence()` below can record from bytes it verified in this process. V2
+# (`run_tree_validation`) publishes no manifest this reader can check, and V3 — the integrated
+# trial — is not implemented in this plan at all. Widening this tuple is the last step of
+# implementing one of them, never a separate decision:
+# `test_evidence_must_be_recorded_under_the_code_and_lock_of_this_run` pins the tuple against what
+# a published run actually carries, so a stage that starts recording V2 fails there until the
+# tuple follows.
+EVIDENCE_STEPS = ('V0', 'V1')
 
 
 # --- the analytical projection -------------------------------------------------

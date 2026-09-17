@@ -100,6 +100,7 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                             'test_two_destinations_publish_the_same_partitions_byte_for_byte',
                             'test_report_cli_emits_every_declared_table_from_a_complete_campaign',
                             'test_report_reconstructs_documents_blocks_and_groups_from_the_persisted_positions',
+                            'test_arm_diagnostics_keep_the_document_dimension_the_loss_sums_carry',
                             'test_report_refuses_an_incomplete_campaign_and_any_inventory_only_score',
                             'test_report_refuses_a_run_that_is_not_the_deposited_configuration',
                             'test_report_refuses_a_second_emission_and_a_partition_added_after_it',

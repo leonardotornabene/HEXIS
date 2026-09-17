@@ -61,10 +61,13 @@ def run_pair(cfg, frames, cell, held, seed):
     frame = sequences[sequences['variant'].eq(variant)]
     documents = dict(zip(frame['sent_id'].astype(str), frame['doc_id'].astype(str)))
     positions = positions.assign(doc_id=positions['sent_id'].map(documents))
-    if positions['doc_id'].isna().any():
+    arms = arms.assign(doc_id=arms['sent_id'].map(documents))
+    if positions['doc_id'].isna().any() or arms['doc_id'].isna().any():
         raise ValueError(f'{held}: a scored sentence has no document in variant {variant!r}')
     sums = scores.aggregate(positions, keys=['doc_id'])
-    arm_sums = (arms.drop(columns=['sent_id']).groupby(['arm', 'past_band'], sort=True,
+    # §11.5: the §9.3 summaries are kept per document, like the loss sums beside them — summing
+    # the document dimension away here would lose it for good (§14.3, 1.540 logical rows).
+    arm_sums = (arms.drop(columns=['sent_id']).groupby(['doc_id', 'arm', 'past_band'], sort=True,
                                                        as_index=False).sum())
     lengths = ledger.assign(tokens=ledger['end'] - ledger['start'])
     training = lengths.groupby(['block', 'block_key'], sort=True, as_index=False).agg(

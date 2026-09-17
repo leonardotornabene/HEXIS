@@ -202,7 +202,8 @@ V2, prima della ripresa documentata sotto. Le parti PENDING V4/V5 della tabella 
   Sono sostituiti soltanto gli attesi delle firme del protocollo v2.1, come registrato
   nella nota di esecuzione V3-001; il confine senza etichette resta obbligatorio.
 
-Accettazione dopo la ripresa: **240 passed, 338 deselected, zero skip**.
+Accettazione sui byte della ripresa committati in `d38b5a7`:
+**240 passed, 338 deselected, zero skip**.
 Suite completa: **561 passed, 17 skipped storici**. Lock invariato, 23 pacchetti.
 I 20 casi attivi aggiunti comprendono 18 nuovi casi e i due test di firma
 preesistenti; la revisione integrale e V3–V5 restano fuori da questa attestazione.

@@ -9,7 +9,8 @@
 - V1, corpus e persistenza: `7afdd3a4f87341110b0f15a77179febe9075ee9b`.
 - V0+V1, attestazione documentale: `b607cef434ffa8698cb2e4ca0387d2b759a18862`.
 - V2, core e protocollo, quattro milestone chiusi in sequenza: `105c0aae26f4eb9b54267e02ee45f5449e565ac6`, `3119517da223940cc51eabaef096508c33c6ec03`, `e9c8c96e4573fb9585f4250ce38f47d5cc3a2998`, `de8ea5d576c415aa6bc082186b8ce649271a664b`.
-- L'aggiornamento finale di questo handoff è documentale; il manifest identifica il commit produttore sopra, senza autoriferimenti.
+- Ripresa V2 e completamento dei collegamenti/persistenza: `d38b5a7`.
+- L'aggiornamento finale di questo handoff è documentale e cita il commit di implementazione precedente, senza autoriferimenti.
 
 Autorità: [specifica attiva](01_MASTER_SPEC.md), [V3-001](02_DECISION_LOG.md) e piano/JSON byte-identificati in `contracts/hexis-3.1/`. Il [record esterno del deposito](V3-001-deposit.json) conserva i digest; nessun byte normativo o atteso è stato aggiornato per far passare i controlli. Verificati 8 digest della consegna, 14 verdetto/evidenze, 33 file del pacchetto storico, 103 dell'archivio interno e le quattro fixture CTW. Le fixture non sono state eseguite come programmi storici.
 
@@ -88,7 +89,8 @@ percorso V2, con test rossi osservati prima delle modifiche:
 - I record V0/V1 da soli non consentono più l'emissione di un report reale;
   le evidenze V2/V3 saranno collegate nell'integrazione, non simulate qui.
 
-Comandi eseguiti e righe finali verbatim, tutti exit 0:
+Comandi eseguiti sui byte poi committati in `d38b5a7` e righe finali verbatim,
+tutti exit 0:
 
 ```text
 uv run pytest -q
@@ -100,6 +102,12 @@ uv run pytest -m v31 -q
 uv lock --check
 Resolved 23 packages in 4ms
 ```
+
+Dopo l'allineamento finale dei testi, i 12 test documentali sono passati.
+Una precedente invocazione limitata a documentazione e inventario aveva ottenuto
+exit 1 perché il controllo di raccolta richiede l'intera accettazione: la
+selezione parziale non conteneva gli altri test obbligatori. Nessun controllo
+è stato indebolito; le due suite complete sopra hanno verificato la raccolta.
 
 I 20 test attivi in più comprendono 18 nuovi casi e i due controlli di firma
 già esistenti, ora inclusi anche in v31; i 17 skip restano tutti storici.

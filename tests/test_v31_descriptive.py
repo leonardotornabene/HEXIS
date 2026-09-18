@@ -100,7 +100,8 @@ def toy_corpus(tmp_path, *, lengths=None, alphabets='1' * 64):
     contract = {'spec_version': 'HEXIS-3.1-fixture', 'representation_version': 'toy-1',
                 'analytical_contracts': {}, 'source_commit': '0' * 40, 'plan': '0' * 64,
                 'code': {}, 'data': {'toy.conllu': '0' * 64}, 'registry': '4' * 64,
-                'alphabets': alphabets, 'configuration': '2' * 64, 'lock': '3' * 64,
+                'alphabets': alphabets, 'configuration': '2' * 64,
+                'lock': sha256_file(ROOT / 'uv.lock'),
                 'rng_version': 'hexis-v3-rng-1'}
     artifacts = toy_frames(lengths)
     directory = tmp_path / 'corpus'
@@ -243,10 +244,10 @@ def test_interrupted_fit_keeps_completed_pairs_and_resume_matches_fresh_run(tmp_
     real_pair = run_descriptive.run_pair
     completed = []
 
-    def interrupted(*args):
+    def interrupted(*args, **kwargs):
         if completed:
             raise RuntimeError('interrupted between pairs')
-        result = real_pair(*args)
+        result = real_pair(*args, **kwargs)
         completed.append(result[0])
         return result
 
@@ -523,16 +524,18 @@ def test_arm_diagnostics_keep_the_document_dimension_the_loss_sums_carry(tmp_pat
 
 
 def test_report_refuses_a_document_silently_dropped_from_document_scores(tmp_path):
-    # §14.2 step 3 names a document/band key family beside pair/model. Without checking it,
-    # a document contributing zero eligible slots (every sentence shorter than
-    # min_available_past=4) is silently missing from document_scores.csv — scores.aggregate
-    # keeps only the doc_ids present in the scored positions — while arm_diagnostics.csv still
-    # carries it at n=0, because score_streams pre-seeds a total for every evaluated sent_id
-    # before it ever walks an eligible position. Nothing else cross-checks the two tables.
+    # Explicit corruption: a zero-target document must still have both rows.
     blocks = {'ALPHA': (['a', 'short'], 'HEX'), 'BETA': (['b'], 'PROSE_ALL')}
     lengths = {**LENGTHS, 'short': [3, 3]}  # both sentences shorter than min_available_past
     config, corpus, output = campaign(tmp_path, blocks=blocks, lengths=lengths)
-    describe(config, corpus, output, '--cell', 'all')
+    manifest = describe(config, corpus, output, '--cell', 'all')
+    for name in manifest['artifacts']:
+        if name.startswith('pair__'):
+            record = json.loads((output/name).read_text())
+            record['document_sums'] = [row for row in record['document_sums'] if row['doc_id'] != 'short']
+            corpus_run.write_artifact(output/name, record)
+            manifest['artifacts'][name] = corpus_run.artifact_record(output/name)
+    corpus_run.write_artifact(output/'manifest.json', manifest)
     with pytest.raises(ValueError, match='document_band') as exc:
         report(config, corpus, output)
     assert 'short' in str(exc.value) and 'document_scores.csv' in str(exc.value)

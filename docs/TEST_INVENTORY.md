@@ -223,3 +223,7 @@ preesistenti; la revisione integrale e V3–V5 restano fuori da questa attestazi
 ## Riconciliazione 2A — 2026-09-18
 
 T11/T17/T22: istogrammi di supporto per profondità con BOS; contatore di incontri non osservati indipendente dall'underflow; slot unici fra stream, provenienza biunivoca e validazione di tutti i simboli del core. T15/T16: batteria completa per insieme esatto dei casi, conteggi, valori finiti, normalizzazione, supporti, deficit e oracle rigenerato dalla fixture. I 25 sintetici rispettano le soglie congelate; i nove stress non devono raggiungere l'oracle. Accettazione: **262 passed, 338 deselected**, nessuno skip/xfail. Nessun generatore, seme, soglia o contratto modificato.
+
+## Riconciliazione 2B — 2026-09-18
+
+M4/T22/T26/T27/T29: `test_v31_completion.py` e `test_v31_report_semantics.py` coprono lock presente, righe vuote, risorse per modello esterne all'identità, bracci/famiglie artefatti, tipi delle chiavi e corruzioni semantiche in report/resume anche dopo ricalcolo degli hash. Le somme C0 delle quattro perdite, L_resolved e unseen sono ricostruite; conteggi/chiavi esatti, CE entro 1e-9 bit/target e diagnostiche entro 1e-12 per posizione. Schemi, duplicati, null, masse, supporti e denominatori verificati anche nelle sensibilità. R1 conserva frequenze empiriche e smussate. Accettazione: **302 passed, 338 deselected**, zero skip/xfail. Restano V3–V5 le verifiche modellistiche reali, rigenerazione prefissata e figure; questa copertura è sintetica.

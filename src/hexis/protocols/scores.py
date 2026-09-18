@@ -11,6 +11,7 @@ and can carry the opposite sign. G and Q are never truncated (§8.1).
 """
 
 import math
+import time
 
 import numpy as np
 import pandas as pd
@@ -92,6 +93,7 @@ def pooled_score_core(original, shuffled, *, model_original, model_shuffled,
     observed = {arm: set(model.inspect(())['counts']) for arm, model in models.items()}
 
     rows, totals, seen_slots = [], {}, set()
+    evaluation_seconds = dict.fromkeys(ARMS, 0.0)
     for index, (left, right) in enumerate(zip(original, shuffled)):
         _require_paired(left, right, index)
         if seen_slots.intersection(left['slot_uids']):
@@ -111,6 +113,7 @@ def pooled_score_core(original, shuffled, *, model_original, model_shuffled,
                    'shuffled_symbol_id': right['symbols'][position],
                    'shuffled_origin_slot_uid': right['source_slot_uids'][position]}
             for arm, symbols in (('original', left['symbols']), ('shuffled', right['symbols'])):
+                started = time.perf_counter()
                 model, target, history = models[arm], symbols[position], symbols[:position]
                 record = diagnostics.resolved(model.mixture(history))
                 row[f'loss_ctw_{arm}'] = -math.log2(model.predict_proba(history)[target])
@@ -119,6 +122,7 @@ def pooled_score_core(original, shuffled, *, model_original, model_shuffled,
                 row[f'resolved_mean_{arm}'] = (math.nan if record['resolved_mean'] is None
                                                else record['resolved_mean'])
                 totals[(sent_id, band, arm)].add(record, root_unseen=target not in observed[arm])
+                evaluation_seconds[arm] += time.perf_counter() - started
             rows.append(row)
     if not rows:
         raise ValueError(f'no eligible target with min_available_past={min_available_past} in '
@@ -127,7 +131,9 @@ def pooled_score_core(original, shuffled, *, model_original, model_shuffled,
                                             *POSITION_COLUMNS])
     arm_rows = [{'sent_id': sent_id, 'past_band': band, 'arm': arm, **record.row()}
                 for (sent_id, band, arm), record in totals.items()]
-    return positions, pd.DataFrame(arm_rows)
+    arm_frame = pd.DataFrame(arm_rows)
+    arm_frame.attrs['evaluation_seconds'] = evaluation_seconds
+    return positions, arm_frame
 
 
 # Existing v3.1 callers use the same implementation, with no second scoring path.
@@ -154,7 +160,7 @@ def annotate_scores(scores, registry, *, on='doc_id') -> pd.DataFrame:
     return scores.join(registry.set_index(on), on=on, how='left', validate='many_to_one')
 
 
-def aggregate(positions, keys=()) -> pd.DataFrame:
+def aggregate(positions, keys=(), *, universe=None) -> pd.DataFrame:
     """§8.2 sums per (keys, band); every key keeps both bands, empty ones at zero."""
     keys = list(keys)
     changed = positions['original_symbol_id'].ne(positions['shuffled_symbol_id'])
@@ -164,7 +170,8 @@ def aggregate(positions, keys=()) -> pd.DataFrame:
                                 ('ctw_original', 'root_original', 'ctw_shuffled', 'root_shuffled')})
     grouped = frame.groupby(keys + ['past_band'], sort=True)[list(SUM_COLUMNS)].sum().reset_index()
     bands = pd.DataFrame({'past_band': list(BANDS)})
-    complete = (frame[keys].drop_duplicates().sort_values(keys).merge(bands, how='cross')
+    members = frame[keys].drop_duplicates() if universe is None else universe[keys]
+    complete = (members.sort_values(keys).merge(bands, how='cross')
                 if keys else bands)
     filled = complete.merge(grouped, how='left', on=keys + ['past_band'])
     filled[list(SUM_COLUMNS)] = filled[list(SUM_COLUMNS)].fillna(0)

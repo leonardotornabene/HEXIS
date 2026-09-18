@@ -15,6 +15,8 @@ import argparse
 import time
 from pathlib import Path
 
+import pandas as pd
+
 from hexis.contracts import compare, digest
 from hexis.model.context_tree import CTW, CTWParams
 from hexis.pipeline import scientific_run
@@ -30,7 +32,7 @@ def available_tokens(sequences, blocks, variant) -> dict:
     return {name: int(sum(int(kept.get(doc, 0)) for doc in docs)) for name, docs in blocks.items()}
 
 
-def run_pair(cfg, frames, cell, held, seed):
+def run_pair(cfg, frames, cell, held, seed, *, resources=None):
     """One (cell, fold, seed): sample once, fit both arms, score the coupled slots.
 
     Returns the pair record of §11.4–§11.5 and, for C0, the positional frame.
@@ -52,12 +54,23 @@ def run_pair(cfg, frames, cell, held, seed):
                                                      held=held_key, purpose='shuffle_eval')
     params = CTWParams.from_rho(m=int(cell['m']), depth=depth, a=cell['a_per_symbol'],
                                 rho=cell['rho'])
-    models = {arm: CTW(params).fit([stream['symbols'] for stream in train[arm]])
-              for arm in scores.ARMS}
+    models, measured = {}, {}
+    for arm in scores.ARMS:
+        started = time.perf_counter()
+        models[arm] = CTW(params).fit([stream['symbols'] for stream in train[arm]])
+        measured[arm] = {'fit_seconds': time.perf_counter() - started,
+                         'peak_rss_bytes': scientific_run.peak_rss_bytes(),
+                         'rss_method': scientific_run.RSS_METHOD,
+                         'timer': 'time.perf_counter; seconds'}
     positions, arms = scores.pooled_score_core(evaluated['original'], evaluated['shuffled'],
                                            model_original=models['original'],
                                            model_shuffled=models['shuffled'],
                                            min_available_past=cfg['min_available_past'])
+    if resources is not None:
+        resources.update({arm: {**measured[arm],
+                                'evaluation_seconds': arms.attrs['evaluation_seconds'][arm],
+                                'peak_rss_bytes': scientific_run.peak_rss_bytes()}
+                          for arm in scores.ARMS})
     coordinates = frames['coordinates.parquet']
     eligible = coordinates[coordinates['variant'].eq(variant)
                            & coordinates['doc_id'].astype(str).isin(blocks[held])
@@ -70,7 +83,8 @@ def run_pair(cfg, frames, cell, held, seed):
     arms = arms.assign(doc_id=arms['sent_id'].map(documents))
     if positions['doc_id'].isna().any() or arms['doc_id'].isna().any():
         raise ValueError(f'{held}: a scored sentence has no document in variant {variant!r}')
-    sums = scores.aggregate(positions, keys=['doc_id'])
+    sums = scores.aggregate(positions, keys=['doc_id'],
+                            universe=pd.DataFrame({'doc_id': blocks[held]}))
     # §11.5: the §9.3 summaries are kept per document, like the loss sums beside them — summing
     # the document dimension away here would lose it for good (§14.3, 1.540 logical rows).
     arm_sums = (arms.drop(columns=['sent_id']).groupby(['doc_id', 'arm', 'past_band'], sort=True,
@@ -137,6 +151,8 @@ def main(argv=None):
     if prior:
         compare(contract, prior['run_contract'], 'run_contract')
         compare(evidence, prior['evidence'], 'evidence')
+        from hexis.pipeline.run_report import validate_partitions
+        validate_partitions(args.output_dir, prior, cfg, frames)
     resumable = {tuple(key) for key in prior['keys']['pair']} if prior else set()
     blocks = scientific_run.block_keys_of(cfg)
     keys = {'pair': [], 'model': []}
@@ -149,13 +165,15 @@ def main(argv=None):
               'cells': sorted({cell['id'] for cell in cells} | set(
                   prior['checks'].get('cells', []) if prior else []))}
     manifest = prior
+    resources = list(prior['metadata']['descriptive']['models']) if prior else []
 
     def publish(artifacts):
         body = {'keys': scientific_run.union_keys(manifest, keys), 'checks': checks,
                 'evidence': evidence,
                 'metadata': scientific_run.stage_metadata(
                     'descriptive', corpus_dir=args.corpus_dir, output_dir=args.output_dir,
-                    started=started, selection=args.cell, seed=args.seed, resume=args.resume)}
+                    started=started, selection=args.cell, seed=args.seed, resume=args.resume,
+                    models=resources)}
         return scientific_run.publish_stage(
             args.output_dir, 'descriptive', artifacts, contract, body,
             resume=args.resume or manifest is not None, corpus_dir=args.corpus_dir)
@@ -164,7 +182,9 @@ def main(argv=None):
         key = [cell['id'], blocks[held], int(seed)]
         if tuple(key) in resumable:
             continue
-        record, vectors = run_pair(cfg, frames, cell, held, seed)
+        measured = {}
+        record, vectors = run_pair(cfg, frames, cell, held, seed, resources=measured)
+        resources.extend({'key': [*key, arm], **measured[arm]} for arm in scores.ARMS)
         ledger = record['sample_ledger']
         record['sample_ledger'] = scientific_run.ledger_name(record['ledger_sha256'])
         artifacts = {scientific_run.pair_name(*key): record, record['sample_ledger']: ledger}

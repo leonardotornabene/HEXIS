@@ -21,6 +21,7 @@ import os
 import platform
 import resource
 import subprocess
+import sys
 import tempfile
 import time
 from collections import Counter
@@ -147,6 +148,9 @@ def run_contract(cfg, corpus) -> dict:
         if contract.get(field) != declared:
             raise ValueError(f'{field}: the configuration declares {declared!r} and the corpus was '
                              f'published under {contract.get(field)!r}')
+    present_lock = sha256_file(ROOT / 'uv.lock')
+    compare(present_lock, contract['lock'], 'run_contract.lock: present uv.lock')
+    contract['lock'] = present_lock
     contract['configuration'] = digest(cfg)
     contract['code'] = _code_identity()
     if sorted(contract) != sorted(CONTRACT_FIELDS):
@@ -203,6 +207,11 @@ def key_sets(keys) -> dict:
         raise ValueError(f'keys: {sorted(keys)}, expected {sorted(KEY_WIDTH)}')
     table = {}
     for kind, width in KEY_WIDTH.items():
+        for key in keys[kind]:
+            if (not isinstance(key, (list, tuple)) or len(key) != width
+                    or not all(isinstance(value, str) and value for value in key[:2])
+                    or type(key[2]) is not int or key[2] < 0):
+                raise ValueError(f'keys/{kind}: malformed key {key!r}')
         rows = [tuple(key) for key in keys[kind]]
         repeated = sorted(key for key, count in Counter(rows).items() if count > 1)
         if repeated:
@@ -217,6 +226,9 @@ def key_sets(keys) -> dict:
     unfitted = sorted(table['pair'] - {key[:3] for key in table['model']})
     if unfitted:
         raise ValueError(f'keys/pair: {unfitted} carry no model identity')
+    if table['model'] != {(*key, arm) for key in table['pair']
+                          for arm in ('original', 'shuffled')}:
+        raise ValueError('keys/model: each pair requires exactly original and shuffled arms')
     return table
 
 
@@ -283,15 +295,29 @@ def validate_run(output, *, locked=False) -> dict:
         if not stages or stages != list(STAGES[:len(stages)]):
             raise ValueError(f'manifest: {stages} is not an ordered prefix of {list(STAGES)}')
         keys = key_sets(manifest['keys'])
+        if 'descriptive' in stages:
+            measurements = manifest['metadata'].get('descriptive', {}).get('models', [])
+            resource_keys = []
+            for row in measurements:
+                if (set(row) != {'key', 'fit_seconds', 'evaluation_seconds', 'peak_rss_bytes',
+                                 'rss_method', 'timer'}
+                        or any(type(row[field]) not in (int, float) or not math.isfinite(row[field])
+                               or row[field] < 0 for field in ('fit_seconds', 'evaluation_seconds'))
+                        or type(row['peak_rss_bytes']) is not int or row['peak_rss_bytes'] <= 0
+                        or row['rss_method'] != RSS_METHOD or row['timer'] != 'time.perf_counter; seconds'):
+                    raise ValueError('resources: invalid model measurement or units')
+                resource_keys.append(tuple(row['key']))
+            if len(resource_keys) != len(keys['model']) or set(resource_keys) != keys['model']:
+                raise ValueError('resources: missing or duplicate model measurements')
         expected = {pair_name(*key) for key in keys['pair']}
         listed = {name for name in manifest['artifacts'] if name.startswith('pair__')}
         if listed != expected:
             raise ValueError(f'manifest: pair artifacts {sorted(listed ^ expected)} do not match '
                              'the published pair keys')
-        stray = ({name for name in manifest['artifacts'] if name.startswith('positions__')}
-                 - {positions_name(*key) for key in keys['pair']})
-        if stray:
-            raise ValueError(f'manifest: positional artifacts {sorted(stray)} name no pair key')
+        positions = {positions_name(*key) for key in keys['pair'] if key[0] == 'C0'}
+        listed_positions = {name for name in manifest['artifacts'] if name.startswith('positions__')}
+        if positions != listed_positions:
+            raise ValueError('manifest: positional artifacts are required for C0 only')
         names = set(manifest['artifacts']) | {'manifest.json'} | ({'.lock'} if locked else set())
         present = {path.name for path in output.iterdir()}
         if present != names:
@@ -315,6 +341,10 @@ def validate_run(output, *, locked=False) -> dict:
         listed_ledgers = {name for name in manifest['artifacts'] if name.startswith('sample_ledger__')}
         if listed_ledgers != ledgers:
             raise ValueError('manifest: sample ledger artifacts do not match the pair references')
+        from hexis.pipeline.run_report import TABLES
+        families = expected | positions | ledgers | (set(TABLES) if 'report' in stages else set())
+        if set(manifest['artifacts']) != families:
+            raise ValueError('manifest: missing or unknown artifact family')
         return manifest
     except (OSError, KeyError, TypeError, json.JSONDecodeError, pd.errors.ParserError,
             pa.ArrowException) as exc:
@@ -414,6 +444,15 @@ def publish_stage(output, stage, artifacts, contract, body, *, resume=False, cor
             output.rmdir()
 
 
+def peak_rss_bytes():
+    """Process lifetime RSS high-water mark; macOS reports bytes, Linux reports KiB."""
+    measured = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    return int(measured * (1 if sys.platform == 'darwin' else 1024))
+
+
+RSS_METHOD = 'resource.getrusage(RUSAGE_SELF).ru_maxrss; process lifetime high-water mark'
+
+
 def stage_metadata(stage, *, corpus_dir, output_dir, started, **extra) -> dict:
     """External metadata (§11.3): never part of the identity, never inside an artifact."""
     def git(*argv):
@@ -427,5 +466,5 @@ def stage_metadata(stage, *, corpus_dir, output_dir, started, **extra) -> dict:
                     'implementation_commit': git('rev-parse', 'HEAD'),
                     'tracked_dirty': bool(git('status', '--porcelain', '--untracked-files=no')),
                     'resources': {'wall_seconds': time.perf_counter() - started,
-                                  'ru_maxrss': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss},
+                                  'peak_rss_bytes': peak_rss_bytes(), 'rss_method': RSS_METHOD},
                     **extra}}

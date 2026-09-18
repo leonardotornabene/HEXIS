@@ -13,6 +13,7 @@ code identity stops the report — a partial contrast is never written as a resu
 import argparse
 import itertools
 import json
+import math
 import time
 from pathlib import Path
 
@@ -134,13 +135,182 @@ def read_partitions(output, manifest) -> list:
     output, records = Path(output), []
     for key in sorted(tuple(key) for key in manifest['keys']['pair']):
         name = scientific_run.pair_name(*key)
-        record = json.loads((output / name).read_bytes())
-        missing = [field for field in RECORD_FIELDS if field not in record]
-        if missing:
-            raise ValueError(f'{name}: the partition is missing field(s) {missing}')
+        record = scientific_run._read_json(output / name)
+        _schema(record, RECORD_FIELDS, name)
         if (record['cell'], record['held_block_key'], record['seed']) != key:
             raise ValueError(f'{name}: the record names another key')
         records.append(record)
+    return records
+
+
+def _schema(row, fields, where):
+    if not isinstance(row, dict) or set(row) != set(fields):
+        raise ValueError(f'{where}: fields must be exactly {list(fields)}')
+
+
+def _number(value, where, *, count=False):
+    if (type(value) not in ((int,) if count else (int, float))
+            or not math.isfinite(value) or value < 0):
+        raise ValueError(f'{where}: expected a finite nonnegative {"integer" if count else "number"}')
+
+
+def _close(actual, expected, where, *, count=1, tolerance=1e-12):
+    if not math.isclose(actual, expected, rel_tol=0, abs_tol=count * tolerance):
+        raise ValueError(f'{where}: {actual} differs from reconstructed {expected}')
+
+
+def _rows(rows, fields, keys, expected, where):
+    found = {}
+    for row in rows:
+        _schema(row, fields, where)
+        key = tuple(row[name] for name in keys)
+        if key in found:
+            raise ValueError(f'{where}: duplicate key {key}')
+        found[key] = row
+    if set(found) != set(expected):
+        raise ValueError(f'{where}: document_band key set differs from the contract: missing {set(expected) - set(found)}, unexpected {set(found) - set(expected)}')
+    return found
+
+
+def validate_partitions(output, manifest, cfg, frames):
+    """Validate each published pair, including a partial campaign, before reuse or reporting.
+
+    Keys/counts are exact; CE reconstruction uses §6.5's 1e-9 bit/target.
+    Diagnostic sums allow 1e-12 per contributing position for summation roundoff.
+    """
+    published = scientific_run.key_sets(manifest['keys'])
+    expected = expected_keys(cfg)
+    if not published['pair'] <= set(expected['pair']):
+        raise ValueError('pair key set contains an undeclared execution')
+    if published['model'] != {(*key, arm) for key in published['pair'] for arm in scores.ARMS}:
+        raise ValueError('model key set must contain both arms of every pair')
+    records = read_partitions(output, manifest)
+    cells = {cell['id']: cell for cell in cfg['cells']}
+    blocks = scientific_run.blocks_of(cfg)
+    coordinates = frames['coordinates.parquet']
+    for record in records:
+        cell = cells[record['cell']]
+        held = record['held_block']
+        if held not in blocks or scientific_run.block_keys_of(cfg)[held] != record['held_block_key']:
+            raise ValueError('held_block disagrees with its declared key')
+        for field, value in {'variant': cell['variant'], 'depth': cell['D'], 'm': cell['m'],
+                             'q': cell['q'], 'rho': cell['rho'], 'a_per_symbol': cell['a_per_symbol'],
+                             'min_available_past': cfg['min_available_past'], 'arms': list(scores.ARMS)}.items():
+            if type(record[field]) is not type(value) or record[field] != value:
+                raise ValueError(f'{field}: partition differs from configuration')
+        positional = scientific_run.positions_name(record['cell'], record['held_block_key'], record['seed'])
+        if record['positions'] != (positional if record['cell'] == REFERENCE_CELL else None):
+            raise ValueError('positions: mandatory in C0 and forbidden in sensitivities')
+        eligible = coordinates[coordinates['variant'].eq(record['variant'])
+                               & coordinates['doc_id'].astype(str).isin(blocks[held])
+                               & coordinates['eligible'].astype(bool)].copy()
+        eligible['doc_id'] = eligible['doc_id'].astype(str)
+        eligible['past_band'] = eligible['available_past'].map(scores.past_band)
+        counts = eligible.groupby(['doc_id', 'past_band']).size().to_dict()
+        if not len(eligible):
+            raise ValueError(f'{held}: primary block has no eligible targets')
+        keys = [(str(doc), band) for doc in blocks[held] for band in scores.BANDS]
+        docs = _rows(record['document_sums'], ('doc_id', 'past_band', *scores.SUM_COLUMNS),
+                     ('doc_id', 'past_band'), keys, 'document_scores.csv')
+        diag_fields = diagnostics.EvaluationTotals(record['depth']).row()
+        arms = _rows(record['arm_diagnostics'], ('doc_id', 'arm', 'past_band', *diag_fields),
+                     ('doc_id', 'past_band', 'arm'),
+                     [(*key, arm) for key in keys for arm in scores.ARMS], 'arm_diagnostics.csv')
+        check_roles(pd.DataFrame(record['document_sums']), frames['documents.csv'])
+        for key, row in docs.items():
+            n = counts.get(key, 0)
+            for field in scores.SUM_COLUMNS:
+                _number(row[field], field, count=field in scores.COUNT_COLUMNS)
+                if n == 0 and row[field] != 0:
+                    raise ValueError(f'{key}: empty bucket has nonzero sums')
+            if row['n'] != n or row['eligible_slot_count'] != n or row['changed_symbol_eligible_slot_count'] > n:
+                raise ValueError(f'{key}: coordinate denominator differs')
+            for arm in scores.ARMS:
+                diagnostic = arms[(*key, arm)]
+                for field, default in diag_fields.items():
+                    _number(diagnostic[field], field, count=type(default) is int)
+                    if n == 0 and diagnostic[field] != 0:
+                        raise ValueError(f'{key}: empty bucket has nonzero diagnostics')
+                valid = diagnostic['resolved_valid_count']
+                null = diagnostic['resolved_null_count_no_resolved_mass']
+                if diagnostic['n'] != n or valid + null != n:
+                    raise ValueError(f'{key}: diagnostic denominator differs')
+                for field in ('root_unseen_target_count', 'implicit_unseen_branch_encounter_count'):
+                    if diagnostic[field] > n:
+                        raise ValueError(f'{key}: {field} exceeds its denominator')
+                if diagnostic['sum_resolved_valid'] > valid * record['depth'] + n * 1e-12:
+                    raise ValueError(f'{key}: resolved sum exceeds depth/valid count')
+                if diagnostic['sum_unseen_mass'] > n + n * 1e-12:
+                    raise ValueError(f'{key}: unseen mass exceeds denominator')
+                mass = math.fsum(diagnostic[field] for field in diag_fields if field.startswith(diagnostics.MASS_PREFIX))
+                _close(mass + diagnostic['sum_unseen_mass'], n, 'mass conservation', count=max(n, 1))
+        _schema(record['models'], scores.ARMS, 'models')
+        training_tokens = (len(blocks) - 1) * cell['q']
+        _schema(record['shuffle'], ('training', 'evaluation'), 'shuffle')
+        sequences = frames['sequences.parquet']
+        evaluated_tokens = int(sequences.loc[sequences['variant'].eq(cell['variant'])
+                                             & sequences['doc_id'].astype(str).isin(blocks[held]),
+                                             'encoded_length'].sum())
+        for population, denominator in (('training', training_tokens), ('evaluation', evaluated_tokens)):
+            counts = record['shuffle'][population]
+            _schema(counts, ('changed_count', 'total_count'), 'shuffle counts')
+            for value in counts.values():
+                _number(value, 'shuffle counts', count=True)
+            if counts['total_count'] != denominator or counts['changed_count'] > denominator:
+                raise ValueError('shuffle denominator differs from corpus/budget')
+        for arm, model in record['models'].items():
+            _schema(model, ('fingerprint', 'training_streams', 'training_tokens', 'nodes', 'nodes_by_depth',
+                           'support_histogram_1_2to4_5to9_10plus_by_depth', 'root_support', 'root_unobserved',
+                           'root_stop', 'delta_root', 'delta_root_reason', 'log_evidence'), f'model {arm}')
+            for field in ('training_streams', 'training_tokens', 'nodes', 'root_support', 'root_unobserved'):
+                _number(model[field], field, count=True)
+            if model['training_tokens'] != training_tokens or model['training_streams'] != record['ledger_rows']:
+                raise ValueError('model training denominator differs from budget/ledger')
+            depths = model['nodes_by_depth']
+            histograms = model['support_histogram_1_2to4_5to9_10plus_by_depth']
+            if len(depths) != len(histograms) or not depths or depths[0] != 1 or len(depths) > record['depth'] + 1:
+                raise ValueError('model support depth differs')
+            for n, histogram in zip(depths, histograms):
+                _number(n, 'nodes_by_depth', count=True)
+                _schema(histogram, ('1', '2to4', '5to9', '10plus'), 'support histogram')
+                for value in histogram.values(): _number(value, 'support histogram', count=True)
+                if sum(histogram.values()) != n:
+                    raise ValueError('model support histogram count differs')
+            if sum(depths) != model['nodes'] or model['root_support'] + model['root_unobserved'] != record['m']:
+                raise ValueError('model support count differs')
+            _number(model['root_stop'], 'root_stop')
+            if model['root_stop'] > 1:
+                raise ValueError('root_stop exceeds one')
+            if type(model['log_evidence']) not in (int, float) or not math.isfinite(model['log_evidence']):
+                raise ValueError('nonfinite log_evidence')
+            if record['depth'] == 0:
+                if model['delta_root'] is not None or model['delta_root_reason'] != 'forced_leaf' or model['root_stop'] != 1:
+                    raise ValueError('invalid forced root')
+            elif (type(model['delta_root']) not in (int, float) or not math.isfinite(model['delta_root'])
+                  or model['delta_root_reason'] is not None):
+                raise ValueError('invalid delta_root')
+        if record['positions'] is not None:
+            positions, eligible = check_positions(output, record, cfg, coordinates)
+            joined = scores.pair_positions(positions, eligible[['slot_uid', 'doc_id', 'available_past']])
+            joined['doc_id'] = joined['doc_id'].astype(str)
+            joined['past_band'] = joined['available_past'].map(scores.past_band)
+            rebuilt = scores.aggregate(joined, keys=['doc_id'], universe=pd.DataFrame({'doc_id': blocks[held]}))
+            for row in rebuilt.to_dict('records'):
+                persisted = docs[(row['doc_id'], row['past_band'])]
+                for field in scores.SUM_COLUMNS:
+                    if field in scores.COUNT_COLUMNS:
+                        if persisted[field] != row[field]: raise ValueError(f'{field}: reconstructed count differs')
+                    else:
+                        _close(persisted[field], row[field], field, count=max(row['n'], 1), tolerance=1e-9)
+            for key in keys:
+                part = joined[joined['doc_id'].eq(key[0]) & joined['past_band'].eq(key[1])]
+                for arm in scores.ARMS:
+                    row = arms[(*key, arm)]
+                    resolved = part[f'resolved_mean_{arm}'].dropna()
+                    if row['resolved_valid_count'] != len(resolved):
+                        raise ValueError('resolved valid/null count differs from positions')
+                    _close(row['sum_resolved_valid'], math.fsum(resolved), 'resolved sum', count=max(len(resolved), 1))
+                    _close(row['sum_unseen_mass'], math.fsum(part[f'unseen_mass_{arm}']), 'unseen sum', count=max(len(part), 1))
     return records
 
 
@@ -169,6 +339,37 @@ def check_positions(output, record, cfg, coordinates):
     if len(frame) != len(eligible):
         raise ValueError(f"{record['positions']}: {len(frame)} persisted rows against "
                          f'{len(eligible)} eligible slots of {record["held_block"]}')
+    scores.pair_positions(frame[['slot_uid']], eligible[['slot_uid']])
+    integer_columns = ('slot_uid', 'original_symbol_id', 'shuffled_symbol_id', 'shuffled_origin_slot_uid')
+    for field in integer_columns:
+        if not pd.api.types.is_integer_dtype(frame[field].dtype) or (frame[field] < 0).any():
+            raise ValueError(f'{field}: expected nonnegative integer positions')
+    for field in ('original_symbol_id', 'shuffled_symbol_id'):
+        if (frame[field] >= record['m']).any():
+            raise ValueError(f'{field}: symbol outside alphabet')
+    for field in scores.POSITION_COLUMNS[4:]:
+        values = frame[field]
+        nullable = field.startswith('resolved_mean_')
+        if not pd.api.types.is_float_dtype(values.dtype) or values.dtype.itemsize != 8:
+            raise ValueError(f'{field}: positional diagnostics/losses require float64')
+        for value in values:
+            if nullable and pd.isna(value):
+                continue
+            _number(float(value), field)
+            if field.startswith('unseen_mass_') and value > 1 + 1e-12:
+                raise ValueError(f'{field}: mass exceeds one')
+            if nullable and value > record['depth'] + 1e-12:
+                raise ValueError(f'{field}: resolved length exceeds depth')
+    original = eligible.set_index('slot_uid')['symbol_id']
+    if not frame['original_symbol_id'].eq(frame['slot_uid'].map(original)).all():
+        raise ValueError('original_symbol_id differs from coordinates')
+    origins = coordinates[coordinates['variant'].eq(record['variant'])].set_index('slot_uid')
+    if not origins.index.is_unique or not frame['shuffled_origin_slot_uid'].isin(origins.index).all():
+        raise ValueError('shuffled provenance is missing or ambiguous')
+    if (not frame['shuffled_origin_slot_uid'].is_unique
+            or not frame['shuffled_symbol_id'].eq(frame['shuffled_origin_slot_uid'].map(origins['symbol_id'])).all()
+            or not frame['slot_uid'].map(origins['sent_id']).eq(frame['shuffled_origin_slot_uid'].map(origins['sent_id'])).all()):
+        raise ValueError('shuffled provenance differs from source symbol/sentence')
     return frame, eligible
 
 
@@ -333,7 +534,9 @@ def r1_tables(cfg, coordinates) -> dict:
                     for name, vector in counts.items()}
         distributions.extend(
             {'variant': variant, 'block': name, 'symbol_id': symbol,
-             'count': int(counts[name][symbol]), 'frequency': float(smoothed[name][symbol])}
+             'count': int(counts[name][symbol]),
+             'empirical_frequency': float(counts[name][symbol] / counts[name].sum()),
+             'smoothed_frequency': float(smoothed[name][symbol])}
             for name in sorted(counts) for symbol in range(sizes[variant]))
         pairs.append(r1.pairs(smoothed).assign(variant=variant))
         contributions.extend(
@@ -384,7 +587,7 @@ def main(argv=None):
     steps.append(2)
     check_keys(cfg, prior['keys'])
     steps.append(3)
-    records = read_partitions(args.output_dir, prior)
+    records = validate_partitions(args.output_dir, prior, cfg, frames)
     coordinates = frames['coordinates.parquet']
     positional = [record for record in records if record['positions'] is not None]
     for record in positional:  # one partition in memory at a time (§11.4)
@@ -396,12 +599,6 @@ def main(argv=None):
     check_keys(cfg, docs=docs, arm=arm)
     tables = r1_tables(cfg, coordinates)
     steps.append(5)
-    for record in positional:
-        rebuilt = reconstruct(*check_positions(args.output_dir, record, cfg, coordinates))
-        persisted = pd.DataFrame(record['document_sums'])
-        if not rebuilt.reset_index(drop=True).equals(persisted[rebuilt.columns]):
-            raise ValueError(f"{record['positions']}: the persisted sums are not the sums of the "
-                             'persisted positions')
     blocks = block_pairs(docs)
     totals = blocks[blocks['past_band'].eq('all')]
     contrasts = group_contrasts(totals, scientific_run.groups_of(cfg))

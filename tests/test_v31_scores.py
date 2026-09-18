@@ -28,6 +28,37 @@ CE_ATOL = 1e-9  # §6.5 CE reconstruction tolerance, bits per symbol
 
 # --- fixtures -----------------------------------------------------------------
 
+@pytest.mark.parametrize('fault', ['duplicate', 'cross_stream_duplicate', 'origin', 'negative', 'short_slots'])
+def test_scoring_rejects_invalid_slot_bijections_and_symbols(fault):
+    trained = model([[0, 1]], m=2, depth=0)
+    left = stream('s', [0, 1, 0, 1, 0, 1])
+    right = left | {'source_slot_uids': list(left['slot_uids'])}
+    originals, shuffled = [left], [right]
+    if fault == 'duplicate':
+        left['slot_uids'][-1] = left['slot_uids'][-2]
+    elif fault == 'cross_stream_duplicate':
+        originals.append(left | {'sent_id': 't'})
+        shuffled.append(right | {'sent_id': 't'})
+    elif fault == 'origin':
+        right['source_slot_uids'][-1] = right['source_slot_uids'][-2]
+    elif fault == 'negative':
+        left['symbols'][-1] = -1
+    else:
+        left['slot_uids'].pop()
+    with pytest.raises(ValueError, match='slot|symbol|provenance') as error:
+        scores.pooled_score_core(originals, shuffled, model_original=trained, model_shuffled=trained)
+    assert str(error.value)
+
+
+def test_unseen_branch_encounter_survives_weight_underflow():
+    trained = CTW(CTWParams(m=2, depth=1, a=.5, log_rho=-1e-300,
+                           log_one_minus_rho=-1000.)).fit([[0]])
+    record = diagnostics.resolved(trained.mixture([1]))
+    assert trained.inspect((1,)) is None and record['unseen_mass'] == 0.0
+    totals = diagnostics.EvaluationTotals(1)
+    totals.add(record, root_unseen=False)
+    assert totals.row()['implicit_unseen_branch_encounter_count'] == 1
+
 def model(streams, m, depth=8, a=0.5):
     return CTW(CTWParams.from_rho(m=m, depth=depth, a=a, rho=0.5)).fit(streams)
 

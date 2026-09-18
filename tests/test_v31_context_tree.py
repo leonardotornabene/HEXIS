@@ -130,6 +130,17 @@ def test_counts_partition_over_children_with_terminal_bos():
     assert model.inspect((1, 1, 0))['forced']
 
 
+@pytest.mark.parametrize('count,bucket', [(1, '1'), (2, '2to4'), (4, '2to4'),
+                                        (5, '5to9'), (9, '5to9'), (10, '10plus')])
+def test_support_histogram_counts_observations_including_bos(count, bucket):
+    trained = fitted([[0]] * count, m=2, depth=2)
+    expected = dict.fromkeys(('1', '2to4', '5to9', '10plus'), 0)
+    expected[bucket] = 1  # root and terminal BOS each have count observations
+    assert trained.diagnostics()['support_histogram_1_2to4_5to9_10plus_by_depth'] == [expected, expected]
+    empty = fitted([], m=2, depth=2).diagnostics()
+    assert empty['support_histogram_1_2to4_5to9_10plus_by_depth'] == [dict.fromkeys(expected, 0)]
+
+
 # --- T11: normalization, support, empty training, D=0, strict input -----------
 
 @pytest.mark.parametrize('m', [100, 105, 11])
@@ -377,7 +388,29 @@ def test_validation_stage_exits_non_zero_when_a_threshold_fails(monkeypatch, tmp
     assert validation.main(['--out', str(path)]) != 0
     assert json.loads(path.read_text())['analytic_pass'] is False
     assert validation.exit_code(rows) == 1
-    assert validation.exit_code([{**rows[0], 'ce': 2.0, 'analytic_pass': True}]) == 0
+    assert validation.exit_code([{**rows[0], 'ce': 2.0, 'analytic_pass': True}]) == 1  # incomplete
+
+
+@pytest.mark.parametrize('fault', ['missing', 'duplicate', 'extra', 'nan', 'normalization',
+                                  'count', 'support', 'deficit', 'false_flag', 'oracle_drift'])
+def test_battery_gate_rejects_incomplete_or_invalid_recorded_results(battery, fault):
+    rows = [dict(row) for row in battery[1]['rows']]
+    if fault == 'missing':
+        rows.pop()
+    elif fault == 'duplicate':
+        rows[-1] = dict(rows[-2])
+    elif fault == 'extra':
+        rows.append(dict(rows[-1], seed=99))
+    elif fault == 'oracle_drift':
+        rows[0].update(ce=.1, target=.1, deficit=0., analytic_pass=True)
+    elif fault == 'false_flag':
+        rows[0]['ce'] = rows[0]['target'] + .5
+    else:
+        key, value = {'nan': ('ce', float('nan')), 'normalization': ('normalization_max_error', .1),
+                      'count': ('n', 1), 'support': ('root_support', 0),
+                      'deficit': ('deficit', None)}[fault]
+        next(row for row in rows if row['kind'] == 'lag2_full')[key] = value
+    assert validation.exit_code(rows) == 1
 
 
 def test_validation_cli_rejects_configuration_drift_before_running(tmp_path):

@@ -77,6 +77,7 @@ class Mixture:
 
     weights: tuple
     unseen_mass: float
+    unseen_branch_encountered: bool
 
 
 @dataclass(frozen=True)
@@ -152,7 +153,7 @@ class CTW:
 
     def predict_proba(self, history) -> np.ndarray:
         """Normalized q_CTW over the alphabet for the given history; the model is untouched."""
-        path, unseen = self._mixture(self._history(history))
+        path, unseen, _ = self._mixture(self._history(history))
         m, a = self.params.m, self.params.a
         ma = m * a
         q = np.full(m, unseen / m)
@@ -165,9 +166,9 @@ class CTW:
 
     def mixture(self, history) -> Mixture:
         """The §9.2 weights behind `predict_proba` for the same history."""
-        path, unseen = self._mixture(self._history(history))
+        path, unseen, encountered = self._mixture(self._history(history))
         return Mixture(weights=tuple((lexical, weight) for _, weight, lexical in path),
-                       unseen_mass=unseen)
+                       unseen_mass=unseen, unseen_branch_encountered=encountered)
 
     def evaluate(self, streams, *, min_available_past) -> EvalResult:
         """Mean CTW and root code lengths in bits over targets with enough past (§8.1)."""
@@ -190,7 +191,7 @@ class CTW:
                 key = tuple(symbols[max(0, position - depth):position]) if depth else ()
                 resolved = memo.get(key)
                 if resolved is None:
-                    path, unseen = self._mixture(key)
+                    path, unseen, _ = self._mixture(key)
                     resolved = memo[key] = ([(node.counts, node.total, weight) for node, weight, _ in path],
                                             unseen)
                 path, unseen = resolved
@@ -217,11 +218,19 @@ class CTW:
         """Supports and the §6.5 root record; delta_root is in nats."""
         self._require_fitted()
         root = self._root
-        by_depth, level = [], [root]
+        by_depth, histograms, level = [], [], [root]
         while level:
             by_depth.append(len(level))
+            histogram = dict.fromkeys(('1', '2to4', '5to9', '10plus'), 0)
+            for node in level:
+                if node.total:
+                    bucket = ('1' if node.total == 1 else '2to4' if node.total < 5
+                              else '5to9' if node.total < 10 else '10plus')
+                    histogram[bucket] += 1
+            histograms.append(histogram)
             level = [child for node in level for child in node.children.values()]
         return {'nodes': sum(by_depth), 'nodes_by_depth': by_depth,
+                'support_histogram_1_2to4_5to9_10plus_by_depth': histograms,
                 'root_support': len(root.counts), 'root_unobserved': self.params.m - len(root.counts),
                 'root_stop': math.exp(root.log_stop), 'delta_root': root.delta,
                 'delta_root_reason': 'forced_leaf' if root.forced else None,
@@ -290,18 +299,18 @@ class CTW:
         """Walk the frozen path: [(node, lambda, lexical length)] and the unseen mass."""
         node = self._root
         if node.total == 0:  # empty training: uniform prediction, all mass unseen (§9.2)
-            return [], 1.0
+            return [], 1.0, True
         path, log_acc, depth, lexical = [], 0.0, 0, 0
         while True:
             if node.forced:  # stop = 1 by construction (§6.5)
                 path.append((node, math.exp(log_acc), lexical))
-                return path, 0.0
+                return path, 0.0, False
             path.append((node, math.exp(log_acc + node.log_stop), lexical))
             log_acc += node.log_split
             symbol = history[-1 - depth] if depth < len(history) else BOS
             child = node.children.get(symbol)
             if child is None:  # never-observed subtree: q = 1/m (§6.4), mass unseen (§9.2)
-                return path, math.exp(log_acc)
+                return path, math.exp(log_acc), True
             node, depth = child, depth + 1
             if symbol != BOS:
                 lexical += 1

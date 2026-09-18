@@ -219,3 +219,7 @@ Accettazione sui byte della ripresa committati in `d38b5a7`:
 Suite completa: **561 passed, 17 skipped storici**. Lock invariato, 23 pacchetti.
 I 20 casi attivi aggiunti comprendono 18 nuovi casi e i due test di firma
 preesistenti; la revisione integrale e V3–V5 restano fuori da questa attestazione.
+
+## Riconciliazione 2A — 2026-09-18
+
+T11/T17/T22: istogrammi di supporto per profondità con BOS; contatore di incontri non osservati indipendente dall'underflow; slot unici fra stream, provenienza biunivoca e validazione di tutti i simboli del core. T15/T16: batteria completa per insieme esatto dei casi, conteggi, valori finiti, normalizzazione, supporti, deficit e oracle rigenerato dalla fixture. I 25 sintetici rispettano le soglie congelate; i nove stress non devono raggiungere l'oracle. Accettazione: **262 passed, 338 deselected**, nessuno skip/xfail. Nessun generatore, seme, soglia o contratto modificato.

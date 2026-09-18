@@ -54,6 +54,11 @@ def _require_paired(left, right, index):
     if len(left['symbols']) != len(right['symbols']):
         raise ValueError(f'{left["sent_id"]}: the shuffle must preserve the stream length, got '
                          f'{len(left["symbols"])} and {len(right["symbols"])}')
+    slots, origins = left['slot_uids'], right['source_slot_uids']
+    if len(slots) != len(left['symbols']) or len(set(slots)) != len(slots):
+        raise ValueError(f'{left["sent_id"]}: slot_uids must be unique and match symbols in length')
+    if len(origins) != len(slots) or set(origins) != set(slots):
+        raise ValueError(f'{left["sent_id"]}: provenance must permute the slot_uids one-to-one')
 
 
 def pooled_score_core(original, shuffled, *, model_original, model_shuffled,
@@ -86,10 +91,15 @@ def pooled_score_core(original, shuffled, *, model_original, model_shuffled,
     roots = {arm: model.root_distribution() for arm, model in models.items()}
     observed = {arm: set(model.inspect(())['counts']) for arm, model in models.items()}
 
-    rows, totals = [], {}
+    rows, totals, seen_slots = [], {}, set()
     for index, (left, right) in enumerate(zip(original, shuffled)):
         _require_paired(left, right, index)
+        if seen_slots.intersection(left['slot_uids']):
+            raise ValueError('slot_uids repeat across scored streams')
+        seen_slots.update(left['slot_uids'])
         sent_id = left['sent_id']
+        for arm, stream in (('original', left), ('shuffled', right)):
+            models[arm]._validated(stream['symbols'], f'{sent_id} {arm}')
         for band in BANDS:
             for arm in ARMS:
                 totals[(sent_id, band, arm)] = diagnostics.EvaluationTotals(depth)

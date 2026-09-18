@@ -24,8 +24,10 @@ def resolved(mixture) -> dict:
     total = math.fsum(mass.values())
     if total <= 0.0:
         return {'mass_by_length': mass, 'unseen_mass': mixture.unseen_mass,
+                'unseen_branch_encountered': mixture.unseen_branch_encountered,
                 'resolved_mean': None, 'reason': NO_RESOLVED_MASS}
     return {'mass_by_length': mass, 'unseen_mass': mixture.unseen_mass,
+            'unseen_branch_encountered': mixture.unseen_branch_encountered,
             'resolved_mean': math.fsum(length * weight for length, weight in mass.items()) / total,
             'reason': None}
 
@@ -56,7 +58,7 @@ class EvaluationTotals:
             self.resolved_valid_count += 1
         self.sum_unseen_mass += record['unseen_mass']
         self.root_unseen_target_count += int(root_unseen)
-        self.unseen_branch_encounters += int(record['unseen_mass'] > 0.0)
+        self.unseen_branch_encounters += int(record['unseen_branch_encountered'])
         for length, weight in record['mass_by_length'].items():
             self.mass[length] += weight
 

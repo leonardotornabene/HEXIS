@@ -92,10 +92,12 @@ def run_case(kind, m, seed, design, cell):
             'analytic_pass': analytic_pass(kind, m, result.ce, target),
             'normalization_max_error': error,
             'nodes': diagnostics['nodes'], 'nodes_by_depth': diagnostics['nodes_by_depth'],
+            'support_histogram_1_2to4_5to9_10plus_by_depth':
+                diagnostics['support_histogram_1_2to4_5to9_10plus_by_depth'],
             'root_support': diagnostics['root_support'],
-            'root_stop': diagnostics['root_stop'], 'delta_root': diagnostics['delta_root'],
+            'root_stop': diagnostics['root_stop'], 'delta_root': float(diagnostics['delta_root']),
             'delta_root_reason': diagnostics['delta_root_reason'],
-            'log_evidence': diagnostics['log_evidence']}
+            'log_evidence': float(diagnostics['log_evidence'])}
 
 
 def run_battery():
@@ -110,8 +112,61 @@ def run_battery():
 
 
 def exit_code(rows):
-    """A false analytic_pass must never be reported with exit 0 (§12.1)."""
-    return 1 if any(row['analytic_pass'] is False for row in rows) else 0
+    """Accept the complete frozen battery, recomputing its checks rather than trusting flags."""
+    design = load_contracts()['design']
+    validation = design['validation']
+    seeds = validation['synthetic_training_seeds']
+    expected = {(kind, m, seed) for kind, m in SMALL for seed in seeds}
+    expected |= {(kind, validation['historical_stress_alphabet'], seed)
+                 for kind in STRESS for seed in seeds[:3]}
+    try:
+        keys = [(row['kind'], row['m'], row['seed']) for row in rows]
+        if len(keys) != len(expected) or set(keys) != expected:
+            return 1
+        for row in rows:
+            kind, m = row['kind'], row['m']
+            if (type(m) is not int or type(row['seed']) is not int
+                    or type(row['n']) is not int
+                    or row['n'] != validation['synthetic_n_test'] - design['min_available_past']
+                    or row['cell'] != 'C0'):
+                return 1
+            for field in ('ce', 'root_ce', 'normalization_max_error', 'root_stop',
+                          'delta_root', 'log_evidence'):
+                if type(row[field]) not in (int, float) or not math.isfinite(row[field]):
+                    return 1
+            if (min(row['ce'], row['root_ce']) < 0
+                    or not 0 <= row['normalization_max_error'] <= 1e-12
+                    or not 0 <= row['root_stop'] <= 1 or row['delta_root_reason'] is not None
+                    or type(row['root_support']) is not int or not 0 < row['root_support'] <= m):
+                return 1
+            depths = row['nodes_by_depth']
+            histograms = row['support_histogram_1_2to4_5to9_10plus_by_depth']
+            if (not depths or any(type(n) is not int or n <= 0 for n in depths)
+                    or type(row['nodes']) is not int or row['nodes'] != sum(depths)
+                    or len(histograms) != len(depths)):
+                return 1
+            for count, histogram in zip(depths, histograms):
+                if (set(histogram) != {'1', '2to4', '5to9', '10plus'}
+                        or any(type(n) is not int or n < 0 for n in histogram.values())
+                        or sum(histogram.values()) != count):
+                    return 1
+            _, oracle = generate(kind, validation['synthetic_n_test'],
+                                 validation['synthetic_test_seed_offset'] + row['seed'], m)
+            if row['target'] != oracle:
+                return 1
+            if kind == 'lag2_core':
+                if row['target'] is not None or row['deficit'] is not None:
+                    return 1
+            elif (type(row['target']) not in (int, float) or not math.isfinite(row['target'])
+                  or type(row['deficit']) not in (int, float) or not math.isfinite(row['deficit'])
+                  or abs(row['deficit'] - (row['ce'] - row['target'])) > 1e-12):
+                return 1
+            passed = analytic_pass(kind, m, row['ce'], row['target'])
+            if passed is False or row['analytic_pass'] is not passed:
+                return 1
+    except (KeyError, TypeError, ValueError):
+        return 1
+    return 0
 
 
 def main(argv=None) -> int:

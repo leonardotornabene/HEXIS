@@ -1,4 +1,12 @@
-# Handoff HEXIS 3.1 — V3-001 — tranche V0–V2 conclusa
+# Handoff HEXIS 3.1 — V3-001 — riconciliazione V2
+
+## Rettifica del 18 settembre 2026
+
+**V0–V1 completati; V2 ampiamente implementata, chiusura da riconciliare e verificare; V3–V5 non attestati.** La dichiarazione generale di completamento V2 delle attestazioni seguenti è rettificata: i conteggi e le proprietà dimostrate restano evidenze dei commit citati, ma non coprono i residui M4/M5 né la revisione integrale richiesta ora. Le sezioni datate precedenti sono conservate come resoconto storico, compresi i rinvii all'integrazione che questa tranche deve completare. Nessun nuovo fit reale né riscrittura del proposal.
+
+La nuova esecuzione parte da `8b4d50432724442465d4d3003a2d37717395126a`, ramo `codex/hexis31-v0-v1`; stato iniziale `?? scripts/`, nessuna modifica tracciata. Si lavora sul ramo richiesto nel checkout esistente. Script locale e risultati storici restano preservati. Il [registro della revisione](V2_RECONCILIATION.md) traccia sottostadi, digest e verifiche; l'[inventario](TEST_INVENTORY.md) distingue implementazione, prove e lacune.
+
+## Attestazioni precedenti (stato riferito ai commit citati)
 
 **V0–V2 completati; V3–V5 non attestati; nessun nuovo fit reale.** Stato V0–V1 verificato il 16 settembre 2026, stato V2 il 17 settembre 2026. Ramo locale: `codex/hexis31-v0-v1`.
 

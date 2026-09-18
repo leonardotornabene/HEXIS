@@ -3,6 +3,18 @@
 Accettazione attiva: marker `v31`; raccolta effettiva obbligatoria, assert eseguiti,
 nessuno skip/xfail/xpass. Il confronto col contratto non sostituisce i test del CTW.
 
+## Riconciliazione del 18 settembre 2026 — M1–M5
+
+Le attestazioni successive conservano il credito dei rispettivi commit. La chiusura generale V2 è in verifica; le righe V2 T01–T23/T26 indicano copertura preesistente, non completamento dei residui qui elencati.
+
+| Requisito | Implementazione e test esistenti | Residuo della revisione corrente |
+|---|---|---|
+| M1 — CTW/numerica | `context_tree.py`, `diagnostics.py`; `test_v31_context_tree.py` T09–T16 | Confronto integrale con §6/§12, riesecuzione 25 sintetici e 9 stress con criteri distinti |
+| M2 — RNG/campione/shuffle | `sampling.py`; `test_v31_sampling.py` T05–T09/T17–T18 | Riconciliazione con vettori e riusi congelati |
+| M3 — score/diagnostiche/R1 | `scores.py`, `r1.py`; test score/R1 T19–T23 | Riconciliazione formule, due pesi e null; nessuna modifica agli attesi |
+| M4 — persistenza/semantica | `scientific_run.py`, `run_descriptive.py`, `run_report.py`; `test_v31_descriptive.py` | Lock effettivo, documenti senza target, ricostruzione L/unseen, schemi/chiavi/denominatori, risorse per modello |
+| M5 — evidenze/checklist | `run_tree_validation.py`, enforcement `conftest.py` | Modalità corpus/output, JUnit e processo v31 collegati al manifest, contesto stabile, schema versionato, conservazione in resume, controllo futuro 42/84 distinto da 490/980 |
+
 | ID | Stato V0–V2 | Copertura / obbligo residuo |
 |---|---|---|
 | T01 | V1 | Input/hash, sent_id, 18 prefissi/17 documenti |

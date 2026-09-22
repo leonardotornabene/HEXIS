@@ -1,5 +1,51 @@
 # Handoff HEXIS 3.1 — V3-001 — riconciliazione V2
 
+## Revisione integrale pre-V3 — 22 settembre 2026
+
+**V0–V2 completati; codice e test definitivi per V3 dopo questa revisione; V3–V5 non attestati; nessun fit reale; nessun push.** La revisione integrale chiesta dall'utente (sola lettura, a `a123278`) ha riprodotto l'attestazione precedente (332/653+17/lock 23), verificato i 63 digest del deposito, la storia v2.1 byte per byte contro `852644b` e i due run V1, e ha trovato difetti poi corretti test-first nel commit di codice `0dc69b5`. Il commit documentale che contiene questa sezione non cita se stesso.
+
+**Decisioni del proprietario (22/09/2026).** D1: nessun push pubblico finché un atto di pubblicazione non decide sui derivati; il deposito contiene `HEXIS_v3_allegati/verifiche_CTW_precedenti.zip` → `ctw_validation/pilot_positions_example.npz`, 46.634 perdite per posizione dei target omerici del pilot storico (65 valori distinti di `root_loss`, funzione del simbolo in ciascuna posizione), cioè un derivato per posizione che il §17.3 lascia locale. D2: il validatore rigenera ledger, conteggi di shuffle e provenienza C0. D3: la deviazione della CLI dal §14.1 è registrata nella nota V3-001 del [Decision Log](02_DECISION_LOG.md). D4: figure corrette nei difetti e nella leggibilità.
+
+**Correzioni (`0dc69b5`).**
+- T05/T08/T24 sulla campagna: `run_report.validate_partitions` rigenera con `sampling.pair_streams` (condivisa con `run_pair`, output identico byte per byte) il ledger di ogni coppia, i conteggi di shuffle e in C0 la provenienza rimescolata; prima un ledger manomesso e ri-hashato con una frase held-out o `inventory_only` passava. Costo misurato sul corpus reale 0,2–0,3 s per coppia.
+- Figure: fig. 5 disegnava a zero le masse di C0 per ℓ = 9…12 (colonne di D12 vuote sommate); fig. 2 etichettava i documenti col `doc_id` grezzo e ora mostra «autore, opera (n=…)» (dominanza dell'Iliade, §3.3) con blocchi in ordine di gruppo; fig. 1 aveva un titolo tagliato; fig. 4 ora nomina i simboli (colonna `symbol` nelle tabelle R1) e aveva un titolo tagliato con tre rappresentazioni; fig. 3 segue l'ordine delle celle del contratto. Anteprime ispezionate: fig. 1 e 4 sui dati V1 reali, fig. 2, 3 e 5 alla cardinalità reale con valori fittizi, senza fit.
+- Test: inventario v31 esaustivo e imposto (8 test attivi ne erano fuori); fissate con `match=` le sette guardie del validatore mai esercitate. Mutazioni su una copia: 35 di 40 rilevate, le 5 sopravvissute dominate da controlli più forti ([inventario](TEST_INVENTORY.md)).
+- Commento `ponytail` di `run_descriptive` riscritto: la rivalidazione a ogni pubblicazione costa circa 8 s per coppia per il corpus più una crescita quadratica, stimate in circa 2 h su 490 coppie; renderla più rapida dopo V3 è una nuova identità e rifà V3.
+
+**Perimetro del congelamento.** `_code_identity()` copre tutto `src/hexis`; l'evidenza V2 (`validation_run.context`) lega anche `tests/*.py`, `conftest.py`, `pyproject.toml`, il file di configurazione, `uv.lock` e il manifest del corpus usato. Una modifica a uno di questi dopo la pubblicazione della validazione impedisce la ripresa e impone una nuova directory con V2 e V3 rifatti. I documenti restano modificabili.
+
+**Sequenza operativa prevista per V3–V5, non eseguita.** Albero tracciato pulito (`scripts/` non tracciato è ammesso), corpus `results/hexis31/v1`, destinazioni nuove sotto `results/hexis31/`:
+
+```bash
+uv sync --frozen
+uv run python -m hexis.pipeline.run_tree_validation --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run>
+uv run python -m hexis.pipeline.run_descriptive --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run> --seed 0
+# §12.2: stessa coppia di comandi in una directory distinta, stesso codice
+uv run python -m hexis.pipeline.run_tree_validation --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<regen>
+uv run python -m hexis.pipeline.run_descriptive --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<regen> --seed 0
+# V4, dopo la revisione di V3
+uv run python -m hexis.pipeline.run_descriptive --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run> --resume
+# V5
+uv run python -m hexis.pipeline.run_report --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run> --regenerated-dir results/hexis31/<regen>
+```
+
+**Deposito.** Il commit V0 `e98fb8e` aveva depositato 64 file, tra cui `hexis-verifica/.DS_Store` (metadati del Finder, sha256 `18cc90e9ff3e6473b1790a06f5bbf5afb3be60f5359284118c94b4f8383df96b`, assente da `hexis-verifica/SHA256SUMS.json` e ancora presente nell'originale sul Desktop). Il commit V1 `7afdd3a` lo ha rimosso insieme alla sua riga in `V3-001-deposit.json`, senza documentarlo. I 63 digest restanti sono invariati e coincidono coi file tracciati; `.DS_Store` è ora in `.gitignore`.
+
+Comandi sui byte di `0dc69b5`, righe finali verbatim, tutti exit 0:
+
+```text
+uv run --frozen pytest -m v31 -q -p no:cacheprovider
+351 passed, 338 deselected in 180.99s (0:03:00)
+
+uv run --frozen pytest -q -p no:cacheprovider
+672 passed, 17 skipped in 200.10s (0:03:20)
+
+uv lock --check
+Resolved 23 packages in 12ms
+```
+
+Commit soltanto locali. Arresto per revisione prima di V3.
+
 ## Figure §11.6 — 22 settembre 2026
 
 **V0–V2 completati; il codice necessario prima di V3 è completo; V3–V5 non attestati; nessun fit reale.** Il vincolo registrato nella chiusura V2 qui sotto è soddisfatto in `559dc40`: `viz/plots.py` sostituisce lo stub v2.1 con le cinque figure del contratto (`corpus_annotation`, `block_document_profiles`, `sensitivities_two_weights`, `R1`, `supports_mixture_masses`), disegnate soltanto dalle tabelle verificate e pubblicate da `run_report` come SVG deterministici, con testo in inglese. Nessuna figura calcola quantità proprie oltre l'aggregazione unica di `scores`/`diagnostics`; nessun intervallo inferenziale, solo min–max computazionali fra semi. La revisione ha corretto anche `model_diagnostics.csv`, che scriveva l'istogramma dei supporti come repr Python: le colonne strutturate sono ora JSON canonico. Firme approvate dal proprietario; verifiche su fixture, esecuzione reale in V5.

@@ -8,12 +8,13 @@ __pycache__/
 data/raw/*
 !data/raw/PROVENANCE.md
 
-# Derived corpus data: substantial derivatives of CC BY-NC-SA treebank data (D28);
-# regenerable from the pipeline under fixed seeds (D26).
-# NOTE (G4/G5): add targeted re-include exceptions here for the derived STATISTICS
-# that D28 does publish (alphabet.json, scores/ tables, figures).
+# Derived corpus data (historical v2.1 layout); under HEXIS 3.1 no data is published in
+# this tranche and the legal status of derivatives is undecided (plan §17.3).
 data/interim/
 data/processed/
 
 # Local v3.1 corpus derivatives; publication is separate.
 results/hexis31/
+
+# Finder metadata (one copy entered and left the V0 deposit; see docs/HANDOFF.md)
+.DS_Store

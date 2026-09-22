@@ -6,13 +6,13 @@ Il [contratto depositato](contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-0
 |---|---|---|
 | V0 | Deposito, autorità, configurazione, registro e test | COMPLETATO — e98fb8e |
 | V1 | Corpus, mapping, audit, coordinate e persistenza | COMPLETATO — 7afdd3a |
-| V2 | CTW, RNG/campione/shuffle, quattro perdite, diagnostiche, R1, resume | COMPLETATO — chiusura verificata il 22/09/2026, codice 0a6f644; evidenze nell'handoff |
+| V2 | CTW, RNG/campione/shuffle, quattro perdite, diagnostiche, R1, resume | COMPLETATO — chiusura verificata il 22/09/2026, codice 0a6f644; revisione pre-V3 0dc69b5; evidenze nell'handoff |
 | V3 | Seme 0, sei celle, sette fold: 42 coppie/84 modelli; freeze | PENDING — arresto per revisione prima dell'apertura |
 | V4 | 490 coppie/980 modelli; tutte le celle/semi/bracci | PENDING |
 | V5 | Report, cinque figure, due pesi, rigenerazione e completezza | PENDING — codice pronto; esecuzione e verifica |
 
-Chiusura V2 (codice `0a6f644`) e cinque figure §11.6 (`559dc40`): **332 test v31 senza skip;
-653 passed e 17 skip storici nella suite completa**, lock invariato. Evidenze V2/V3 nel manifest,
+Chiusura V2 (codice `0a6f644`), cinque figure §11.6 (`559dc40`) e revisione integrale pre-V3
+(`0dc69b5`): **351 test v31 senza skip; 672 passed e 17 skip storici nella suite completa**, lock invariato. Evidenze V2/V3 nel manifest,
 controllo tecnico 42/84, tabelle del report, confronto di rigenerazione e figure verificati
 soltanto su fixture: l'identità del codice comprende tutto `src/hexis`, quindi il codice è
 completo prima del freeze di V3. **Arresto per revisione prima di V3**; V3 resta non eseguito. Storico della ripresa (`d38b5a7`):

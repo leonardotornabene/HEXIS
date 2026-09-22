@@ -34,6 +34,22 @@ nell'[handoff](HANDOFF.md) e nell'[inventario](TEST_INVENTORY.md).
 
 ---
 
+## V3-001 — Nota di esecuzione pre-V3, 2026-09-22
+
+La revisione integrale chiesta dall'utente prima di V3 ha ricevuto quattro decisioni esplicite
+(D1–D4, [handoff](HANDOFF.md)). Qui si registra la sola deviazione dal testo del contratto.
+
+**CLI (§14.1).** Le righe del §14.1 sono comandi di principio. Gli entry point implementati
+richiedono in più destinazioni esplicite: `--data-root`/`--output-dir` per audit e codifica;
+`--corpus-dir`/`--output-dir` per `run_descriptive`, `run_report` e per la pubblicazione delle
+evidenze con `run_tree_validation`; `--regenerated-dir` per il report scientifico (§12.2). Accettano
+inoltre `--seed 0`, `--resume` e `--fixture`. Motivo: il §11.7 vieta sovrascritture implicite e
+richiede pubblicazione atomica in una destinazione nuova o in una ripresa verificata, quindi nessuna
+destinazione è dedotta. Nessun parametro scientifico passa dalla CLI: celle, semi e pesi restano
+quelli della proiezione depositata. Nessuna clausola, atteso o byte contrattuale è modificato.
+
+---
+
 ## Archivio normativo v2.1 — non autorità per nuove esecuzioni
 
 # PROJECT HEXIS — DECISION LOG

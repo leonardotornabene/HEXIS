@@ -8,9 +8,10 @@ which adopt docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md
 and its byte-identified JSON contracts. Text governs semantics; JSON fixes values.
 Do not silently deviate or regenerate expectations to make tests pass.
 
-V0–V2 are completed; V2 closure verified on 2026-09-22 (docs/HANDOFF.md),
-preserving prior synthetic evidence. V3–V5 are not attested. Code identity covers
-all of src/hexis: the report tables and five §11.6 figures exist before V3.
+V0–V2 are completed; V2 closure and pre-V3 review verified on 2026-09-22
+(docs/HANDOFF.md), preserving prior synthetic evidence. V3–V5 are not attested.
+Code identity covers all of src/hexis; V2 evidence also binds tests, conftest.py,
+pyproject.toml, config, uv.lock and the corpus manifest: all are final before V3.
 Stop for review before V3; no new real model fits in this tranche.
 The old v2.1 P1/P2 inference, Latin, O7 blocker, permutation constants, sign-stability,
 old sensitivities and gates G0–G7 are historical, not resolved retroactively.

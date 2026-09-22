@@ -40,12 +40,12 @@ Le attestazioni successive conservano il credito dei rispettivi commit. La chius
 | T21 | V2 | Sensibilità accoppiate |
 | T22 | V2 | Masse/supporti/L_resolved |
 | T23 | V2 | R1 |
-| T24 | PARZIALE V1 | Censimento dei sei inventory_only; assenza training/scoring finale PENDING V5 |
+| T24 | CODICE pre-V3, ESECUZIONE PENDING V5 | Censimento dei sei inventory_only (V1); il validatore del report rigenera ogni ledger dal contratto RNG, quindi nessun held-out/inventory_only in training, e rifiuta ogni scoring inventory_only: codice e test in `0dc69b5`; esecuzione sulla campagna in V5 |
 | T25 | PENDING V4 | Uguaglianza 490/980 chiavi modello/coppia |
 | T26 | V2 | Atomicità/interruzione, resume, corruzione, duplicati e chiavi extra: corpus (V1) e stage scientifico (V2) |
-| T27 | CODICE V2, ESECUZIONE PENDING V5 | Ricostruzione score/diagnostiche e cinque figure: codice e test su fixture in `559dc40`; esecuzione sui dati reali in V5 |
+| T27 | CODICE V2, ESECUZIONE PENDING V5 | Ricostruzione score/diagnostiche e cinque figure: codice e test su fixture in `559dc40`, correzioni della revisione pre-V3 (campioni, shuffle e provenienza C0 rigenerati; figure leggibili alla cardinalità reale) in `0dc69b5`; esecuzione sui dati reali in V5 |
 | T28 | V0–V1 | Pipeline senza candidates/inferenza; accettazione senza skip |
-| T29 | PARZIALE V1 | Identità/round-trip corpus; CE/riproduzione modelli PENDING V5 |
+| T29 | PARZIALE V1 | Identità/round-trip corpus; campioni e shuffle rigenerati per ogni coppia (`0dc69b5`); CE/riproduzione modelli PENDING V5 |
 | T30 | PENDING V5 | Report scientifico completo |
 
 | Suite precedente | Disposizione e motivazione |
@@ -245,3 +245,15 @@ Accettazione sul codice `0a6f644`: **328 passed, 338 deselected**, zero skip/xfa
 T27 (`559dc40`), `test_v31_figures.py` nell'inventario obbligatorio: le cinque figure con i nomi di `report_contract_v3.1.json`, SVG deterministici con il `run_id` e senza data, valori tracciati uguali a quelli delle tabelle (profili, D_Q, matrice R1, quote PART), colonne strutturate di `model_diagnostics.csv` in JSON canonico, nessun import di modello, campionatore, pipeline, `pyplot`, `stats` o `candidates` in `viz/plots.py`. L'identità fra due destinazioni copre anche le figure. Questo soddisfa l'obbligo «prima di V3» della sezione precedente; l'esecuzione sui dati reali resta V5.
 
 Accettazione sul codice `559dc40`: **332 passed, 338 deselected**, zero skip/xfail. Suite completa: **653 passed, 17 skipped storici**.
+
+## Revisione integrale pre-V3 — 2026-09-22
+
+Correzioni in `0dc69b5`, ciascuna con test rosso prima del codice (dettaglio e decisioni D1–D4 nell'[handoff](HANDOFF.md)):
+
+- T05/T08/T24 sulla campagna: `validate_partitions` rigenera con `sampling.pair_streams` il ledger di ogni coppia, i conteggi di shuffle e, in C0, la provenienza rimescolata. `test_the_persisted_ledger_is_the_contract_sample_even_after_rehashing` (frase held-out, frase `inventory_only`, taglio spostato, tutti ri-hashati in modo coerente) e `test_shuffle_counts_and_c0_provenance_are_the_contract_regeneration`.
+- Sette guardie del validatore che la mutazione mostrava mai esercitate, ora fissate con `match=`: `test_each_c0_guard_names_its_own_corruption`, `test_sensitivity_partitions_enforce_diagnostic_denominators_and_bounds`, `test_contrasts_refuse_a_q_that_is_not_the_gain_difference`.
+- T27, figure: masse di C0 fino alla sua profondità, etichette «autore, opera (n=…)» e ordine per gruppo, nomi dei simboli nelle tabelle R1, ordine dichiarato delle celle; `test_every_figure_keeps_its_text_inside_the_canvas` usa le diciassette etichette del registro depositato e tre rappresentazioni R1.
+- Inventario esaustivo: `REQUIRED` comprende tutti i 181 test v31 definiti (erano 8 fuori) e `test_v31_inventory_lists_every_collected_active_test` lo impone.
+- Mutazioni (copia in scratchpad): 35 guardie su 40 rilevate; le 5 sopravvissute sono dominate da un controllo più forte (ruoli per partizione e al passo 5 dal confronto delle chiavi documento/fascia; sovrascrittura in `annotate_scores` dal rifiuto di pandas; confronto in ripresa dal nome-digest; denominatore dello shuffle dalla sua rigenerazione).
+
+Accettazione sul codice `0dc69b5`: **351 passed, 338 deselected**, zero skip/xfail. Suite completa: **672 passed, 17 skipped storici**. Le parti PENDING V4/V5 della tabella restano tali.

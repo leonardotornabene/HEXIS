@@ -1,25 +1,33 @@
 # HEXIS 3.1
 
-Studio descrittivo dell'ordine entro frase delle annotazioni morfosintattiche nel corpus finito greco UD Perseus r2.18. La decisione [V3-001](docs/02_DECISION_LOG.md) adotta il [contratto completo](docs/01_MASTER_SPEC.md).
+Studio descrittivo dell'ordine entro frase delle annotazioni morfosintattiche nel corpus finito greco UD Perseus r2.18. L'autorità è il [piano depositato](docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md) con i suoi JSON identificati byte per byte, adottato da [V3-001](docs/02_DECISION_LOG.md); [V3-002](docs/02_DECISION_LOG.md) ha riallineato la repository e regola la pubblicazione.
 
-V0–V1 completati e verificati: deposito normativo, configurazione rigorosa, audit e codifica reali. I nove artefatti sono stati riprodotti identici byte per byte in due directory distinte. V2 chiusa e verificata il 22 settembre 2026, dopo la riconciliazione M1–M5 e la revisione integrale ([handoff](docs/HANDOFF.md)). Evidenze su fixture sintetiche/analitiche: CTW, campionamento/shuffle, punteggi, diagnostiche, R1, persistenza scientifica e tabelle del report. Anche le cinque figure del §11.6 sono implementate e verificate su fixture (`559dc40`): l'identità del codice comprende tutto `src/hexis`, quindi tutto il codice è scritto prima di V3. La revisione integrale pre-V3 del 22 settembre 2026 ha reso il validatore del report capace di rigenerare campioni e rimescolamenti senza fit, corretto le figure alla cardinalità reale e reso esaustivo l'inventario dei test (`0dc69b5`, [handoff](docs/HANDOFF.md)). Fit reali, campagna, report e figure appartengono a **V3–V5**, non attestati. Nessun risultato finale e nessun nuovo fit reale in questa tranche.
+## Stato
 
-Comandi operativi, dalla radice della repository (la destinazione iniziale deve essere nuova):
+**V0–V2 completati; V3–V5 non attestati; nessun fit reale è mai stato eseguito.** Sono implementati e verificati su fixture sintetiche e analitiche: lettore e codifica del corpus, CTW congelato, campionamento con RNG del contratto e rimescolamento, quattro perdite con G e Q, diagnostiche, R1, persistenza atomica con ripresa, tabelle del report e cinque figure. Il corpus reale è stato letto e codificato una sola volta (V1), e i suoi nove artefatti sono riproducibili byte per byte. Campagna, contrasti finali e risultati appartengono a V3–V5 e non esistono. La tranche si ferma per revisione prima di V3.
+
+L'albero attivo contiene soltanto il percorso 3.1. La storia — v2.1, gate G0/G1, `candidates/`, utility statistiche, proposal precedente, risultati pre-audit — è conservata byte per byte in [archive/](archive/README.md), che non è un'autorità e non viene eseguito.
+
+## Uso
 
 ```bash
 uv sync --frozen
-uv run python -m hexis.pipeline.run_audit --config config/default.yaml --data-root data/raw/UD_Ancient_Greek-Perseus --output-dir results/hexis31/new-run
-uv run python -m hexis.pipeline.run_encode --config config/default.yaml --data-root data/raw/UD_Ancient_Greek-Perseus --output-dir results/hexis31/new-run
+uv run pytest
+uv run python -m hexis.pipeline.run_tree_validation --config config/default.yaml
+uv run python -m hexis.pipeline.run_audit  --config config/default.yaml --data-root data/raw/UD_Ancient_Greek-Perseus --output-dir results/hexis31/<nuovo>
+uv run python -m hexis.pipeline.run_encode --config config/default.yaml --data-root data/raw/UD_Ancient_Greek-Perseus --output-dir results/hexis31/<nuovo>
 ```
 
-`run_encode` può anche creare direttamente un nuovo run, includendo l'audit. Un secondo avvio dello stesso stadio è rifiutato. Il manifest del corpus distingue `corpus_complete` da `scientific_complete`; lo stadio descrittivo ha un proprio run con un solo manifest, partizioni per coppia e ledger identificati dall'hash. La ripresa è verificata su fixture sintetiche, anche dopo un'interruzione fra coppie.
+Il corpus non è incluso: `data/raw` è immutabile, ignorato da Git e mai ridistribuito qui. La destinazione di un run deve essere nuova; un secondo avvio dello stesso stadio è rifiutato e nessuna scrittura è implicita. `run_descriptive` e `run_report` sono implementati e verificati su fixture: sulla configurazione depositata si eseguono a partire da V3, a codice congelato.
 
-La batteria sintetica è eseguibile con `uv run python -m hexis.pipeline.run_tree_validation --config config/default.yaml`. Le CLI descrittive accettano la configurazione depositata; `--fixture` serve soltanto alle configurazioni giocattolo. La selezione `--seed 0` è implementata per la futura prova V3, ma **questa tranche si ferma per revisione prima di V3**. La pubblicazione delle evidenze V0–V2 in un nuovo run scientifico (`run_tree_validation --corpus-dir … --output-dir …`) è implementata e verificata su fixture; sulla configurazione depositata si esegue all'apertura di V3, a codice congelato. Il report reale esige nel manifest le evidenze V2 e V3, ricalcolate a ogni lettura, e la rigenerazione del seme 0 in una directory distinta (`--regenerated-dir`, §12.2).
+Accettazione attiva: `uv run pytest` e `uv run pytest -m v31` raccolgono gli stessi test, tutti marcati, senza skip e con un assert eseguito ciascuno. Conteggi verbatim nell'[handoff](docs/HANDOFF.md); mappa e obblighi nell'[inventario](docs/TEST_INVENTORY.md).
 
-Python 3.12 via uv, dipendenze e lock conservati. `uv run pytest -m v31` seleziona l'accettazione attiva; `uv run pytest` comprende anche la suite storica e i suoi scaffold esplicitamente pendenti. Stato attestato sul codice `0dc69b5` (chiusura V2, figure e revisione pre-V3): **351 test attivi senza skip; 672 passed e 17 skip storici nella suite completa**. Gli skip storici non attestano il nuovo software. [Inventario test](docs/TEST_INVENTORY.md), [roadmap](docs/03_ROADMAP_OPERATIVA_IT.md), [handoff](docs/HANDOFF.md).
+## Perimetro scientifico
 
-Il corpus include 17 documenti censiti: 11 primari in sette blocchi, sei solo inventario. Alfabeto accorpato ADV/PART, varianti 100/105/11. Target con almeno quattro predecessori nella frase; regimi sorgente separati dal gruppo del report.
+Diciassette documenti censiti: undici primari in sette blocchi, sei soltanto d'inventario, mai addestrati né valutati. Alfabeto con accorpamento globale ADV/PART, tre varianti di dimensione 100, 105 e 11. Target con almeno quattro predecessori nella stessa frase, nessuna storia fra frasi. Le misure sono perdite predittive fuori dal training in bit per simbolo: nessuna inferenza, nessun p-value, nessun intervallo. I semi sono repliche computazionali, non incertezza di popolazione, e gli undici documenti non sono undici repliche indipendenti.
 
-La v2.1, il proposal PDF e i README di backup sono storici. La riscrittura del proposal e la pubblicazione dei dati sono separate. Le utility statistiche conservate non entrano nella pipeline descrittiva. Lo script locale di acquisizione non è uno strumento canonico.
+## Licenze e dati
 
-Codice MIT; i raw restano CC BY-NC-SA 2.5; la qualificazione giuridica dei derivati non è decisa in questa tranche (§17.3) e nessun dato viene pubblicato. Raw immutabili/ignorati e risultati locali voluminosi esclusi dalla pubblicazione. Non redistribuire i treebank tramite questo repository. [Bibliografia attiva](docs/BIBLIOGRAPHY.md).
+Codice sotto licenza MIT. I raw restano CC BY-NC-SA 2.5 e non vengono ridistribuiti da questo repository. Che cosa viene pubblicato dei derivati del corpus, e sotto quale licenza, è deciso dall'atto di pubblicazione in V3-002 e in nessun altro luogo: la licenza del codice non si estende né ai documenti né ai dati. [Bibliografia attiva](docs/BIBLIOGRAPHY.md).
+
+Python 3.12 via uv, con il lock conservato. Il research proposal 3.1 (§17.1) non è ancora depositato.

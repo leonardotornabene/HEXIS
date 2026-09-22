@@ -1,6 +1,6 @@
-# Registro bibliografico attivo HEXIS 3.1 — V3-001
+# Registro bibliografico attivo HEXIS 3.1 — V3-001, V3-002
 
-Recepimento del §18 del contratto depositato. Il registro precedente resta nella roadmap v2.1.
+Recepimento del §18 del contratto depositato. Il registro precedente è conservato nella [roadmap storica](../archive/docs/history/v2.1/03_ROADMAP_OPERATIVA_IT.md), in archivio.
 
 Queste sono le fonti direttamente utilizzate, da recepire nel registro del progetto in V0 conservando quello storico. Gli obblighi di citazione relativi a latino, transfer e stimatori ritirati non rimangono vincoli della 3.1 se non hanno funzione nel testo. Nessuna fonte esterna al registro viene introdotta implicitamente nel proposal.
 

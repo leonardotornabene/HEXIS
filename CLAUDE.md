@@ -1,23 +1,29 @@
 # Project HEXIS — standing instructions (design 3.1)
 
-Active authority: docs/01_MASTER_SPEC.md and V3-001 in docs/02_DECISION_LOG.md,
-which adopt docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md
-and its byte-identified JSON contracts. Text governs semantics; JSON fixes values.
+Active authority: docs/01_MASTER_SPEC.md, V3-001 and V3-002 in
+docs/02_DECISION_LOG.md, which adopt
+docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md and its
+byte-identified JSON contracts. Text governs semantics; JSON fixes values.
 Do not silently deviate or regenerate expectations to make tests pass.
 
-V0–V2 are completed; V2 closure and pre-V3 review verified on 2026-09-22
-(docs/HANDOFF.md), preserving prior synthetic evidence. V3–V5 are not attested.
-Code identity covers all of src/hexis; V2 evidence also binds tests, conftest.py,
-pyproject.toml, config, uv.lock and the corpus manifest: all are final before V3.
-Stop for review before V3; no new real model fits in this tranche.
-The old v2.1 P1/P2 inference, Latin, O7 blocker, permutation constants, sign-stability,
-old sensitivities and gates G0–G7 are historical, not resolved retroactively.
-D01–D54, proposed D55 and technical G1 ratifications retain their historical status.
+V0–V2 are completed; V3–V5 are not attested and no real fit has ever run.
+V3-002 realigned the repository on 2026-09-22: the active tree is 3.1 only and
+every historical material is preserved byte for byte under archive/, at the
+path it had at 5f1ec06. archive/ is a record: never imported, never collected,
+outside the code identity; it runs at that commit, not here. Retired design
+elements — v2.1 inference, Latin, gates G0–G7, permutation constants,
+sign-stability, D01–D55 — are listed in V3-001 and must never be reintroduced.
 
-Tests first; never weaken a still-valid property. Active acceptance: pytest -m v31,
-actual collection coverage, executed asserts, no skip/xfail. The remaining
-V3–V5 obligations are tracked in docs/TEST_INVENTORY.md. Use Python 3.12 via uv;
-keep dependencies and uv.lock. No print in library code or candidates imports.
+Stop for review before V3; no new real model fits in this tranche. The freeze
+perimeter is code identity over all of src/hexis plus tests, conftest.py,
+pyproject.toml, config and uv.lock: once V2/V3 evidence is published, changing
+any of them forces a new directory and a new run.
+
+Tests first; never weaken a still-valid property; retiring one means replacing
+its test with a reason, not deleting the check. Active acceptance: pytest and
+pytest -m v31 collect the same tests, all marked v31, with no skip or xfail and
+an executed assert each. Obligations are tracked in docs/TEST_INVENTORY.md.
+Use Python 3.12 via uv; keep dependencies and uv.lock. No print in library code.
 
 Three pinned Greek CoNLL-U only; recombine numeric source coordinates, not splits.
 18 prefixes, 17 documents, 11 primary in seven blocks; six inventory_only enter
@@ -27,15 +33,17 @@ then frozen lexicographic IDs: ud23/ud23_oth/upos_only = 100/105/11.
 UPOS shares the exact C0 mask; OTH has its own population. Sentence streams reset,
 including empty streams; target j≥4. No SEP, EOS, UNK or cross-sentence history.
 
-Implemented instrument: frozen CTW, four losses, Q and G in bits, two declared weights,
-R1 descriptive only. No inference. Core label-free; labels via annotate_scores.
-No extra model-complexity penalty. RNG per deposited SHA-256 contract, not old CRC32.
+Implemented instrument: frozen CTW, four losses, Q and G in bits, two declared
+weights, R1 descriptive only. No inference. Core label-free; labels via
+annotate_scores. No extra model-complexity penalty. RNG per the deposited
+SHA-256 contract.
 
 One manifest per run: deterministic identity from contract/code/data/registry/
 alphabets/config/lock; timestamps, machine and paths external. Atomic publication,
-no implicit overwrite; preserve local scripts and all historical results.
+no implicit overwrite; preserve local scripts and every historical result.
 data/raw is immutable and gitignored; reject output inside raw even through symlinks.
-Raw licensing remains CC BY-NC-SA 2.5; no data publication in this tranche.
+Raw licensing remains CC BY-NC-SA 2.5; what the publication act of V3-002 covers,
+and under which licence, is decided there and nowhere else.
 Sources only from the active registry in docs/BIBLIOGRAPHY.md.
 
 When scientifically uncertain: stop the affected passage, state the discrepancy,

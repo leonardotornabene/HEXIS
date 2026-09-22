@@ -4,7 +4,7 @@
 
 Studio descrittivo dell'ordine entro frase delle annotazioni nel corpus finito greco UD Perseus r2.18. Inventario di 17 documenti, 11 primari in sette blocchi e sei `inventory_only`. Rappresentazioni accorpate ADV/PART; CTW congelato implementato e verificato in V2; profili Q/G/quattro CE, due pesature e R1 secondo il contratto.
 
-**V0–V1 completati; V2 ampiamente implementata, chiusura da riconciliare e verificare**, con evidenze pregresse nell'[handoff](HANDOFF.md), senza nuovi fit reali. Le proprietà già verificate su fixture sintetiche/analitiche conservano il loro credito; la revisione corrente verifica i residui e l'integrazione delle evidenze. V3–V5 non attestati. La ripresa si ferma per revisione prima di V3. I fit iniziano soltanto in V3 dopo V0–V2. Il completamento del corpus è distinto dal completamento scientifico.
+**V0–V2 completati; chiusura V2 riconciliata e verificata il 22 settembre 2026** (M1–M5 e revisione integrale nell'[handoff](HANDOFF.md)), senza nuovi fit reali. Le proprietà verificate su fixture sintetiche/analitiche conservano il loro credito. V3–V5 non attestati. Prima di V3 vanno implementate le cinque figure del §11.6, perché l'identità del codice comprende tutto `src/hexis`. Arresto per revisione prima di V3. I fit iniziano soltanto in V3 dopo V0–V2. Il completamento del corpus è distinto dal completamento scientifico.
 
 D01–D54, D55 proposto e ratifiche G1 rimangono storia documentata. Le clausole incompatibili della v2.1 sono sostituite da V3-001 per le nuove esecuzioni; nessuna apertura storica è dichiarata risolta. [Specifica precedente](history/v2.1/01_MASTER_SPEC.md).
 

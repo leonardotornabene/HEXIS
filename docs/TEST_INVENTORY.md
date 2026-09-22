@@ -5,7 +5,7 @@ nessuno skip/xfail/xpass. Il confronto col contratto non sostituisce i test del 
 
 ## Riconciliazione del 18 settembre 2026 — M1–M5
 
-Le attestazioni successive conservano il credito dei rispettivi commit. La chiusura generale V2 è in verifica; le righe V2 T01–T23/T26 indicano copertura preesistente, non completamento dei residui qui elencati.
+Le attestazioni successive conservano il credito dei rispettivi commit. La chiusura generale V2 è verificata il 22 settembre 2026 (sezione finale); i residui qui elencati sono chiusi.
 
 | Requisito | Implementazione e test esistenti | Residuo della revisione corrente |
 |---|---|---|
@@ -227,3 +227,15 @@ T11/T17/T22: istogrammi di supporto per profondità con BOS; contatore di incont
 ## Riconciliazione 2B — 2026-09-18
 
 M4/T22/T26/T27/T29: `test_v31_completion.py` e `test_v31_report_semantics.py` coprono lock presente, righe vuote, risorse per modello esterne all'identità, bracci/famiglie artefatti, tipi delle chiavi e corruzioni semantiche in report/resume anche dopo ricalcolo degli hash. Le somme C0 delle quattro perdite, L_resolved e unseen sono ricostruite; conteggi/chiavi esatti, CE entro 1e-9 bit/target e diagnostiche entro 1e-12 per posizione. Schemi, duplicati, null, masse, supporti e denominatori verificati anche nelle sensibilità. R1 conserva frequenze empiriche e smussate. Accettazione: **302 passed, 338 deselected**, zero skip/xfail. Restano V3–V5 le verifiche modellistiche reali, rigenerazione prefissata e figure; questa copertura è sintetica.
+
+## Chiusura 2C, revisione integrale e completamento del report — 2026-09-22
+
+- M5/T26/T29 (`482cef0`) — `test_v31_validation_run.py`, ora nell'inventario obbligatorio: accettazione confrontata con JUnit e raccolta effettiva; vacuità, skip e fallimenti rifiutati; evidenza V2 conservata in ripresa; evidenza mancante, PASS scritto a mano, contesto, JUnit o processo alterati bloccano i fit; insieme tecnico 42/84 solo su fixture; fit reali solo con produttori tracciati puliti; record V3 ricalcolato, mai creduto.
+- Contratto del report (`f3f8a65`): `test_diagnostics_carry_the_report_contract_names` legge `report_contract_v3.1.json` e ne verifica campi aggregati, diagnostiche per braccio (`…_by_reason_*`, `…_by_length_*` come famiglie), conteggi dello shuffle e colonne di `model_diagnostics.csv`, risorse incluse.
+- M4/T11 (`5dc7d1b`): `training` e `fragments` ricalcolati dal ledger persistito, con i guasti `training`/`fragments` in `test_partition_semantic_corruption_is_rejected`; training vuoto → zero nodi osservati (§9.1).
+- T20/T21/T27/T29 (`0a6f644`): `test_report_summarizes_every_level_and_pairs_sensitivities_per_block_and_seed`, `test_empty_document_summaries_stay_null_with_their_reason`, `test_seed_zero_regeneration_is_compared_and_recorded_by_the_report`, `test_a_scientific_report_requires_the_seed_zero_regeneration`.
+- M1–M4: verifiche indipendenti della revisione nell'[handoff](HANDOFF.md).
+- Le sezioni precedenti descrivono lo stato ai rispettivi commit: `hexis-scientific-manifest-1` è sostituito da `-2`, e `changed_count`/`total_count`, `observed_mass_*` e gli altri nomi precedenti da quelli del contratto.
+- Prima di V3: le cinque figure §11.6 (T27), perché l'identità del codice copre tutto `src/hexis`. T25 resta V4; T24/T27/T29/T30 restano V5 come esecuzione e verifica.
+
+Accettazione sul codice `0a6f644`: **328 passed, 338 deselected**, zero skip/xfail. Suite completa: **649 passed, 17 skipped storici**.

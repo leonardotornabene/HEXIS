@@ -1,4 +1,4 @@
-"""Active V0–V1 must collect all required tests and execute real assertions."""
+"""Active V0–V2 must collect all required tests and execute real assertions."""
 from collections import defaultdict
 from pathlib import Path
 from types import SimpleNamespace

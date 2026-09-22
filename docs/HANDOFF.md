@@ -1,5 +1,41 @@
 # Handoff HEXIS 3.1 — V3-001 — riconciliazione V2
 
+## Chiusura V2 — 22 settembre 2026
+
+**V0–V2 completati; V3–V5 non attestati; nessun nuovo fit reale.** Questa sezione chiude i residui M1–M5 della rettifica del 18 settembre, che resta come storia, dopo la revisione integrale richiesta prima di V3. Codice di chiusura `0a6f644`, dopo `482cef0`, `f3f8a65` e `5dc7d1b`; il commit documentale che contiene questa sezione non cita se stesso. Commit soltanto locali, nessun push.
+
+**Ripresa dopo l'interruzione del sottostadio 2C: nessun danno.** Tre CoNLL-U greci con gli hash del contratto, clone a `37837c7`; piano, allegati 3.1, ZIP 3.0.1 e `hexis-verifica` identici byte per byte al Desktop; `uv.lock` `33db43b0…` e `uv lock --check` invariati; `scripts/reacquire_raw_data.sh` al digest registrato, non tracciato e preservato; manifest V1 `154433c7…`/`de08d13d…` validi, nove artefatti identici fra le due directory; sotto `results/hexis31/` soltanto le tre directory V1. Il lavoro 2C non committato era coerente (318 v31 pass) ed è stato conservato.
+
+**2C/M5 — `482cef0`.** Stadio `validation` nel manifest `hexis-scientific-manifest-2`: batteria §12.1, processo `pytest -m v31` e JUnit confrontati per insieme con la raccolta effettiva. Nessun fit reale senza di esso; campagna completa soltanto dopo il record V3 del seme 0 (42/84, distinto da 490/980). Corretti test-first: un record V3 scritto a mano con codice/lock corretti era accettato — ora ogni V3 registrato è ricalcolato dal run pubblicato; `test_v31_validation_run.py` mancava dall'inventario obbligatorio. Provato su fixture; sulla suite reale il meccanismo ha raccolto 321 test e 321 casi JUnit corrispondenti, senza pubblicare alcun run. L'evidenza V2 sulla configurazione depositata si produce all'apertura di V3, a codice congelato.
+
+**Revisione integrale, con verifiche indipendenti.**
+- CTW contro un'enumerazione degli alberi scritta dalle formule §6 (26 alberi): log-evidenza identica, predizione entro 1e-15.
+- Batteria §12.1 rieseguita: 25/25 entro soglia; stress lag 2 m106 CE 5,09–5,13 contro oracle 1,13109; generatore identico (AST) alla fixture `e6a55b08…`.
+- Vettore §12.2 ricalcolato con sole `hashlib`/`numpy`; sei celle identiche al §10; sul corpus reale, senza fit, sette fold × due semi: ledger C0 = a_total1 = D12 = upos, q_half prefisso dell'ordine C0, budget 53.304/26.652.
+- Controesempio §7 riprodotto (Q 0,71346; scorciatoia −0,66505). Nessun test indebolito da `852644b`; l'unica sostituzione di attesi (firme v2.1) è registrata in V3-001.
+
+**Difetti trovati dalla revisione e corretti test-first, su decisione del proprietario.**
+- `f3f8a65`: otto campi persistiti con nomi diversi dal `report_contract_v3.1.json`, ora identici e vincolati da un test che legge il contratto depositato; risorse per modello in `model_diagnostics.csv` (§11.5), con l'identità fra destinazioni che esenta esattamente quelle tre colonne misurate.
+- `5dc7d1b`: `training` e `fragments` delle coppie non erano verificati contro il ledger persistito, e `training` alimenta le quote di training del report; ora sono ricalcolati dal ledger. Con training vuoto la radice non osservata non conta più come nodo (§9.1, caso non raggiungibile nelle celle reali).
+- `0a6f644`: il codice del report fa parte dell'identità del run, quindi tutto ciò che il report deve emettere esiste prima di V3 — riepiloghi fra semi per gruppi, blocchi e documenti (§8.2); differenze accoppiate delle sensibilità per blocco/seme e per gruppo/seme (§10); quote di gruppo del training per fold (§5.1); tabella dei frammenti (§11.5); `compare_regeneration` per la rigenerazione del seme 0 (§12.2), richiesto dal report scientifico (§14.2 passo 6). Lo strumento esiste e non è stato eseguito su dati reali.
+
+**Vincolo prima di V3.** `_code_identity()` comprende tutti i 39 file di `src/hexis/`, e il report rifiuta un run con un'altra identità. Le cinque figure del §11.6 (T27) non sono implementate: `viz/plots.py` è ancora lo stub v2.1. Vanno implementate e verificate su fixture prima del freeze di V3, previa approvazione delle firme; altrimenti il lavoro di V5 cambierebbe il `run_id` di V3/V4.
+
+Comandi sui byte del commit di chiusura (codice identico a `0a6f644`; cambiano soltanto documenti e attesi documentali dei test), righe finali verbatim, tutti exit 0:
+
+```text
+uv run --frozen pytest -m v31 -q -p no:cacheprovider
+328 passed, 338 deselected in 148.75s (0:02:28)
+
+uv run --frozen pytest -q -p no:cacheprovider
+649 passed, 17 skipped in 153.77s (0:02:33)
+
+uv lock --check
+Resolved 23 packages in 3ms
+```
+
+Arresto per revisione prima di V3.
+
 ## Rettifica del 18 settembre 2026
 
 **V0–V1 completati; V2 ampiamente implementata, chiusura da riconciliare e verificare; V3–V5 non attestati.** La dichiarazione generale di completamento V2 delle attestazioni seguenti è rettificata: i conteggi e le proprietà dimostrate restano evidenze dei commit citati, ma non coprono i residui M4/M5 né la revisione integrale richiesta ora. Le sezioni datate precedenti sono conservate come resoconto storico, compresi i rinvii all'integrazione che questa tranche deve completare. Nessun nuovo fit reale né riscrittura del proposal.
@@ -140,7 +176,7 @@ CTW, quattro punteggi, diagnostiche, R1 e persistenza scientifica sono verificat
 
 Un solo contatto col corpus reale resta in V2, ed è di campionamento, non di modello: `tests/test_v31_sampling.py` ricostruisce il corpus V1 dai tre input greci per verificare, su sei celle × sette fold, che nessun documento held-out e nessun `inventory_only` entri nel training e che il ledger sia quello dichiarato. Nessun modello vi è fittato, esattamente come nei test corpus di V1.
 
-## Obblighi residui
+## Obblighi residui (stato al 17 settembre, superato dalla chiusura del 22 settembre)
 
 L'[inventario T01–T30](TEST_INVENTORY.md) distingue la copertura V0–V2 dalle parti ancora PENDING. V2 è concluso: CTW, sampling/RNG/shuffle, core comportamentalmente indipendente dalle etichette, quattro perdite, diagnostiche, R1 e resume esistono e sono coperti, con le fixture esatte e i 25 sintetici alle soglie congelate. Restano PENDING la parte modellistica di T24 e T29, T25 in V4, T27 e T30 in V5.
 

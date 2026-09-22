@@ -17,9 +17,9 @@ Digest SHA-256 iniziali:
 | 1 — riallineamento | COMPLETATO — a535484 | 12 test documentali superati; attestazioni storiche conservate |
 | 2A — M1–M3 | COMPLETATO | 262 v31 pass; 25 sintetici + 9 stress; revisione separata delle correzioni superata |
 | 2B — M4 | COMPLETATO | 302 v31 pass; 86 test mirati pass |
-| 2C — M5 | PENDING | Nessun fit reale autorizzato |
-| 3 — revisione integrale | PENDING | Separata dall'implementazione |
-| 4 — chiusura | PENDING | V2 dichiarabile solo dopo tutti i controlli |
+| 2C — M5 | COMPLETATO — 482cef0 | V3 ricalcolato; inventario completo; meccanismo provato su fixture e sulla suite reale |
+| 3 — revisione integrale | COMPLETATO — f3f8a65, 5dc7d1b, 0a6f644 | Verifiche indipendenti; difetti corretti test-first |
+| 4 — chiusura | COMPLETATO | V2 chiusa; figure §11.6 da implementare prima di V3; arresto prima di V3 |
 
 La modifica dei test documentali sostituisce l'attesa di una dichiarazione generale non giustificata con la rettifica richiesta dall'utente; non indebolisce proprietà scientifiche.
 
@@ -46,3 +46,34 @@ Tempi di fit e valutazione in secondi da `time.perf_counter`; RSS in byte da `re
 R1 conserva ora sia frequenze empiriche sia smussate accanto ai conteggi (§8.3), senza cambiare la JSD. Revisioni dei cambiamenti separate dalla scrittura hanno segnalato e fatto coprire anche la completezza dei metadati delle risorse. Nessun fit reale.
 
 Chiusura 2B: `uv run pytest -q tests/test_v31_report_semantics.py tests/test_v31_completion.py tests/test_v31_descriptive.py --tb=short` → `86 passed in 17.65s`; `uv run pytest -m v31 -q` → `302 passed, 338 deselected in 82.57s (0:01:22)`, exit 0 e zero skip/xfail.
+
+## 2C — evidenze nel manifest
+
+Ripresa del 22 settembre dopo l'interruzione: nessun danno (verifiche nell'[handoff](HANDOFF.md)); il diff non committato del sottostadio era coerente (`318 passed, 338 deselected`) ed è stato conservato. Il test del record V3 ricalcolato è stato eseguito rosso prima della correzione (`2 failed, 1 passed`: i due record manomessi arrivavano al fit), poi verde. Inventario: sulla raccolta reale completa nessuna mancanza; togliendo un test il gate nomina esattamente quel test. Commit `482cef0`: `321 passed, 338 deselected`; `642 passed, 17 skipped`.
+
+## 3 — revisione integrale
+
+Verifiche indipendenti nell'[handoff](HANDOFF.md). Correzioni, ciascuna con test rosso prima:
+
+- `f3f8a65`, nomi del contratto del report e risorse in `model_diagnostics.csv`: `322 passed, 338 deselected`; `643 passed, 17 skipped`.
+- `5dc7d1b`, `training`/`fragments` ricalcolati dal ledger e nodi osservati (§9.1): `324 passed, 338 deselected`; `645 passed, 17 skipped`.
+- `0a6f644`, tabelle del report complete e confronto di rigenerazione §12.2: `328 passed, 338 deselected`; `649 passed, 17 skipped`.
+
+Resta prima di V3 l'implementazione delle cinque figure §11.6: l'identità del codice comprende tutto `src/hexis`.
+
+## 4 — chiusura
+
+Sui byte del commit di chiusura, codice identico a `0a6f644`, righe finali verbatim, tutti exit 0:
+
+```text
+uv run --frozen pytest -m v31 -q -p no:cacheprovider
+328 passed, 338 deselected in 148.75s (0:02:28)
+
+uv run --frozen pytest -q -p no:cacheprovider
+649 passed, 17 skipped in 153.77s (0:02:33)
+
+uv lock --check
+Resolved 23 packages in 3ms
+```
+
+V2 chiusa. Arresto per revisione prima di V3; nessun push.

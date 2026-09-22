@@ -20,8 +20,9 @@ def test_active_authority_and_instructions_are_aligned():
     readme = (ROOT/'README.md').read_text()
     assert '**V3–V5**, non attestati' in readme
     assert 'V2–V5' not in readme
-    assert 'V2 ampiamente implementata, chiusura da riconciliare e verificare' in readme
-    assert 'Rettifica del 18 settembre 2026' in (ROOT/'docs/HANDOFF.md').read_text()
+    assert 'V2 chiusa e verificata il 22 settembre 2026' in readme
+    handoff = (ROOT/'docs/HANDOFF.md').read_text()
+    assert 'Rettifica del 18 settembre 2026' in handoff and 'Chiusura V2 — 22 settembre 2026' in handoff
 
 
 def test_history_and_deposit_are_byte_preserved():

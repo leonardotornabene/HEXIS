@@ -21,7 +21,7 @@ import pandas as pd
 
 from hexis.contracts import compare, digest, load_contracts
 from hexis.model import diagnostics
-from hexis.pipeline import scientific_run
+from hexis.pipeline import scientific_run, validation_run
 from hexis.protocols import r1, scores
 
 KEY_COLUMNS = ('cell', 'variant', 'held_block', 'held_block_key', 'seed')
@@ -584,6 +584,8 @@ def main(argv=None):
     scientific = check_deposit(contract, deposited)
     steps.append(1)
     check_evidence(prior['evidence'], contract, scientific=scientific)
+    if scientific or 'V3' in prior['evidence']:
+        validation_run.verify_technical(args.output_dir, prior, cfg, frames, scientific=scientific)
     steps.append(2)
     check_keys(cfg, prior['keys'])
     steps.append(3)

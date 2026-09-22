@@ -19,7 +19,7 @@ import pandas as pd
 
 from hexis.contracts import compare, digest
 from hexis.model.context_tree import CTW, CTWParams
-from hexis.pipeline import scientific_run
+from hexis.pipeline import scientific_run, validation_run
 from hexis.protocols import sampling, scores
 
 POSITION_CELL = 'C0'  # §11.4: positional persistence in C0 alone
@@ -136,7 +136,7 @@ def main(argv=None):
                         help='declare a synthetic configuration; refuses the deposited projection')
     args = parser.parse_args(argv)
     started = time.perf_counter()
-    cfg, _ = scientific_run.load_projection(args.config, args.fixture)
+    cfg, deposited = scientific_run.load_projection(args.config, args.fixture)
     cells = scientific_run.select_cells(cfg, args.cell)
     if args.seed is not None:
         missing = [cell['id'] for cell in cells if args.seed not in cell['seeds']]
@@ -150,9 +150,20 @@ def main(argv=None):
     scientific_run.check_stage_open(args.output_dir, 'descriptive', prior, args.resume)
     if prior:
         compare(contract, prior['run_contract'], 'run_contract')
-        compare(evidence, prior['evidence'], 'evidence')
+        compare(evidence, {step: prior['evidence'].get(step) for step in evidence}, 'evidence')
+        if 'validation' in prior['completed_stages']:
+            validation_run.verify_evidence(args.output_dir, prior,
+                current=validation_run.context(args.config, args.corpus_dir, contract))
+        evidence = dict(prior['evidence'])
         from hexis.pipeline.run_report import validate_partitions
         validate_partitions(args.output_dir, prior, cfg, frames)
+    if deposited and (not prior or 'validation' not in prior['completed_stages']):
+        raise ValueError('V2 validation evidence is required before any real fit')
+    if args.seed != 0 and (deposited or 'V3' in evidence):
+        validation_run.verify_technical(args.output_dir, prior, cfg, frames, scientific=deposited)
+    if deposited:
+        scientific_run.require_clean_producers()
+    before = validation_run.context(args.config, args.corpus_dir, contract)
     resumable = {tuple(key) for key in prior['keys']['pair']} if prior else set()
     blocks = scientific_run.block_keys_of(cfg)
     keys = {'pair': [], 'model': []}
@@ -165,7 +176,14 @@ def main(argv=None):
               'cells': sorted({cell['id'] for cell in cells} | set(
                   prior['checks'].get('cells', []) if prior else []))}
     manifest = prior
-    resources = list(prior['metadata']['descriptive']['models']) if prior else []
+    resources = list(prior['metadata'].get('descriptive', {}).get('models', [])) if prior else []
+
+    def unchanged():
+        current_corpus = scientific_run.load_corpus(args.corpus_dir)[0]
+        current_cfg = scientific_run.load_projection(args.config, args.fixture)[0]
+        current = scientific_run.run_contract(current_cfg, current_corpus)
+        compare(before, validation_run.context(args.config, args.corpus_dir, current),
+                'descriptive execution context changed')
 
     def publish(artifacts):
         body = {'keys': scientific_run.union_keys(manifest, keys), 'checks': checks,
@@ -176,7 +194,8 @@ def main(argv=None):
                     models=resources)}
         return scientific_run.publish_stage(
             args.output_dir, 'descriptive', artifacts, contract, body,
-            resume=args.resume or manifest is not None, corpus_dir=args.corpus_dir)
+            resume=args.resume or manifest is not None, corpus_dir=args.corpus_dir,
+            before_publish=unchanged)
 
     for cell, held, seed in selected:
         key = [cell['id'], blocks[held], int(seed)]
@@ -199,6 +218,10 @@ def main(argv=None):
         manifest = publish(artifacts)
         del artifacts, record, vectors, ledger
     if not checks['published_partitions']:
+        manifest = publish({})
+    if deposited and args.seed == 0:
+        evidence['V3'] = validation_run.check_technical(args.output_dir, manifest, cfg, frames,
+                                                       scientific=True)
         manifest = publish({})
     scientific_run.validate_run(args.output_dir)
     return manifest

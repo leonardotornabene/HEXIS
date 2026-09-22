@@ -132,7 +132,7 @@ def report(config, corpus, output, *argv):
 def test_cli_runs_every_cell_and_publishes_one_partition_per_pair(tmp_path):
     config, corpus, output = campaign(tmp_path)
     manifest = describe(config, corpus, output, '--cell', 'all')
-    assert manifest['schema_version'] == 'hexis-scientific-manifest-1'
+    assert manifest['schema_version'] == 'hexis-scientific-manifest-2'
     assert manifest['completed_stages'] == ['descriptive']
     assert manifest['run_id'] == digest(manifest['run_contract'])
     assert sorted(manifest['run_contract']) == sorted(

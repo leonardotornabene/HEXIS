@@ -3,7 +3,9 @@
 Twenty-five small cases (five sources x five seeds) against the thresholds of the
 §12.1 table, then the historical m=106 stress (three variants x three seeds) for
 which only execution, normalization, supports and the gap from the declared
-oracle are required — not reaching it. Synthetic data only; no corpus is read.
+oracle are required — not reaching it. The battery reads no corpus; `--corpus-dir/
+--output-dir` only re-verifies a published V1 run to bind the V0–V2 evidence into a
+new scientific manifest (`validation_run`).
 
 `generate` is the pure fixture of `docs/contracts/hexis-3.1/fixtures/ctw_validation/
 verify_synthetic.py` (sha256 e6a55b08d5709d8966c4431b5bfec5d9c1cb64a5d3ba4dbf6e291b3b3c8479f0
@@ -174,7 +176,21 @@ def main(argv=None) -> int:
     parser.add_argument('--config', type=Path, help='validate the deposited analytical projection')
     parser.add_argument('--out', type=Path, help='write the battery results as JSON')
     parser.add_argument('--force', action='store_true', help='overwrite an existing --out')
+    parser.add_argument('--corpus-dir', type=Path, help='verify a V1 corpus for V0–V2 publication')
+    parser.add_argument('--output-dir', type=Path, help='publish V0–V2 in a new scientific run')
+    parser.add_argument('--fixture', action='store_true', help='explicitly synthetic corpus/configuration')
     args = parser.parse_args(argv)
+    if (args.corpus_dir is None) != (args.output_dir is None):
+        parser.error('--corpus-dir and --output-dir are required together')
+    if args.corpus_dir is not None:
+        if args.out is not None or args.force:
+            parser.error('--out/--force belong to battery-only mode')
+        from hexis.pipeline.validation_run import publish_validation
+        publish_validation(args.config or ROOT/'config/default.yaml', args.corpus_dir,
+                           args.output_dir, fixture=args.fixture)
+        return 0
+    if args.fixture:
+        parser.error('--fixture requires --corpus-dir/--output-dir')
     load_v31_config(args.config)
     if args.out is not None:
         check_destination(args.out, ROOT/'data/raw')

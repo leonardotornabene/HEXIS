@@ -24,6 +24,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import xml.etree.ElementTree as ET
 from collections import Counter
 from pathlib import Path
 
@@ -35,12 +36,12 @@ from hexis.config import load_v31_config, load_yaml
 from hexis.contracts import ROOT, compare, digest, load_contracts
 from hexis.manifest import sha256_file, _package_versions
 from hexis.pipeline import corpus_run
-from hexis.pipeline.corpus_run import (_code_identity, _read_json, artifact_record,
-                                       check_destination, write_artifact)
+from hexis.pipeline.corpus_run import (_code_identity, _read_json, artifact_record as _artifact_record,
+                                       check_destination, write_artifact as _write_artifact)
 from hexis.protocols import sampling
 
-SCHEMA = 'hexis-scientific-manifest-1'
-STAGES = ('descriptive', 'report')
+SCHEMA = 'hexis-scientific-manifest-2'
+STAGES = ('validation', 'descriptive', 'report')
 CONTRACT_FIELDS = ('spec_version', 'representation_version', 'analytical_contracts', 'source_commit',
                    'plan', 'code', 'data', 'registry', 'alphabets', 'configuration', 'lock',
                    'rng_version')
@@ -50,9 +51,9 @@ MANIFEST_FIELDS = {'schema_version': str, 'run_id': str, 'run_contract': dict,
 KEY_WIDTH = {'pair': 3, 'model': 4}  # §11.3: (cell, held_block_key, seed[, arm])
 PROJECTION_FIELDS = ('spec_version', 'representation', 'min_available_past', 'rng', 'cells',
                      'blocks', 'registry', 'R1')
-# Evidence this runner can record from verified bytes. The real report separately
-# requires V0–V3 (§14.2): these two records alone never authorize scientific output.
-# Recording the V2 acceptance and actual V3 integration evidence remains a V3 task.
+# Evidence this runner records from verified bytes. V2 (the validation stage) and V3
+# (the seed-zero integration) are recorded by `validation_run` and re-verified from their
+# artifacts whenever they are read; the real report requires V0–V3 (§14.2).
 EVIDENCE_STEPS = ('V0', 'V1')
 
 
@@ -159,6 +160,20 @@ def run_contract(cfg, corpus) -> dict:
     return contract
 
 
+def require_clean_producers():
+    """§11.3: a real fit uses clean tracked code; unrelated local scripts are preserved."""
+    def git(*args):
+        return subprocess.run(['git', *args], cwd=ROOT, check=True, capture_output=True,
+                              text=True).stdout
+    if git('status', '--porcelain', '--untracked-files=no').strip():
+        raise ValueError('real fits require clean tracked code and environment')
+    tracked = set(git('ls-files', '-z', 'src/hexis').split('\0'))
+    untracked = [str(path.relative_to(ROOT)) for path in (ROOT/'src/hexis').rglob('*.py')
+                 if str(path.relative_to(ROOT)) not in tracked]
+    if untracked:
+        raise ValueError(f'untracked scientific producers: {untracked}')
+
+
 def load_corpus(corpus_dir):
     """Re-verify the published corpus and return its frames; this *is* the V1 evidence."""
     corpus_dir = Path(corpus_dir)
@@ -262,9 +277,32 @@ def records(frame) -> list:
     return [plain(row) for row in frame.to_dict('records')]
 
 
+def write_artifact(path, value):
+    if path.suffix == '.xml' and isinstance(value, bytes):
+        with path.open('wb') as handle:
+            handle.write(value)
+            handle.flush()
+            os.fsync(handle.fileno())
+    else:
+        _write_artifact(path, value)
+
+
+def artifact_record(path):
+    record = _artifact_record(path)
+    if path.suffix == '.xml':
+        root = ET.fromstring(path.read_bytes())
+        cases = list(root.iter('testcase'))
+        record.update(rows=len(cases), schema={'root': root.tag, 'format': 'pytest-junit',
+                                              'testcase_attributes': sorted({key for case in cases for key in case.attrib})})
+    return record
+
+
 def _verify_roundtrip(path, value):
     """§11.7: every temporary is read back before anything is published."""
-    if path.suffix == '.parquet':
+    if path.suffix == '.xml':
+        if path.read_bytes() != value:
+            raise ValueError(f'{path}: XML round-trip mismatch')
+    elif path.suffix == '.parquet':
         pd.testing.assert_frame_equal(pd.read_parquet(path), value.reset_index(drop=True),
                                       check_dtype=False, check_categorical=False)
     elif path.suffix == '.json':
@@ -292,7 +330,10 @@ def validate_run(output, *, locked=False) -> dict:
         if manifest['run_id'] != digest(manifest['run_contract']):
             raise ValueError('manifest: run identity does not match its own run_contract')
         stages = manifest['completed_stages']
-        if not stages or stages != list(STAGES[:len(stages)]):
+        allowed = [list(STAGES[:n]) for n in range(1, len(STAGES) + 1)]
+        if manifest['run_contract']['spec_version'] != 'HEXIS-3.1':
+            allowed += [['descriptive'], ['descriptive', 'report']]
+        if stages not in allowed:
             raise ValueError(f'manifest: {stages} is not an ordered prefix of {list(STAGES)}')
         keys = key_sets(manifest['keys'])
         if 'descriptive' in stages:
@@ -343,11 +384,15 @@ def validate_run(output, *, locked=False) -> dict:
             raise ValueError('manifest: sample ledger artifacts do not match the pair references')
         from hexis.pipeline.run_report import TABLES
         families = expected | positions | ledgers | (set(TABLES) if 'report' in stages else set())
+        if 'validation' in stages:
+            from hexis.pipeline.validation_run import ARTIFACTS, verify_evidence
+            families |= ARTIFACTS
+            verify_evidence(output, manifest)
         if set(manifest['artifacts']) != families:
             raise ValueError('manifest: missing or unknown artifact family')
         return manifest
     except (OSError, KeyError, TypeError, json.JSONDecodeError, pd.errors.ParserError,
-            pa.ArrowException) as exc:
+            pa.ArrowException, ET.ParseError) as exc:
         raise ValueError(f'{output}: unreadable or corrupt run: {exc}') from exc
 
 
@@ -370,7 +415,8 @@ def check_stage_open(output, stage, prior, resume: bool):
                               '--resume extends the same identity')
 
 
-def publish_stage(output, stage, artifacts, contract, body, *, resume=False, corpus_dir=None):
+def publish_stage(output, stage, artifacts, contract, body, *, resume=False, corpus_dir=None,
+                  before_publish=None):
     """Reserve the destination, verify every temporary, link, replace the manifest last.
 
     Atomic hard-link publication refuses a collision even between the preflight
@@ -407,8 +453,10 @@ def publish_stage(output, stage, artifacts, contract, body, *, resume=False, cor
                        for kind in KEY_WIDTH}
             if any(dropped.values()):
                 raise ValueError(f'keys: this publication drops published key(s) {dropped}')
-        if stage == STAGES[1] and STAGES[0] not in stages:
+        if stage == 'report' and 'descriptive' not in stages:
             raise ValueError(f'{output}: the report needs a published descriptive stage')
+        if stage == 'descriptive' and contract['spec_version'] == 'HEXIS-3.1' and 'validation' not in stages:
+            raise ValueError('V2 validation is required before any real fit')
         old = dict(prior['artifacts']) if prior else {}
         artifact_records = dict(old)
         with tempfile.TemporaryDirectory(prefix='.stage-', dir=output) as tmp:
@@ -420,6 +468,8 @@ def publish_stage(output, stage, artifacts, contract, body, *, resume=False, cor
                 if name in old:
                     compare(artifact_records[name], old[name], f'existing/{name}')
                 _verify_roundtrip(path, value)
+            if before_publish is not None:
+                before_publish()
             manifest = {'schema_version': SCHEMA, 'run_id': digest(contract),
                         'run_contract': contract,
                         'completed_stages': stages if stage in stages else [*stages, stage],

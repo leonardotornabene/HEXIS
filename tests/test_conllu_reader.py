@@ -1,16 +1,17 @@
-"""CoNLL-U reader tests (Spec §7, gate G0; §3.2; D54).
+"""CoNLL-U reader: parsing, identity and localized errors (piano §11.1; T03).
 
-These cases originated as the RED checkpoint in the overnight run and now form
-active G0 coverage of D54(ii)-(iv). Beyond the §7 minimum (malformed input,
-mandatory sent_id, and ID order), they cover MWT/empty-node removal,
-representation blindness, streaming failure boundaries, label validation, and
-newdoc-id recovery.
+Beyond the three minimal cases (malformed input, mandatory sent_id, ID order)
+these cover MWT/empty-node removal, representation blindness, streaming failure
+boundaries, label validation and newdoc-id recovery. The reader is the active
+3.1 source stage, so its behaviour is active acceptance.
 """
 
 import pytest
 from conllu import TokenList
 
 from hexis import conllu_reader
+
+pytestmark = pytest.mark.v31  # g0 marks stay until the retired gate files are archived
 
 
 # --- the three §7 cases ---------------------------------------------------------
@@ -92,8 +93,8 @@ def test_public_type_and_streaming_failure_boundary(conllu_samples):
     assert exc.value.path == conllu_samples["lazy"]
 
 
-@pytest.mark.g0
 @pytest.mark.parametrize("sample", ["invalid_upos", "empty_deprel"])
+@pytest.mark.g0
 def test_invalid_required_labels_raise_parse_error(conllu_samples, sample):
     with pytest.raises(conllu_reader.ParseError) as exc:
         list(conllu_reader.iter_sentences(conllu_samples[sample]))

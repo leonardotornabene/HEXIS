@@ -1,11 +1,12 @@
 """V1 independent synthetic cases and exact real census (no model fits)."""
 import copy
+import dataclasses
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
-from hexis.alphabet import map_token
+from hexis.alphabet import map_token, map_tokens, strip_subtype
 from hexis.config import load_v31_config
 from hexis.contracts import load_contracts
 from hexis.corpus import read_corpus, encode_corpus, build_corpus, verify_corpus, diagnostic_a
@@ -205,4 +206,84 @@ def test_coordinate_schema_does_not_silently_cast_float_ids(real_corpus):
     broken=dict(real_corpus);broken['coordinates.parquet']=real_corpus['coordinates.parquet'].copy()
     broken['coordinates.parquet']['symbol_id']=broken['coordinates.parquet']['symbol_id'].astype(float)
     with pytest.raises(ValueError,match='integer') as exc:verify_corpus(broken,load_contracts())
+    assert str(exc.value)
+
+
+# --- mapping unit cases carried over from the v2.1 alphabet suite ----------------
+# Same properties, restated on the 3.1 rules: three variants, ADV/PART merged after
+# retention, unknown source UPOS refused instead of dropped.
+
+VERIFIED_SUBTYPES = {'acl:relcl':'acl','advcl:abs':'advcl','advcl:cmp':'advcl','advcl:pred':'advcl',
+ 'advmod:neg':'advmod','advmod:emph':'advmod','advmod:lmod':'advmod','advmod:tmod':'advmod',
+ 'aux:pass':'aux','nsubj:pass':'nsubj','nsubj:outer':'nsubj','obl:arg':'obl','obl:cmp':'obl',
+ 'ccomp:reported':'ccomp','conj:expl':'conj','det:numgov':'det','nummod:gov':'nummod',
+ 'flat:name':'flat','flat:redup':'flat','csubj:pass':'csubj'}
+
+
+def test_subtype_stripping_is_total_and_lowercases_every_colon():
+    for raw, expected in VERIFIED_SUBTYPES.items():
+        assert strip_subtype(raw) == expected
+    assert strip_subtype('root') == 'root'
+    assert strip_subtype('ADVMOD:EMPH') == 'advmod'
+    assert strip_subtype('obl:arg:extra') == 'obl'
+    assert strip_subtype('') == ''
+
+
+def test_propn_is_mapped_to_noun_before_retention():
+    cfg = load_v31_config()
+    mapped = map_token('PROPN', 'nsubj', cfg, variant='ud23')
+    assert (mapped.upos, mapped.symbol, mapped.kept) == ('NOUN', 'NOUN:nsubj', True)
+    assert map_token('PROPN', 'nsubj', cfg, variant='upos_only').symbol == 'NOUN'
+
+
+@pytest.mark.parametrize('variant', ['ud23', 'ud23_oth', 'upos_only'])
+@pytest.mark.parametrize('upos', ['PUNCT', 'X', 'INTJ', 'SYM'])
+def test_excluded_source_upos_drops_before_any_deprel_rule(variant, upos):
+    """Order of operations: an excluded UPOS carrying an excluded deprel is reported
+    as upos_excluded, in every variant and under either deprel policy."""
+    mapped = map_token(upos, 'vocative', load_v31_config(), variant=variant)
+    assert (mapped.kept, mapped.symbol, mapped.drop_reason) == (False, None, 'upos_excluded')
+
+
+def test_excluded_deprel_drops_with_its_base_label_or_is_absorbed_by_oth():
+    cfg = load_v31_config()
+    dropped = map_token('NOUN', 'vocative', cfg, variant='ud23')
+    assert (dropped.kept, dropped.symbol, dropped.drop_reason) == (False, None, 'deprel_excluded:vocative')
+    assert map_token('NOUN', 'flat:name', cfg, variant='ud23').drop_reason == 'deprel_excluded:flat'
+    absorbed = map_token('NOUN', 'vocative', cfg, variant='ud23_oth')
+    assert (absorbed.kept, absorbed.symbol, absorbed.deprel_base) == (True, 'NOUN:oth', 'vocative')
+    assert map_token('NOUN', 'nsubj', cfg, variant='ud23_oth').symbol == 'NOUN:nsubj'
+
+
+def test_the_merge_follows_retention_so_an_excluded_token_keeps_its_source_upos():
+    """§4.1: ADV/PART become ADV_PART only where the token is retained. The same
+    PART token is ADV_PART under oth and plain PART in the C0 exclusions."""
+    cfg = load_v31_config()
+    assert map_token('PART', 'advmod', cfg, variant='ud23').symbol == 'ADV_PART:advmod'
+    assert map_token('PART', 'discourse', cfg, variant='ud23_oth').symbol == 'ADV_PART:oth'
+    excluded = map_token('PART', 'discourse', cfg, variant='ud23')
+    assert (excluded.upos, excluded.kept) == ('PART', False)
+
+
+def test_mapped_token_is_immutable():
+    mapped = map_token('NOUN', 'nsubj', load_v31_config(), variant='ud23')
+    with pytest.raises(dataclasses.FrozenInstanceError):
+        mapped.symbol = 'VERB:root'
+    assert mapped.symbol == 'NOUN:nsubj'
+
+
+def test_map_tokens_keeps_a_boolean_mask_on_an_empty_table():
+    """The empty table is a declared case; `kept` must stay a boolean mask and not
+    become an object column, which no downstream mask would accept."""
+    columns = ['language', 'doc_id', 'sent_id', 'token_ord', 'upos_raw', 'deprel_raw']
+    mapped = map_tokens(pd.DataFrame(columns=columns), load_v31_config(), variant='ud23')
+    assert len(mapped) == 0
+    assert mapped['kept'].dtype == bool
+
+
+def test_an_unknown_alphabet_variant_is_refused():
+    """The three variants are the whole cell space; a fourth name is a mistyped run,
+    not a new representation."""
+    with pytest.raises(ValueError, match='variant') as exc:
+        map_token('NOUN', 'nsubj', load_v31_config(), variant='ud23_bad')
     assert str(exc.value)

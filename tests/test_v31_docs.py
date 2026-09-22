@@ -60,3 +60,14 @@ def test_pipeline_does_not_import_candidates_or_inferential_utilities():
             if isinstance(node,ast.Import):imports.extend(a.name for a in node.names)
             elif isinstance(node,ast.ImportFrom):imports.append(node.module or '')
         assert not any(name.startswith(('candidates','hexis.stats')) for name in imports),path
+
+
+def test_the_three_standing_instruction_copies_are_identical():
+    """The template in 04 is the source; CLAUDE.md and AGENTS.md are its copies,
+    and AGENTS.md may differ only in its first line."""
+    template = (ROOT/'docs/04_AI_HANDOFF_PROMPT.md').read_text()
+    fenced = template.partition('````markdown\n')[2].partition('\n````')[0] + '\n'
+    claude = (ROOT/'CLAUDE.md').read_text()
+    agents = (ROOT/'AGENTS.md').read_text()
+    assert fenced == claude
+    assert agents.splitlines(keepends=True)[1:] == claude.splitlines(keepends=True)[1:]

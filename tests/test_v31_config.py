@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from hexis.config import load_config, load_v31_config, resolve_config
+from hexis.config import load_config, load_v31_config, load_yaml, resolve_config
 from hexis.contracts import BUNDLE, load_contracts, validate_projection
 
 pytestmark = pytest.mark.v31
@@ -79,3 +79,34 @@ def test_legacy_executors_refuse_active_config():
     with pytest.raises(ValueError, match='historical') as exc:
         resolve_config(base=cfg)
     assert '3.1' in str(exc.value)
+
+
+# --- YAML reader cases carried over from the v2.1 audit suite --------------------
+
+
+@pytest.mark.parametrize('body', ['spec_version: HEXIS-3.1\nspec_version: HEXIS-3.1\n',
+                                  'registry:\n- source_prefix: a\n  part_order: 0\n  part_order: 1\n'],
+                         ids=['top-level', 'nested'])
+def test_duplicate_yaml_keys_are_rejected_at_every_depth(tmp_path, body):
+    path = tmp_path/'duplicate.yaml'
+    path.write_text(body)
+    with pytest.raises(ValueError, match='duplicate') as exc:
+        load_yaml(path)
+    assert str(path) in str(exc.value)
+
+
+def test_a_yaml_error_names_the_original_file_and_keeps_its_snippet(tmp_path):
+    """The stage parses a private copy, whose temporary path is gone by the time
+    anyone reads the message: the error must name the original and keep the
+    parser's line, column and caret."""
+    original = tmp_path/'unparseable.yaml'
+    original.write_text('alpha: [unclosed\n')
+    staged = tmp_path/'0000_unparseable.yaml'
+    staged.write_bytes(original.read_bytes())
+    with pytest.raises(ValueError) as exc:
+        load_yaml(original, source=staged)
+    message = str(exc.value)
+    assert staged.name not in message
+    assert f'in "{original}", line 1, column 8' in message
+    assert 'alpha: [unclosed' in message and '^' in message
+    assert '<unicode string>' not in message

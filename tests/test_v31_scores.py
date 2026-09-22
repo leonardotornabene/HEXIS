@@ -168,7 +168,7 @@ def test_four_term_q_reproduces_the_archived_sign_inversion():
     trained = model([[0] * 6 + [1] * 2], m=2)
     original = stream('fixture@1', [0, 0, 0, 0, 1, 1, 1, 1])
     shuffled = stream('fixture@1', [1, 1, 1, 1, 0, 0, 0, 0], origin=[4, 5, 6, 7, 0, 1, 2, 3])
-    positions, _ = scores.score_streams([original], [shuffled],
+    positions, _ = scores.pooled_score_core([original], [shuffled],
                                         model_original=trained, model_shuffled=trained)
 
     block = scores.ce_gain_q(scores.roll_up(scores.aggregate(positions))).iloc[0]
@@ -191,7 +191,7 @@ def test_q_needs_the_four_terms_of_two_independently_fitted_arms():
     blocks = {'H': ['h1'], 'P1': ['p1'], 'P2': ['p2']}
     original, shuffled, test, test_shuffled = protocol(spec, blocks, 'H', m=5, q=30)
 
-    positions, _ = scores.score_streams(test, test_shuffled, model_original=original,
+    positions, _ = scores.pooled_score_core(test, test_shuffled, model_original=original,
                                         model_shuffled=shuffled)
     block = scores.ce_gain_q(scores.roll_up(scores.aggregate(positions))).iloc[0]
 
@@ -212,43 +212,43 @@ def test_slots_are_paired_one_to_one_and_a_mismatch_is_refused():
     original, shuffled, test, test_shuffled = protocol(spec, blocks, 'H', m=4, q=20)
     assert [s['slot_uids'] for s in test] == [s['slot_uids'] for s in test_shuffled]
 
-    positions, _ = scores.score_streams(test, test_shuffled, model_original=original,
+    positions, _ = scores.pooled_score_core(test, test_shuffled, model_original=original,
                                         model_shuffled=shuffled)
     assert positions['slot_uid'].is_unique
 
     broken = [s | {'slot_uids': [slot + 1 for slot in s['slot_uids']]} for s in test_shuffled]
     with pytest.raises(ValueError, match='slot'):
-        scores.score_streams(test, broken, model_original=original, model_shuffled=shuffled)
+        scores.pooled_score_core(test, broken, model_original=original, model_shuffled=shuffled)
     with pytest.raises(ValueError, match='0 eligible|no eligible'):
-        scores.score_streams([stream('short@1', [0, 1, 2])], [stream('short@1', [2, 1, 0], origin=[2, 1, 0])],
+        scores.pooled_score_core([stream('short@1', [0, 1, 2])], [stream('short@1', [2, 1, 0], origin=[2, 1, 0])],
                              model_original=original, model_shuffled=shuffled)
     with pytest.raises(ValueError, match='sent_id'):  # never merge two streams into one record
-        scores.score_streams(test + test[:1], test_shuffled + test_shuffled[:1],
+        scores.pooled_score_core(test + test[:1], test_shuffled + test_shuffled[:1],
                              model_original=original, model_shuffled=shuffled)
 
 
-def test_score_streams_refuses_an_alphabet_size_mismatch():
+def test_pooled_core_refuses_an_alphabet_size_mismatch():
     """A smaller-alphabet arm paired with a larger one would misindex CE_0/CE_CTW silently."""
     small = model([[0, 1, 0, 1, 0, 1]], m=2, depth=4)
     large = model([[0, 1, 2, 3, 0, 1, 2, 3]], m=4, depth=4)
     original = stream('fixture@1', [0, 1, 0, 1, 0, 1])
     shuffled = stream('fixture@1', [1, 0, 1, 0, 1, 0], origin=[1, 0, 3, 2, 5, 4])
     with pytest.raises(ValueError) as excinfo:
-        scores.score_streams([original], [shuffled], model_original=small, model_shuffled=large)
+        scores.pooled_score_core([original], [shuffled], model_original=small, model_shuffled=large)
     assert 'alphabet' in str(excinfo.value)
 
 
-def test_score_streams_refuses_a_negative_min_available_past():
+def test_pooled_core_refuses_a_negative_min_available_past():
     """Mirrors CTW.evaluate's own guard on the identical parameter (context_tree.py)."""
     trained = model([[0, 1, 0, 1, 0, 1]], m=2, depth=4)
     original = stream('fixture@1', [0, 1, 0, 1, 0, 1])
     shuffled = stream('fixture@1', [1, 0, 1, 0, 1, 0], origin=[1, 0, 3, 2, 5, 4])
     with pytest.raises(ValueError) as excinfo:
-        scores.score_streams([original], [shuffled], model_original=trained, model_shuffled=trained,
+        scores.pooled_score_core([original], [shuffled], model_original=trained, model_shuffled=trained,
                              min_available_past=-1)
     assert 'min_available_past' in str(excinfo.value)
     with pytest.raises(ValueError) as excinfo:
-        scores.score_streams([original], [shuffled], model_original=trained, model_shuffled=trained,
+        scores.pooled_score_core([original], [shuffled], model_original=trained, model_shuffled=trained,
                              min_available_past=2.5)
     assert 'min_available_past' in str(excinfo.value)
 
@@ -271,7 +271,7 @@ def test_shuffled_gain_is_not_automatically_zero_on_a_heterogeneous_pool():
     total = sum(s['total_slot_count'] for s in test_shuffled)
     assert 0 < changed < total  # §7: an explicit denominator, no resampling for change
 
-    positions, _ = scores.score_streams(test, test_shuffled, model_original=original,
+    positions, _ = scores.pooled_score_core(test, test_shuffled, model_original=original,
                                         model_shuffled=shuffled)
     block = scores.ce_gain_q(scores.roll_up(scores.aggregate(positions))).iloc[0]
     assert block['g_shuffled'] > 0.05
@@ -389,7 +389,7 @@ def test_paired_sensitivities_over_the_first_ten_seeds_detect_a_population_misma
         for seed in range(10):
             original, shuffled, test, test_shuffled = protocol(
                 spec, blocks, 'H', m=5, q=24, seed=seed, depth=depth)
-            positions, _ = scores.score_streams(test, test_shuffled, model_original=original,
+            positions, _ = scores.pooled_score_core(test, test_shuffled, model_original=original,
                                                 model_shuffled=shuffled)
             values.append(float(scores.ce_gain_q(
                 scores.roll_up(scores.aggregate(positions))).iloc[0]['q']))
@@ -409,7 +409,7 @@ def test_paired_sensitivities_over_the_first_ten_seeds_detect_a_population_misma
 
     # OTH changes the target population: the join must refuse, not line rows up.
     original, shuffled, test, test_shuffled = protocol(spec, blocks, 'H', m=5, q=24)
-    positions, _ = scores.score_streams(test, test_shuffled, model_original=original,
+    positions, _ = scores.pooled_score_core(test, test_shuffled, model_original=original,
                                         model_shuffled=shuffled)
     paired = scores.pair_positions(positions, positions.copy())
     assert len(paired) == len(positions)
@@ -448,7 +448,7 @@ def test_evaluation_diagnostics_count_valid_and_null_resolved_means():
     original = stream('toy@1', [0, 1, 2, 0, 1, 2, 0, 1, 2, 0])
     shuffled = stream('toy@1', [2, 1, 0, 2, 1, 0, 2, 1, 0, 2], origin=list(range(10)))
 
-    positions, per_arm = scores.score_streams([original], [shuffled],
+    positions, per_arm = scores.pooled_score_core([original], [shuffled],
                                               model_original=trained, model_shuffled=untrained)
     assert len(positions) == 6
     assert np.allclose(positions['loss_ctw_shuffled'], math.log2(3))  # empty training: uniform
@@ -483,7 +483,7 @@ def test_an_empty_band_is_null_with_a_reason_and_never_a_false_zero():
     trained = model([[0, 1, 2, 3] * 3], m=4)
     original = stream('short@1', [0, 1, 2, 3, 0, 1])
     shuffled = stream('short@1', [1, 0, 3, 2, 1, 0], origin=[1, 0, 3, 2, 5, 4])
-    positions, per_arm = scores.score_streams([original], [shuffled],
+    positions, per_arm = scores.pooled_score_core([original], [shuffled],
                                               model_original=trained, model_shuffled=trained)
     assert set(positions['past_band']) == {'4_7'}
 
@@ -500,3 +500,22 @@ def test_an_empty_band_is_null_with_a_reason_and_never_a_false_zero():
     assert set(per_arm['past_band']) == {'4_7', 'ge8'}
     empty_arm = diagnostics.means(per_arm[per_arm['past_band'].eq('ge8')].sum(numeric_only=True))
     assert empty_arm == {'L': None, 'unseen': None, 'mass': None, 'reason': 'empty_bucket'}
+
+
+# --- public signatures of the §11.1 contract (carried over from the v2.1 suite) --
+
+
+def test_public_core_keeps_the_label_free_signature():
+    import inspect
+    signature = inspect.signature(scores.pooled_score_core)
+    assert tuple(signature.parameters) == ('original', 'shuffled', 'model_original',
+                                           'model_shuffled', 'min_available_past')
+    assert set(signature.parameters).isdisjoint({'registry', 'regime', 'author', 'work'})
+    assert signature.return_annotation == tuple[pd.DataFrame, pd.DataFrame]
+
+
+def test_annotation_keeps_the_registry_signature():
+    import inspect
+    signature = inspect.signature(scores.annotate_scores)
+    assert tuple(signature.parameters) == ('scores', 'registry', 'on')
+    assert signature.return_annotation is pd.DataFrame

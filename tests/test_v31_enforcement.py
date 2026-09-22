@@ -9,6 +9,17 @@ pytestmark = pytest.mark.v31
 ROOT_CONFTEST = Path(__file__).resolve().parents[1]/'conftest.py'
 
 REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_missing_or_unmarked_inventory'],
+ 'test_conllu_reader.py': ['test_malformed_row_raises_parse_error_with_location',
+                           'test_missing_sent_id_raises_parse_error',
+                           'test_id_order_preserved',
+                           'test_out_of_order_integer_ids_raise_parse_error',
+                           'test_mwt_range_and_empty_nodes_removed',
+                           'test_punct_token_yielded_unchanged',
+                           'test_newdoc_id_recoverable_from_metadata',
+                           'test_public_type_and_streaming_failure_boundary',
+                           'test_invalid_required_labels_raise_parse_error',
+                           'test_conllu_parse_exception_is_wrapped',
+                           'test_representation_exclusions_are_yielded_unchanged'],
  'test_v31_context_tree.py': ['test_independent_enumeration_matches_evidence_and_prediction',
                               'test_counts_partition_over_children_with_terminal_bos',
                               'test_support_histogram_counts_observations_including_bos',
@@ -53,8 +64,6 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                          'test_module_imports_no_retired_v21_helper',
                          'test_sample_streams_refuses_a_ledger_cut_from_a_shorter_variant',
                          'test_shuffle_records_the_symbol_change_rate_with_an_explicit_denominator'],
- 'test_scores.py': ['test_pooled_score_core_has_label_free_signature',
-                    'test_annotate_scores_has_d52_signature'],
  'test_v31_scores.py': ['test_public_core_and_annotation_keep_scores_independent_of_labels',
                         'test_annotation_refuses_ambiguous_missing_or_overwriting_registry',
                         'test_four_term_q_reproduces_the_archived_sign_inversion',
@@ -69,10 +78,12 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                         'test_mixture_masses_and_resolved_length_follow_the_direct_sum',
                         'test_evaluation_diagnostics_count_valid_and_null_resolved_means',
                         'test_an_empty_band_is_null_with_a_reason_and_never_a_false_zero',
-                        'test_score_streams_refuses_an_alphabet_size_mismatch',
-                        'test_score_streams_refuses_a_negative_min_available_past',
+                        'test_pooled_core_refuses_an_alphabet_size_mismatch',
+                        'test_pooled_core_refuses_a_negative_min_available_past',
                         'test_roll_up_casts_count_columns_to_int64_in_both_branches',
-                        'test_contrasts_refuse_a_q_that_is_not_the_gain_difference'],
+                        'test_contrasts_refuse_a_q_that_is_not_the_gain_difference',
+                        'test_public_core_keeps_the_label_free_signature',
+                        'test_annotation_keeps_the_registry_signature'],
  'test_v31_r1.py': ['test_jsd_is_symmetric_zero_on_the_diagonal_and_bounded_by_one_bit',
                     'test_smoothed_counts_of_the_seven_blocks_and_their_matrix',
                     'test_group_centroids_are_not_the_mean_of_the_pairwise_divergences',
@@ -82,7 +93,9 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                         'test_application_contract_rejects_drift',
                         'test_yaml_rejects_duplicate_keys_and_registry_drift',
                         'test_deposit_refuses_altered_missing_extra_contracts',
-                        'test_legacy_executors_refuse_active_config'],
+                        'test_legacy_executors_refuse_active_config',
+                        'test_duplicate_yaml_keys_are_rejected_at_every_depth',
+                        'test_a_yaml_error_names_the_original_file_and_keeps_its_snippet'],
  'test_v31_corpus.py': ['test_numeric_order_raw_coordinates_empty_reset_and_targets',
                         'test_athenaeus_parts_order_before_ordinal',
                         'test_ambiguous_identities_fail_with_source',
@@ -96,17 +109,28 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                         'test_mwt_and_empty_nodes_do_not_change_source_word_ids',
                         'test_validator_rejects_semantic_corruption_at_unchanged_cardinality',
                         'test_b_is_diagnostic_and_keeps_low_retention_documents',
-                         'test_coordinate_schema_does_not_silently_cast_float_ids'],
+                         'test_coordinate_schema_does_not_silently_cast_float_ids',
+                        'test_subtype_stripping_is_total_and_lowercases_every_colon',
+                        'test_propn_is_mapped_to_noun_before_retention',
+                        'test_excluded_source_upos_drops_before_any_deprel_rule',
+                        'test_excluded_deprel_drops_with_its_base_label_or_is_absorbed_by_oth',
+                        'test_the_merge_follows_retention_so_an_excluded_token_keeps_its_source_upos',
+                        'test_mapped_token_is_immutable',
+                        'test_map_tokens_keeps_a_boolean_mask_on_an_empty_table',
+                        'test_an_unknown_alphabet_variant_is_refused'],
  'test_v31_docs.py': ['test_active_authority_and_instructions_are_aligned',
                       'test_history_and_deposit_are_byte_preserved',
                       'test_test_inventory_explicitly_tracks_future_obligations',
                       'test_all_preserved_v21_documents_match_the_original_hash_inventory',
-                      'test_pipeline_does_not_import_candidates_or_inferential_utilities'],
+                      'test_pipeline_does_not_import_candidates_or_inferential_utilities',
+                      'test_the_three_standing_instruction_copies_are_identical'],
  'test_v31_enforcement.py': ['test_v31_actual_collection_covers_required_behaviors',
                              'test_v31_inventory_rejects_missing_test_and_marker',
                              'test_v31_enforcement_rejects_vacuity_skip_and_xfail',
                              'test_v31_enforcement_accepts_executed_assert',
-                             'test_v31_inventory_lists_every_collected_active_test'],
+                             'test_v31_inventory_lists_every_collected_active_test',
+                             'test_v31_enforcement_rejects_a_static_skip_and_an_xpass_without_strict_xfail',
+                             'test_v31_enforcement_invalidates_pyc_compiled_without_the_assertion_hook'],
  'test_v31_descriptive.py': ['test_cli_runs_every_cell_and_publishes_one_partition_per_pair',
                             'test_every_pair_persists_its_exact_sampling_ledger',
                             'test_sensitivity_checks_coordinate_slot_sets_before_discarding_vectors',
@@ -178,7 +202,9 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                              'test_input_staging_binds_hash_to_processed_bytes_and_detects_changes',
                              'test_before_publication_input_failure_leaves_prior_stage_intact',
                              'test_concurrent_reservation_refuses_second_writer',
-                             'test_manifest_schema_rejects_ambiguous_json']}
+                             'test_manifest_schema_rejects_ambiguous_json',
+                             'test_sha256_file_is_the_hash_of_the_bytes_on_disk',
+                             'test_a_destination_inside_the_repository_raw_root_is_refused_under_any_data_root']}
 
 
 def missing_coverage(items, required):
@@ -236,3 +262,38 @@ def test_v31_enforcement_accepts_executed_assert(pytester):
     pytester.makepyfile('import pytest\npytestmark=pytest.mark.v31\ndef test_good(): assert 2+2==4')
     result=pytester.runpytest_subprocess('-m','v31','--strict-markers')
     assert result.ret==0
+
+
+# --- enforcement mechanics carried over from the v2.1 gate suite -----------------
+
+
+def _project(pytester, *, assertion_pass=True, xfail_strict=False):
+    pytester.makeconftest(ROOT_CONFTEST.read_text())
+    pytester.makepyprojecttoml(
+        '[tool.pytest.ini_options]\nmarkers=["v31: active"]\n'
+        f'enable_assertion_pass_hook={str(assertion_pass).lower()}\n'
+        + ('xfail_strict=true\n' if xfail_strict else ''))
+    return lambda: pytester.runpytest_subprocess('-m', 'v31', '--strict-markers')
+
+
+@pytest.mark.parametrize('body', [
+    '@pytest.mark.skip("static")\ndef test_bad(): assert True',
+    '@pytest.mark.xfail(reason="but passes")\ndef test_bad(): assert True',
+    '@pytest.mark.xfail(reason="but passes", strict=False)\ndef test_bad(): assert True',
+])
+def test_v31_enforcement_rejects_a_static_skip_and_an_xpass_without_strict_xfail(pytester, body):
+    """The gate must not depend on `xfail_strict`: a non-strict xpass is green to
+    pytest and still has to fail the acceptance."""
+    run = _project(pytester)
+    pytester.makepyfile('import pytest\npytestmark=pytest.mark.v31\n' + body)
+    assert run().ret != 0
+
+
+def test_v31_enforcement_invalidates_pyc_compiled_without_the_assertion_hook(pytester):
+    """A cached .pyc compiled without the assertion-pass hook would make every
+    assert invisible, so the gate would read a real test as assertion-free."""
+    run = _project(pytester, assertion_pass=False)
+    pytester.makepyfile('import pytest\npytestmark=pytest.mark.v31\ndef test_ok(): assert 1 == 1')
+    assert run().ret != 0
+    run = _project(pytester, assertion_pass=True)
+    assert run().ret == 0

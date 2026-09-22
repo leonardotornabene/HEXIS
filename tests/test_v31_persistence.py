@@ -125,8 +125,12 @@ def test_input_staging_binds_hash_to_processed_bytes_and_detects_changes(tmp_pat
             verify_inputs_unchanged(snapshot,files=[path],data_root=tmp_path)
         assert str(exc.value)
         path.write_bytes(b'original')
-        extra=tmp_path/'extra.conllu';extra.write_bytes(b'new')
+        extra=tmp_path/'nested'/'extra.conllu';extra.parent.mkdir();extra.write_bytes(b'new')
         with pytest.raises(RuntimeError,match='appeared') as exc:
+            verify_inputs_unchanged(snapshot,files=[path],data_root=tmp_path)
+        assert str(exc.value)
+        extra.unlink();path.unlink()
+        with pytest.raises(RuntimeError,match='removed') as exc:
             verify_inputs_unchanged(snapshot,files=[path],data_root=tmp_path)
         assert str(exc.value)
 
@@ -170,3 +174,21 @@ def test_manifest_schema_rejects_ambiguous_json(tmp_path,fault):
     path.write_text(content)
     with pytest.raises(ValueError) as exc:validate_run(out)
     assert str(exc.value)
+
+
+# --- input and destination cases carried over from the v2.1 audit suite ----------
+
+
+def test_sha256_file_is_the_hash_of_the_bytes_on_disk(tmp_path):
+    import hashlib
+    path=tmp_path/'a.bin';path.write_bytes(b'hello')
+    assert sha256_file(path)==hashlib.sha256(b'hello').hexdigest()
+
+
+def test_a_destination_inside_the_repository_raw_root_is_refused_under_any_data_root(tmp_path):
+    """Both immutable roots are checked, not only the one this run was given."""
+    from hexis.pipeline.corpus_run import check_destination
+    raw=Path(__file__).resolve().parents[1]/'data/raw'
+    for destination in (raw, raw/'UD_Ancient_Greek-Perseus'/'out'):
+        with pytest.raises(ValueError,match='raw') as exc:check_destination(destination,tmp_path)
+        assert str(exc.value)

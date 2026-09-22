@@ -3,7 +3,7 @@
 Nothing here re-implements a formula. Documents, blocks, groups and the two
 weightings come from `protocols.scores`, the three R1 quantities from
 `protocols.r1`, and the tables are those objects written out. The five figures of
-§11.6 are not this stage's work: they derive from these verified tables.
+§11.6 are drawn by `viz.plots` from these same verified tables.
 
 The validator refuses before it emits. A missing cell, a duplicated key, a
 corrupted artifact, an inventory_only score or an evidence recorded under another
@@ -23,6 +23,7 @@ from hexis.contracts import compare, digest, load_contracts
 from hexis.model import diagnostics
 from hexis.pipeline import scientific_run, validation_run
 from hexis.protocols import r1, sampling, scores
+from hexis.viz import plots
 
 KEY_COLUMNS = ('cell', 'variant', 'held_block', 'held_block_key', 'seed')
 RECORD_FIELDS = (*KEY_COLUMNS, 'q', 'depth', 'm', 'a_per_symbol', 'rho', 'min_available_past',
@@ -43,6 +44,7 @@ FOLD_COLUMNS = ('fold_training_tokens', f'fold_share_{scores.HEX}', f'fold_share
 FRAGMENT_COLUMNS = (*KEY_COLUMNS, 'contributor', 'contributor_key', 'fragment_count',
                     'internal_start_count', 'fragment_tokens', 'direct_context_targets')
 CENTROID_COLUMNS = ('variant', 'group_a', 'group_b', 'blocks_a', 'blocks_b', 'jsd')
+STRUCTURED_COLUMNS = ('node_count_by_structural_depth', 'support_histogram_1_2to4_5to9_10plus_by_depth')
 RESOURCE_COLUMNS = ('fit_seconds', 'evaluation_seconds', 'peak_rss')  # §11.5; measured, never deterministic
 
 
@@ -565,9 +567,10 @@ def model_diagnostics(records, resources) -> pd.DataFrame:
                           for population, counts in sorted(record['shuffle'].items())
                           for name, value in sorted(counts.items())},
                        **{name: value for name, value in sorted(model.items())
-                          if name != 'node_count_by_structural_depth'},
-                       node_count_by_structural_depth=' '.join(
-                           str(count) for count in model['node_count_by_structural_depth']),
+                          if name not in STRUCTURED_COLUMNS},
+                       # A list or mapping inside a CSV cell is written as canonical JSON, never a repr.
+                       **{name: json.dumps(model[name], sort_keys=True, separators=(',', ':'))
+                          for name in STRUCTURED_COLUMNS},
                        **{field: resources[(record['cell'], record['held_block_key'], record['seed'], arm)][field]
                           for field in RESOURCE_COLUMNS})
             rows.append(row)
@@ -636,7 +639,7 @@ def r1_tables(cfg, coordinates) -> dict:
 
 def main(argv=None):
     parser = argparse.ArgumentParser(
-        description='HEXIS 3.1 report: six-step validator, one aggregation, no figures')
+        description='HEXIS 3.1 report: six-step validator, one aggregation, five figures')
     parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--corpus-dir', type=Path, required=True)
     parser.add_argument('--output-dir', type=Path, required=True)
@@ -701,14 +704,17 @@ def main(argv=None):
     steps.append(6)
     if sorted(tables) != sorted(TABLES):
         raise ValueError(f'report: {sorted(set(tables) ^ set(TABLES))} is not a declared table')
+    # §11.6: the five figures derive from these verified tables and the verified corpus audit.
+    figures = plots.render(tables, frames['documents.csv'],
+                           pd.read_csv(args.corpus_dir / 'audit_contingency.csv'), digest(contract))
     checks = {'steps': steps, 'scientific': scientific, 'reported_partitions': len(records),
               'positional_partitions': len(positional),
               'r1_pairs': int(len(tables['jsd_pairs.csv'])), 'regeneration': regeneration}
     body = {'keys': prior['keys'], 'checks': checks, 'evidence': prior['evidence'],
             'metadata': scientific_run.stage_metadata('report', corpus_dir=args.corpus_dir,
                                                       output_dir=args.output_dir, started=started)}
-    manifest = scientific_run.publish_stage(args.output_dir, 'report', tables, contract, body,
-                                            corpus_dir=args.corpus_dir)
+    manifest = scientific_run.publish_stage(args.output_dir, 'report', {**tables, **figures}, contract,
+                                            body, corpus_dir=args.corpus_dir)
     scientific_run.validate_run(args.output_dir)
     return manifest
 

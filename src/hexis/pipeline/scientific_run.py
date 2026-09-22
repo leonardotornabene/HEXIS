@@ -277,8 +277,11 @@ def records(frame) -> list:
     return [plain(row) for row in frame.to_dict('records')]
 
 
+BYTE_ARTIFACTS = ('.xml', '.svg')  # JUnit evidence and figures are published as their exact bytes
+
+
 def write_artifact(path, value):
-    if path.suffix == '.xml' and isinstance(value, bytes):
+    if path.suffix in BYTE_ARTIFACTS and isinstance(value, bytes):
         with path.open('wb') as handle:
             handle.write(value)
             handle.flush()
@@ -299,9 +302,9 @@ def artifact_record(path):
 
 def _verify_roundtrip(path, value):
     """§11.7: every temporary is read back before anything is published."""
-    if path.suffix == '.xml':
+    if path.suffix in BYTE_ARTIFACTS:
         if path.read_bytes() != value:
-            raise ValueError(f'{path}: XML round-trip mismatch')
+            raise ValueError(f'{path}: byte round-trip mismatch')
     elif path.suffix == '.parquet':
         pd.testing.assert_frame_equal(pd.read_parquet(path), value.reset_index(drop=True),
                                       check_dtype=False, check_categorical=False)
@@ -383,7 +386,8 @@ def validate_run(output, *, locked=False) -> dict:
         if listed_ledgers != ledgers:
             raise ValueError('manifest: sample ledger artifacts do not match the pair references')
         from hexis.pipeline.run_report import TABLES
-        families = expected | positions | ledgers | (set(TABLES) if 'report' in stages else set())
+        from hexis.viz.plots import ARTIFACTS as FIGURES
+        families = expected | positions | ledgers | (set(TABLES) | set(FIGURES) if 'report' in stages else set())
         if 'validation' in stages:
             from hexis.pipeline.validation_run import ARTIFACTS, verify_evidence
             families |= ARTIFACTS

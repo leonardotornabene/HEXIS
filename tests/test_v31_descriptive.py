@@ -26,6 +26,7 @@ from hexis.contracts import digest
 from hexis.manifest import sha256_file
 from hexis.pipeline import corpus_run, run_descriptive, run_report, scientific_run
 from hexis.protocols import sampling, scores
+from hexis.viz import plots
 
 pytestmark = pytest.mark.v31
 
@@ -88,11 +89,20 @@ def toy_frames(lengths=None):
                                for index, (uid, symbol) in enumerate(zip(slots, symbols)))
     sequences = pd.DataFrame(sentences)
     documents = pd.DataFrame([{'variant': VARIANT, 'doc_id': doc, 'role': group['role'].iloc[0],
+                               'author_label': f'Author {doc}', 'work': f'Work {doc}',
+                               'dependence_block': None if doc == 'z' else doc,
+                               'raw': int(group['encoded_length'].sum()) + 2,
                                'kept': int(group['encoded_length'].sum()),
+                               'eligible': int(sum(max(0, n - 4) for n in group['encoded_length'])),
+                               'retention': int(group['encoded_length'].sum())
+                               / (int(group['encoded_length'].sum()) + 2),
                                'sentences': len(group)}
                               for doc, group in sequences.groupby('doc_id', sort=True)])
+    contingency = pd.DataFrame([{'level': 'document', 'unit': doc, 'upos_raw': tag,
+                                 'deprel_raw': 'advmod', 'count': count}
+                                for doc in documents['doc_id'] for tag, count in (('PART', 1), ('ADV', 2))])
     return {'documents.csv': documents, 'sequences.parquet': sequences,
-            'coordinates.parquet': pd.DataFrame(coordinates)}
+            'coordinates.parquet': pd.DataFrame(coordinates), 'audit_contingency.csv': contingency}
 
 
 def toy_corpus(tmp_path, *, lengths=None, alphabets='1' * 64):
@@ -475,7 +485,7 @@ def test_report_cli_emits_every_declared_table_from_a_complete_campaign(tmp_path
     assert set(documents['doc_id']) == {'a', 'b'}
     jsd = pd.read_csv(output / 'jsd_pairs.csv')
     assert len(jsd) == 1 and jsd['jsd'].iloc[0] >= 0.0
-    assert not (output / 'figures').exists()
+    assert set(plots.ARTIFACTS) <= set(manifest['artifacts'])  # §11.6: the five figures
 
 
 def test_report_reconstructs_documents_blocks_and_groups_from_the_persisted_positions(tmp_path):

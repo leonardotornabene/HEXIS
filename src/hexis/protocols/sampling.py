@@ -280,3 +280,22 @@ def fragment_metrics(ledger, depth) -> pd.DataFrame:
                      'internal_start_count': len(internal), 'fragment_tokens': int(lengths.sum()),
                      'direct_context_targets': int(internal.clip(upper=depth).sum())})
     return pd.DataFrame(rows, columns=list(METRIC_COLUMNS))
+
+
+def pair_streams(sequences, *, variant, blocks, held_block, q, seed):
+    """§7 steps 1–3 and 5 for one (cell, fold, seed), from the RNG contract alone: the ledger,
+    both training arms and both evaluated arms — what the executor fits and the report regenerates."""
+    ledger = sample_fold(sequences, variant=variant, blocks=blocks, held_block=held_block, q=q, seed=seed)
+    held = block_key(blocks[held_block])
+    train = {'original': sample_streams(ledger, sequences, variant)}
+    train['shuffled'] = shuffle_streams(train['original'], seed=seed, held=held, purpose='shuffle_train')
+    evaluated = {'original': evaluation_streams(sequences, variant=variant, docs=blocks[held_block], block=held)}
+    evaluated['shuffled'] = shuffle_streams(evaluated['original'], seed=seed, held=held, purpose='shuffle_eval')
+    return ledger, train, evaluated
+
+
+def change_counts(train, evaluated):
+    """§7: slots holding another symbol after the shuffle, over an explicit denominator."""
+    return {population: {name: sum(stream[name] for stream in streams['shuffled'])
+                         for name in ('changed_symbol_slot_count', 'total_slot_count')}
+            for population, streams in (('training', train), ('evaluation', evaluated))}

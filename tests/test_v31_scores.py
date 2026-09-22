@@ -365,6 +365,16 @@ def test_both_weightings_report_four_components_and_agree_on_d_q():
         scores.contrasts(blocks, groups)
 
 
+def test_contrasts_refuse_a_q_that_is_not_the_gain_difference():
+    """§8.2: D_Q = D_G_O − D_G_R is verified, so an inconsistent block row stops the contrast."""
+    blocks = pd.DataFrame({'block': ['H', 'P'], 'n': [3, 5],
+                           **{column: [1.0, 1.0] for column in scores.SCORE_COLUMNS}})
+    blocks.loc[0, 'q'] = 0.5  # its g_original - g_shuffled is 0
+    with pytest.raises(ValueError, match='D_Q') as error:
+        scores.contrasts(blocks, {'H': scores.HEX, 'P': scores.PROSE})
+    assert 'D_Q' in str(error.value)
+
+
 # --- T21: paired sensitivities over the first ten seeds -----------------------
 
 def test_paired_sensitivities_over_the_first_ten_seeds_detect_a_population_mismatch():

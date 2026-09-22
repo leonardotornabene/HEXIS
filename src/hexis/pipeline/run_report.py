@@ -215,6 +215,12 @@ def validate_partitions(output, manifest, cfg, frames):
         if digest(rows) != record['ledger_sha256'] or len(rows) != record['ledger_rows']:
             raise ValueError(f"{record['sample_ledger']}: ledger digest or cardinality mismatch")
         ledger = pd.DataFrame(rows, columns=list(sampling.LEDGER_COLUMNS))
+        # T05/T24 on the campaign (§5.2–§5.3): the persisted sample is the one the RNG contract
+        # draws, so no held-out or inventory_only sentence trained a model — regenerated, never trusted.
+        drawn, train, evaluated = sampling.pair_streams(
+            frames['sequences.parquet'], variant=cell['variant'], blocks=blocks, held_block=held,
+            q=cell['q'], seed=record['seed'])
+        compare(rows, scientific_run.records(drawn), 'sample_ledger')
         # §11.5: the training and fragment summaries the report reads are recomputed, never trusted.
         compare(record['training'], scientific_run.records(sampling.training_metrics(
             ledger, frames['sequences.parquet'], blocks=blocks, variant=cell['variant'])), 'training')
@@ -280,6 +286,7 @@ def validate_partitions(output, manifest, cfg, frames):
                 _number(value, 'shuffle counts', count=True)
             if counts['total_slot_count'] != denominator or counts['changed_symbol_slot_count'] > denominator:
                 raise ValueError('shuffle denominator differs from corpus/budget')
+        compare(record['shuffle'], sampling.change_counts(train, evaluated), 'shuffle')
         for arm, model in record['models'].items():
             _schema(model, ('fingerprint', 'training_streams', 'training_tokens', 'nodes',
                            'node_count_by_structural_depth', 'support_histogram_1_2to4_5to9_10plus_by_depth',
@@ -318,6 +325,10 @@ def validate_partitions(output, manifest, cfg, frames):
                 raise ValueError('invalid delta_root_nats_stop_minus_split')
         if record['positions'] is not None:
             positions, eligible = check_positions(output, record, cfg, coordinates)
+            regenerated = {slot: origin for stream in evaluated['shuffled']
+                           for slot, origin in zip(stream['slot_uids'], stream['source_slot_uids'])}
+            if not positions['shuffled_origin_slot_uid'].eq(positions['slot_uid'].map(regenerated)).all():
+                raise ValueError('shuffled_origin_slot_uid differs from the shuffle_eval regeneration')
             joined = scores.pair_positions(positions, eligible[['slot_uid', 'doc_id', 'available_past']])
             joined['doc_id'] = joined['doc_id'].astype(str)
             joined['past_band'] = joined['available_past'].map(scores.past_band)
@@ -596,7 +607,7 @@ def arm_diagnostics(records) -> pd.DataFrame:
     return frame[[*leading, *[name for name in frame.columns if name not in leading]]]
 
 
-def r1_tables(cfg, coordinates) -> dict:
+def r1_tables(cfg, coordinates, alphabets) -> dict:
     """R1 in full: raw counts, frequencies, the C(n,2) pairs, centroids and contributions."""
     blocks, groups = scientific_run.blocks_of(cfg), scientific_run.groups_of(cfg)
     sizes = scientific_run.alphabet_sizes(cfg)
@@ -604,11 +615,15 @@ def r1_tables(cfg, coordinates) -> dict:
     for variant in cfg['R1']['variants']:
         if variant not in sizes:
             raise ValueError(f'R1 variant {variant!r}: no cell declares its alphabet size')
+        names = alphabets[variant]['symbols']
+        if len(names) != sizes[variant]:
+            raise ValueError(f'R1 variant {variant!r}: the corpus alphabet has {len(names)} symbols, '
+                             f'the cells declare {sizes[variant]}')
         counts = r1.block_counts(coordinates, blocks, variant=variant, m=sizes[variant])
         smoothed = {name: r1.smoothed(vector, a=cfg['R1']['a_per_symbol'])
                     for name, vector in counts.items()}
         distributions.extend(
-            {'variant': variant, 'block': name, 'symbol_id': symbol,
+            {'variant': variant, 'block': name, 'symbol_id': symbol, 'symbol': names[symbol],
              'count': int(counts[name][symbol]),
              'empirical_frequency': float(counts[name][symbol] / counts[name].sum()),
              'smoothed_frequency': float(smoothed[name][symbol])}
@@ -616,7 +631,7 @@ def r1_tables(cfg, coordinates) -> dict:
         pairs.append(r1.pairs(smoothed).assign(variant=variant))
         contributions.extend(
             {'variant': variant, 'scope': 'block_pair', 'a': left, 'b': right,
-             'symbol_id': symbol, 'contribution': float(value)}
+             'symbol_id': symbol, 'symbol': names[symbol], 'contribution': float(value)}
             for left, right in itertools.combinations(sorted(smoothed), 2)
             for symbol, value in enumerate(r1.contributions(smoothed[left], smoothed[right])))
         members = {group: [smoothed[name] for name in sorted(smoothed) if groups[name] == group]
@@ -628,7 +643,7 @@ def r1_tables(cfg, coordinates) -> dict:
                               'jsd': r1.jsd(means[left], means[right])})
             contributions.extend(
                 {'variant': variant, 'scope': 'group_centroid', 'a': left, 'b': right,
-                 'symbol_id': symbol, 'contribution': float(value)}
+                 'symbol_id': symbol, 'symbol': names[symbol], 'contribution': float(value)}
                 for symbol, value in enumerate(r1.contributions(means[left], means[right])))
     return {'root_distributions.csv': pd.DataFrame(distributions),
             'jsd_pairs.csv': pd.concat(pairs, ignore_index=True)[
@@ -679,7 +694,7 @@ def main(argv=None):
     check_roles(docs, frames['documents.csv'])
     arm = arm_diagnostics(records)
     check_keys(cfg, docs=docs, arm=arm)
-    tables = r1_tables(cfg, coordinates)
+    tables = r1_tables(cfg, coordinates, frames['alphabets.json'])
     steps.append(5)
     blocks = block_pairs(docs)
     totals = blocks[blocks['past_band'].eq('all')]
@@ -706,7 +721,8 @@ def main(argv=None):
         raise ValueError(f'report: {sorted(set(tables) ^ set(TABLES))} is not a declared table')
     # §11.6: the five figures derive from these verified tables and the verified corpus audit.
     figures = plots.render(tables, frames['documents.csv'],
-                           pd.read_csv(args.corpus_dir / 'audit_contingency.csv'), digest(contract))
+                           pd.read_csv(args.corpus_dir / 'audit_contingency.csv'), digest(contract),
+                           cells=[cell['id'] for cell in cfg['cells']])
     checks = {'steps': steps, 'scientific': scientific, 'reported_partitions': len(records),
               'positional_partitions': len(positional),
               'r1_pairs': int(len(tables['jsd_pairs.csv'])), 'regeneration': regeneration}

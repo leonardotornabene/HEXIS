@@ -36,15 +36,8 @@ def run_pair(cfg, frames, cell, held, seed, *, resources=None):
     blocks, keys = scientific_run.blocks_of(cfg), scientific_run.block_keys_of(cfg)
     variant, depth, held_key = cell['variant'], int(cell['D']), keys[held]
     sequences = frames['sequences.parquet']
-    ledger = sampling.sample_fold(sequences, variant=variant, blocks=blocks, held_block=held,
-                                  q=cell['q'], seed=seed)
-    train = {'original': sampling.sample_streams(ledger, sequences, variant)}
-    train['shuffled'] = sampling.shuffle_streams(train['original'], seed=seed, held=held_key,
-                                                 purpose='shuffle_train')
-    evaluated = {'original': sampling.evaluation_streams(sequences, variant=variant,
-                                                         docs=blocks[held], block=held_key)}
-    evaluated['shuffled'] = sampling.shuffle_streams(evaluated['original'], seed=seed,
-                                                     held=held_key, purpose='shuffle_eval')
+    ledger, train, evaluated = sampling.pair_streams(sequences, variant=variant, blocks=blocks,
+                                                     held_block=held, q=cell['q'], seed=seed)
     params = CTWParams.from_rho(m=int(cell['m']), depth=depth, a=cell['a_per_symbol'],
                                 rho=cell['rho'])
     models, measured = {}, {}
@@ -93,10 +86,7 @@ def run_pair(cfg, frames, cell, held, seed, *, resources=None):
         'training': scientific_run.records(sampling.training_metrics(
             ledger, sequences, blocks=blocks, variant=variant)),
         'fragments': scientific_run.records(sampling.fragment_metrics(ledger, depth)),
-        'shuffle': {population: {name: sum(s[name] for s in streams)
-                                 for name in ('changed_symbol_slot_count', 'total_slot_count')}
-                    for population, streams in (('training', train['shuffled']),
-                                                ('evaluation', evaluated['shuffled']))},
+        'shuffle': sampling.change_counts(train, evaluated),
         'models': {arm: {'fingerprint': models[arm].fingerprint(),
                          'training_streams': len(train[arm]),
                          'training_tokens': sum(len(s['symbols']) for s in train[arm]),
@@ -203,7 +193,9 @@ def main(argv=None):
         checks['published_partitions'] += 1
         checks['new_model_fits'] += len(cell['arms'])
         # §11.4: publish each pair before fitting the next; keep only one vector in memory.
-        # ponytail: publication revalidates prior artifacts; optimize only after V3 measurements.
+        # ponytail: each publication revalidates the whole run and the corpus (~8 s/pair measured
+        # for the corpus, plus quadratic growth; ~2 h estimated over 490 pairs). Faster
+        # revalidation is a code change: after V3 it is a new identity and V3 is redone.
         manifest = publish(artifacts)
         del artifacts, record, vectors, ledger
     if not checks['published_partitions']:

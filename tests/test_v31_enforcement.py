@@ -30,7 +30,8 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                               'test_validation_output_refuses_raw_including_symlinks',
                               'test_validation_publication_refuses_a_racing_writer',
                               'test_validation_forced_publication_is_atomic_on_write_failure',
-                              'test_historical_m106_stress_records_execution_and_oracle_gap'],
+                              'test_historical_m106_stress_records_execution_and_oracle_gap',
+                              'test_analytic_pass_pins_the_corrected_iid_threshold'],
  'test_v31_sampling.py': ['test_pinned_rng_vector_and_fixture_ledger_reproduce_the_deposit',
                          'test_deposited_block_keys_recompute_from_their_member_lists',
                          'test_purposes_fields_repeatability_and_no_active_shuffle_probe',
@@ -49,7 +50,9 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                          'test_slot_identity_is_distinct_from_the_provenance_of_the_moved_token',
                          'test_shuffled_control_is_not_iid_within_a_stream',
                          'test_heterogeneous_pool_keeps_local_dependence_after_shuffling',
-                         'test_module_imports_no_retired_v21_helper'],
+                         'test_module_imports_no_retired_v21_helper',
+                         'test_sample_streams_refuses_a_ledger_cut_from_a_shorter_variant',
+                         'test_shuffle_records_the_symbol_change_rate_with_an_explicit_denominator'],
  'test_scores.py': ['test_pooled_score_core_has_label_free_signature',
                     'test_annotate_scores_has_d52_signature'],
  'test_v31_scores.py': ['test_public_core_and_annotation_keep_scores_independent_of_labels',
@@ -65,10 +68,15 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                         'test_paired_sensitivities_over_the_first_ten_seeds_detect_a_population_mismatch',
                         'test_mixture_masses_and_resolved_length_follow_the_direct_sum',
                         'test_evaluation_diagnostics_count_valid_and_null_resolved_means',
-                        'test_an_empty_band_is_null_with_a_reason_and_never_a_false_zero'],
+                        'test_an_empty_band_is_null_with_a_reason_and_never_a_false_zero',
+                        'test_score_streams_refuses_an_alphabet_size_mismatch',
+                        'test_score_streams_refuses_a_negative_min_available_past',
+                        'test_roll_up_casts_count_columns_to_int64_in_both_branches',
+                        'test_contrasts_refuse_a_q_that_is_not_the_gain_difference'],
  'test_v31_r1.py': ['test_jsd_is_symmetric_zero_on_the_diagonal_and_bounded_by_one_bit',
                     'test_smoothed_counts_of_the_seven_blocks_and_their_matrix',
-                    'test_group_centroids_are_not_the_mean_of_the_pairwise_divergences'],
+                    'test_group_centroids_are_not_the_mean_of_the_pairwise_divergences',
+                    'test_matrix_orders_blocks_alphabetically_like_pairs_regardless_of_insertion_order'],
  'test_v31_config.py': ['test_deposit_and_application_projection_match',
                         'test_schema_refuses_wrong_numeric_types_and_values',
                         'test_application_contract_rejects_drift',
@@ -97,7 +105,8 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
  'test_v31_enforcement.py': ['test_v31_actual_collection_covers_required_behaviors',
                              'test_v31_inventory_rejects_missing_test_and_marker',
                              'test_v31_enforcement_rejects_vacuity_skip_and_xfail',
-                             'test_v31_enforcement_accepts_executed_assert'],
+                             'test_v31_enforcement_accepts_executed_assert',
+                             'test_v31_inventory_lists_every_collected_active_test'],
  'test_v31_descriptive.py': ['test_cli_runs_every_cell_and_publishes_one_partition_per_pair',
                             'test_every_pair_persists_its_exact_sampling_ledger',
                             'test_sensitivity_checks_coordinate_slot_sets_before_discarding_vectors',
@@ -125,7 +134,8 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                             'test_evidence_must_be_recorded_under_the_code_and_lock_of_this_run',
                             'test_retired_stages_declare_their_retirement_and_refuse_to_run',
                             'test_the_descriptive_path_imports_no_retired_scientific_module',
-                            'test_the_documented_command_lines_run_the_whole_toy_campaign'],
+                            'test_the_documented_command_lines_run_the_whole_toy_campaign',
+                            'test_report_refuses_a_document_silently_dropped_from_document_scores'],
  'test_v31_completion.py': ['test_scientific_identity_verifies_the_present_lock', 'test_model_keys_reject_noninteger_seed_without_coercion', 'test_zero_target_documents_keep_both_bands_and_null_reasons', 'test_per_model_resources_are_measured_and_kept_out_of_deterministic_artifacts', 'test_resume_rejects_invalid_artifact_families_and_model_arms', 'test_resume_rejects_semantically_corrupt_sums_even_after_rehashing', 'test_resource_records_are_complete_valid_and_bound_to_model_keys', 'test_diagnostics_carry_the_report_contract_names',
                            'test_report_summarizes_every_level_and_pairs_sensitivities_per_block_and_seed',
                            'test_empty_document_summaries_stay_null_with_their_reason',
@@ -145,8 +155,18 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
  'test_v31_figures.py': ['test_report_emits_the_five_contract_figures_as_deterministic_svg',
                          'test_plotted_values_are_the_verified_table_values',
                          'test_structured_model_columns_are_canonical_json',
-                         'test_figures_read_tables_only'],
- 'test_v31_report_semantics.py': ['test_partition_semantic_corruption_is_rejected', 'test_partial_campaign_validates_and_float_reconstruction_allows_roundoff', 'test_root_distribution_preserves_empirical_and_smoothed_frequencies', 'test_duplicate_json_fields_in_pair_are_rejected'],
+                         'test_figures_read_tables_only',
+                         'test_mixture_mass_axis_stops_at_the_reference_depth',
+                         'test_profiles_label_documents_by_author_work_and_targets',
+                         'test_corpus_figure_orders_documents_by_group_then_block',
+                         'test_r1_tables_and_figure_name_every_symbol',
+                         'test_sensitivity_figure_follows_the_declared_cell_order',
+                         'test_every_figure_keeps_its_text_inside_the_canvas'],
+ 'test_v31_report_semantics.py': ['test_partition_semantic_corruption_is_rejected', 'test_partial_campaign_validates_and_float_reconstruction_allows_roundoff', 'test_root_distribution_preserves_empirical_and_smoothed_frequencies', 'test_duplicate_json_fields_in_pair_are_rejected',
+                                  'test_the_persisted_ledger_is_the_contract_sample_even_after_rehashing',
+                                  'test_shuffle_counts_and_c0_provenance_are_the_contract_regeneration',
+                                  'test_each_c0_guard_names_its_own_corruption',
+                                  'test_sensitivity_partitions_enforce_diagnostic_denominators_and_bounds'],
  'test_v31_persistence.py': ['test_exact_three_inputs_and_hashes',
                              'test_identity_excludes_locations_and_is_sensitive_to_components',
                              'test_atomic_roundtrip_and_same_run_in_distinct_directories',
@@ -170,15 +190,29 @@ def missing_coverage(items, required):
             for file,names in required.items() if not names or set(names)-collected[file]}
 
 
+def unlisted_tests(items, required):
+    return sorted({(Path(item.path).name, getattr(item, 'originalname', None) or item.name.split('[', 1)[0])
+                   for item in items if item.get_closest_marker('v31') is not None}
+                  - {(file, name) for file, names in required.items() for name in names})
+
+
 def test_v31_actual_collection_covers_required_behaviors(request):
     assert REQUIRED
     assert not missing_coverage(request.session.items,REQUIRED)
+
+
+def test_v31_inventory_lists_every_collected_active_test(request):
+    """Exhaustive inventory: an active test outside REQUIRED could be deleted unnoticed."""
+    assert not unlisted_tests(request.session.items, REQUIRED)
 
 
 def test_v31_inventory_rejects_missing_test_and_marker():
     item=SimpleNamespace(path=Path('test_a.py'),name='test_a',get_closest_marker=lambda marker:None)
     assert missing_coverage([item],{'test_a.py':['test_a']})=={'test_a.py':['test_a']}
     assert missing_coverage([],{'test_a.py':[]})=={'test_a.py':['empty inventory']}
+    marked = SimpleNamespace(path=Path('test_b.py'), name='test_b[x]', originalname='test_b',
+                             get_closest_marker=lambda marker: object())
+    assert unlisted_tests([marked], {}) == [('test_b.py', 'test_b')]
 
 
 @pytest.mark.parametrize('body',[

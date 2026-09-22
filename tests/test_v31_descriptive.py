@@ -35,6 +35,7 @@ VARIANT = 'toy'
 M = 5
 LENGTHS = {'a': [9, 9, 9, 9], 'b': [9, 7, 6, 9], 'z': [8, 8]}
 BLOCKS = {'ALPHA': (['a'], 'HEX'), 'BETA': (['b'], 'PROSE_ALL')}
+BLOCK_OF = {doc: name for name, (docs, _) in BLOCKS.items() for doc in docs}
 TABLES = ('document_scores.csv', 'block_pairs.csv', 'aggregation_weights.csv', 'contrasts.csv',
           'seed_summaries.csv', 'sensitivity_pairs.csv', 'model_diagnostics.csv',
           'arm_diagnostics.csv', 'fragment_diagnostics.csv', 'root_distributions.csv',
@@ -90,7 +91,7 @@ def toy_frames(lengths=None):
     sequences = pd.DataFrame(sentences)
     documents = pd.DataFrame([{'variant': VARIANT, 'doc_id': doc, 'role': group['role'].iloc[0],
                                'author_label': f'Author {doc}', 'work': f'Work {doc}',
-                               'dependence_block': None if doc == 'z' else doc,
+                               'dependence_block': BLOCK_OF.get(doc),  # the block name, as in the real corpus
                                'raw': int(group['encoded_length'].sum()) + 2,
                                'kept': int(group['encoded_length'].sum()),
                                'eligible': int(sum(max(0, n - 4) for n in group['encoded_length'])),
@@ -101,8 +102,10 @@ def toy_frames(lengths=None):
     contingency = pd.DataFrame([{'level': 'document', 'unit': doc, 'upos_raw': tag,
                                  'deprel_raw': 'advmod', 'count': count}
                                 for doc in documents['doc_id'] for tag, count in (('PART', 1), ('ADV', 2))])
+    alphabets = {VARIANT: {'m': M, 'symbols': [f'S{index}:toy' for index in range(M)]}}
     return {'documents.csv': documents, 'sequences.parquet': sequences,
-            'coordinates.parquet': pd.DataFrame(coordinates), 'audit_contingency.csv': contingency}
+            'coordinates.parquet': pd.DataFrame(coordinates), 'audit_contingency.csv': contingency,
+            'alphabets.json': alphabets}
 
 
 def toy_corpus(tmp_path, *, lengths=None, alphabets='1' * 64):

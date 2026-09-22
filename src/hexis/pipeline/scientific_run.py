@@ -184,6 +184,7 @@ def load_corpus(corpus_dir):
     frames = {name: pd.read_parquet(corpus_dir / name)
               for name in ('sequences.parquet', 'coordinates.parquet')}
     frames['documents.csv'] = pd.read_csv(corpus_dir / 'documents.csv')
+    frames['alphabets.json'] = _read_json(corpus_dir / 'alphabets.json')  # verified with the run
     return manifest, frames
 
 

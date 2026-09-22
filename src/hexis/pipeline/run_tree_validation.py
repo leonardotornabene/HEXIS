@@ -93,11 +93,13 @@ def run_case(kind, m, seed, design, cell):
             'deficit': None if target is None else result.ce - target,
             'analytic_pass': analytic_pass(kind, m, result.ce, target),
             'normalization_max_error': error,
-            'nodes': diagnostics['nodes'], 'nodes_by_depth': diagnostics['nodes_by_depth'],
+            'nodes': diagnostics['nodes'],
+            'node_count_by_structural_depth': diagnostics['node_count_by_structural_depth'],
             'support_histogram_1_2to4_5to9_10plus_by_depth':
                 diagnostics['support_histogram_1_2to4_5to9_10plus_by_depth'],
-            'root_support': diagnostics['root_support'],
-            'root_stop': diagnostics['root_stop'], 'delta_root': float(diagnostics['delta_root']),
+            'root_observed_symbol_count': diagnostics['root_observed_symbol_count'],
+            'root_stop': diagnostics['root_stop'], 'delta_root_nats_stop_minus_split':
+                float(diagnostics['delta_root_nats_stop_minus_split']),
             'delta_root_reason': diagnostics['delta_root_reason'],
             'log_evidence': float(diagnostics['log_evidence'])}
 
@@ -133,15 +135,16 @@ def exit_code(rows):
                     or row['cell'] != 'C0'):
                 return 1
             for field in ('ce', 'root_ce', 'normalization_max_error', 'root_stop',
-                          'delta_root', 'log_evidence'):
+                          'delta_root_nats_stop_minus_split', 'log_evidence'):
                 if type(row[field]) not in (int, float) or not math.isfinite(row[field]):
                     return 1
             if (min(row['ce'], row['root_ce']) < 0
                     or not 0 <= row['normalization_max_error'] <= 1e-12
                     or not 0 <= row['root_stop'] <= 1 or row['delta_root_reason'] is not None
-                    or type(row['root_support']) is not int or not 0 < row['root_support'] <= m):
+                    or type(row['root_observed_symbol_count']) is not int
+                    or not 0 < row['root_observed_symbol_count'] <= m):
                 return 1
-            depths = row['nodes_by_depth']
+            depths = row['node_count_by_structural_depth']
             histograms = row['support_histogram_1_2to4_5to9_10plus_by_depth']
             if (not depths or any(type(n) is not int or n <= 0 for n in depths)
                     or type(row['nodes']) is not int or row['nodes'] != sum(depths)

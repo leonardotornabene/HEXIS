@@ -52,11 +52,11 @@ def test_partition_semantic_corruption_is_rejected(partition, fault):
     elif fault == 'nan_sum': sums['sum_loss_ctw_original'] = float('nan')
     elif fault == 'negative_sum': sums['sum_loss_ctw_original'] = -1.
     elif fault == 'valid_count': arm['resolved_valid_count'] -= 1
-    elif fault == 'mass': arm['observed_mass_0'] += .1
+    elif fault == 'mass': arm['sum_observed_mass_by_length_0'] += .1
     elif fault == 'resolved': arm['sum_resolved_valid'] += .1
     elif fault == 'unseen':
         arm['sum_unseen_mass'] += .01
-        arm['observed_mass_0'] -= .01
+        arm['sum_observed_mass_by_length_0'] -= .01
     elif fault == 'model_arm': record['models'].pop('shuffled')
     elif fault == 'variant': record['variant'] = 'wrong'
     elif fault == 'position_duplicate': positions.loc[1, 'slot_uid'] = positions.loc[0, 'slot_uid']
@@ -64,7 +64,7 @@ def test_partition_semantic_corruption_is_rejected(partition, fault):
     elif fault == 'position_symbol': positions.loc[0, 'original_symbol_id'] = -1
     elif fault == 'model_histogram': record['models']['original']['support_histogram_1_2to4_5to9_10plus_by_depth'][0]['1'] += 1
     elif fault == 'training_tokens': record['models']['original']['training_tokens'] += 1
-    elif fault == 'shuffle_denominator': record['shuffle']['evaluation']['total_count'] += 1
+    elif fault == 'shuffle_denominator': record['shuffle']['evaluation']['total_slot_count'] += 1
     with pytest.raises(ValueError) as error: validate(partition)
     assert str(error.value)
 

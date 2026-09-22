@@ -13,7 +13,7 @@ import math
 
 NO_RESOLVED_MASS = 'no_resolved_mass'
 EMPTY_BUCKET = 'empty_bucket'
-MASS_PREFIX = 'observed_mass_'
+MASS_PREFIX = 'sum_observed_mass_by_length_'
 
 
 def resolved(mixture) -> dict:
@@ -66,7 +66,7 @@ class EvaluationTotals:
         """The report-contract fields of one `per_arm_diagnostics` row."""
         return {'n': self.n, 'sum_resolved_valid': self.sum_resolved_valid,
                 'resolved_valid_count': self.resolved_valid_count,
-                f'resolved_null_count_{NO_RESOLVED_MASS}': self.resolved_null_count,
+                f'resolved_null_count_by_reason_{NO_RESOLVED_MASS}': self.resolved_null_count,
                 'sum_unseen_mass': self.sum_unseen_mass,
                 'root_unseen_target_count': self.root_unseen_target_count,
                 'implicit_unseen_branch_encounter_count': self.unseen_branch_encounters,

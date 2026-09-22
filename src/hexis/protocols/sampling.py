@@ -232,10 +232,10 @@ def shuffle_streams(streams, *, seed, held, purpose) -> list:
     and nothing in this module decodes it. Each stream derives its own
     generator, so reordering the streams cannot change any of them (§5.3).
 
-    `changed_count`/`total_count` record §7's "quota di slot con simbolo
+    `changed_symbol_slot_count`/`total_slot_count` record §7's "quota di slot con simbolo
     diverso, con denominatore esplicito": how many slots hold a different
     symbol after the shuffle, out of the stream's length. A constant
-    sentence can come back identical (`changed_count == 0`) even though every
+    sentence can come back identical (`changed_symbol_slot_count == 0`) even though every
     slot's provenance still moved.
     """
     if purpose not in ('shuffle_train', 'shuffle_eval'):
@@ -252,7 +252,7 @@ def shuffle_streams(streams, *, seed, held, purpose) -> list:
         changed = sum(1 for before, after in zip(stream['symbols'], moved) if before != after)
         shuffled.append(stream | {'symbols': moved,
                                   'source_slot_uids': [stream['slot_uids'][index] for index in order],
-                                  'changed_count': changed, 'total_count': len(moved)})
+                                  'changed_symbol_slot_count': changed, 'total_slot_count': len(moved)})
     return shuffled
 
 

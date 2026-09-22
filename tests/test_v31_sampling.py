@@ -437,14 +437,14 @@ def test_shuffle_records_the_symbol_change_rate_with_an_explicit_denominator():
     constant = stream([5, 5, 5, 5])
     after = sampling.shuffle_streams([constant], seed=0, held=HELD_KEY, purpose='shuffle_train')[0]
     assert after['symbols'] == constant['symbols']  # permuting equal values changes no slot
-    assert (after['changed_count'], after['total_count']) == (0, 4)
+    assert (after['changed_symbol_slot_count'], after['total_slot_count']) == (0, 4)
 
     one_odd = stream([0, 0, 0, 1], sid='x@2')
     after = sampling.shuffle_streams([one_odd], seed=0, held=HELD_KEY, purpose='shuffle_train')[0]
-    assert after['total_count'] == 4
-    assert after['changed_count'] == sum(1 for before, moved in zip(one_odd['symbols'], after['symbols'])
+    assert after['total_slot_count'] == 4
+    assert after['changed_symbol_slot_count'] == sum(1 for before, moved in zip(one_odd['symbols'], after['symbols'])
                                          if before != moved)  # independently recomputed from the two arrays
-    assert after['changed_count'] in (0, 2)  # the lone 1 either lands back home, or swaps with one 0
+    assert after['changed_symbol_slot_count'] in (0, 2)  # the lone 1 either lands back home, or swaps with one 0
 
 
 # --- T18: the control is not innocuous ----------------------------------------

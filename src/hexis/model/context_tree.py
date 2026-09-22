@@ -215,7 +215,7 @@ class CTW:
         return q
 
     def diagnostics(self) -> dict:
-        """Supports and the §6.5 root record; delta_root is in nats."""
+        """Supports and the §6.5 root record, under the report-contract names; delta in nats (u - v)."""
         self._require_fitted()
         root = self._root
         by_depth, histograms, level = [], [], [root]
@@ -229,10 +229,11 @@ class CTW:
                     histogram[bucket] += 1
             histograms.append(histogram)
             level = [child for node in level for child in node.children.values()]
-        return {'nodes': sum(by_depth), 'nodes_by_depth': by_depth,
+        return {'nodes': sum(by_depth), 'node_count_by_structural_depth': by_depth,
                 'support_histogram_1_2to4_5to9_10plus_by_depth': histograms,
-                'root_support': len(root.counts), 'root_unobserved': self.params.m - len(root.counts),
-                'root_stop': math.exp(root.log_stop), 'delta_root': root.delta,
+                'root_observed_symbol_count': len(root.counts),
+                'root_unseen_symbol_count': self.params.m - len(root.counts),
+                'root_stop': math.exp(root.log_stop), 'delta_root_nats_stop_minus_split': root.delta,
                 'delta_root_reason': 'forced_leaf' if root.forced else None,
                 'log_evidence': root.log_w}
 

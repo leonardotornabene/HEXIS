@@ -63,8 +63,8 @@ def test_per_model_resources_are_measured_and_kept_out_of_deterministic_artifact
     assert {tuple(row['key']) for row in measured} == {tuple(key) for key in second['keys']['model']}
     for row in measured:
         assert row['fit_seconds'] >= 0 and row['evaluation_seconds'] > 0
-        assert type(row['peak_rss_bytes']) is int and row['peak_rss_bytes'] > 0
-        assert row['rss_method'] == 'resource.getrusage(RUSAGE_SELF).ru_maxrss; process lifetime high-water mark'
+        assert type(row['peak_rss']) is int and row['peak_rss'] > 0
+        assert row['rss_method'] == 'resource.getrusage(RUSAGE_SELF).ru_maxrss in bytes; process lifetime high-water mark'
         assert row['timer'] == 'time.perf_counter; seconds'
     assert 'resources' not in second['run_contract']
     for name in second['artifacts']:
@@ -128,3 +128,25 @@ def test_resource_records_are_complete_valid_and_bound_to_model_keys(tmp_path, f
     with pytest.raises(ValueError, match='resource') as error:
         scientific_run.validate_run(output)
     assert str(error.value)
+
+
+def test_diagnostics_carry_the_report_contract_names(tmp_path):
+    """report_contract_v3.1.json fixes the names; `_by_reason`/`_by_length` name column families."""
+    from hexis.contracts import load_contracts
+    contract = load_contracts()['report']
+    aggregate = contract['paired_aggregate_all_cells']
+
+    def missing(required, fields):
+        return [name for name in required if name not in fields and not (
+            name.endswith(('_by_reason', '_by_length')) and any(f.startswith(name + '_') for f in fields))]
+
+    config, corpus, output = campaign(tmp_path)
+    describe(config, corpus, output, '--cell', 'all')
+    manifest = report(config, corpus, output)
+    record = json.loads((output/min(n for n in manifest['artifacts'] if n.startswith('pair__'))).read_text())
+    docs = set(record['document_sums'][0])
+    assert missing(aggregate['fields'], docs) == []
+    assert missing(aggregate['per_arm_diagnostics'], set(record['arm_diagnostics'][0])) == []
+    for population in ('training', 'evaluation'):
+        assert missing(aggregate['shuffle'], set(record['shuffle'][population]) | docs) == []
+    assert missing(contract['model_diagnostics'], set(pd.read_csv(output/'model_diagnostics.csv').columns)) == []

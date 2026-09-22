@@ -178,7 +178,7 @@ def test_zero_depth_is_a_forced_root_leaf():
     model = fitted([[0, 1, 1, 2]], m=3, depth=0)
     diagnostics = model.diagnostics()
     assert diagnostics['root_stop'] == 1.0
-    assert diagnostics['delta_root'] is None
+    assert diagnostics['delta_root_nats_stop_minus_split'] is None
     assert diagnostics['delta_root_reason'] == 'forced_leaf'
     assert model.mixture([0, 1]).weights == ((0, 1.0),)
     assert model.mixture([0, 1]).unseen_mass == 0.0
@@ -322,7 +322,7 @@ def test_saturation_is_distinct_from_a_forced_leaf():
     leaf = model.inspect((3, 2, 1))
     assert leaf['forced'] and leaf['log_split'] == -math.inf and leaf['log_stop'] == 0.0
     assert leaf['delta'] is None
-    assert model.diagnostics()['delta_root'] == root['delta']
+    assert model.diagnostics()['delta_root_nats_stop_minus_split'] == root['delta']
     assert model.diagnostics()['delta_root_reason'] is None
     mixture = model.mixture([1, 2, 3])
     assert mixture.weights[0][1] == 0.0 and mixture.unseen_mass == 0.0
@@ -407,7 +407,7 @@ def test_battery_gate_rejects_incomplete_or_invalid_recorded_results(battery, fa
         rows[0]['ce'] = rows[0]['target'] + .5
     else:
         key, value = {'nan': ('ce', float('nan')), 'normalization': ('normalization_max_error', .1),
-                      'count': ('n', 1), 'support': ('root_support', 0),
+                      'count': ('n', 1), 'support': ('root_observed_symbol_count', 0),
                       'deficit': ('deficit', None)}[fault]
         next(row for row in rows if row['kind'] == 'lag2_full')[key] = value
     assert validation.exit_code(rows) == 1
@@ -476,7 +476,7 @@ def test_historical_m106_stress_records_execution_and_oracle_gap(battery):
     assert sorted({row['kind'] for row in stress}) == ['iid', 'lag2_core', 'lag2_full']
     assert all(math.isfinite(row['ce']) and row['n'] > 0 for row in stress)
     assert all(row['normalization_max_error'] <= 1e-12 for row in stress)
-    assert all(0 < row['root_support'] <= 106 and row['nodes'] > 1 for row in stress)
+    assert all(0 < row['root_observed_symbol_count'] <= 106 and row['nodes'] > 1 for row in stress)
     assert all(row['analytic_pass'] is None for row in stress)
     core = [row for row in stress if row['kind'] == 'lag2_core']
     assert len(core) == 3 and all(row['target'] is None and row['deficit'] is None for row in core)

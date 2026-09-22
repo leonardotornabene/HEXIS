@@ -36,6 +36,7 @@ REFERENCE_CELL = 'C0'  # §11.5: sensitivities are paired against C0 on the same
 SENSITIVITY_COLUMNS = ('cell', 'reference', 'aggregation', 'group', 'metric', 'seeds', 'mean', 'sd',
                        'min', 'max', 'S')
 CENTROID_COLUMNS = ('variant', 'group_a', 'group_b', 'blocks_a', 'blocks_b', 'jsd')
+RESOURCE_COLUMNS = ('fit_seconds', 'evaluation_seconds', 'peak_rss')  # §11.5; measured, never deterministic
 
 
 # --- the six steps -------------------------------------------------------------
@@ -232,7 +233,7 @@ def validate_partitions(output, manifest, cfg, frames):
                     if n == 0 and diagnostic[field] != 0:
                         raise ValueError(f'{key}: empty bucket has nonzero diagnostics')
                 valid = diagnostic['resolved_valid_count']
-                null = diagnostic['resolved_null_count_no_resolved_mass']
+                null = diagnostic[f'resolved_null_count_by_reason_{diagnostics.NO_RESOLVED_MASS}']
                 if diagnostic['n'] != n or valid + null != n:
                     raise ValueError(f'{key}: diagnostic denominator differs')
                 for field in ('root_unseen_target_count', 'implicit_unseen_branch_encounter_count'):
@@ -253,30 +254,34 @@ def validate_partitions(output, manifest, cfg, frames):
                                              'encoded_length'].sum())
         for population, denominator in (('training', training_tokens), ('evaluation', evaluated_tokens)):
             counts = record['shuffle'][population]
-            _schema(counts, ('changed_count', 'total_count'), 'shuffle counts')
+            _schema(counts, ('changed_symbol_slot_count', 'total_slot_count'), 'shuffle counts')
             for value in counts.values():
                 _number(value, 'shuffle counts', count=True)
-            if counts['total_count'] != denominator or counts['changed_count'] > denominator:
+            if counts['total_slot_count'] != denominator or counts['changed_symbol_slot_count'] > denominator:
                 raise ValueError('shuffle denominator differs from corpus/budget')
         for arm, model in record['models'].items():
-            _schema(model, ('fingerprint', 'training_streams', 'training_tokens', 'nodes', 'nodes_by_depth',
-                           'support_histogram_1_2to4_5to9_10plus_by_depth', 'root_support', 'root_unobserved',
-                           'root_stop', 'delta_root', 'delta_root_reason', 'log_evidence'), f'model {arm}')
-            for field in ('training_streams', 'training_tokens', 'nodes', 'root_support', 'root_unobserved'):
+            _schema(model, ('fingerprint', 'training_streams', 'training_tokens', 'nodes',
+                           'node_count_by_structural_depth', 'support_histogram_1_2to4_5to9_10plus_by_depth',
+                           'root_observed_symbol_count', 'root_unseen_symbol_count', 'root_stop',
+                           'delta_root_nats_stop_minus_split', 'delta_root_reason', 'log_evidence'),
+                    f'model {arm}')
+            for field in ('training_streams', 'training_tokens', 'nodes', 'root_observed_symbol_count',
+                          'root_unseen_symbol_count'):
                 _number(model[field], field, count=True)
             if model['training_tokens'] != training_tokens or model['training_streams'] != record['ledger_rows']:
                 raise ValueError('model training denominator differs from budget/ledger')
-            depths = model['nodes_by_depth']
+            depths = model['node_count_by_structural_depth']
             histograms = model['support_histogram_1_2to4_5to9_10plus_by_depth']
             if len(depths) != len(histograms) or not depths or depths[0] != 1 or len(depths) > record['depth'] + 1:
                 raise ValueError('model support depth differs')
             for n, histogram in zip(depths, histograms):
-                _number(n, 'nodes_by_depth', count=True)
+                _number(n, 'node_count_by_structural_depth', count=True)
                 _schema(histogram, ('1', '2to4', '5to9', '10plus'), 'support histogram')
                 for value in histogram.values(): _number(value, 'support histogram', count=True)
                 if sum(histogram.values()) != n:
                     raise ValueError('model support histogram count differs')
-            if sum(depths) != model['nodes'] or model['root_support'] + model['root_unobserved'] != record['m']:
+            if (sum(depths) != model['nodes'] or model['root_observed_symbol_count']
+                    + model['root_unseen_symbol_count'] != record['m']):
                 raise ValueError('model support count differs')
             _number(model['root_stop'], 'root_stop')
             if model['root_stop'] > 1:
@@ -284,9 +289,10 @@ def validate_partitions(output, manifest, cfg, frames):
             if type(model['log_evidence']) not in (int, float) or not math.isfinite(model['log_evidence']):
                 raise ValueError('nonfinite log_evidence')
             if record['depth'] == 0:
-                if model['delta_root'] is not None or model['delta_root_reason'] != 'forced_leaf' or model['root_stop'] != 1:
+                if model['delta_root_nats_stop_minus_split'] is not None or model['delta_root_reason'] != 'forced_leaf' or model['root_stop'] != 1:
                     raise ValueError('invalid forced root')
-            elif (type(model['delta_root']) not in (int, float) or not math.isfinite(model['delta_root'])
+            elif (type(model['delta_root_nats_stop_minus_split']) not in (int, float)
+                  or not math.isfinite(model['delta_root_nats_stop_minus_split'])
                   or model['delta_root_reason'] is not None):
                 raise ValueError('invalid delta_root')
         if record['positions'] is not None:
@@ -483,8 +489,8 @@ def sensitivity_pairs(contrasts) -> pd.DataFrame:
     return frame
 
 
-def model_diagnostics(records) -> pd.DataFrame:
-    """§11.5: supports, masses, root record and fingerprint of every fitted model."""
+def model_diagnostics(records, resources) -> pd.DataFrame:
+    """§11.5: supports, masses, root record, fingerprint and measured resources of every model."""
     rows = []
     for record in records:
         for arm, model in sorted(record['models'].items()):
@@ -496,8 +502,11 @@ def model_diagnostics(records) -> pd.DataFrame:
                           for population, counts in sorted(record['shuffle'].items())
                           for name, value in sorted(counts.items())},
                        **{name: value for name, value in sorted(model.items())
-                          if name != 'nodes_by_depth'},
-                       nodes_by_depth=' '.join(str(count) for count in model['nodes_by_depth']))
+                          if name != 'node_count_by_structural_depth'},
+                       node_count_by_structural_depth=' '.join(
+                           str(count) for count in model['node_count_by_structural_depth']),
+                       **{field: resources[(record['cell'], record['held_block_key'], record['seed'], arm)][field]
+                          for field in RESOURCE_COLUMNS})
             rows.append(row)
     return pd.DataFrame(rows)
 
@@ -609,7 +618,8 @@ def main(argv=None):
                        totals, training_quota(records), scientific_run.groups_of(cfg)),
                    'contrasts.csv': contrasts, 'seed_summaries.csv': seed_summaries(contrasts),
                    'sensitivity_pairs.csv': sensitivity_pairs(contrasts),
-                   'model_diagnostics.csv': model_diagnostics(records),
+                   'model_diagnostics.csv': model_diagnostics(records, {
+                       tuple(row['key']): row for row in prior['metadata']['descriptive']['models']}),
                    'arm_diagnostics.csv': arm})
     steps.append(6)
     if sorted(tables) != sorted(TABLES):

@@ -408,8 +408,14 @@ def test_two_destinations_publish_the_same_partitions_byte_for_byte(tmp_path):
     describe(config, corpus, second, '--cell', 'all')
     left, right = report(config, corpus, output), report(config, corpus, second)
     assert left['run_id'] == right['run_id']
+    measured = 'model_diagnostics.csv'  # §11.5 resources are measured, never byte-identical
     assert all(sha256_file(output / name) == sha256_file(second / name)
-               for name in left['artifacts'])
+               for name in left['artifacts'] if name != measured)
+    pd.testing.assert_frame_equal(
+        pd.read_csv(output / measured).drop(columns=list(run_report.RESOURCE_COLUMNS)),
+        pd.read_csv(second / measured).drop(columns=list(run_report.RESOURCE_COLUMNS)))
+    for manifest in (left, right):
+        manifest['artifacts'].pop(measured)
     assert ({name: value for name, value in left.items() if name != 'metadata'}
             == {name: value for name, value in right.items() if name != 'metadata'})
     assert left['metadata']['report']['output_dir'] != right['metadata']['report']['output_dir']

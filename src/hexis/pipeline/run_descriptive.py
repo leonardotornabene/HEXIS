@@ -59,7 +59,7 @@ def run_pair(cfg, frames, cell, held, seed, *, resources=None):
         started = time.perf_counter()
         models[arm] = CTW(params).fit([stream['symbols'] for stream in train[arm]])
         measured[arm] = {'fit_seconds': time.perf_counter() - started,
-                         'peak_rss_bytes': scientific_run.peak_rss_bytes(),
+                         'peak_rss': scientific_run.peak_rss_bytes(),
                          'rss_method': scientific_run.RSS_METHOD,
                          'timer': 'time.perf_counter; seconds'}
     positions, arms = scores.pooled_score_core(evaluated['original'], evaluated['shuffled'],
@@ -69,7 +69,7 @@ def run_pair(cfg, frames, cell, held, seed, *, resources=None):
     if resources is not None:
         resources.update({arm: {**measured[arm],
                                 'evaluation_seconds': arms.attrs['evaluation_seconds'][arm],
-                                'peak_rss_bytes': scientific_run.peak_rss_bytes()}
+                                'peak_rss': scientific_run.peak_rss_bytes()}
                           for arm in scores.ARMS})
     coordinates = frames['coordinates.parquet']
     eligible = coordinates[coordinates['variant'].eq(variant)
@@ -104,8 +104,8 @@ def run_pair(cfg, frames, cell, held, seed, *, resources=None):
         'ledger_rows': int(len(ledger)),
         'training': scientific_run.records(training),
         'fragments': scientific_run.records(sampling.fragment_metrics(ledger, depth)),
-        'shuffle': {population: {'changed_count': sum(s['changed_count'] for s in streams),
-                                 'total_count': sum(s['total_count'] for s in streams)}
+        'shuffle': {population: {name: sum(s[name] for s in streams)
+                                 for name in ('changed_symbol_slot_count', 'total_slot_count')}
                     for population, streams in (('training', train['shuffled']),
                                                 ('evaluation', evaluated['shuffled']))},
         'models': {arm: {'fingerprint': models[arm].fingerprint(),

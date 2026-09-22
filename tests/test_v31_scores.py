@@ -267,8 +267,8 @@ def test_shuffled_gain_is_not_automatically_zero_on_a_heterogeneous_pool():
     blocks = {'H': ['h1'], 'P1': ['p1'], 'P2': ['p2']}
     original, shuffled, test, test_shuffled = protocol(spec, blocks, 'P2', m=4, q=24)
 
-    changed = sum(s['changed_count'] for s in test_shuffled)
-    total = sum(s['total_count'] for s in test_shuffled)
+    changed = sum(s['changed_symbol_slot_count'] for s in test_shuffled)
+    total = sum(s['total_slot_count'] for s in test_shuffled)
     assert 0 < changed < total  # §7: an explicit denominator, no resampling for change
 
     positions, _ = scores.score_streams(test, test_shuffled, model_original=original,
@@ -447,7 +447,7 @@ def test_evaluation_diagnostics_count_valid_and_null_resolved_means():
 
     totals = per_arm.groupby('arm').sum(numeric_only=True)
     assert totals.loc['shuffled', 'resolved_valid_count'] == 0
-    assert totals.loc['shuffled', 'resolved_null_count_no_resolved_mass'] == 6
+    assert totals.loc['shuffled', 'resolved_null_count_by_reason_no_resolved_mass'] == 6
     assert totals.loc['shuffled', 'sum_unseen_mass'] == pytest.approx(6.0)
     assert totals.loc['shuffled', 'root_unseen_target_count'] == 6  # empty training observes nothing
     assert totals.loc['original', 'resolved_valid_count'] == 6
@@ -461,7 +461,7 @@ def test_evaluation_diagnostics_count_valid_and_null_resolved_means():
     assert null['L'] is None and null['reason'] == 'no_resolved_mass'
     assert null['unseen'] == pytest.approx(1.0)
 
-    observed = [column for column in per_arm.columns if column.startswith('observed_mass_')]
+    observed = [column for column in per_arm.columns if column.startswith('sum_observed_mass_by_length_')]
     assert len(observed) == 9  # ℓ = 0..D
     assert per_arm[per_arm['arm'].eq('original')][observed].to_numpy().sum() \
         + totals.loc['original', 'sum_unseen_mass'] == pytest.approx(6.0, abs=1e-12)

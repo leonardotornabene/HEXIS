@@ -126,7 +126,7 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                             'test_retired_stages_declare_their_retirement_and_refuse_to_run',
                             'test_the_descriptive_path_imports_no_retired_scientific_module',
                             'test_the_documented_command_lines_run_the_whole_toy_campaign'],
- 'test_v31_completion.py': ['test_scientific_identity_verifies_the_present_lock', 'test_model_keys_reject_noninteger_seed_without_coercion', 'test_zero_target_documents_keep_both_bands_and_null_reasons', 'test_per_model_resources_are_measured_and_kept_out_of_deterministic_artifacts', 'test_resume_rejects_invalid_artifact_families_and_model_arms', 'test_resume_rejects_semantically_corrupt_sums_even_after_rehashing', 'test_resource_records_are_complete_valid_and_bound_to_model_keys'],
+ 'test_v31_completion.py': ['test_scientific_identity_verifies_the_present_lock', 'test_model_keys_reject_noninteger_seed_without_coercion', 'test_zero_target_documents_keep_both_bands_and_null_reasons', 'test_per_model_resources_are_measured_and_kept_out_of_deterministic_artifacts', 'test_resume_rejects_invalid_artifact_families_and_model_arms', 'test_resume_rejects_semantically_corrupt_sums_even_after_rehashing', 'test_resource_records_are_complete_valid_and_bound_to_model_keys', 'test_diagnostics_carry_the_report_contract_names'],
  'test_v31_validation_run.py': ['test_acceptance_checks_actual_junit_collection_and_process',
                                 'test_acceptance_rejects_vacuity_skip_and_failure',
                                 'test_validation_cli_requires_both_directories_and_protects_raw',

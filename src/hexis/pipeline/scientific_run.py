@@ -340,11 +340,11 @@ def validate_run(output, *, locked=False) -> dict:
             measurements = manifest['metadata'].get('descriptive', {}).get('models', [])
             resource_keys = []
             for row in measurements:
-                if (set(row) != {'key', 'fit_seconds', 'evaluation_seconds', 'peak_rss_bytes',
+                if (set(row) != {'key', 'fit_seconds', 'evaluation_seconds', 'peak_rss',
                                  'rss_method', 'timer'}
                         or any(type(row[field]) not in (int, float) or not math.isfinite(row[field])
                                or row[field] < 0 for field in ('fit_seconds', 'evaluation_seconds'))
-                        or type(row['peak_rss_bytes']) is not int or row['peak_rss_bytes'] <= 0
+                        or type(row['peak_rss']) is not int or row['peak_rss'] <= 0
                         or row['rss_method'] != RSS_METHOD or row['timer'] != 'time.perf_counter; seconds'):
                     raise ValueError('resources: invalid model measurement or units')
                 resource_keys.append(tuple(row['key']))
@@ -500,7 +500,7 @@ def peak_rss_bytes():
     return int(measured * (1 if sys.platform == 'darwin' else 1024))
 
 
-RSS_METHOD = 'resource.getrusage(RUSAGE_SELF).ru_maxrss; process lifetime high-water mark'
+RSS_METHOD = 'resource.getrusage(RUSAGE_SELF).ru_maxrss in bytes; process lifetime high-water mark'
 
 
 def stage_metadata(stage, *, corpus_dir, output_dir, started, **extra) -> dict:
@@ -516,5 +516,5 @@ def stage_metadata(stage, *, corpus_dir, output_dir, started, **extra) -> dict:
                     'implementation_commit': git('rev-parse', 'HEAD'),
                     'tracked_dirty': bool(git('status', '--porcelain', '--untracked-files=no')),
                     'resources': {'wall_seconds': time.perf_counter() - started,
-                                  'peak_rss_bytes': peak_rss_bytes(), 'rss_method': RSS_METHOD},
+                                  'peak_rss': peak_rss_bytes(), 'rss_method': RSS_METHOD},
                     **extra}}

@@ -256,6 +256,18 @@ def shuffle_streams(streams, *, seed, held, purpose) -> list:
     return shuffled
 
 
+def training_metrics(ledger, sequences, *, blocks, variant) -> pd.DataFrame:
+    """Streams and tokens per contributor, beside the primary tokens it could give (§5.1)."""
+    frame = sequences[sequences['variant'].eq(variant) & sequences['role'].eq('primary')]
+    kept = frame.groupby(frame['doc_id'].astype(str))['encoded_length'].sum()
+    training = ledger.assign(tokens=ledger['end'] - ledger['start']).groupby(
+        ['block', 'block_key'], sort=True, as_index=False).agg(
+        streams=('sent_id', 'size'), tokens=('tokens', 'sum'))
+    training['available'] = [int(sum(int(kept.get(doc, 0)) for doc in blocks[name]))
+                             for name in training['block']]
+    return training
+
+
 def fragment_metrics(ledger, depth) -> pd.DataFrame:
     """The four cut quantities §5.2 requires per contributor, shared by both arms."""
     depth = _index(depth, 'depth', minimum=1)

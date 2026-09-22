@@ -19,6 +19,9 @@ def partition(tmp_path):
     cfg = yaml.safe_load(toy_config(tmp_path).read_text())
     frames = toy_frames()
     record, positions = run_descriptive.run_pair(cfg, frames, cfg['cells'][0], 'ALPHA', 0)
+    ledger = record['sample_ledger']
+    record['sample_ledger'] = scientific_run.ledger_name(record['ledger_sha256'])
+    (tmp_path / record['sample_ledger']).write_text(json.dumps(ledger))
     key = (record['cell'], record['held_block_key'], record['seed'])
     manifest = {'keys': {'pair': [key], 'model': [(*key, arm) for arm in scores.ARMS]}}
     return tmp_path, cfg, frames, record, positions, manifest
@@ -36,7 +39,7 @@ def validate(case):
     'missing_arm', 'extra_sum', 'denominator', 'fractional_count', 'bool_count', 'nan_sum',
     'negative_sum', 'valid_count', 'mass', 'resolved', 'unseen', 'model_arm', 'variant',
     'position_duplicate', 'position_nan', 'position_symbol', 'model_histogram',
-    'training_tokens', 'shuffle_denominator'])
+    'training_tokens', 'shuffle_denominator', 'training', 'fragments'])
 def test_partition_semantic_corruption_is_rejected(partition, fault):
     _, _, _, record, positions, _ = partition
     sums, arm = record['document_sums'][0], record['arm_diagnostics'][0]
@@ -65,6 +68,8 @@ def test_partition_semantic_corruption_is_rejected(partition, fault):
     elif fault == 'model_histogram': record['models']['original']['support_histogram_1_2to4_5to9_10plus_by_depth'][0]['1'] += 1
     elif fault == 'training_tokens': record['models']['original']['training_tokens'] += 1
     elif fault == 'shuffle_denominator': record['shuffle']['evaluation']['total_slot_count'] += 1
+    elif fault == 'training': record['training'][0]['tokens'] += 5
+    elif fault == 'fragments': record['fragments'][0]['fragment_tokens'] += 1
     with pytest.raises(ValueError) as error: validate(partition)
     assert str(error.value)
 

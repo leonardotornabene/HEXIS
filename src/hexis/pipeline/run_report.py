@@ -22,7 +22,7 @@ import pandas as pd
 from hexis.contracts import compare, digest, load_contracts
 from hexis.model import diagnostics
 from hexis.pipeline import scientific_run, validation_run
-from hexis.protocols import r1, scores
+from hexis.protocols import r1, sampling, scores
 
 KEY_COLUMNS = ('cell', 'variant', 'held_block', 'held_block_key', 'seed')
 RECORD_FIELDS = (*KEY_COLUMNS, 'q', 'depth', 'm', 'a_per_symbol', 'rho', 'min_available_past',
@@ -179,6 +179,7 @@ def validate_partitions(output, manifest, cfg, frames):
     Keys/counts are exact; CE reconstruction uses §6.5's 1e-9 bit/target.
     Diagnostic sums allow 1e-12 per contributing position for summation roundoff.
     """
+    output = Path(output)
     published = scientific_run.key_sets(manifest['keys'])
     expected = expected_keys(cfg)
     if not published['pair'] <= set(expected['pair']):
@@ -199,6 +200,17 @@ def validate_partitions(output, manifest, cfg, frames):
                              'min_available_past': cfg['min_available_past'], 'arms': list(scores.ARMS)}.items():
             if type(record[field]) is not type(value) or record[field] != value:
                 raise ValueError(f'{field}: partition differs from configuration')
+        if record['sample_ledger'] != scientific_run.ledger_name(record['ledger_sha256']):
+            raise ValueError('sample_ledger: name does not match its digest')
+        rows = scientific_run._read_json(output / record['sample_ledger'])
+        if digest(rows) != record['ledger_sha256'] or len(rows) != record['ledger_rows']:
+            raise ValueError(f"{record['sample_ledger']}: ledger digest or cardinality mismatch")
+        ledger = pd.DataFrame(rows, columns=list(sampling.LEDGER_COLUMNS))
+        # §11.5: the training and fragment summaries the report reads are recomputed, never trusted.
+        compare(record['training'], scientific_run.records(sampling.training_metrics(
+            ledger, frames['sequences.parquet'], blocks=blocks, variant=cell['variant'])), 'training')
+        compare(record['fragments'], scientific_run.records(
+            sampling.fragment_metrics(ledger, record['depth'])), 'fragments')
         positional = scientific_run.positions_name(record['cell'], record['held_block_key'], record['seed'])
         if record['positions'] != (positional if record['cell'] == REFERENCE_CELL else None):
             raise ValueError('positions: mandatory in C0 and forbidden in sensitivities')
@@ -294,7 +306,7 @@ def validate_partitions(output, manifest, cfg, frames):
             elif (type(model['delta_root_nats_stop_minus_split']) not in (int, float)
                   or not math.isfinite(model['delta_root_nats_stop_minus_split'])
                   or model['delta_root_reason'] is not None):
-                raise ValueError('invalid delta_root')
+                raise ValueError('invalid delta_root_nats_stop_minus_split')
         if record['positions'] is not None:
             positions, eligible = check_positions(output, record, cfg, coordinates)
             joined = scores.pair_positions(positions, eligible[['slot_uid', 'doc_id', 'available_past']])

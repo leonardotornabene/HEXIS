@@ -171,7 +171,9 @@ def test_empty_training_is_a_valid_core_case(streams):
     assert max(abs(model.root_distribution() - uniform)) <= 1e-12
     mixture = model.mixture([3, 4])
     assert mixture.weights == () and mixture.unseen_mass == 1.0
-    assert model.diagnostics()['nodes'] == 1
+    diagnostics = model.diagnostics()  # §9.1 counts observed nodes: an empty root is not one
+    assert diagnostics['nodes'] == 0 and diagnostics['node_count_by_structural_depth'] == [0]
+    assert sum(diagnostics['support_histogram_1_2to4_5to9_10plus_by_depth'][0].values()) == 0
 
 
 def test_zero_depth_is_a_forced_root_leaf():

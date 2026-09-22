@@ -220,7 +220,7 @@ class CTW:
         root = self._root
         by_depth, histograms, level = [], [], [root]
         while level:
-            by_depth.append(len(level))
+            by_depth.append(sum(1 for node in level if node.total))  # §9.1: observed nodes only
             histogram = dict.fromkeys(('1', '2to4', '5to9', '10plus'), 0)
             for node in level:
                 if node.total:

@@ -25,13 +25,6 @@ from hexis.protocols import sampling, scores
 POSITION_CELL = 'C0'  # §11.4: positional persistence in C0 alone
 
 
-def available_tokens(sequences, blocks, variant) -> dict:
-    """Encoded primary tokens each block can contribute to a training sample (§5.2)."""
-    frame = sequences[sequences['variant'].eq(variant) & sequences['role'].eq('primary')]
-    kept = frame.groupby(frame['doc_id'].astype(str))['encoded_length'].sum()
-    return {name: int(sum(int(kept.get(doc, 0)) for doc in docs)) for name, docs in blocks.items()}
-
-
 def run_pair(cfg, frames, cell, held, seed, *, resources=None):
     """One (cell, fold, seed): sample once, fit both arms, score the coupled slots.
 
@@ -89,11 +82,6 @@ def run_pair(cfg, frames, cell, held, seed, *, resources=None):
     # the document dimension away here would lose it for good (§14.3, 1.540 logical rows).
     arm_sums = (arms.drop(columns=['sent_id']).groupby(['doc_id', 'arm', 'past_band'], sort=True,
                                                        as_index=False).sum())
-    lengths = ledger.assign(tokens=ledger['end'] - ledger['start'])
-    training = lengths.groupby(['block', 'block_key'], sort=True, as_index=False).agg(
-        streams=('sent_id', 'size'), tokens=('tokens', 'sum'))
-    pool = available_tokens(sequences, blocks, variant)
-    training['available'] = [pool[name] for name in training['block']]
     sample_ledger = scientific_run.records(ledger)
     record = {
         'cell': cell['id'], 'variant': variant, 'held_block': held, 'held_block_key': held_key,
@@ -102,7 +90,8 @@ def run_pair(cfg, frames, cell, held, seed, *, resources=None):
         'min_available_past': int(cfg['min_available_past']), 'arms': list(scores.ARMS),
         'ledger_sha256': digest(sample_ledger), 'sample_ledger': sample_ledger,
         'ledger_rows': int(len(ledger)),
-        'training': scientific_run.records(training),
+        'training': scientific_run.records(sampling.training_metrics(
+            ledger, sequences, blocks=blocks, variant=variant)),
         'fragments': scientific_run.records(sampling.fragment_metrics(ledger, depth)),
         'shuffle': {population: {name: sum(s[name] for s in streams)
                                  for name in ('changed_symbol_slot_count', 'total_slot_count')}

@@ -589,9 +589,8 @@ def test_report_refuses_a_second_emission_and_a_partition_added_after_it(tmp_pat
 def test_evidence_must_be_recorded_under_the_code_and_lock_of_this_run(tmp_path):
     config, corpus, output = campaign(tmp_path)
     manifest = describe(config, corpus, output, '--cell', 'all')
-    # §14.2 step 2 names V0-V3; this validator requires V0 and V1, the two a run records for
-    # itself. The pin is deliberate and is held against what a published run actually carries,
-    # so a stage that begins recording V2 fails here until EVIDENCE_STEPS follows it.
+    # §14.2 step 2 names V0-V3; the descriptive stage records V0/V1 for itself, while V2/V3
+    # come from `validation_run` and are recomputed wherever they are read.
     assert scientific_run.EVIDENCE_STEPS == ('V0', 'V1')
     assert set(manifest['evidence']) == set(scientific_run.EVIDENCE_STEPS)
     assert manifest['evidence']['V1']['code'] == digest(manifest['run_contract']['code'])

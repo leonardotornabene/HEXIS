@@ -28,6 +28,6 @@ Diciassette documenti censiti: undici primari in sette blocchi, sei soltanto d'i
 
 ## Licenze e dati
 
-Codice sotto licenza MIT. I raw restano CC BY-NC-SA 2.5 e non vengono ridistribuiti da questo repository. Che cosa viene pubblicato dei derivati del corpus, e sotto quale licenza, è deciso dall'atto di pubblicazione in V3-002 e in nessun altro luogo: la licenza del codice non si estende né ai documenti né ai dati. [Bibliografia attiva](docs/BIBLIOGRAPHY.md).
+Tre licenze, per tre cose diverse (atto di pubblicazione in V3-002). Il **codice** — `src/`, `tests/`, configurazione e lock — è **MIT**. I **documenti dell'autore**, compresi i testi e i JSON del deposito, sono **CC BY 4.0**. Tutto ciò che **deriva dal corpus** — vettori per posizione, ledger con coordinate, aggregati — è **CC BY-NC-SA 2.5**, come la fonte, con attribuzione a UD Ancient Greek Perseus r2.18 al commit `37837c7a`: ShareAlike vincola l'adattamento alla licenza della fonte, e la licenza del codice non si estende né ai documenti né ai dati. I raw non vengono ridistribuiti da questo repository. [Bibliografia attiva](docs/BIBLIOGRAPHY.md).
 
 Python 3.12 via uv, con il lock conservato. Il research proposal 3.1 (§17.1) non è ancora depositato.

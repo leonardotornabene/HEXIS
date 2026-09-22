@@ -96,19 +96,20 @@ D2–D4 restano attuate da `0dc69b5`.
 **Atto di pubblicazione (§17.3).**
 - *Perimetro.* Tutti gli oggetti raggiungibili dal ramo e dai tag pubblicati che non sono già su `origin`: la storia successiva a `852644b`, non soltanto l'albero finale. Quanto sta fino a `852644b` compreso è pubblico dal push di `g1/pre-audit`.
 - *Codice* (`src/`, `tests/`, `conftest.py`, `pyproject.toml`, `uv.lock`): licenza MIT, [LICENSE](../LICENSE).
-- *Documenti del progetto e deposito contrattuale*, pubblicati byte per byte come depositati: licenza **[E2 — da decidere dal proprietario]**. La licenza del codice non si estende a documenti né a dati.
+- *Documenti del progetto e testi e JSON del deposito contrattuale*, pubblicati byte per byte come depositati: **CC BY 4.0**, con attribuzione a Leonardo Tornabene. Sono opera dell'autore e devono restare citabili in revisione. La licenza del codice non si estende né ai documenti né ai dati.
 - *Derivati del corpus UD Ancient Greek Perseus r2.18* (CC BY-NC-SA 2.5):
   - (a) **simboli per posizione:** `ctw_validation/pilot_positions_example.npz`, sha256 `738f0ccbe395a562cd47435f984474d6c2206dcac7757a38eb4b0c5575e89fec`, con 46.634 posizioni del pilot storico (`loss`, `root_loss`, `weighted_depth`, `matched_depth`, `unseen_weight`, `past`);
   - (b) **coordinate:** i 70 `ctw_validation/ledger_<cella>_B<k>.json`, con `sent_id` e intervalli dei campioni dei pilot, e le citazioni puntuali di `sent_id` in `hexis-verifica/evidenze/corpus_audit.json` e `audit_corpus.md`;
   - (c) **aggregati:** risultati dei pilot, conteggi, inventari e alfabeti dei contratti, conteggi fissati nei test.
 
-  I file (a) e (b) stanno in `HEXIS_v3_allegati/verifiche_CTW_precedenti.zip`, sha256 `85fce2a6462fd741b2cc5616aa85863ef4c25235a84b463da1e6c6e6e35f6198` (in `V3-001-deposit.json`). Lo stesso ZIP compare altre tre volte, identico, dentro gli ZIP del deposito. Il digest di ciascun file è in `ctw_validation/FILE_HASHES.json`, cioè fra i 103 digest interni verificati da V3-001 e ricontrollati il 22 settembre. Licenza dei derivati: **[E2]**, compatibile con la licenza della fonte.
+  I file (a) e (b) stanno in `HEXIS_v3_allegati/verifiche_CTW_precedenti.zip`, sha256 `85fce2a6462fd741b2cc5616aa85863ef4c25235a84b463da1e6c6e6e35f6198` (in `V3-001-deposit.json`). Lo stesso ZIP compare altre tre volte, identico, dentro gli ZIP del deposito. Il digest di ciascun file è in `ctw_validation/FILE_HASHES.json`, cioè fra i 103 digest interni verificati da V3-001 e ricontrollati il 22 settembre. Licenza dei derivati del corpus, categorie (a), (b) e (c): **CC BY-NC-SA 2.5**, la stessa della fonte, con attribuzione a UD Ancient Greek Perseus r2.18 al commit `37837c7a3c592c9563f8c51cc63344b87247f8a5` e ad AGDT/Perseus. Non è una scelta fra licenze possibili: ShareAlike impone a un adattamento la licenza della fonte e NonCommercial vieta l'uso che una licenza permissiva concederebbe, quindi dichiarare MIT su questi file sarebbe una promessa che l'autore non è in condizione di mantenere.
 - *Non pubblicati:* i raw (`data/raw` resta ignorato; `PROVENANCE.md` contiene soltanto hash e metadati d'acquisizione) e i run locali `results/hexis31/`.
-- *Efficacia:* al primo push, dopo che la decisione E2 è stata registrata in questo atto. Fino ad allora vale D1.
+- *Portata nel tempo:* l'atto copre soltanto ciò che esiste oggi. I vettori per posizione di C0 della campagna V4–V5, quando esisteranno, non sono compresi e richiedono un atto proprio.
+- *Efficacia:* al primo push. Prima del push resta da verificare con la sede editoriale che la clausola NonCommercial sia compatibile con i suoi materiali supplementari: dopo la pubblicazione non si ritira.
 
 **Decisioni.**
 - E1: il deposito resta intatto.
-- E2: licenza, da decidere dal proprietario prima del push.
+- E2: licenze decise il 22 settembre 2026 — MIT per il codice, CC BY 4.0 per i documenti dell'autore, CC BY-NC-SA 2.5 per i derivati del corpus.
 - E3: pubblicazione di tutto, per nome.
 - E4: il PDF v2 va in archivio senza sostituto.
 - E5: il ramo remoto `g1/pre-audit` si cancella dopo il merge, verificata l'ascendenza.

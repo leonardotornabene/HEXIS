@@ -74,7 +74,7 @@ uv run python -m hexis.pipeline.run_report --config config/default.yaml --corpus
 ## Obblighi aperti
 
 1. **Code review integrale**, sull'albero finale e sul diff `5f1ec06..HEAD`, con la [mappa dei test](TEST_INVENTORY.md) come ingresso.
-2. **Licenza dei derivati (E2)**: decisione del proprietario, da registrare in V3-002 prima del push.
+2. **Licenze**: decise ed espresse nell'atto (MIT / CC BY 4.0 / CC BY-NC-SA 2.5). Resta da verificare con la sede editoriale, prima del push, che la clausola NonCommercial sia compatibile con i suoi materiali supplementari.
 3. **Research proposal 3.1 (§17.1)**: non ancora depositato. In `docs/proposal/` esistono file locali non tracciati; tracciarli è una decisione separata, perché entrerebbero nel perimetro della pubblicazione.
 4. **V3–V5**: prova tecnica, campagna, report e figure, nell'ordine del §14.
 

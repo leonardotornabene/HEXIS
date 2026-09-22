@@ -43,7 +43,7 @@ Le attestazioni successive conservano il credito dei rispettivi commit. La chius
 | T24 | PARZIALE V1 | Censimento dei sei inventory_only; assenza training/scoring finale PENDING V5 |
 | T25 | PENDING V4 | Uguaglianza 490/980 chiavi modello/coppia |
 | T26 | V2 | Atomicità/interruzione, resume, corruzione, duplicati e chiavi extra: corpus (V1) e stage scientifico (V2) |
-| T27 | PENDING V5 | Ricostruzione score/diagnostiche e figure |
+| T27 | CODICE V2, ESECUZIONE PENDING V5 | Ricostruzione score/diagnostiche e cinque figure: codice e test su fixture in `559dc40`; esecuzione sui dati reali in V5 |
 | T28 | V0–V1 | Pipeline senza candidates/inferenza; accettazione senza skip |
 | T29 | PARZIALE V1 | Identità/round-trip corpus; CE/riproduzione modelli PENDING V5 |
 | T30 | PENDING V5 | Report scientifico completo |
@@ -239,3 +239,9 @@ M4/T22/T26/T27/T29: `test_v31_completion.py` e `test_v31_report_semantics.py` co
 - Prima di V3: le cinque figure §11.6 (T27), perché l'identità del codice copre tutto `src/hexis`. T25 resta V4; T24/T27/T29/T30 restano V5 come esecuzione e verifica.
 
 Accettazione sul codice `0a6f644`: **328 passed, 338 deselected**, zero skip/xfail. Suite completa: **649 passed, 17 skipped storici**.
+
+## Cinque figure §11.6 — 2026-09-22
+
+T27 (`559dc40`), `test_v31_figures.py` nell'inventario obbligatorio: le cinque figure con i nomi di `report_contract_v3.1.json`, SVG deterministici con il `run_id` e senza data, valori tracciati uguali a quelli delle tabelle (profili, D_Q, matrice R1, quote PART), colonne strutturate di `model_diagnostics.csv` in JSON canonico, nessun import di modello, campionatore, pipeline, `pyplot`, `stats` o `candidates` in `viz/plots.py`. L'identità fra due destinazioni copre anche le figure. Questo soddisfa l'obbligo «prima di V3» della sezione precedente; l'esecuzione sui dati reali resta V5.
+
+Accettazione sul codice `559dc40`: **332 passed, 338 deselected**, zero skip/xfail. Suite completa: **653 passed, 17 skipped storici**.

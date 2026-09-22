@@ -7,7 +7,7 @@ Do not silently deviate or regenerate expectations to make tests pass.
 
 V0–V2 are completed; V2 closure verified on 2026-09-22 (docs/HANDOFF.md),
 preserving prior synthetic evidence. V3–V5 are not attested. Code identity covers
-all of src/hexis, so the five §11.6 figures must be implemented before V3.
+all of src/hexis: the report tables and five §11.6 figures exist before V3.
 Stop for review before V3; no new real model fits in this tranche.
 The old v2.1 P1/P2 inference, Latin, O7 blocker, permutation constants, sign-stability,
 old sensitivities and gates G0–G7 are historical, not resolved retroactively.

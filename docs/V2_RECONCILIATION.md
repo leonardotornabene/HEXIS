@@ -19,7 +19,7 @@ Digest SHA-256 iniziali:
 | 2B — M4 | COMPLETATO | 302 v31 pass; 86 test mirati pass |
 | 2C — M5 | COMPLETATO — 482cef0 | V3 ricalcolato; inventario completo; meccanismo provato su fixture e sulla suite reale |
 | 3 — revisione integrale | COMPLETATO — f3f8a65, 5dc7d1b, 0a6f644 | Verifiche indipendenti; difetti corretti test-first |
-| 4 — chiusura | COMPLETATO | V2 chiusa; figure §11.6 da implementare prima di V3; arresto prima di V3 |
+| 4 — chiusura | COMPLETATO | V2 chiusa; figure §11.6 implementate (559dc40); arresto prima di V3 |
 
 La modifica dei test documentali sostituisce l'attesa di una dichiarazione generale non giustificata con la rettifica richiesta dall'utente; non indebolisce proprietà scientifiche.
 
@@ -59,7 +59,7 @@ Verifiche indipendenti nell'[handoff](HANDOFF.md). Correzioni, ciascuna con test
 - `5dc7d1b`, `training`/`fragments` ricalcolati dal ledger e nodi osservati (§9.1): `324 passed, 338 deselected`; `645 passed, 17 skipped`.
 - `0a6f644`, tabelle del report complete e confronto di rigenerazione §12.2: `328 passed, 338 deselected`; `649 passed, 17 skipped`.
 
-Resta prima di V3 l'implementazione delle cinque figure §11.6: l'identità del codice comprende tutto `src/hexis`.
+Restava prima di V3 l'implementazione delle cinque figure §11.6, perché l'identità del codice comprende tutto `src/hexis`: eseguita in `559dc40` (sezione 5).
 
 ## 4 — chiusura
 
@@ -77,3 +77,20 @@ Resolved 23 packages in 3ms
 ```
 
 V2 chiusa. Arresto per revisione prima di V3; nessun push.
+
+## 5 — figure §11.6
+
+Firme approvate dal proprietario, testo delle figure in inglese, SVG prodotti da `run_report` dalle stesse tabelle verificate. Test nuovi rossi sul codice precedente (`4 failed`), poi verdi; figure della fixture ispezionate visivamente e corrette per leggibilità. Corretta anche la serializzazione di `model_diagnostics.csv`, che scriveva l'istogramma dei supporti come repr Python. Commit `559dc40`, righe finali verbatim, tutti exit 0:
+
+```text
+uv run --frozen pytest -m v31 -q -p no:cacheprovider
+332 passed, 338 deselected in 162.20s (0:02:42)
+
+uv run --frozen pytest -q -p no:cacheprovider
+653 passed, 17 skipped in 168.70s (0:02:48)
+
+uv lock --check
+Resolved 23 packages in 3ms
+```
+
+Arresto per revisione prima di V3; nessun push.

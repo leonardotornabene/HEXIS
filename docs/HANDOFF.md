@@ -1,5 +1,24 @@
 # Handoff HEXIS 3.1 — V3-001 — riconciliazione V2
 
+## Figure §11.6 — 22 settembre 2026
+
+**V0–V2 completati; il codice necessario prima di V3 è completo; V3–V5 non attestati; nessun fit reale.** Il vincolo registrato nella chiusura V2 qui sotto è soddisfatto in `559dc40`: `viz/plots.py` sostituisce lo stub v2.1 con le cinque figure del contratto (`corpus_annotation`, `block_document_profiles`, `sensitivities_two_weights`, `R1`, `supports_mixture_masses`), disegnate soltanto dalle tabelle verificate e pubblicate da `run_report` come SVG deterministici, con testo in inglese. Nessuna figura calcola quantità proprie oltre l'aggregazione unica di `scores`/`diagnostics`; nessun intervallo inferenziale, solo min–max computazionali fra semi. La revisione ha corretto anche `model_diagnostics.csv`, che scriveva l'istogramma dei supporti come repr Python: le colonne strutturate sono ora JSON canonico. Firme approvate dal proprietario; verifiche su fixture, esecuzione reale in V5.
+
+Comandi sui byte di `559dc40`, righe finali verbatim, tutti exit 0:
+
+```text
+uv run --frozen pytest -m v31 -q -p no:cacheprovider
+332 passed, 338 deselected in 162.20s (0:02:42)
+
+uv run --frozen pytest -q -p no:cacheprovider
+653 passed, 17 skipped in 168.70s (0:02:48)
+
+uv lock --check
+Resolved 23 packages in 3ms
+```
+
+Commit soltanto locali, nessun push. Arresto per revisione prima di V3.
+
 ## Chiusura V2 — 22 settembre 2026
 
 **V0–V2 completati; V3–V5 non attestati; nessun nuovo fit reale.** Questa sezione chiude i residui M1–M5 della rettifica del 18 settembre, che resta come storia, dopo la revisione integrale richiesta prima di V3. Codice di chiusura `0a6f644`, dopo `482cef0`, `f3f8a65` e `5dc7d1b`; il commit documentale che contiene questa sezione non cita se stesso. Commit soltanto locali, nessun push.

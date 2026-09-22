@@ -484,7 +484,8 @@ def test_heterogeneous_pool_keeps_local_dependence_after_shuffling():
 
 
 def test_module_imports_no_retired_v21_helper():
-    """registry.py/sequences.py are v2.1 and are not part of the 3.1 pipeline."""
+    """The sampler reads the corpus and the contract, nothing else: the retired
+    registry and sequence helpers are in the archive and must not come back."""
     tree = ast.parse(Path(sampling.__file__).read_text(encoding='utf-8'))
     imported = set()
     for node in ast.walk(tree):

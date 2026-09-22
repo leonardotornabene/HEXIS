@@ -125,7 +125,7 @@ ed eseguibile a `5f1ec06`.
 | `tests/test_determinism.py::test_sha256_file_matches_hashlib` | migrato | test_v31_persistence.py::test_sha256_file_is_the_hash_of_the_bytes_on_disk |
 | `tests/test_determinism.py::test_write_manifest_central_path_and_refuses_overwrite` | sostituito | test_v31_persistence.py::test_destinations_with_existing_files_are_preserved |
 | `tests/test_determinism.py::test_write_manifest_refusal_is_atomic` | sostituito | test_v31_persistence.py::test_interrupted_write_never_publishes_stage |
-| `tests/test_determinism.py::test_write_sidecar_is_minimal_and_refuses_overwrite` | sostituito | niente sidecar in 3.1: un manifest per run (§11.7) |
+| `tests/test_determinism.py::test_write_sidecar_is_minimal_and_refuses_overwrite` | ritirato | niente sidecar in 3.1: un manifest per run (§11.7) |
 | `tests/test_docs_consistency.py::test_every_item_is_inside_a_lettered_section` | archiviato | coerenza fra i due documenti G1; l'identità delle istruzioni è migrata |
 | `tests/test_docs_consistency.py::test_neither_document_numbers_an_item_twice` | archiviato | coerenza fra i due documenti G1; l'identità delle istruzioni è migrata |
 | `tests/test_docs_consistency.py::test_only_the_owner_ratified_technical_items_are_closed` | archiviato | coerenza fra i due documenti G1; l'identità delle istruzioni è migrata |
@@ -339,9 +339,8 @@ ed eseguibile a `5f1ec06`.
 | `tests/test_tree_slices.py::test_depth1_nodes_equal_smoothed_bigram` | archiviato | scaffold v2.1, sempre skip; radice e profondità 1 sono in test_v31_context_tree.py |
 | `tests/test_tree_slices.py::test_evaluate_on_train_consistency` | archiviato | scaffold v2.1, sempre skip; radice e profondità 1 sono in test_v31_context_tree.py |
 | `tests/test_tree_slices.py::test_root_equals_add_beta_unigram` | archiviato | scaffold v2.1, sempre skip; radice e profondità 1 sono in test_v31_context_tree.py |
-
 Riepilogo: 270 funzioni non `v31` a `5f1ec06` — 11 v31 sul posto, 22 migrate, 50 coperte,
-15 sostituite, 2 ritirate e 170 archiviate col loro codice.
+14 sostituite, 3 ritirate e 170 archiviate col loro codice.
 
 ## Obblighi residui
 

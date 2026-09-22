@@ -112,7 +112,7 @@ def check_keys(cfg, produced=None, *, docs=None, arm=None):
     they exist only once the partitions are aggregated, so the document/band
     family is checked in a second call once those two frames are built.
     `scores.aggregate` keeps only the documents actually present in the scored
-    positions, while `score_streams` pre-seeds a total for every evaluated
+    positions, while `pooled_score_core` pre-seeds a total for every evaluated
     `sent_id` before it ever walks an eligible position — a document contributing
     zero eligible slots silently vanishes from the first table and not the
     second, and nothing else cross-checks them (§14.2 step 3).

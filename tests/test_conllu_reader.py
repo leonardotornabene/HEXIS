@@ -35,7 +35,7 @@ def test_malformed_row_raises_parse_error_with_location(conllu_samples):
 def test_missing_sent_id_raises_parse_error(conllu_samples):
     with pytest.raises(conllu_reader.ParseError) as exc:
         list(conllu_reader.iter_sentences(conllu_samples["missing_sent_id"]))
-    assert exc.value.sent_id is None  # violation precedes sent_id availability (D54 iv)
+    assert exc.value.sent_id is None  # the violation precedes sent_id availability
 
 
 def test_id_order_preserved(conllu_samples):
@@ -65,7 +65,7 @@ def test_mwt_range_and_empty_nodes_removed(conllu_samples):
 def test_punct_token_yielded_unchanged(conllu_samples):
     first = next(iter(conllu_reader.iter_sentences(conllu_samples["valid"])))
     puncts = [tok for tok in first if tok["upos"] == "PUNCT"]
-    assert len(puncts) == 1 and puncts[0]["form"] == "."  # representation blindness (D54 iii)
+    assert len(puncts) == 1 and puncts[0]["form"] == "."  # representation blindness
 
 
 def test_newdoc_id_recoverable_from_metadata(conllu_samples):

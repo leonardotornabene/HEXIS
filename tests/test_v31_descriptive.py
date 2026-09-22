@@ -36,8 +36,8 @@ LENGTHS = {'a': [9, 9, 9, 9], 'b': [9, 7, 6, 9], 'z': [8, 8]}
 BLOCKS = {'ALPHA': (['a'], 'HEX'), 'BETA': (['b'], 'PROSE_ALL')}
 TABLES = ('document_scores.csv', 'block_pairs.csv', 'aggregation_weights.csv', 'contrasts.csv',
           'seed_summaries.csv', 'sensitivity_pairs.csv', 'model_diagnostics.csv',
-          'arm_diagnostics.csv', 'root_distributions.csv', 'jsd_pairs.csv',
-          'jsd_centroids.csv', 'jsd_contributions.csv')
+          'arm_diagnostics.csv', 'fragment_diagnostics.csv', 'root_distributions.csv',
+          'jsd_pairs.csv', 'jsd_centroids.csv', 'jsd_contributions.csv')
 
 
 # --- toy corpus and toy contract ---------------------------------------------

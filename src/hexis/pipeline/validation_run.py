@@ -1,4 +1,5 @@
 """V0–V2 execution evidence in the scientific manifest; no real model fits."""
+import math
 import os
 import subprocess
 import sys
@@ -6,6 +7,9 @@ import tempfile
 import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
 
 from hexis.contracts import ROOT, compare, digest
 from hexis.manifest import sha256_file
@@ -15,6 +19,7 @@ BATTERY = 'tree_validation.json'
 PROCESS = 'v31_process.json'
 JUNIT = 'v31.junit.xml'
 ARTIFACTS = {BATTERY, PROCESS, JUNIT}
+REGENERATION_TOLERANCE = 1e-8  # §6.5 reproduction between platforms; identities, counts and keys exact
 
 
 def context(config, corpus_dir, contract):
@@ -197,3 +202,76 @@ def verify_technical(output, manifest, cfg, frames, *, scientific):
         raise ValueError('evidence V3: the seed-zero integration is not recorded')
     compare(manifest['evidence']['V3'],
             check_technical(output, manifest, cfg, frames, scientific=scientific), 'evidence V3')
+
+
+def _same(left, right, where):
+    """Exact on every identity, count, key and string; floats within the §6.5 tolerance."""
+    if type(left) is not type(right):
+        raise ValueError(f'{where}: {type(left).__name__} regenerated as {type(right).__name__}')
+    if isinstance(left, dict):
+        if left.keys() != right.keys():
+            raise ValueError(f'{where}: fields differ')
+        for key in left:
+            if key != 'fingerprint':  # hashes float bits: compared through the values it hashes
+                _same(left[key], right[key], f'{where}.{key}')
+    elif isinstance(left, list):
+        if len(left) != len(right):
+            raise ValueError(f'{where}: length differs')
+        for index, (a, b) in enumerate(zip(left, right)):
+            _same(a, b, f'{where}[{index}]')
+    elif isinstance(left, float):
+        if not math.isclose(left, right, rel_tol=REGENERATION_TOLERANCE, abs_tol=REGENERATION_TOLERANCE):
+            raise ValueError(f'{where}: {left!r} regenerated as {right!r}')
+    elif left != right:
+        raise ValueError(f'{where}: {left!r} regenerated as {right!r}')
+
+
+def _regenerated(original, regenerated) -> str:
+    """One partition artifact: byte-identical, or equal within tolerance, or refused."""
+    if original.read_bytes() == regenerated.read_bytes():
+        return 'identical'
+    if original.suffix == '.parquet':
+        left, right = pd.read_parquet(original), pd.read_parquet(regenerated)
+        if list(left.columns) != list(right.columns) or len(left) != len(right):
+            raise ValueError(f'{original.name}: regenerated schema or cardinality differs')
+        for column in left.columns:
+            a, b = left[column].to_numpy(), right[column].to_numpy()
+            if (not np.allclose(a, b, rtol=REGENERATION_TOLERANCE, atol=REGENERATION_TOLERANCE, equal_nan=True)
+                    if pd.api.types.is_float_dtype(left[column]) else not (a == b).all()):
+                raise ValueError(f'{original.name}.{column}: regenerated values differ')
+    else:
+        _same(scientific_run._read_json(original), scientific_run._read_json(regenerated), original.name)
+    return 'within_tolerance'
+
+
+def compare_regeneration(campaign, regenerated, cfg, frames) -> dict:
+    """§12.2 (T27/T29): the seed-0 pairs regenerated in a distinct directory against the campaign.
+
+    Both runs are validated whole and share the run identity; the regenerated keys are exactly
+    the predefined seed-0 set. Every pair record, ledger and C0 positional partition is
+    byte-identical to the campaign's, or equal within the §6.5 reproduction tolerance with every
+    identity, count and key exact — a fingerprint hashes float bits, so it is then reported
+    through the values it hashes rather than required. Nothing here fits a model.
+    """
+    from hexis.pipeline import run_report
+    campaign, regenerated = Path(campaign), Path(regenerated)
+    if campaign.resolve() == regenerated.resolve():
+        raise ValueError('regeneration requires a distinct directory')
+    left, right = scientific_run.validate_run(campaign), scientific_run.validate_run(regenerated)
+    if left['run_id'] != right['run_id']:
+        raise ValueError('regeneration ran under another run identity')
+    expected = scientific_run.key_sets(technical_keys(cfg))
+    produced, published = scientific_run.key_sets(right['keys']), scientific_run.key_sets(left['keys'])
+    for kind in ('pair', 'model'):
+        if produced[kind] != expected[kind] or not expected[kind] <= published[kind]:
+            raise ValueError(f'regeneration: {kind} keys are not the seed-0 set of the campaign')
+    run_report.validate_partitions(regenerated, right, cfg, frames)
+    artifacts = {}
+    for key in sorted(expected['pair']):
+        name = scientific_run.pair_name(*key)
+        record = scientific_run._read_json(regenerated/name)
+        for artifact in (name, record['sample_ledger'], *([record['positions']] if record['positions'] else [])):
+            artifacts[artifact] = _regenerated(campaign/artifact, regenerated/artifact)
+    return {'run_id': left['run_id'], 'pair_count': len(expected['pair']),
+            'model_count': len(expected['model']), 'tolerance': REGENERATION_TOLERANCE,
+            'artifacts': artifacts}

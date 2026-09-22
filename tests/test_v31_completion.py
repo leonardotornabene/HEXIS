@@ -150,3 +150,122 @@ def test_diagnostics_carry_the_report_contract_names(tmp_path):
     for population in ('training', 'evaluation'):
         assert missing(aggregate['shuffle'], set(record['shuffle'][population]) | docs) == []
     assert missing(contract['model_diagnostics'], set(pd.read_csv(output/'model_diagnostics.csv').columns)) == []
+
+
+def test_report_summarizes_every_level_and_pairs_sensitivities_per_block_and_seed(tmp_path):
+    """§8.2/§10/§5.1/§11.5, each recomputed here from the per-seed tables of the same report."""
+    import numpy as np
+    from hexis.protocols import scores
+    from test_v31_descriptive import cell
+    blocks = {'ALPHA': (['a'], 'HEX'), 'BETA': (['b'], 'PROSE_ALL'), 'GAMMA': (['c'], 'PROSE_ALL')}
+    config, corpus, output = campaign(tmp_path, blocks=blocks, lengths={**LENGTHS, 'c': [9, 8, 7]},
+                                      cells=[cell('C0', q=12, seeds=(0, 1)), cell('tiny', q=6, seeds=(0, 1))])
+    describe(config, corpus, output, '--cell', 'all')
+    report(config, corpus, output)
+    summaries, pairs = pd.read_csv(output/'seed_summaries.csv'), pd.read_csv(output/'sensitivity_pairs.csv')
+    block_rows, docs = pd.read_csv(output/'block_pairs.csv'), pd.read_csv(output/'document_scores.csv')
+    assert set(summaries['level']) == {'group', 'block', 'document', 'group_difference', 'block_difference'}
+
+    def summary(**where):
+        rows = summaries[np.logical_and.reduce([summaries[key].eq(value) for key, value in where.items()])]
+        assert len(rows) == 1
+        return rows.iloc[0]
+
+    def block_q(name):
+        rows = block_rows[block_rows.cell.eq(name) & block_rows.held_block.eq('ALPHA') & block_rows.past_band.eq('all')]
+        return rows.set_index('seed')['q'].sort_index()
+
+    expected = scores.seed_summary(block_q('C0'))
+    row = summary(cell='C0', level='block', unit='ALPHA', past_band='all', metric='q')
+    assert [row[f] for f in ('mean', 'sd', 'min', 'max', 'S')] == pytest.approx(
+        [expected[f] for f in ('mean', 'sd', 'min', 'max', 'S')], abs=1e-12)
+    part = docs[docs.cell.eq('C0') & docs.doc_id.eq('b')].groupby('seed')[
+        ['n', 'sum_loss_ctw_original', 'sum_loss_root_original', 'sum_loss_ctw_shuffled', 'sum_loss_root_shuffled']].sum()
+    q = ((part.sum_loss_root_original - part.sum_loss_ctw_original)
+         - (part.sum_loss_root_shuffled - part.sum_loss_ctw_shuffled)) / part.n
+    assert summary(cell='C0', level='document', unit='b', past_band='all', metric='q')['mean'] == pytest.approx(q.mean(), abs=1e-12)
+
+    difference = block_q('tiny') - block_q('C0')
+    rows = pairs[pairs.cell.eq('tiny') & pairs.level.eq('block') & pairs.unit.eq('ALPHA')
+                 & pairs.past_band.eq('all') & pairs.metric.eq('q')].set_index('seed').sort_index()
+    assert list(rows.index) == [0, 1] and (rows['reference'] == 'C0').all()
+    assert rows['difference'].to_numpy() == pytest.approx(difference.to_numpy(), abs=1e-12)
+    assert summary(cell='tiny', level='block_difference', unit='ALPHA', past_band='all',
+                   metric='q')['mean'] == pytest.approx(difference.mean(), abs=1e-12)
+
+    weights = pd.read_csv(output/'aggregation_weights.csv').drop_duplicates(['cell', 'seed', 'block']).set_index(
+        ['cell', 'seed', 'block'])
+    shares = ['fold_share_HEX', 'fold_share_PROSE_ALL', 'fold_share_own_group']
+    assert list(weights.loc[('C0', 0, 'ALPHA'), shares]) == [0.0, 1.0, 0.0]  # §5.1: HEX test, prose training
+    assert list(weights.loc[('C0', 0, 'BETA'), shares]) == [0.5, 0.5, 0.5]
+    assert weights.loc[('C0', 0, 'BETA'), 'fold_training_tokens'] == 24
+
+    fragments = pd.read_csv(output/'fragment_diagnostics.csv')
+    assert len(fragments) == 2 * 3 * 2 * 2  # cells x folds x seeds x contributors
+    metrics = ['fragment_count', 'internal_start_count', 'fragment_tokens', 'direct_context_targets']
+    for path in sorted(output.glob('pair__*.json')):
+        record = json.loads(path.read_text())
+        rows = fragments[fragments.cell.eq(record['cell']) & fragments.held_block_key.eq(record['held_block_key'])
+                         & fragments.seed.eq(record['seed'])]
+        assert rows[['contributor', *metrics]].to_dict('records') == [
+            {'contributor': row['block'], **{name: row[name] for name in metrics}} for row in record['fragments']]
+
+
+def test_empty_document_summaries_stay_null_with_their_reason(tmp_path):
+    config, corpus, output = campaign(
+        tmp_path, blocks={'ALPHA': (['a', 'short'], 'HEX'), 'BETA': (['b'], 'PROSE_ALL')},
+        lengths={**LENGTHS, 'short': [0, 3]})
+    describe(config, corpus, output)
+    report(config, corpus, output)
+    summaries = pd.read_csv(output/'seed_summaries.csv')
+    empty = summaries[summaries.level.eq('document') & summaries.unit.eq('short')]
+    assert len(empty) == 2 * 3 * 7  # cells x (two bands and the total) x metrics
+    assert (empty['reason'] == 'empty_bucket').all() and empty[['mean', 'min', 'max']].isna().all().all()
+
+
+def test_seed_zero_regeneration_is_compared_and_recorded_by_the_report(tmp_path):
+    from hexis.pipeline import validation_run
+    from test_v31_descriptive import cell
+    config, corpus, output = campaign(tmp_path, cells=[cell('C0', q=12, seeds=(0, 1)), cell('tiny', q=6, seeds=(0, 1))])
+    describe(config, corpus, output, '--cell', 'all')
+    regenerated = tmp_path/'regenerated'
+    describe(config, corpus, regenerated, '--seed', '0')
+    cfg, frames = yaml.safe_load(config.read_text()), scientific_run.load_corpus(corpus)[1]
+    result = validation_run.compare_regeneration(output, regenerated, cfg, frames)
+    assert result['pair_count'] == 4 and result['model_count'] == 8
+    assert set(result['artifacts'].values()) == {'identical'}
+    assert {name.split('__')[0] for name in result['artifacts']} == {'pair', 'sample_ledger', 'positions'}
+    with pytest.raises(ValueError, match='distinct') as error:
+        validation_run.compare_regeneration(output, output, cfg, frames)
+    assert str(error.value)
+
+    name = min(name for name in result['artifacts'] if name.startswith('pair__'))
+    manifest = json.loads((regenerated/'manifest.json').read_text())
+
+    def rewrite(delta):  # a float the validator cannot reconstruct, moved from the campaign bytes
+        record = json.loads((output/name).read_text())
+        record['models']['original']['log_evidence'] += delta
+        corpus_run.write_artifact(regenerated/name, record)
+        manifest['artifacts'][name] = scientific_run.artifact_record(regenerated/name)
+        corpus_run.write_artifact(regenerated/'manifest.json', manifest)
+
+    rewrite(1e-12)
+    assert validation_run.compare_regeneration(output, regenerated, cfg, frames)['artifacts'][name] == 'within_tolerance'
+    rewrite(1e-6)
+    with pytest.raises(ValueError, match='log_evidence') as error:
+        validation_run.compare_regeneration(output, regenerated, cfg, frames)
+    assert str(error.value)
+    rewrite(0.0)
+    recorded = report(config, corpus, output, '--regenerated-dir', str(regenerated))['checks']['regeneration']
+    assert recorded == validation_run.compare_regeneration(output, regenerated, cfg, frames)
+
+
+def test_a_scientific_report_requires_the_seed_zero_regeneration(tmp_path, monkeypatch):
+    from hexis.pipeline import run_report
+    config, corpus, output = campaign(tmp_path)
+    cfg = yaml.safe_load(config.read_text())
+    monkeypatch.setattr(scientific_run, 'load_projection', lambda path, fixture: (cfg, True))
+    monkeypatch.setattr(scientific_run, 'load_corpus', lambda path: pytest.fail('the guard must come first'))
+    with pytest.raises(ValueError, match='regenerat') as error:
+        run_report.main(['--config', str(config), '--corpus-dir', str(corpus), '--output-dir', str(output)])
+    assert '--regenerated-dir' in str(error.value)

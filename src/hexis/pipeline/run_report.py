@@ -30,11 +30,18 @@ RECORD_FIELDS = (*KEY_COLUMNS, 'q', 'depth', 'm', 'a_per_symbol', 'rho', 'min_av
                  'document_sums', 'arm_diagnostics', 'positions')
 TABLES = ('document_scores.csv', 'block_pairs.csv', 'aggregation_weights.csv', 'contrasts.csv',
           'seed_summaries.csv', 'sensitivity_pairs.csv', 'model_diagnostics.csv',
-          'arm_diagnostics.csv', 'root_distributions.csv', 'jsd_pairs.csv', 'jsd_centroids.csv',
-          'jsd_contributions.csv')
+          'arm_diagnostics.csv', 'fragment_diagnostics.csv', 'root_distributions.csv',
+          'jsd_pairs.csv', 'jsd_centroids.csv', 'jsd_contributions.csv')
 REFERENCE_CELL = 'C0'  # §11.5: sensitivities are paired against C0 on the same seeds
-SENSITIVITY_COLUMNS = ('cell', 'reference', 'aggregation', 'group', 'metric', 'seeds', 'mean', 'sd',
-                       'min', 'max', 'S')
+UNIT_COLUMNS = ('level', 'unit', 'aggregation', 'past_band')  # a group, block or document profile
+NOT_APPLICABLE = 'not_applicable'  # blocks and documents have no weighting choice (§8.2)
+SUMMARY_COLUMNS = ('cell', *UNIT_COLUMNS, 'metric', 'mean', 'sd', 'min', 'max', 'S', 'reason')
+PAIR_COLUMNS = ('cell', 'reference', *UNIT_COLUMNS, 'seed', 'metric', 'value', 'reference_value',
+                'difference')
+FOLD_COLUMNS = ('fold_training_tokens', f'fold_share_{scores.HEX}', f'fold_share_{scores.PROSE}',
+                'fold_share_own_group')
+FRAGMENT_COLUMNS = (*KEY_COLUMNS, 'contributor', 'contributor_key', 'fragment_count',
+                    'internal_start_count', 'fragment_tokens', 'direct_context_targets')
 CENTROID_COLUMNS = ('variant', 'group_a', 'group_b', 'blocks_a', 'blocks_b', 'jsd')
 RESOURCE_COLUMNS = ('fit_seconds', 'evaluation_seconds', 'peak_rss')  # §11.5; measured, never deterministic
 
@@ -435,8 +442,9 @@ def group_contrasts(blocks, groups) -> pd.DataFrame:
         ['cell', 'seed', 'aggregation', 'group', 'n', *scores.SCORE_COLUMNS]]
 
 
-def aggregation_weights(blocks, training, groups) -> pd.DataFrame:
-    """§11.5: the weight each block carries under both weightings, with its training quota."""
+def aggregation_weights(blocks, training, folds, groups) -> pd.DataFrame:
+    """§11.5: the weight each block carries under both weightings, beside its training quota and
+    the §5.1 group shares of the training of the fold that evaluates it."""
     rows = []
     registry = pd.DataFrame({'held_block': list(groups), 'group': list(groups.values())})
     annotated = scores.annotate_scores(blocks, registry, on='held_block')
@@ -446,9 +454,11 @@ def aggregation_weights(blocks, training, groups) -> pd.DataFrame:
         shares = frame.groupby(['cell', 'seed', 'group'])['weight'].transform('sum')
         rows.append(frame.assign(share=frame['weight'] / shares))
     weights = pd.concat(rows, ignore_index=True).rename(columns={'held_block': 'block'})
-    merged = weights.merge(training, on=['cell', 'block'], how='left', validate='many_to_one')
+    merged = weights.merge(training, on=['cell', 'block'], how='left', validate='many_to_one').merge(
+        folds, on=['cell', 'seed', 'block'], how='left', validate='many_to_one')
     return merged[['cell', 'seed', 'aggregation', 'block', 'held_block_key', 'group', 'n',
-                   'weight', 'share', 'training_tokens', 'available_tokens', 'training_share']]
+                   'weight', 'share', 'training_tokens', 'available_tokens', 'training_share',
+                   *FOLD_COLUMNS]]
 
 
 def training_quota(records) -> pd.DataFrame:
@@ -462,43 +472,84 @@ def training_quota(records) -> pd.DataFrame:
     return quota
 
 
-def seed_summaries(contrasts) -> pd.DataFrame:
-    """§8.2: aggregate per seed first, then mean, SD with S-1, min, max and S."""
-    melted = contrasts.melt(id_vars=['cell', 'seed', 'aggregation', 'group'],
-                            value_vars=list(scores.SCORE_COLUMNS), var_name='metric',
-                            value_name='value')
-    rows = [{'cell': cell, 'aggregation': aggregation, 'group': group, 'metric': metric,
-             **scores.seed_summary(part['value'])}
-            for (cell, aggregation, group, metric), part in
-            melted.groupby(['cell', 'aggregation', 'group', 'metric'], sort=True)]
-    return pd.DataFrame(rows)
-
-
-def sensitivity_pairs(contrasts) -> pd.DataFrame:
-    """§11.5: paired differences against C0 on the very same seeds, never on a changed set."""
-    melted = contrasts.melt(id_vars=['cell', 'seed', 'aggregation', 'group'],
-                            value_vars=list(scores.SCORE_COLUMNS), var_name='metric',
-                            value_name='value')
-    on = ['seed', 'aggregation', 'group', 'metric']
-    reference = melted[melted['cell'].eq(REFERENCE_CELL)].drop(columns='cell')
+def fold_training(records, groups) -> pd.DataFrame:
+    """§5.1: per fold, the share of training tokens from each group and from the test's own group."""
     rows = []
-    for cell, part in melted[melted['cell'].ne(REFERENCE_CELL)].groupby('cell', sort=True):
-        paired = part.drop(columns='cell').merge(reference, on=on, suffixes=('', '_reference'),
-                                                 validate='one_to_one')
-        if len(paired) != len(part):
-            raise ValueError(f'{cell}: {len(part) - len(paired)} rows have no {REFERENCE_CELL} '
+    for record in records:
+        tokens = pd.DataFrame(record['training'])
+        by_group = tokens.groupby(tokens['block'].map(groups))['tokens'].sum()
+        total = int(tokens['tokens'].sum())
+        rows.append({'cell': record['cell'], 'seed': record['seed'], 'block': record['held_block'],
+                     'fold_training_tokens': total,
+                     **{f'fold_share_{group}': int(by_group.get(group, 0)) / total
+                        for group in (scores.HEX, scores.PROSE)},
+                     'fold_share_own_group': int(by_group.get(groups[record['held_block']], 0)) / total})
+    return pd.DataFrame(rows, columns=['cell', 'seed', 'block', *FOLD_COLUMNS])
+
+
+def profiles(contrasts, blocks, docs) -> pd.DataFrame:
+    """§8.2: the per-seed value of every reported unit — group, block and document — in one frame.
+
+    Documents carry their two bands and their total, summed as the blocks' are (§11.5).
+    """
+    totals = scores.roll_up(docs, keys=[*KEY_COLUMNS, 'doc_id']).assign(past_band='all')
+    documents = scores.ce_gain_q(pd.concat([docs, totals[docs.columns]], ignore_index=True))
+    levels = (contrasts.assign(level='group', past_band='all').rename(columns={'group': 'unit'}),
+              blocks.assign(level='block', aggregation=NOT_APPLICABLE)
+              .rename(columns={'held_block': 'unit'}),
+              documents.assign(level='document', aggregation=NOT_APPLICABLE)
+              .rename(columns={'doc_id': 'unit'}))
+    return pd.concat([frame[['cell', 'seed', *UNIT_COLUMNS, *scores.SCORE_COLUMNS]]
+                      for frame in levels], ignore_index=True).melt(
+        id_vars=['cell', 'seed', *UNIT_COLUMNS], var_name='metric', value_name='value')
+
+
+def _summary(values) -> dict:
+    """§8.2 across seeds; a bucket empty in every seed stays null with its reason (§9.3)."""
+    values = pd.Series(values, dtype='float64')
+    if values.isna().all():
+        return {'mean': None, 'sd': None, 'min': None, 'max': None, 'S': len(values),
+                'reason': diagnostics.EMPTY_BUCKET}
+    if values.isna().any():
+        raise ValueError('a bucket is empty in some seeds only; the evaluated population is fixed')
+    return {**scores.seed_summary(values), 'reason': None}
+
+
+def seed_summaries(long) -> pd.DataFrame:
+    """§8.2 at every level: per seed first, then mean, SD with S-1, min, max and S — never an
+    SD or an extreme of a lower level."""
+    keys = ['cell', *UNIT_COLUMNS, 'metric']
+    rows = [{**dict(zip(keys, key)), **_summary(part['value'])}
+            for key, part in long.groupby(keys, sort=True)]
+    return pd.DataFrame(rows, columns=list(SUMMARY_COLUMNS))
+
+
+def sensitivity_pairs(long) -> pd.DataFrame:
+    """§10: paired differences per block/seed and per group/seed, against C0 on the very same
+    seeds — never on a changed set. Their summaries are rows of `seed_summaries`."""
+    paired = long[long['level'].isin(('group', 'block'))]
+    on = ['seed', *UNIT_COLUMNS, 'metric']
+    reference = paired[paired['cell'].eq(REFERENCE_CELL)].drop(columns='cell')
+    frames = []
+    for cell, part in paired[paired['cell'].ne(REFERENCE_CELL)].groupby('cell', sort=True):
+        joined = part.merge(reference, on=on, suffixes=('', '_reference'), validate='one_to_one')
+        if len(joined) != len(part):
+            raise ValueError(f'{cell}: {len(part) - len(joined)} rows have no {REFERENCE_CELL} '
                              'value on the same seed; a changed population is not a paired '
                              'comparison')
-        paired = paired.assign(difference=paired['value'] - paired['value_reference'])
-        for (aggregation, group, metric), block in paired.groupby(
-                ['aggregation', 'group', 'metric'], sort=True):
-            rows.append({'cell': cell, 'reference': REFERENCE_CELL, 'aggregation': aggregation,
-                         'group': group, 'metric': metric,
-                         'seeds': sorted(int(seed) for seed in block['seed']),
-                         **scores.seed_summary(block['difference'])})
-    frame = pd.DataFrame(rows, columns=list(SENSITIVITY_COLUMNS))
-    frame['seeds'] = frame['seeds'].map(lambda seeds: ' '.join(str(seed) for seed in seeds))
-    return frame
+        frames.append(joined.assign(reference=REFERENCE_CELL, reference_value=joined['value_reference'],
+                                    difference=joined['value'] - joined['value_reference']))
+    if not frames:
+        return pd.DataFrame(columns=list(PAIR_COLUMNS))
+    return pd.concat(frames, ignore_index=True)[list(PAIR_COLUMNS)]
+
+
+def fragment_diagnostics(records) -> pd.DataFrame:
+    """§5.2/§11.5: the cut quantities of every contributor of every pair, shared by both arms."""
+    frames = [pd.DataFrame(record['fragments'])
+              .rename(columns={'block': 'contributor', 'block_key': 'contributor_key'})
+              .assign(**{column: record[column] for column in KEY_COLUMNS}) for record in records]
+    return pd.concat(frames, ignore_index=True)[list(FRAGMENT_COLUMNS)]
 
 
 def model_diagnostics(records, resources) -> pd.DataFrame:
@@ -591,9 +642,14 @@ def main(argv=None):
     parser.add_argument('--output-dir', type=Path, required=True)
     parser.add_argument('--fixture', action='store_true',
                         help='declare a synthetic configuration; the report is not scientific')
+    parser.add_argument('--regenerated-dir', type=Path,
+                        help='the distinct seed-0 regeneration of §12.2; required for a scientific report')
     args = parser.parse_args(argv)
     started = time.perf_counter()
     cfg, deposited = scientific_run.load_projection(args.config, args.fixture)
+    if deposited and args.regenerated_dir is None:
+        raise ValueError('a scientific report verifies the §12.2 seed-0 regeneration (§14.2 step 6): '
+                         '--regenerated-dir is required')
     corpus, frames = scientific_run.load_corpus(args.corpus_dir)
     contract = scientific_run.run_contract(cfg, corpus)
     prior = scientific_run.read_prior(args.output_dir)
@@ -624,21 +680,30 @@ def main(argv=None):
     steps.append(5)
     blocks = block_pairs(docs)
     totals = blocks[blocks['past_band'].eq('all')]
-    contrasts = group_contrasts(totals, scientific_run.groups_of(cfg))
+    groups = scientific_run.groups_of(cfg)
+    contrasts = group_contrasts(totals, groups)
+    long = profiles(contrasts, blocks, docs)
+    pairs = sensitivity_pairs(long)
+    differences = pairs.assign(level=pairs['level'] + '_difference', value=pairs['difference'])
     tables.update({'document_scores.csv': scores.ce_gain_q(docs), 'block_pairs.csv': blocks,
                    'aggregation_weights.csv': aggregation_weights(
-                       totals, training_quota(records), scientific_run.groups_of(cfg)),
-                   'contrasts.csv': contrasts, 'seed_summaries.csv': seed_summaries(contrasts),
-                   'sensitivity_pairs.csv': sensitivity_pairs(contrasts),
+                       totals, training_quota(records), fold_training(records, groups), groups),
+                   'contrasts.csv': contrasts,
+                   'seed_summaries.csv': seed_summaries(
+                       pd.concat([long, differences[long.columns]], ignore_index=True)),
+                   'sensitivity_pairs.csv': pairs,
+                   'fragment_diagnostics.csv': fragment_diagnostics(records),
                    'model_diagnostics.csv': model_diagnostics(records, {
                        tuple(row['key']): row for row in prior['metadata']['descriptive']['models']}),
                    'arm_diagnostics.csv': arm})
+    regeneration = (None if args.regenerated_dir is None else validation_run.compare_regeneration(
+        args.output_dir, args.regenerated_dir, cfg, frames))
     steps.append(6)
     if sorted(tables) != sorted(TABLES):
         raise ValueError(f'report: {sorted(set(tables) ^ set(TABLES))} is not a declared table')
     checks = {'steps': steps, 'scientific': scientific, 'reported_partitions': len(records),
               'positional_partitions': len(positional),
-              'r1_pairs': int(len(tables['jsd_pairs.csv']))}
+              'r1_pairs': int(len(tables['jsd_pairs.csv'])), 'regeneration': regeneration}
     body = {'keys': prior['keys'], 'checks': checks, 'evidence': prior['evidence'],
             'metadata': scientific_run.stage_metadata('report', corpus_dir=args.corpus_dir,
                                                       output_dir=args.output_dir, started=started)}

@@ -137,7 +137,6 @@ def pooled_score_core(original, shuffled, *, model_original, model_shuffled,
 
 
 # Existing v3.1 callers use the same implementation, with no second scoring path.
-score_streams = pooled_score_core
 
 
 def annotate_scores(scores, registry, *, on='doc_id') -> pd.DataFrame:
@@ -262,23 +261,3 @@ def pair_positions(left, right, *, on='slot_uid', suffixes=('_left', '_right')) 
                          f'{len(only_right)} only on the right — a changed target population '
                          'is not a paired comparison')
     return left.merge(right, on=on, suffixes=suffixes, validate='one_to_one')
-
-
-# --- retired v2.1 scaffold ----------------------------------------------------
-# Not part of HEXIS 3.1. The retained core and annotation names above implement
-# §11.1; the protocol-(b)/(c) orchestration and learning curves below are retired.
-
-
-def delta_ce_scores(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame:
-    """Retired with protocol (b) (v2.1 Spec §4.2; not in the 3.1 design)."""
-    raise NotImplementedError
-
-
-def pooled_scores(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame:
-    """Retired v2.1 composition of the two stages above (D52(v))."""
-    raise NotImplementedError
-
-
-def learning_curves(registry, sequences, alphabet, cfg, rng) -> pd.DataFrame:
-    """Retired with figure F8 (v2.1 Spec §4.2; §11.6 admits no learning curve)."""
-    raise NotImplementedError

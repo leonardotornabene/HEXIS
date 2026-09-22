@@ -1,12 +1,14 @@
 """Shared V1 audit/encode runner, deterministic identity and atomic persistence."""
 import argparse
 import datetime
+import hashlib
 import json
 import io
 import os
 import platform
 import subprocess
 import tempfile
+from contextlib import contextmanager
 from pathlib import Path
 
 import pandas as pd
@@ -17,9 +19,95 @@ from hexis.config import load_v31_config
 from hexis.contracts import ROOT, BUNDLE, canonical_json, compare, digest, load_contracts
 from hexis.corpus import build_corpus, verify_corpus
 from hexis.manifest import sha256_file, _package_versions
-from hexis.pipeline.legacy_audit import staged_inputs, verify_inputs_unchanged, check_output_locations
 
 AUDIT_FILES = {'documents.csv','alphabets.json','source_audit.json','audit_summary.csv','audit_contingency.csv','audit_A.csv','exclusions.parquet'}
+
+
+# Moved unchanged from the historical audit stage (piano §13.2, "conservare difese
+# funzionanti"): the immutable-raw destination check and the input staging that
+# binds each digest to the bytes actually parsed.
+CANONICAL_DATA_ROOT = Path("data/raw")
+
+
+def check_output_locations(paths, *, data_root: Path) -> None:
+    """Reject every resolved destination inside either immutable raw-data root."""
+    roots = (
+        ("selected data root", Path(data_root).resolve()),
+        ("canonical data root", Path(CANONICAL_DATA_ROOT).resolve()),
+    )
+    for path in map(Path, paths):
+        resolved = path.resolve()
+        for label, root in roots:
+            if resolved == root or root in resolved.parents:
+                raise ValueError(
+                    f"output destination {path} resolves to {resolved}, inside the "
+                    f"{label} {root}: raw data is immutable"
+                )
+
+def _conllu_paths(data_root: Path) -> list[Path]:
+    return sorted(Path(data_root).rglob("*.conllu"))
+
+@contextmanager
+def staged_inputs(paths):
+    """Copy each input's bytes to a private directory and hash **those** bytes.
+
+    Yields ``(snapshot, staged)``: original path -> SHA-256, and original path ->
+    the copy to read.
+
+    Hashing a file and then reopening it to parse is not enough, however tight the
+    window looks and however carefully the digest is re-checked afterwards. The
+    defeating sequence is edit → parse → restore: both digests match the original
+    while the parse consumed something else, and the run publishes a report of
+    bytes its manifest does not describe. Comparing before and after cannot see
+    this, because there is nothing left to compare.
+
+    So the bytes are read once, the digest is taken of what was read, and the
+    parse consumes a copy no one else has a path to. Digest and content then
+    describe the same bytes by construction rather than by timing.
+    """
+    with tempfile.TemporaryDirectory(prefix="hexis-audit-") as tmp:
+        staging = Path(tmp)
+        snapshot: dict[Path, str] = {}
+        staged: dict[Path, Path] = {}
+        for index, original in enumerate(map(Path, paths)):
+            data = original.read_bytes()
+            snapshot[original] = hashlib.sha256(data).hexdigest()
+            # Index-prefixed so two inputs sharing a basename cannot collide.
+            copy = staging / f"{index:04d}_{original.name}"
+            copy.write_bytes(data)
+            staged[original] = copy
+        yield snapshot, staged
+
+def verify_inputs_unchanged(
+    snapshot: dict[Path, str], *, files, data_root: Path
+) -> None:
+    """Refuse to publish if the inputs moved under us — in any of three ways.
+
+    This is **not** what makes digest and content agree — `staged_inputs` does
+    that, by construction. What is left for this check is the operator's question:
+    did the corpus move while we were auditing it? A run whose sources were
+    **edited** or **removed** underneath it, or whose data root gained a **new**
+    `.conllu`, describes a state that no longer exists, and publishing that
+    silently would be its own kind of dishonesty.
+
+    So the data root is re-globbed as well as re-hashed. Checked before the first
+    write, so a failure publishes nothing.
+    """
+    problems = []
+    appeared = sorted(set(_conllu_paths(data_root)) - set(files))
+    if appeared:
+        problems.append(f"appeared: {[str(path) for path in appeared]}")
+    for path, digest in sorted(snapshot.items()):
+        if not path.exists():
+            problems.append(f"removed: {path}")
+        elif sha256_file(path) != digest:
+            problems.append(f"edited: {path}")
+    if problems:
+        raise RuntimeError(
+            "inputs changed while the audit was running — "
+            + "; ".join(problems)
+            + ". Nothing was written; rerun against a stable data root (§11.7)."
+        )
 
 
 def discover_inputs(data_root, design):

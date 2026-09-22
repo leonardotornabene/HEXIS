@@ -1,4 +1,9 @@
-"""Repository-level enforcement for the pytest gate selections (D45/D52(iii))."""
+"""Repository-level enforcement of the active acceptance (piano §12).
+
+Every collected test is v31 acceptance: no skip, no xfail, no xpass, and no test
+collected without an executed assert. The rule is enforced here rather than read
+off a pytest summary by eye.
+"""
 
 import ast
 import importlib.util
@@ -8,18 +13,10 @@ import pytest
 
 pytest_plugins = ["pytester"]
 
-# Markers under gate enforcement. D52(ii)–(iii) define the G0 set and the rule:
-# no test in a gate selection may be skipped, xfail, xpass, or collected without
-# an effective assertion, and the enforcement must not depend on reading the
-# pytest summary by eye. `g1` extends the same mechanics to the G1 audit tests
-# (D55 §xiv, convention 13; ratified 2026-09-04). The rule is identical for both, so the
-# marker name is data here rather than a second implementation.
-GATE_MARKERS = ("g0", "g1", "v31")
-GATE_INVENTORIES = {
-    "g0": "test_g0_enforcement.py",
-    "g1": "test_g1_enforcement.py",
-    "v31": "test_v31_enforcement.py",
-}
+# One acceptance, one marker. The inventory anchor must exist and must carry the
+# marker, or the enforcement would certify nothing.
+GATE_MARKERS = ("v31",)
+GATE_INVENTORIES = {"v31": "test_v31_enforcement.py"}
 
 _ASSERTED: set[str] = set()
 _COLLECTION_SKIPPED: set[str] = set()
@@ -75,6 +72,19 @@ def pytest_sessionstart(session):
     _COLLECTION_SKIPPED.clear()
     _SKIPPED.clear()
     _XPASSED.clear()
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_collection_modifyitems(session, config, items):
+    """Active acceptance is the whole suite: a collected test without the marker
+    would run outside `-m v31`, where nothing checks it (piano §12)."""
+    unmarked = sorted(item.nodeid for item in items if item.get_closest_marker("v31") is None)
+    if unmarked:
+        raise pytest.UsageError(
+            "every collected test must carry pytest.mark.v31; unmarked: "
+            + ", ".join(unmarked[:10])
+            + (f" (+{len(unmarked) - 10} more)" if len(unmarked) > 10 else "")
+        )
 
 
 def _is_gated(item) -> bool:

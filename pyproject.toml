@@ -22,18 +22,14 @@ build-backend = "hatchling.build"
 packages = ["src/hexis"]
 
 [tool.pytest.ini_options]
-# Collection is confined to tests/ (Spec §7). candidates/ holds quarantined
-# non-canonical implementations (D47) whose test basenames collide with the
-# canonical suite; they must never enter the G0 or G3 test sets.
+# Collection is confined to tests/: archive/ holds the historical suites, which
+# are a record and are never collected.
 testpaths = ["tests"]
-# G0 gate mechanics (D52(iii)/D45): reject unregistered markers and turn an xpass
-# into a failure; the root conftest also requires an executed Python assert.
+# Reject unregistered markers and turn an xpass into a failure; the root conftest
+# also requires an executed assert and refuses any test without the marker.
 addopts = "--strict-markers"
 enable_assertion_pass_hook = true
 xfail_strict = true
 markers = [
-    "v31: active V0–V2 acceptance; no skip or placeholder",
-    "g0: Gate G0 acceptance tests (D52); incomplete until all mandatory coverage is implemented",
-    "g1: Gate G1 audit tests (D55 §xiv, convention 13 — ratified 2026-09-04); same no-skip/real-assert enforcement as g0",
+    "v31: active acceptance; no skip, no placeholder",
 ]
-norecursedirs = ["candidates", ".venv", "data", "results", "notebooks"]

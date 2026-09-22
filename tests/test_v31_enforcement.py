@@ -93,7 +93,7 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                         'test_application_contract_rejects_drift',
                         'test_yaml_rejects_duplicate_keys_and_registry_drift',
                         'test_deposit_refuses_altered_missing_extra_contracts',
-                        'test_legacy_executors_refuse_active_config',
+                        'test_the_alphabet_reads_the_active_projection_only',
                         'test_duplicate_yaml_keys_are_rejected_at_every_depth',
                         'test_a_yaml_error_names_the_original_file_and_keeps_its_snippet'],
  'test_v31_corpus.py': ['test_numeric_order_raw_coordinates_empty_reset_and_targets',
@@ -130,7 +130,8 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                              'test_v31_enforcement_accepts_executed_assert',
                              'test_v31_inventory_lists_every_collected_active_test',
                              'test_v31_enforcement_rejects_a_static_skip_and_an_xpass_without_strict_xfail',
-                             'test_v31_enforcement_invalidates_pyc_compiled_without_the_assertion_hook'],
+                             'test_v31_enforcement_invalidates_pyc_compiled_without_the_assertion_hook',
+                              'test_every_collected_test_is_active_acceptance'],
  'test_v31_descriptive.py': ['test_cli_runs_every_cell_and_publishes_one_partition_per_pair',
                             'test_every_pair_persists_its_exact_sampling_ledger',
                             'test_sensitivity_checks_coordinate_slot_sets_before_discarding_vectors',
@@ -156,7 +157,9 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                             'test_report_refuses_a_run_that_is_not_the_deposited_configuration',
                             'test_report_refuses_a_second_emission_and_a_partition_added_after_it',
                             'test_evidence_must_be_recorded_under_the_code_and_lock_of_this_run',
-                            'test_retired_stages_declare_their_retirement_and_refuse_to_run',
+                            'test_retired_stages_do_not_exist',
+                            'test_retired_v21_modules_do_not_exist',
+                            'test_the_v21_configuration_api_is_gone',
                             'test_the_descriptive_path_imports_no_retired_scientific_module',
                             'test_the_documented_command_lines_run_the_whole_toy_campaign',
                             'test_report_refuses_a_document_silently_dropped_from_document_scores'],
@@ -297,3 +300,13 @@ def test_v31_enforcement_invalidates_pyc_compiled_without_the_assertion_hook(pyt
     assert run().ret != 0
     run = _project(pytester, assertion_pass=True)
     assert run().ret == 0
+
+
+def test_every_collected_test_is_active_acceptance(pytester):
+    """A test without the marker is refused at collection, so `pytest` and
+    `pytest -m v31` cannot drift apart."""
+    run = _project(pytester)
+    pytester.makepyfile(test_unmarked='def test_outside(): assert True')
+    result = run()
+    assert result.ret != 0
+    result.stderr.fnmatch_lines(['*every collected test must carry pytest.mark.v31*'])

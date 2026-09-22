@@ -1,4 +1,4 @@
-"""HEXIS 3.1 corpus audit; historical v2.1 audit is isolated in legacy_audit."""
+"""HEXIS 3.1 corpus audit: read, validate and census the three pinned inputs."""
 from hexis.pipeline.corpus_run import main as _main
 
 

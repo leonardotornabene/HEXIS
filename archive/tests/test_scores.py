@@ -18,6 +18,7 @@ SKIP = pytest.mark.skip(reason="Fase 0 scaffold — implement at gate G3 per Spe
 
 
 @pytest.mark.g0
+@pytest.mark.v31
 def test_pooled_score_core_has_label_free_signature():
     core = getattr(scores, "pooled_score_core", None)
     assert core is not None
@@ -37,6 +38,7 @@ def test_pooled_score_core_has_label_free_signature():
 
 
 @pytest.mark.g0
+@pytest.mark.v31
 def test_annotate_scores_has_d52_signature():
     annotate = getattr(scores, "annotate_scores", None)
     assert annotate is not None

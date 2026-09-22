@@ -11,13 +11,12 @@ from conllu import TokenList
 
 from hexis import conllu_reader
 
-pytestmark = pytest.mark.v31  # g0 marks stay until the retired gate files are archived
+pytestmark = pytest.mark.v31
 
 
 # --- the three §7 cases ---------------------------------------------------------
 
 
-@pytest.mark.g0
 def test_malformed_row_raises_parse_error_with_location(conllu_samples):
     with pytest.raises(conllu_reader.ParseError) as exc:
         list(conllu_reader.iter_sentences(conllu_samples["malformed"]))
@@ -33,21 +32,18 @@ def test_malformed_row_raises_parse_error_with_location(conllu_samples):
     assert "\n" not in rendered
 
 
-@pytest.mark.g0
 def test_missing_sent_id_raises_parse_error(conllu_samples):
     with pytest.raises(conllu_reader.ParseError) as exc:
         list(conllu_reader.iter_sentences(conllu_samples["missing_sent_id"]))
     assert exc.value.sent_id is None  # violation precedes sent_id availability (D54 iv)
 
 
-@pytest.mark.g0
 def test_id_order_preserved(conllu_samples):
     sentences = list(conllu_reader.iter_sentences(conllu_samples["valid"]))
     first = sentences[0]
     assert [tok["id"] for tok in first] == [1, 2, 3, 4]  # surface CoNLL-U ID order
 
 
-@pytest.mark.g0
 def test_out_of_order_integer_ids_raise_parse_error(conllu_samples):
     """Removing MWT/empty rows must not let malformed word order pass silently."""
     with pytest.raises(conllu_reader.ParseError) as exc:
@@ -60,28 +56,24 @@ def test_out_of_order_integer_ids_raise_parse_error(conllu_samples):
 # --- declared additions (edge cases) --------------------------------------------
 
 
-@pytest.mark.g0
 def test_mwt_range_and_empty_nodes_removed(conllu_samples):
     first = next(iter(conllu_reader.iter_sentences(conllu_samples["valid"])))
     assert all(isinstance(tok["id"], int) for tok in first)  # no (i,'-',j) / (i,'.',k)
     assert len(first) == 4
 
 
-@pytest.mark.g0
 def test_punct_token_yielded_unchanged(conllu_samples):
     first = next(iter(conllu_reader.iter_sentences(conllu_samples["valid"])))
     puncts = [tok for tok in first if tok["upos"] == "PUNCT"]
     assert len(puncts) == 1 and puncts[0]["form"] == "."  # representation blindness (D54 iii)
 
 
-@pytest.mark.g0
 def test_newdoc_id_recoverable_from_metadata(conllu_samples):
     first = next(iter(conllu_reader.iter_sentences(conllu_samples["valid"])))
     assert first.metadata["newdoc id"] == "alpha"  # key pinned by the probe
     assert first.metadata["sent_id"] == "alpha@1"
 
 
-@pytest.mark.g0
 def test_public_type_and_streaming_failure_boundary(conllu_samples):
     sentences = conllu_reader.iter_sentences(conllu_samples["lazy"])
     assert iter(sentences) is sentences
@@ -94,7 +86,6 @@ def test_public_type_and_streaming_failure_boundary(conllu_samples):
 
 
 @pytest.mark.parametrize("sample", ["invalid_upos", "empty_deprel"])
-@pytest.mark.g0
 def test_invalid_required_labels_raise_parse_error(conllu_samples, sample):
     with pytest.raises(conllu_reader.ParseError) as exc:
         list(conllu_reader.iter_sentences(conllu_samples[sample]))
@@ -103,7 +94,6 @@ def test_invalid_required_labels_raise_parse_error(conllu_samples, sample):
     assert exc.value.reason
 
 
-@pytest.mark.g0
 def test_conllu_parse_exception_is_wrapped(conllu_samples):
     with pytest.raises(conllu_reader.ParseError) as exc:
         list(conllu_reader.iter_sentences(conllu_samples["invalid_id"]))
@@ -111,7 +101,6 @@ def test_conllu_parse_exception_is_wrapped(conllu_samples):
     assert exc.value.reason
 
 
-@pytest.mark.g0
 def test_representation_exclusions_are_yielded_unchanged(conllu_samples):
     sentence = next(
         iter(conllu_reader.iter_sentences(conllu_samples["representation_blind"]))

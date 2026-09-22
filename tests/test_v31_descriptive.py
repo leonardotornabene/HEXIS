@@ -628,15 +628,30 @@ def test_real_report_requires_v2_and_v3_evidence_as_well_as_corpus(tmp_path):
 # --- the retired v2.1 entry points --------------------------------------------
 
 @pytest.mark.parametrize('module', ['run_confirmatory', 'run_null_calibration', 'run_reference',
-                                    'run_latin', 'run_sensitivity'])
-def test_retired_stages_declare_their_retirement_and_refuse_to_run(module):
-    import importlib
-    stage = importlib.import_module(f'hexis.pipeline.{module}')
-    assert 'retired' in (stage.__doc__ or '').lower()
-    assert '3.1' in (stage.__doc__ or '')
-    with pytest.raises(SystemExit) as exc:
-        stage.main()
-    assert module in str(exc.value)
+                                    'run_latin', 'run_sensitivity', 'legacy_audit'])
+def test_retired_stages_do_not_exist(module):
+    """Stronger than refusing to run: the retired stages are not importable at all,
+    so no call site can reach them by name (§13.2)."""
+    import importlib.util
+    assert importlib.util.find_spec(f'hexis.pipeline.{module}') is None
+    assert not (ROOT/'src/hexis/pipeline'/f'{module}.py').exists()
+
+
+@pytest.mark.parametrize('module', ['hexis.blocks', 'hexis.registry', 'hexis.sequences',
+                                    'hexis.model.lexicon', 'hexis.stats'])
+def test_retired_v21_modules_do_not_exist(module):
+    """The statistical utilities, the v2.1 registry, sequences, chunks and lexicon are
+    history in `archive/`, outside the package and outside the code identity."""
+    import importlib.util
+    assert importlib.util.find_spec(module) is None
+
+
+def test_the_v21_configuration_api_is_gone():
+    """No second loader and no configuration merge: one deposited projection (§13.1)."""
+    import hexis.config as config
+    for name in ('load_config', 'resolve_config', 'load_legacy_config', 'config_hash',
+                 'derive_seed', 'check_against_default'):
+        assert not hasattr(config, name), name
 
 
 def test_the_descriptive_path_imports_no_retired_scientific_module():

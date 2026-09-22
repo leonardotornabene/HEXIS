@@ -1,4 +1,4 @@
-"""CoNLL-U streaming reader (Spec §3.2, §6.2; D54/D54-A1)."""
+"""CoNLL-U streaming reader: identity, order and localized errors (§11.1)."""
 
 import re
 from pathlib import Path
@@ -7,23 +7,23 @@ from typing import Iterator
 import conllu
 from conllu.exceptions import ParseException
 
-# Spec §3.2 validates UPOS against the UD tag set — all 17 tags, not the 12
-# retained by §3.4: the reader is representation-blind (D54(iii)) and the G1
-# audit (T2) needs the raw contingency over every syntactic-word row.
+# UPOS is validated against the whole UD tag set — all 17 tags, not the 12 the
+# representation retains: the reader is representation-blind, and the source
+# audit needs the raw contingency over every syntactic-word row.
 UD_UPOS_TAGS = frozenset(
     "ADJ ADP ADV AUX CCONJ DET INTJ NOUN NUM PART PRON PROPN PUNCT SCONJ SYM VERB X".split()
 )
 
-# Spec §3.2 required columns, as `conllu` names them.
+# Required columns, as `conllu` names them.
 REQUIRED_FIELDS = ("id", "form", "upos", "head", "deprel")
 
 
 class ParseError(ValueError):
-    """A CoNLL-U source violates Spec §3.2 (D54(iv)).
+    """A CoNLL-U source is malformed.
 
     `sent_id` and `token_id` are nullable: a violation may precede their
-    availability. No source line number — `conllu.parse_incr` does not expose
-    one (declared limitation, D54(iv)).
+    availability. There is no source line number — the parser does not expose
+    one, and that limitation is declared rather than faked.
     """
 
     def __init__(
@@ -46,20 +46,19 @@ class ParseError(ValueError):
 
 
 def iter_sentences(path: Path) -> Iterator[conllu.TokenList]:
-    """Yield validated sentences from a CoNLL-U file (Spec §3.2; D54(ii)/D54-A1).
+    """Yield validated sentences from a CoNLL-U file.
 
     Streaming, one sentence at a time. Each yielded `TokenList` carries the
     source metadata (`sent_id` mandatory, `newdoc id` when present) and only
     integer-ID rows: MWT ranges `i-j` and empty nodes `i.1` are removed, so the
-    retained syntactic-word rows *are* the Latin clitic expansion. Token order
-    is CoNLL-U ID order.
+    retained rows are the syntactic words. Token order is CoNLL-U ID order.
 
-    The reader is representation-blind (D54(iii)): it validates UPOS membership
-    in the 17 UD tags and DEPREL non-emptiness, and nothing else. Retention,
-    deletion and subtype stripping belong to `alphabet.map_token` (§3.4).
+    The reader is representation-blind: it validates UPOS membership in the 17
+    UD tags and DEPREL non-emptiness, and nothing else. Retention, deletion,
+    subtype stripping and the merge belong to `alphabet.map_token` (§4.1).
 
     The yielded object is derived and filtered — not a re-serializable image of
-    the source sentence (D54(ii)(f)).
+    the source sentence.
     """
     path = Path(path)
     with path.open(encoding="utf-8") as handle:

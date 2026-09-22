@@ -115,7 +115,7 @@ def test_output_raw_and_symlink_rejected(tmp_path):
 
 
 def test_input_staging_binds_hash_to_processed_bytes_and_detects_changes(tmp_path):
-    from hexis.pipeline.legacy_audit import staged_inputs, verify_inputs_unchanged
+    from hexis.pipeline.corpus_run import staged_inputs, verify_inputs_unchanged
     path=tmp_path/'one.conllu';path.write_bytes(b'original')
     with staged_inputs([path]) as (snapshot, staged):
         path.write_bytes(b'changed')

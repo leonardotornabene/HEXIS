@@ -108,7 +108,7 @@ D2–D4 restano attuate da `0dc69b5`.
 - *Clausola residua.* Ogni file del perimetro non nominato sopra, nell'albero o nella storia, segue la categoria della sua natura: codice o configurazione MIT, documento o metadato CC BY 4.0, derivato del corpus CC BY-NC-SA 2.5.
 - *Non pubblicati:* i raw (`data/raw` resta ignorato; `PROVENANCE.md` contiene soltanto hash e metadati d'acquisizione) e i run locali `results/hexis31/`.
 - *Portata nel tempo:* l'atto copre soltanto ciò che esiste oggi. I vettori per posizione di C0 della campagna V4–V5, quando esisteranno, non sono compresi e richiedono un atto proprio.
-- *Efficacia:* al primo push. Prima del push resta da verificare con la sede editoriale che la clausola NonCommercial sia compatibile con i suoi materiali supplementari: dopo la pubblicazione non si ritira.
+- *Efficacia:* al primo push; dopo la pubblicazione non si ritira. La verifica con la sede editoriale prevista qui non ha destinatario: al 23 settembre 2026 la sede non è determinabile e la destinazione probabile è un archivio di preprint. Si pubblica quindi senza sede. I derivati del corpus restano in questo repository, o in un suo deposito con DOI, sotto la loro licenza; un testo futuro li cita per link e non li include fra i propri file. La licenza di quel testo è una decisione futura (*Portata nel tempo*).
 
 **Decisioni.**
 - E1: il deposito resta intatto.
@@ -119,6 +119,7 @@ D2–D4 restano attuate da `0dc69b5`.
 - E6: l'appendice D01–D54 esce dal log.
 - E7: handoff e inventario sono riscritti come stato attuale.
 - E8: ogni test raccolto è v31.
+- E9: pubblicazione senza sede editoriale determinata (23 settembre 2026); i derivati del corpus si citano per link.
 - N1: il workspace di verifica sta fuori dalla repository.
 - N2: differenziale di copertura con la sola libreria standard.
 - N3: una riga-guardia sugli elementi ritirati nelle istruzioni.

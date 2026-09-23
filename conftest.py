@@ -1,4 +1,4 @@
-"""Repository-level enforcement of the active acceptance (piano §12).
+"""Repository-level enforcement of the active acceptance (plan §12).
 
 Every collected test is v31 acceptance: no skip, no xfail, no xpass, and no test
 collected without an executed assert. The rule is enforced here rather than read
@@ -77,7 +77,7 @@ def pytest_sessionstart(session):
 @pytest.hookimpl(tryfirst=True)
 def pytest_collection_modifyitems(session, config, items):
     """Active acceptance is the whole suite: a collected test without the marker
-    would run outside `-m v31`, where nothing checks it (piano §12)."""
+    would run outside `-m v31`, where nothing checks it (plan §12)."""
     unmarked = sorted(item.nodeid for item in items if item.get_closest_marker("v31") is None)
     if unmarked:
         raise pytest.UsageError(

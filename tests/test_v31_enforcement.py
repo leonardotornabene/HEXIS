@@ -122,6 +122,7 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                       'test_the_v3_001_acts_are_never_rewritten',
                       'test_the_package_is_hormathos_and_hexis_names_only_the_design',
                       'test_the_deposit_and_the_lock_are_byte_preserved',
+                      'test_the_sdist_ships_exactly_the_tracked_tree',
                       'test_all_preserved_v21_documents_match_the_original_hash_inventory',
                       'test_the_archive_is_a_record_and_never_a_dependency',
                       'test_every_archived_file_has_its_bytes_at_the_base',

@@ -1,6 +1,6 @@
 """V2 scores and diagnostics: four losses, coupled slots, aggregations, masses.
 
-Every fixture is synthetic and tiny (piano §12): no Greek corpus row is fitted or
+Every fixture is synthetic and tiny (plan §12): no Greek corpus row is fitted or
 scored here, and no model in this file ever sees a real sequence. The §7
 sign-inversion counterexample is the archived one of
 `HEXIS_v3_allegati/diagnostics_validation.json`, reproduced through the canonical

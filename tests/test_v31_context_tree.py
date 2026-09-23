@@ -1,7 +1,7 @@
 """V2 CTW core: independent enumeration, frozen mixture, numerics and the §12.1 battery.
 
 The enumeration helpers below are a second, deliberately naive implementation of
-the piano §6.1–§6.4 contract (explicit sum over admissible trees, counts matched
+the plan's §6.1–§6.4 contract (explicit sum over admissible trees, counts matched
 by scanning the streams) used as the oracle for T10; they share no code with
 ``hormathos.model.context_tree``.
 """

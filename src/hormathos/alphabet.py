@@ -1,4 +1,4 @@
-"""Alphabet mapping (piano §4.1): validate the source tags, then merge ADV/PART.
+"""Alphabet mapping (plan §4.1): validate the source tags, then merge ADV/PART.
 
 One token in, one decision out. The order is normative: strip the DEPREL subtype,
 map PROPN to NOUN before retention, apply the UPOS retention set, apply the DEPREL

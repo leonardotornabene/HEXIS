@@ -430,8 +430,8 @@ def test_slot_identity_is_distinct_from_the_provenance_of_the_moved_token(arms):
 
 
 def test_shuffle_records_the_symbol_change_rate_with_an_explicit_denominator():
-    """§7: "Registrare quota di slot con simbolo diverso, con denominatore esplicito; le frasi
-    costanti possono restare identiche." Both small cases are hand-verifiable without knowing the
+    """§7: "Record the share of slots with a different symbol, with an explicit denominator;
+    constant sentences may stay identical." Both small cases are hand-verifiable without knowing the
     drawn permutation: a constant stream can only ever come back identical, and with a single odd
     symbol among constants, only that symbol's own slot and the slot it lands on can ever change."""
     constant = stream([5, 5, 5, 5])

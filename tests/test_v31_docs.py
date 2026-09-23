@@ -54,6 +54,31 @@ def test_the_deposit_and_the_lock_are_byte_preserved():
     assert hashlib.sha256((ROOT/'uv.lock').read_bytes()).hexdigest() == LOCK_SHA256
 
 
+def test_the_sdist_ships_exactly_the_tracked_tree():
+    """The sdist is a closed list equal to the tracked tree (V3-003, R1): the proposal drafts,
+    the local scripts and the tools' notes stay out of any distribution. Hatchling honours
+    only the root .gitignore, so an untracked file must not sit under a listed path either."""
+    import tomllib
+    targets = tomllib.loads((ROOT/'pyproject.toml').read_text())['tool']['hatch']['build']['targets']
+    listed = targets['sdist']['only-include']
+
+    def files(*argv):
+        out = subprocess.run(['git', 'ls-files', '-z', *argv], cwd=ROOT, check=True,
+                             capture_output=True, text=True).stdout
+        return [path for path in out.split('\0') if path]
+
+    def under(path, entry):
+        return path == entry or path.startswith(entry + '/')
+
+    tracked = files()
+    assert tracked and len(set(listed)) == len(listed)
+    for path in tracked:
+        assert any(under(path, entry) for entry in listed), path
+    for entry in listed:
+        assert any(under(path, entry) for path in tracked), entry
+    for path in files('--others', '--exclude-standard'):
+        assert not any(under(path, entry) for entry in listed), path
+
 def test_all_preserved_v21_documents_match_the_original_hash_inventory():
     history = ROOT/'archive/docs/history/v2.1'
     records = json.loads((history/'SHA256SUMS.json').read_text())
@@ -64,7 +89,7 @@ def test_all_preserved_v21_documents_match_the_original_hash_inventory():
 
 def test_the_archive_is_a_record_and_never_a_dependency():
     """`archive/` keeps the history at its own paths; nothing active imports it and
-    no archived test is collected (piano §13.1 p.4–5; V3-002)."""
+    no archived test is collected (plan §13.1, items 4–5; V3-002)."""
     archive = ROOT/'archive'
     assert (archive/'README.md').is_file()
     for expected in ['src/hexis/stats/permutation.py', 'src/hexis/registry.py',

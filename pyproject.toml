@@ -23,6 +23,18 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/hormathos"]
 
+[tool.hatch.build.targets.sdist]
+# A closed list equal to the tracked tree (V3-003, R1): untracked local files — the
+# proposal drafts in docs/proposal/, scripts/, tools' notes — never enter a distribution.
+only-include = [
+    ".gitignore", "AGENTS.md", "CLAUDE.md", "LICENSE", "README.md", "archive", "config",
+    "conftest.py", "data/provenance_v31.json", "data/raw/PROVENANCE.md",
+    "docs/00_INDEX.md", "docs/01_MASTER_SPEC.md", "docs/02_DECISION_LOG.md",
+    "docs/03_ROADMAP.md", "docs/04_AI_HANDOFF_PROMPT.md", "docs/BIBLIOGRAPHY.md",
+    "docs/HANDOFF.md", "docs/TEST_INVENTORY.md", "docs/V3-001-deposit.json", "docs/contracts",
+    "pyproject.toml", "src", "tests", "uv.lock",
+]
+
 [tool.pytest.ini_options]
 # Collection is confined to tests/: archive/ holds the historical suites, which
 # are a record and are never collected, not even when pytest starts from the root.

@@ -1,4 +1,4 @@
-"""Sampling, RNG identity and the coupled order control (piano §5.1–§5.3, §7, §11.1).
+"""Sampling, RNG identity and the coupled order control (plan §5.1–§5.3, §7, §11.1).
 
 The sampler is given block membership, the budget q, the held-out block and the
 seed; it never reads a regime, a group or any display label (§11.1). No cell
@@ -232,8 +232,8 @@ def shuffle_streams(streams, *, seed, held, purpose) -> list:
     and nothing in this module decodes it. Each stream derives its own
     generator, so reordering the streams cannot change any of them (§5.3).
 
-    `changed_symbol_slot_count`/`total_slot_count` record §7's "quota di slot con simbolo
-    diverso, con denominatore esplicito": how many slots hold a different
+    `changed_symbol_slot_count`/`total_slot_count` record §7's "share of slots with a different
+    symbol, with an explicit denominator": how many slots hold a different
     symbol after the shuffle, out of the stream's length. A constant
     sentence can come back identical (`changed_symbol_slot_count == 0`) even though every
     slot's provenance still moved.

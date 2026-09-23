@@ -1,4 +1,4 @@
-"""R1: JSD of the complete retained counts (piano §8.3, §11.1).
+"""R1: JSD of the complete retained counts (plan §8.3, §11.1).
 
 The population is every retained original token of the seven primary blocks,
 initial slots included — not the leave-one-block-out training roots and not the

@@ -1,4 +1,4 @@
-"""Mixture masses, L_resolved and the §9.3 evaluation sums (piano §9.1–§9.3).
+"""Mixture masses, L_resolved and the §9.3 evaluation sums (plan §9.1–§9.3).
 
 Nothing here selects a depth. L_resolved describes the observed lengths the
 mixture puts weight on, conditioned on the observed mass R — and R is always the

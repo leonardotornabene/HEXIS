@@ -1,4 +1,4 @@
-"""Stage run_tree_validation: the frozen synthetic battery of piano §12.1 (T15/T16).
+"""Stage run_tree_validation: the frozen synthetic battery of plan §12.1 (T15/T16).
 
 Twenty-five small cases (five sources x five seeds) against the thresholds of the
 §12.1 table, then the historical m=106 stress (three variants x three seeds) for

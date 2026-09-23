@@ -23,8 +23,8 @@ from hormathos.manifest import sha256_file, _package_versions
 AUDIT_FILES = {'documents.csv','alphabets.json','source_audit.json','audit_summary.csv','audit_contingency.csv','audit_A.csv','exclusions.parquet'}
 
 
-# Moved from the historical audit stage (piano §13.2, "conservare difese
-# funzionanti"): the immutable-raw destination check and the input staging that
+# Moved from the historical audit stage (plan §13.2, "keep the working
+# defences"): the immutable-raw destination check and the input staging that
 # binds each digest to the bytes actually parsed. Two changes, declared in V3-002:
 # the refusal message cites §11.7, and the canonical root is the repository's own,
 # not one relative to the working directory.

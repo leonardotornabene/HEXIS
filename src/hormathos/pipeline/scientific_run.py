@@ -1,4 +1,4 @@
-"""Scientific run identity, atomic publication and resume (piano §11.3, §11.7, §14).
+"""Scientific run identity, atomic publication and resume (plan §11.3, §11.7, §14).
 
 The V1 corpus stages publish under `hexis-corpus-manifest-1`, whose completeness
 flags describe an audit/encode pair. A descriptive campaign is identified by

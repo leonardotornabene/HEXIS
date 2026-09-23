@@ -1,4 +1,4 @@
-"""R1: JSD of the complete retained counts (piano §8.3), with its own fixtures.
+"""R1: JSD of the complete retained counts (plan §8.3), with its own fixtures.
 
 R1 needs no CTW, no seed and no sample, so nothing here is shared with the score
 tests: toy blocks of invented counts over a five-symbol alphabet. No Greek corpus

@@ -1,4 +1,4 @@
-"""Four losses on coupled slots, sums, G/Q and the two weightings (piano §8.1–§8.2, §9.3, §11.1).
+"""Four losses on coupled slots, sums, G/Q and the two weightings (plan §8.1–§8.2, §9.3, §11.1).
 
 The core is label-free (§11.1): it pairs the two arms on the eligible slot and
 returns losses, masses and sums keyed by `sent_id`/`slot_uid`. No regime, group

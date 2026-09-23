@@ -1,4 +1,4 @@
-"""CoNLL-U reader: parsing, identity and localized errors (piano §11.1; T03).
+"""CoNLL-U reader: parsing, identity and localized errors (plan §11.1; T03).
 
 Beyond the three minimal cases (malformed input, mandatory sent_id, ID order)
 these cover MWT/empty-node removal, representation blindness, streaming failure

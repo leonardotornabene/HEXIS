@@ -1,4 +1,4 @@
-"""CTW: frozen Bayesian mixture over context trees (piano §6.1–§6.5, §11.1).
+"""CTW: frozen Bayesian mixture over context trees (plan §6.1–§6.5, §11.1).
 
 Counts and Dirichlet(a) evidence on every observed context up to depth D, a BOS
 arc closing a history shorter than D, one integrated weight per node, and a

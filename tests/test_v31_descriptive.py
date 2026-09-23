@@ -3,7 +3,7 @@
 Every fixture here is a toy campaign — three documents, a five-symbol alphabet,
 two blocks, two cells, one seed — written to a temporary corpus run and driven
 through the real entry points. No Greek sentence is sampled, fitted or scored in
-this file: real fits belong to V3 (piano §14), and this module must stay runnable
+this file: real fits belong to V3 (plan §14), and this module must stay runnable
 without `data/raw`.
 
 The toy contract is deliberately *not* the deposited analytical projection, so

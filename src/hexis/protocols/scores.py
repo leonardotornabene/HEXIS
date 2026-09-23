@@ -136,9 +136,6 @@ def pooled_score_core(original, shuffled, *, model_original, model_shuffled,
     return positions, arm_frame
 
 
-# Existing v3.1 callers use the same implementation, with no second scoring path.
-
-
 def annotate_scores(scores, registry, *, on='doc_id') -> pd.DataFrame:
     """§11.1: attach registry columns to fixed scores by their explicit identity.
 

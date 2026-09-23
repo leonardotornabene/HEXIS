@@ -1,6 +1,7 @@
 """V0 authority, preserved history and declared operational limits."""
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -12,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 # sentences of theirs, it never rewrites their bytes.
 V3_001_SHA256 = 'df5ca735f4d9f0f450c147518d138e994a2818e0119e3fec95827c9e81760e6f'
 LOCK_SHA256 = '33db43b00bcb21ab12aedf6dcc4257764770bff0115dc0d1dfab6e5ea89876bf'
+REALIGNMENT_BASE = '5f1ec06afa192c8d0f006d7f39cdb97df72c2983'
 
 
 def test_active_authority_and_instructions_are_aligned():
@@ -59,6 +61,24 @@ def test_the_archive_is_a_record_and_never_a_dependency():
                      'docs/history/v2.1/02_DECISION_LOG.md', 'candidates/README.md']:
         assert (archive/expected).is_file(), expected
     assert not (ROOT/'src/hexis/stats').exists()
+
+
+def test_every_archived_file_has_its_bytes_at_the_base():
+    """Rule `archive/P` (V3-002): every archived file holds the bytes `P` had at the
+    base, so nothing new can sit in the archive under a historical name."""
+    def git(*argv, stdin=None):
+        return subprocess.run(['git', *argv], cwd=ROOT, input=stdin, check=True,
+                              capture_output=True, text=True).stdout
+    base = {}
+    for entry in git('ls-tree', '-r', '-z', REALIGNMENT_BASE).split('\0'):
+        if entry:
+            meta, path = entry.split('\t', 1)
+            base[path] = meta.split()[2]
+    archived = [path for path in git('ls-files', '-z', 'archive').split('\0') if path]
+    blobs = git('hash-object', '--stdin-paths', stdin='\n'.join(archived)).split()
+    assert archived and len(blobs) == len(archived)
+    for path, blob in zip(archived, blobs):
+        assert base.get(path.removeprefix('archive/')) == blob, path
 
 
 def test_test_inventory_explicitly_tracks_future_obligations():

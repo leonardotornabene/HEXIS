@@ -123,6 +123,7 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                       'test_the_deposit_and_the_lock_are_byte_preserved',
                       'test_all_preserved_v21_documents_match_the_original_hash_inventory',
                       'test_the_archive_is_a_record_and_never_a_dependency',
+                      'test_every_archived_file_has_its_bytes_at_the_base',
                       'test_test_inventory_explicitly_tracks_future_obligations',
                       'test_pipeline_does_not_import_candidates_or_inferential_utilities',
                       'test_the_three_standing_instruction_copies_are_identical'],
@@ -133,7 +134,8 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                              'test_v31_inventory_lists_every_collected_active_test',
                              'test_v31_enforcement_rejects_a_static_skip_and_an_xpass_without_strict_xfail',
                              'test_v31_enforcement_invalidates_pyc_compiled_without_the_assertion_hook',
-                              'test_every_collected_test_is_active_acceptance'],
+                              'test_every_collected_test_is_active_acceptance',
+                              'test_the_archive_is_never_collected_even_from_the_root'],
  'test_v31_descriptive.py': ['test_cli_runs_every_cell_and_publishes_one_partition_per_pair',
                             'test_every_pair_persists_its_exact_sampling_ledger',
                             'test_sensitivity_checks_coordinate_slot_sets_before_discarding_vectors',
@@ -312,3 +314,20 @@ def test_every_collected_test_is_active_acceptance(pytester):
     result = run()
     assert result.ret != 0
     result.stderr.fnmatch_lines(['*every collected test must carry pytest.mark.v31*'])
+
+
+def test_the_archive_is_never_collected_even_from_the_root(pytester):
+    """`archive/` is a record (V3-002): the real configuration keeps its suites out of
+    collection whether pytest starts from `testpaths` or from the root."""
+    pytester.makeconftest(ROOT_CONFTEST.read_text())
+    pytester.makepyprojecttoml((ROOT_CONFTEST.parent/'pyproject.toml').read_text())
+    for directory in ('tests', 'archive/tests'):
+        (pytester.path/directory).mkdir(parents=True)
+    (pytester.path/'tests/test_ok.py').write_text(
+        'import pytest\npytestmark = pytest.mark.v31\ndef test_ok(): assert 1 == 1\n')
+    (pytester.path/'archive/tests/test_old.py').write_text(
+        'import hexis_retired_module\ndef test_old(): assert True\n')
+    for args in ((), ('.',)):
+        result = pytester.runpytest_subprocess(*args)
+        assert result.ret == 0, args
+        result.assert_outcomes(passed=1)

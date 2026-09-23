@@ -9,8 +9,14 @@ __pycache__/
 data/raw/*
 !data/raw/PROVENANCE.md
 
-# Local run outputs: publication is decided by the act in V3-002, not by Git.
-results/
+# Derived corpus data from the historical v2.1 layout, which runs at 5f1ec06: never
+# published from here (V3-002).
+data/interim/
+data/processed/
+
+# Local run outputs at the root only: publication is decided by the act in V3-002,
+# not by Git; archive/results/ is part of the record.
+/results/
 
 # Finder metadata (one copy entered and left the V0 deposit; see V3-002)
 .DS_Store

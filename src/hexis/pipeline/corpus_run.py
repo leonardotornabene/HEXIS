@@ -23,10 +23,12 @@ from hexis.manifest import sha256_file, _package_versions
 AUDIT_FILES = {'documents.csv','alphabets.json','source_audit.json','audit_summary.csv','audit_contingency.csv','audit_A.csv','exclusions.parquet'}
 
 
-# Moved unchanged from the historical audit stage (piano §13.2, "conservare difese
+# Moved from the historical audit stage (piano §13.2, "conservare difese
 # funzionanti"): the immutable-raw destination check and the input staging that
-# binds each digest to the bytes actually parsed.
-CANONICAL_DATA_ROOT = Path("data/raw")
+# binds each digest to the bytes actually parsed. Two changes, declared in V3-002:
+# the refusal message cites §11.7, and the canonical root is the repository's own,
+# not one relative to the working directory.
+CANONICAL_DATA_ROOT = ROOT / "data/raw"
 
 
 def check_output_locations(paths, *, data_root: Path) -> None:
@@ -112,7 +114,7 @@ def verify_inputs_unchanged(
 
 def discover_inputs(data_root, design):
     data_root=Path(data_root)
-    files=sorted(data_root.rglob('*.conllu'))
+    files=_conllu_paths(data_root)
     expected={row['file']:row['sha256'] for row in design['source_hashes']}
     names={path.name for path in files}
     if names!=set(expected) or len(files)!=len(expected) or any(p.parent!=data_root for p in files):
@@ -125,9 +127,6 @@ def discover_inputs(data_root, design):
 
 def check_destination(output, data_root):
     check_output_locations([output],data_root=Path(data_root))
-    resolved=Path(output).resolve(); raw=(ROOT/'data/raw').resolve()
-    if resolved==raw or raw in resolved.parents:
-        raise ValueError(f'{output}: output inside immutable raw')
 
 
 def run_identity(contract):

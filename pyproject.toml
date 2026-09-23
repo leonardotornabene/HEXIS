@@ -23,8 +23,9 @@ packages = ["src/hexis"]
 
 [tool.pytest.ini_options]
 # Collection is confined to tests/: archive/ holds the historical suites, which
-# are a record and are never collected.
+# are a record and are never collected, not even when pytest starts from the root.
 testpaths = ["tests"]
+norecursedirs = ["archive", ".*", "data", "results", "notebooks"]
 # Reject unregistered markers and turn an xpass into a failure; the root conftest
 # also requires an executed assert and refuses any test without the marker.
 addopts = "--strict-markers"

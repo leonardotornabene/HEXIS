@@ -185,9 +185,11 @@ def test_sha256_file_is_the_hash_of_the_bytes_on_disk(tmp_path):
     assert sha256_file(path)==hashlib.sha256(b'hello').hexdigest()
 
 
-def test_a_destination_inside_the_repository_raw_root_is_refused_under_any_data_root(tmp_path):
-    """Both immutable roots are checked, not only the one this run was given."""
+def test_a_destination_inside_the_repository_raw_root_is_refused_under_any_data_root(tmp_path, monkeypatch):
+    """Both immutable roots are checked, not only the one this run was given, and the
+    repository's own root does not depend on the working directory."""
     from hexis.pipeline.corpus_run import check_destination
+    monkeypatch.chdir(tmp_path)
     raw=Path(__file__).resolve().parents[1]/'data/raw'
     for destination in (raw, raw/'UD_Ancient_Greek-Perseus'/'out'):
         with pytest.raises(ValueError,match='raw') as exc:check_destination(destination,tmp_path)

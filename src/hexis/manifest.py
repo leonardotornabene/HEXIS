@@ -1,8 +1,9 @@
 """File digests and pinned package versions.
 
 The run manifest itself is written by the 3.1 stages (§11.7): what is left here
-is what they read — the digest of a file's bytes and the versions of the pinned
-packages, both of which enter the run identity.
+is what they read — the digest of a file's bytes, which enters the run identity,
+and the versions of the pinned packages, which go only into the external metadata
+(§11.3).
 """
 
 import hashlib

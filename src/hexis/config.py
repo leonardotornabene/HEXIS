@@ -48,8 +48,6 @@ _UniqueKeyLoader.add_constructor(
 )
 
 
-
-
 def load_yaml(path, *, source=None):
     """Safely load YAML while rejecting duplicate keys at every mapping depth."""
     path = Path(path)
@@ -60,20 +58,6 @@ def load_yaml(path, *, source=None):
     except yaml.YAMLError as exc:
         detail = str(exc).replace("<unicode string>", str(path))
         raise ValueError(f"{path}: not valid YAML — {detail}") from exc
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def load_v31_config(path=None, *, registry_path=None) -> dict:

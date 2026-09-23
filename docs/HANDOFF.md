@@ -4,11 +4,25 @@
 
 ## Project name HORMATHOS — 23 September 2026 (V3-003)
 
-**Commits.** `7f3f641`: fixes prepared by Codex, reviewed and committed — the report rechecks the recorded V2 execution context before its first step and again before publication, and a seed-0 run of a single cell leaves V3 pending instead of failing after publishing its pairs; each of the two new tests failed with its fix removed. `4a82f7e`: the package moves from `src/hexis` to `src/hormathos`, tests first. The documents, their English translation and V3-003 follow in the commit that carries this section, which does not cite its own commit.
+**Commits.** `7f3f641`: fixes prepared by Codex, reviewed and committed — the report rechecks the recorded V2 execution context before its first step and again before publication, and a seed-0 run of a single cell leaves V3 pending instead of failing after publishing its pairs; each of the two new tests failed with its fix removed. `4a82f7e`: the package moves from `src/hexis` to `src/hormathos`, tests first. The documents, their English translation and V3-003 are `e086482`; this attestation follows in a commit of its own, which does not cite itself.
 
 **What changed and what stays.** Imports, paths, CLI descriptions, temporary-directory prefixes, the figure footer and the SVG hash salt follow the package. The distribution keeps the name `hexis`: `uv.lock` records it, and the deposited design fixes the lock bytes (`runtime.lock_sha256`), which `corpus_run` and `scientific_run.run_contract` enforce. The contract identifiers, the deposit, the persisted schema names, `results/hexis31/` and `archive/` keep `hexis`. The V3-001 hash now starts at the first V3-001 heading, so the title of the log can change; the act bytes are unchanged. `00_LEGGIMI_INDICE.md` and `03_ROADMAP_OPERATIVA_IT.md` are now `00_INDEX.md` and `03_ROADMAP.md`. The rest is in V3-003.
 
 **Verification of the renamed package, in a separate clone with its own environment.** `uv lock --check` resolves 23 packages and `uv.lock` keeps SHA-256 `33db43b0…`. The V1 corpus `results/hexis31/v1` is still accepted: `load_corpus` and `run_contract` on the deposited configuration give lock `33db43b0…` and 25 code files under `src/hormathos`. `run_audit` and `run_encode` regenerate the nine V1 artifacts byte for byte; in the manifest every `run_contract` field other than `code` equals V1, the input snapshots are identical once their paths are made relative, and the rest is `run_id` and the external fields. Against `7f3f641`, 11 of the 25 sources are byte-identical and 14 carry the changes of `4a82f7e`.
+
+**Attestation.** Measured on `e086482`, with a clean tracked tree before and after:
+
+```text
+uv run --frozen pytest -q -p no:cacheprovider
+404 passed in 177.61s (0:02:57)
+
+uv run --frozen pytest --collect-only -q          404 tests collected
+uv run --frozen pytest -m v31 --collect-only -q   404 tests collected
+uv run --frozen pytest . --collect-only -q        404 tests collected
+uv lock --check                                   Resolved 23 packages
+```
+
+The three collections have the same node IDs and none under `archive/`, and `uv.lock` keeps SHA-256 `33db43b0…`. The count rises from 400 by the three cases of `7f3f641` and by the package guard of `4a82f7e`. Each new test failed before its change: the two tests of `7f3f641` with their source file restored from `d7c8f21`, the package guard while the package was still `src/hexis`, and the new assertions on the documents against the Italian documents.
 
 ## Code review of 23 September 2026
 

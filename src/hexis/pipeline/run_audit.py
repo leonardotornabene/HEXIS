@@ -1,10 +1,10 @@
-"""Stage run_audit (Spec §6.1): corpus audit → registry + alphabet + T* frozen
-(Spec §3.3–3.4; gate G1). Real data: counts only (D30)."""
+"""HEXIS 3.1 corpus audit: read, validate and census the three pinned inputs."""
+from hexis.pipeline.corpus_run import main as _main
 
 
-def main() -> None:
-    raise NotImplementedError
+def main(argv=None):
+    return _main('audit', argv)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

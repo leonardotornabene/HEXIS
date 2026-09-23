@@ -1,6 +1,6 @@
-"""Shared synthetic CoNLL-U fixtures for the reader tests (Spec §3.2; D54).
+"""Shared synthetic CoNLL-U fixtures for the reader tests.
 
-Built per the P5 brief and the conllu-6.0.0 probe (docs/probe_conllu.md):
+Built on the conllu-6.0.0 probe (archive/docs/probe_conllu.md):
 a well-formed sentence with an MWT range row, an empty node, a PUNCT token and a
 `newdoc id`; a sentence lacking `sent_id`; and a sentence with a malformed
 (short) row missing HEAD/DEPREL at a known token id.
@@ -24,7 +24,7 @@ _VALID = "\n".join(
         _row("1", "quo", "quo", "ADV", "_", "_", "3", "advmod", "_", "_"),
         _row("2", "que", "que", "CCONJ", "_", "_", "3", "cc", "_", "_"),
         _row("3", "canit", "cano", "VERB", "_", "_", "0", "root", "_", "_"),
-        _row("4", ".", ".", "PUNCT", "_", "_", "3", "punct", "_", "_"),  # kept unchanged (D54 iii)
+        _row("4", ".", ".", "PUNCT", "_", "_", "3", "punct", "_", "_"),  # kept unchanged: the reader is representation-blind
         _row("4.1", "_", "_", "X", "_", "_", "_", "_", "_", "_"),  # empty node → dropped
         "",
         "# sent_id = alpha@2",

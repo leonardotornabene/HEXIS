@@ -1,0 +1,539 @@
+# Overnight handoff — branch `phase1a/overnight-2026-07-25`
+
+> **Post-review remediation prepared and owner-ratified 2026-07-27.**
+> The historical overnight snapshot remains below. The remediation replaces the
+> static assertion scan with runtime G0 enforcement, adds the missing D43/input
+> domain tests, completes D46 input hashing and atomic overwrite refusal, expands
+> the reader contract to 11 intentionally RED cases, and corrects this handoff.
+> No Decision Log edit and no reader implementation.
+
+**Pre-commit remediation verification:**
+`uv run pytest -m g0 --strict-markers -p no:cacheprovider
+--ignore=tests/test_conllu_reader.py` → `46 passed, 23 deselected`;
+full suite → `11 failed, 46 passed, 23 skipped`. All 11 failures are confined
+to the deliberately unimplemented reader contract. G0 remains open.
+
+Autonomous Phase-1a run (authorized 2026-07-25, executed into 2026-07-26).
+Scope P1–P6, reader RED-only. No master edit, no Decision Log edit, no merge,
+no force-push. Pre-handoff implementation tip: **`db1dbda`**; historical
+handoff commit: **`d82357b`**.
+
+**Suite at handoff:** `6 failed, 38 passed, 23 skipped`. The 6 failures are the
+**intended reader RED** (P5); nothing was skipped/weakened to go green.
+`uv run pytest` therefore exits non-zero by design — the correct overnight state.
+
+---
+
+## Historical per-unit log at handoff
+
+| Unit | Commit | Outcome |
+|---|---|---|
+| P1 — G0 enforcement | `7559f66` | GREEN — mechanized D45/D52(iii) |
+| P2 — conllu probe | `b5ced54` | done — findings pinned, no D54 contradiction |
+| P3a — permutation | `e9e4489` | GREEN — 7 tests |
+| P3b — holm + bootstrap | `8e95466` | GREEN — 7 tests |
+| P3c — blocks | `8a60ccd` | GREEN — 4 tests |
+| P4a — config/seed/hash | `60bf14d` | GREEN — 4 tests |
+| P4b — manifest/sidecar | `7794d76` | GREEN — 4 tests |
+| P5 — reader (RED only) | `4505c34` | **RED (intended)** — 6 tests fail, impl deferred |
+| P6 — corpus acquisition | `db1dbda` | done — grc/la Perseus r2.18 cloned, PROVENANCE committed |
+
+### Per-file test counts at handoff
+
+| file | result |
+|---|---|
+| test_g0_enforcement.py | 10 passed |
+| test_scores.py | 2 passed, 3 skipped (G3 placeholders) |
+| test_permutation.py | 7 passed |
+| test_bootstrap_holm.py | 7 passed |
+| test_blocks.py | 4 passed |
+| test_determinism.py | 8 passed |
+| **test_conllu_reader.py** | **6 failed (RED, intended)** |
+| test_alphabet.py | 6 skipped (G0 coverage NOT yet implemented — see below) |
+| test_context_tree.py / test_tree_slices.py / test_null_calibration.py | 14 skipped (G3, out of scope) |
+
+### P1 detail — historical implementation (superseded by 2026-07-27 remediation)
+- Enforcement lives in **`./conftest.py` (repo root)**, not `tests/conftest.py`:
+  `pytest_plugins` (needed to expose the `pytester` fixture) is honoured only in
+  the root conftest. Runtime hooks work identically from either location. See Q1.
+- The original assertion-free enforcement was a static AST check. Review found
+  bypasses for dead assertions, module/class markers, non-strict XPASS and
+  collection-time skips. It is replaced in the remediation by runtime
+  `pytest_assertion_pass` accounting plus subprocess regressions, including a
+  warm-`.pyc` case.
+- `tests/conftest.py` DOES exist now — it holds the P5 synthetic reader fixtures
+  (fixtures are allowed in a non-root conftest; only `pytest_plugins` is not).
+
+### P2 detail — conllu probe (full findings: `docs/probe_conllu.md`)
+`conllu` **6.0.0**. `newdoc id` → metadata key `'newdoc id'` (with a space);
+`token['id']` is `int` for syntactic-word rows and a `tuple` for MWT `(i,'-',j)`
+/ empty `(i,'.',k)` rows; a **short row is silent** (reader must validate required
+fields) while a **bad `id` raises** `conllu.exceptions.ParseException` (reader
+must wrap). **No finding contradicts a D54(ii)–(iii) invariant.**
+
+### P5 detail — historical reader RED (verbatim failures)
+All six fail because `iter_sentences` raises `NotImplementedError` and
+`ParseError` is undefined (feature missing):
+```
+FAILED test_conllu_reader.py::test_malformed_row_raises_parse_error_with_location
+FAILED test_conllu_reader.py::test_missing_sent_id_raises_parse_error
+FAILED test_conllu_reader.py::test_id_order_preserved
+FAILED test_conllu_reader.py::test_mwt_range_and_empty_nodes_removed
+FAILED test_conllu_reader.py::test_punct_token_yielded_unchanged
+FAILED test_conllu_reader.py::test_newdoc_id_recoverable_from_metadata
+```
+GREEN-phase note for the implementer: conllu is silent on short rows, so the
+reader must itself check ID/FORM/UPOS/HEAD/DEPREL presence AND wrap
+`conllu.exceptions.ParseException` for bad-id rows (both paths → `ParseError`).
+
+---
+
+## Questions requiring your ruling (numbered)
+
+1. **RESOLVED — conftest location.** Enforcement remains in `./conftest.py`:
+   it is repository-wide and `pytest_plugins` for `pytester` must be declared at
+   the root. `tests/conftest.py` remains fixture-only.
+
+2. **RESOLVED — implementation readings ratified.** On 2026-07-27 the owner
+   ratified the config, manifest, Holm, bootstrap and blocks signatures below,
+   including the manifest's keyword-only `inputs=()`, non-collapsing
+   caller-supplied path strings, and fail-loud behavior when Git state is
+   unavailable.
+
+3. **RESOLVED — D54-A1 alignment.** The branch base includes master commit
+   `5aabc05` ("docs: align D54 governance and handoff references", 2026-07-25),
+   added *after* my D54 commit, which deposited **D54-A1** and updated the reader
+   docstring. D54-A1 makes `Iterator[conllu.TokenList]` the **binding public
+   return type**. The expanded P5 tests now assert `TokenList` explicitly and
+   preserve all D54(ii)–(iv) responsibilities. No Decision Log action is needed.
+
+4. **RESOLVED — enforcement proof scope.** Static proof removed. Ten `pytester`
+   subprocess cases exercise the canonical `-m g0 --strict-markers` path.
+
+5. **KS uniformity (minor).** `test_null_synthetic_p_uniform` label-permutation
+   arm has a fixed-seed KS p-value of 0.10 (> 0.05, deterministic). Acceptable, or
+   raise the replication count for more headroom?
+
+---
+
+## RATIFIED implementation readings (unapplied to master)
+
+- **config.py**: `load_config(path=None)->dict`; `resolve_config(overrides=None,
+  base=None)->dict` (non-mutating deep merge); `config_hash(cfg)->str` (SHA-256 of
+  canonical sorted-key JSON); `derive_seed(analysis_id, global_seed)->int`
+  (`global ^ crc32(id.utf-8)`, §6.3). Default config located by walking up from CWD.
+- **manifest.py**: `sha256_file(path)->str`; `build_manifest(run_id,
+  config_sha256, seed, artifacts, entry_point, *, inputs=())->dict` (D46 fields
+  + SHA-256 for every input and artifact, with non-collapsing paths);
+  `write_manifest(manifest, results_root, force=False)->Path`
+  (`{root}/logs/{run_id}/manifest.json`, atomic FileExistsError without force);
+  `sidecar(run_id, sha256, entry_point)->dict`;
+  `write_sidecar(artifact_path, run_id, entry_point, force=False)->Path`.
+- **holm.py**: `holm_bonferroni(pvalues: Mapping[str,float], alpha=0.05)
+  -> HolmResult(order, adjusted, reject)` — step-down, monotone adjusted p.
+- **bootstrap.py**: `document_bootstrap(values, labels, B=2000, seed=0,
+  alpha=0.05, statistic=None) -> BootResult(observed, replicates, ci)` — within-
+  group whole-document resampling, percentile CI, `default_rng(seed)`.
+- **blocks.py**: `make_blocks(doc, n_block=1000, min_frac=0.5)` where `doc` is one
+  document's sentences (each a sequence of symbols) and the return is a list of
+  blocks (each a list of whole sentences). "Never spans documents" is realized by
+  per-document invocation.
+- **permutation.py** (PermResult signature was already in §6.2; conventions
+  chosen): label-perm statistic = mean(group sorted-first) − mean(sorted-second)
+  over C(n,k); sign-flip = mean(sign·values) over 2^n; two-sided p is centered at
+  the null mean (= 0 for both here). No confirmatory P1 wiring (O7/D44).
+
+The owner ratification is recorded here. No `ASSUMPTIONS.md` or Decision Log
+edit was made.
+
+---
+
+## Current G0/G1 status — attested at `d024cd5` on 2026-09-04
+
+The owner ratified only checklist items **17–20 and 23–26** on 2026-09-04, and
+only their technical content. No scientific item was decided: checklist items
+1–16, 21–22 and 27 remain open; the registry, alphabet and T\* remain unfrozen;
+no real-data model was fitted; **G1 remains open** until those scientific
+decisions are taken. `docs/g1_D55_proposal.md` and `docs/g1_registry_proposal.*`
+stay PROPOSED and are applied to nothing.
+
+Two commits carry the ratified work. `fb53084` is the substantive revision:
+duplicate-key and empty-config refusal in `load_yaml`/`load_config`, the
+bidirectional `sent_id ↔ sent_ord` guard sited before the fusing `groupby`,
+raw-provenance verification against `data/raw/PROVENANCE.md` (release row plus
+the SHA-256 table, hashed into the inputs fingerprint), resolved-destination
+containment refusing any output path inside a data root, canonical mode refusing
+a dirty worktree or a non-canonical overrides file, `--force` refused outside
+`--pre-audit`, the `.pyc` purge repaired via `importlib.util.cache_from_source`,
+and both gate inventories anchored by `pytest.UsageError`. `d024cd5` replaces
+the two 2026-09-03 pre-audit artifact sets with runs regenerated at `fb53084`
+from disposable worktrees verified clean before and after; every scientific
+count is unchanged and all five CSV tables — two from the defaults run, three
+from the overrides run — are byte-identical to the ones they replace. The
+message of `d024cd5` miscounts them as "three … and … four"; the tables are the
+files, and the files are unchanged. The two Markdown reports differ only in the
+run-identity block, the artifact filenames, the Tacitus `flags` cell, and the
+deletion of one sentence of static template prose that asserted a data-dependent
+fact — that `OTHER_VERSE` carries the largest excluded-DEPREL share —
+unconditionally, in a template that also renders runs where no regime is
+assigned at all.
+
+**Attestation of record — commit `d024cd5`, working tree clean before and
+after every command:**
+
+```
+uv run pytest -m g0 --strict-markers  →  144 passed, 200 deselected  (exit 0)
+uv run pytest -m g1 --strict-markers  →  172 passed, 172 deselected  (exit 0)
+uv run pytest                         →  327 passed,  17 skipped     (exit 0)
+uv lock --check                       →  Resolved 23 packages        (exit 0)
+uv run python -V                      →  Python 3.12.13
+```
+
+344 tests are collected: 144 `g0`, 172 `g1`, 28 unmarked (17 skipped G3
+scaffolds plus 11 documentation and inventory-anchor tests). The `g0` and `g1`
+selections are disjoint. The G1 count rose from the 129 attested at `93f2425`
+because the ratified items added tests, not because any earlier test was
+weakened or removed.
+
+The provisional artifacts of record are the two `--pre-audit` runs:
+
+```
+audit_preaudit_53f76d297774_1096e1d24582_fb53084b6d6a_2026-09-04   (defaults)
+audit_preaudit_53f76d297774_cbeffa78b04e_fb53084b6d6a_2026-09-04   (--overrides docs/g1_registry_proposal.yaml)
+```
+
+Both are marked `status: PROVISIONAL`, carry `provenance.status: verified`
+against `data/raw/PROVENANCE.md` at release `r2.18`, and were produced at
+`git.commit fb53084…` with `git.dirty false`. Neither carries a gate verdict
+and neither computes T\*: a pre-audit is deliberately incomplete by contract.
+The Tacitus row now carries `flags: [upstream_urn_conflict]`; that records
+checklist item 27, it does not resolve it.
+
+Nothing here has been merged or pushed.
+
+### Superseded attestation trail
+
+Everything below is retained as dated history. Any present-tense statement in a
+quoted block is scoped to the commit named by that block; it does not override
+the current status above.
+
+## Historical G0 status — closed after pre-merge review 2026-08-14
+
+> The first pre-merge review reopened G0 after finding three uncovered contract
+> defects: out-of-order integer token IDs were accepted; registry overrides could
+> not merge prefixes; and `n_tokens_raw` had no ratified meaning. The reader fix
+> is commit `73f70e3`; the owner ratified both registry readings on 2026-08-14 and
+> their tests-first implementation is commit `eea3b3e`. A second independent
+> review found no Critical or Important issue and confirmed that every previous
+> blocker was resolved.
+>
+> **Attestation of record — commit
+> `93f2425`, working tree clean:**
+>
+> ```
+> uv run pytest -m g0 --strict-markers -q  →  144 passed, 151 deselected  (exit 0)
+> uv run pytest -m g1 --strict-markers -q  →  129 passed, 166 deselected  (exit 0)
+> uv run pytest -q                         →  278 passed,  17 skipped     (exit 0)
+> uv lock --check --offline                →  Resolved 23 packages        (clean)
+> ```
+>
+> Re-attested 2026-09-03, closing an independent audit of the **whole branch** —
+> all forty commits from the merge-base `3f5a6ea`, not the last pass only. Python
+> 3.12.13. **The counts are not carried over: this pass changed library code and
+> added tests, so the docs-only ruling does not apply and all four commands were
+> re-run.** The delta from `0dc72dc` is **four** commits, and all four are named:
+> `04d3a38` (the previous attestation block), `5e9c2c9` (the two mis-sited
+> guards), `6f0341b` (item 27 moved to section A, and the test that would have
+> caught it) and `93f2425` (six documentary corrections), which is the commit
+> measured above — verified by set equality against `git rev-list 0dc72dc..HEAD`,
+> not by counting names. G0 stayed at **144**, the invariant every pass is run
+> under; `-m g1` moved 126 → 129 and the suite 273 → 278, the two extra being the
+> unmarked documentation-consistency cases. The three selections agree on the
+> collection: 144 + 151 = 129 + 166 = 278 + 17 = **295**. The **artifacts were
+> not regenerated**: nothing changed in `config/`, in the audit inputs, or in the
+> run identity, so both committed runs keep their names, hashes and sidecars.
+>
+> **What the whole-branch audit found.** Three perimeters were audited
+> independently and every claim re-verified before it was acted on. The manifests
+> recompute exactly, the `--force` discipline holds, no dependency was added and
+> `data/raw/` is ignored and untracked. What it found was two more guards sited
+> one level away from the thing they guarantee — the branch's signature defect,
+> now recorded five times. `to_model_input` refused a repeated `sent_ord`, but
+> `build_sequences` groups by `(language, doc_id, sent_ord)` and had already
+> fused the two sentences into one row before that check could see them; and the
+> GATE-A threshold was a config value while its sibling `GATE_B_RETENTION` was a
+> constant carrying the comment "a threshold that can drift silently is not a
+> gate" — `gate_a_threshold: 0.9` reported `fired: False` on a corpus that fires
+> at 0.02. Both are mutation-verified: the pre-fix code was rebuilt in memory and
+> **accepts every input the new tests reject**.
+>
+> It also found the checklist and the record disagreeing on whether item 27
+> blocks the freeze — filed under C in one and A in the other, with three
+> consistency tests passing throughout because they compared sets of integers.
+> The item is now in A in both, by owner ruling, and section membership is
+> tested.
+>
+> **Nothing scientific was decided here either.** `config/`,
+> `docs/01_MASTER_SPEC.md` and `docs/02_DECISION_LOG.md` remain byte-identical to
+> the merge-base `3f5a6ea` at the attested commit — verified over the whole
+> branch, not merely since the last pass. Nothing is frozen, `freeze_alphabet`
+> still raises `NotImplementedError`, no model was fit on real data, and all
+> twenty-seven ratification items remain OPEN. What this pass changed is the
+> quality of the evidence, never its content.
+>
+> **Correction to the block this one replaces.** Its delta sentence said the delta
+> from `3025387` was sixteen commits and then named fifteen, of which one
+> (`bbaf7e0`) lay outside the range it was enumerating; `81f61ec` and `d39235f`
+> were omitted, the second being the immediately preceding attestation, which the
+> convention includes. The set is: `95330fc`, `7195eb0`, `2ef9df8`, `4e4dda2`,
+> `a8982df`, `31b5331`, `32421ff`, `9e66deb`, `6946da9`, `7bc4d7d`, `92c9c44`,
+> `9fc5e0a`, `1168cee`, `b7428cc`, **`81f61ec`** and **`d39235f`** — sixteen,
+> verified by set equality against `git rev-list 3025387..b7428cc` and not by
+> counting names in prose. An attestation that names only part of its delta is the
+> defect this block exists to prevent, and it had been committed twice.
+>
+> Previously re-attested 2026-09-03 at `0dc72dc` (144 / 126 / 273 + 17), closing
+> the audit of the remediation pass, whose six fixes were correct in the path
+> each named and one level too coarse in three of them:
+> `config.check_against_default` skipped any declared section replaced by a
+> non-mapping and exempted `corpus.primary_contrast` by a name the check never
+> reaches; `registry` left `source_urn` unchecked, accepting `""`, `42` and
+> `None` into the published frame; `enumerate_prefixes` let a repeated `sent_id`
+> inflate `n_sentences`. One new test was vacuous. Two limits that no fix closes
+> were declared in D55 §xiv instead: the `--results-root` refusal is relative to
+> the *declared* `--data-root`, and the code revision in `run_id` is HEAD alone.
+>
+> Previously re-attested 2026-09-03 at `b7428cc` (144 / 119 / 266 + 17), closing
+> the external-review remediation pass, over the sixteen commits set out above.
+> Six are pure bug fixes with no ratification content —
+> `95330fc` (the declared registry column order survives `_inventory`), `7195eb0`
+> (unknown and missing config keys refused at the entry point, where a typed
+> `dmax` used to be ignored and still move `config_hash`), `2ef9df8` (registry
+> field *values* validated, not only their presence), `4e4dda2` (a
+> `--results-root` inside the immutable data root refused), `a8982df` (a `doc_id`
+> shared by two languages and a `sent_id` repeated across the pooled splits both
+> refused) and `31b5331` (the code revision enters `run_id`, so two runs of
+> different software over the same data and config no longer collide). One is the
+> missing half of the gate: `32421ff` adds `tests/test_g1_enforcement.py`, the
+> mandatory G1 coverage inventory, checked against pytest's live collection —
+> until it existed the `g1` marker certified only the tests already carrying it.
+> `9e66deb` adds an unmarked check that the D55 checklist and the ratification
+> record number the same items, replacing hand-reconciliation. Four are
+> documentary — `6946da9` (statements this branch's own edits had falsified),
+> `7bc4d7d` (the `--force`, `_status` and provenance-binding designs written out
+> as submissions rather than applied, plus new checklist item 26), `92c9c44` (the
+> thirty-row registry verification dossier and new item 27, Tacitus) and
+> `bbaf7e0`, which carried that block. Three rebuild the evidence: `9fc5e0a`
+> removes the superseded artifacts, `1168cee` and `b7428cc` regenerate the two
+> pre-audit runs. The remaining two are `81f61ec` (the docs-only ruling of item
+> 17) and `d39235f` (the attestation this one replaced).
+>
+> **Why the artifacts were rebuilt in three commits and not one.** Every artifact
+> name changed (the run identity now carries the code revision) and the report
+> bytes changed (the inventory's column order), so the committed pair was stale in
+> both name and content. They could not be regenerated together: `git_state`
+> samples `git status --porcelain`, which counts untracked files, so the first
+> run's fresh artifacts would have recorded `dirty: true` on the second. Each run
+> therefore needs a clean tree of its own — which is how the original pair was
+> produced too. Both were verified byte-reproducible against a second run into a
+> scratch results root outside the repository, and both manifests record
+> `dirty: false` correctly.
+>
+> **Nothing scientific was decided.** No binding document changed; `config/`,
+> `docs/01_MASTER_SPEC.md` and `docs/02_DECISION_LOG.md` are byte-identical to
+> `81f61ec`. Nothing is frozen, `freeze_alphabet` still raises
+> `NotImplementedError`, no model was fit on real data, and all twenty-seven
+> ratification items remain OPEN.
+>
+> Previously re-attested 2026-09-02 at
+> `30253877bc49c39aa68c316d3dc45f62dfe08c1a` (144 / 95 / 239 + 17), closing the
+> post-review pass. The delta from `1271d57`
+> is nineteen commits and no test: the previous attestation itself (`1680d3a`),
+> the two pre-audit artifact sets under `results/` (`84a9319`, `dc4cf43`), D55's
+> revision and the opening of the ratification record (`61d6496`, `15352a5`), and
+> the pass — `eec419f`, `d8b8052`, `67789c4`, `95c4fec` and `3025387` (D55's two
+> false `git.dirty: true` claims, its untracked-vs-ignored error, the stale 142/17
+> in its commit recipe, the template/live `CLAUDE.md` drift, a header that called
+> three pointer-bearing files "untouched", checklist item 24's own count, which
+> read nine where the branch carries eleven — three of them in this file — and
+> that item's phrase-search ratio, left on the denominator the count had just
+> vacated), `729679f` and `8fd72be` (the open-finding
+> pointer into `00`/`03`/`04` and into `README.md`), `4766f35` (one overclaiming
+> docstring in `sequences.py`), `8a8ff00` (ratification items 24–25) and the five
+> intermediate re-attestations this block replaces (`025f236`, `22c6c4f`,
+> `f0704a9`, `404e550`, `3faef5f`).
+> **Every count is unchanged** — prose and artifacts only, no test and no library
+> behaviour — and it is re-run rather than transcribed because a figure carried
+> over untested is a figure nobody measured. The convention this block follows:
+> the attestation names the commit whose tree was actually measured, and that
+> commit is the tip unless the ruling below has carried the block forward.
+> (Corrected 2026-09-03: this sentence used to say the attestation commit *is*
+> the tip, which the docs-only ruling immediately below had already made false.)
+> **Owner ruling, 2026-09-03 — in force,
+> submitted for ratification as part of checklist item 17:** a commit that touches
+> no code, no test, no dependency and no artifact does **not** require a re-run;
+> the block is moved to the new tip and the counts carried over, saying so. The
+> boundary is mechanical, not editorial — anything outside `docs/`, `README.md`,
+> `CLAUDE.md` and `AGENTS.md` forces the re-run, and `git diff --stat` against the
+> attested commit decides it. **Correction submitted 2026-09-03, not yet ratified
+> (checklist item 17):** that boundary is too wide. `docs/` also holds executable
+> inputs and binding contracts — `docs/g1_registry_proposal.yaml` is read by the
+> pipeline and its digest enters the manifest, and `docs/01_MASTER_SPEC.md` and
+> `docs/02_DECISION_LOG.md` define what the tests must prove; `git diff --stat`
+> sees paths and line counts, never semantic inertia. The narrower rule submitted
+> here: a commit may carry the attestation forward only if it touches **no** file
+> under `src/`, `tests/` or `config/`, no lockfile, no artifact under `results/`,
+> and none of `docs/**/*.yaml`, `docs/01_MASTER_SPEC.md`,
+> `docs/02_DECISION_LOG.md`. Anything else forces the re-run. Until item 17 is
+> ratified both boundaries are recorded here, and the **narrower** one is the one
+> this session honoured. Everything else still calls for a re-run, never a
+> transcription. So this block may sit some commits behind the tip, and that is
+> not drift: the carried-over commits are exactly those between the attested
+> commit above and the tip, and the reader checks the carry-over was legitimate
+> with `git diff --stat <attested>..HEAD` — every path must fall inside `docs/`,
+> `README.md`, `CLAUDE.md` or `AGENTS.md`. If one does not, these counts are
+> unattested for the current tree and the gates must be re-run.
+> Superseded attestations kept for the trail —
+> `30253877bc49c39aa68c316d3dc45f62dfe08c1a` and `d39235f` at 144 / 95 / 239 + 17,
+> and before them, same counts:
+> `3faef5fc46febe4056a2b656924df76d0815a8a6`,
+> `404e55051380749716421e3d741bfbe8fe8fff55`,
+> `67789c45a1b1a07e7f92b52766046096b3f71bcf`,
+> `8fd72becbc4359dd6c7af49b98d0897e4f0f9ffd`,
+> `d8b805251b261d116251fed31c82bfc2ad5f5610`,
+> `4766f355a0dfbf09ec70d7b07ba99b81d62e8e43` and
+> `1271d57e2c1b112d46f59e27f56f5bdd7f0a8c68`.
+>
+> Earlier still, and the one that did move: commit
+> `180e05cf83985be08a5d4dd27ba843a680d826a8` at 142 passed / 17 deselected (G0)
+> and 142 / 17 (full suite). **G0 itself did not reopen.** The selection moved
+> 142 → 144 because convention 12 of the D55 proposal (unknown override fields
+> rejected) changes `registry.build_registry`, whose mandatory-coverage area is
+> "registry construction and validation" in the D52(ii) inventory: testing it only
+> in an unmarked file would have left `-m g0` green while the rule went
+> unexercised. The suite moved 142 → 239 because this branch adds the G1 audit
+> tests, which carry `g1` and never `g0`, and 239 → 266 in the 2026-09-03
+> remediation pass — twenty-four more `g1` tests (95 → 119) and three unmarked
+> ones checking that two documents number their items alike. G0 stayed at 144
+> throughout, which is the invariant that pass was run under.
+>
+> This is the **only** place the counts are recorded; README, the roadmap and the
+> index point here instead of repeating them. Any test added later moves the
+> number, and a figure transcribed into four documents goes stale silently — as
+> it did at 124, when PR #2 added seven registry tests and the hardening pass
+> below added eleven more. Re-attesting means rerunning the commands on a clean
+> tree and replacing the block above together with its commit.
+>
+> The 17 are G3 scaffolds (`context_tree`, `tree_slices`, `null_calibration`,
+> the G3 scoring-boundary cases); none carries a gate marker. D52(i)'s three
+> conditions hold: environment locked (Python 3.12.13, `uv lock --check` clean,
+> 23 packages); every G0 test passes with an executed assertion; the D45/D46
+> deterministic infrastructure is verified.
+>
+> **`-m g1` is new here** (D55 §xiv, convention 13; owner-authorized 2026-08-17,
+> PROPOSED with the rest of the package). It puts the G1 audit tests under the
+> same enforcement as G0 — `conftest.GATE_MARKERS` — because they previously ran
+> only inside the full suite, where one skipped test lowers the passed count by
+> one, raises the skipped count by one, and stays green: the failure mode D52(iii)
+> forbids for G0 and left open for G1. (The two figures were quoted here until
+> 2026-09-03; they were a second place recording counts, and they went stale the
+> first time the suite moved.) Its first run found nineteen G1 tests passing while
+> executing no Python assert, relying on `pytest.raises(match=…)` alone; each now
+> asserts on the exception's content. Mutation-verified in both directions.
+> It attests no gate: **G1 is not closed** — nothing is frozen, the registry is
+> unratified, and the evidence for its ratification is in
+> `docs/g1_D55_proposal.md` and `docs/g1_registry_proposal.md` (both PROPOSED).
+>
+> **What is applied and what is not** (stated here 2026-09-03, because naming
+> only conventions 12 and 13 above invites the reading that they are the only
+> ones in force). **All thirteen** §xiv software conventions are implemented and
+> in force on this branch, and all thirteen are submitted for ratification with
+> the rest of the package; 12 and 13 are singled out only because they are the
+> two that moved a test count. What is applied to nothing is the amendment's
+> *scientific* content: the A/B choice, every recomputed constant, the registry,
+> the alphabet and T\* contracts, and the freeze. No binding document has changed
+> and nothing is frozen. The D55 preamble states the same split at its head.
+>
+> Two gaps in the enforcement were closed in the process, each one level finer
+> than the last. First: `-m g0` selects only marked tests, so an incomplete
+> marker set exited 0 — the gate command reported a green G0 the moment the
+> reader went green, with three mandatory areas at zero coverage.
+> `tests/test_g0_enforcement.py` now also asserts the D52(ii) inventory. Second
+> (post-merge review, commits `d015b98`–`180e05c`): that inventory guarded areas
+> at *file* granularity while its keys name behaviours, so deleting every P-BOUND
+> test kept the gate green — and, symmetrically, §7's five-label taxonomy row was
+> covered by a subset assertion that two labels satisfied. The inventory now
+> requires named tests by exact name for every mandatory behaviour, and the
+> canonical gate compares them with the module-level G0 items actually collected
+> by the current pytest session. The AST scanner remains only in isolated
+> synthetic probes; it is not closure evidence.
+> `registry.REGIME_LABELS` is pinned by equality with all five labels exercised
+> through `build_registry`. A green gate now implies that every mandatory area is
+> represented, that its named behaviours are still selected by `-m g0`, and that
+> those tests really assert.
+>
+> Still assigned to G1: `sent_ord`, the empirical Greek prefix granularity and
+> the O2/O8 decision about which prefixes to merge. The mechanism itself and the
+> `n_tokens_raw` denominator are now ratified. The KS-headroom question below
+> (Q5) also remains open.
+>
+> **State of those items at this attestation.** The G1 enumeration has been run
+> on the pinned data: the Greek prefix granularity is empirical (18 raw prefixes,
+> 17 canonical if Athenaeus 12+13 merge) and **O2 is resolved at document level**
+> — one Hymn prefix, no duplication — while **O8 remains open** and `sent_ord` is
+> proposed, not implemented. The enumeration also contradicts §2.3: Greek
+> PROSE_CLASS holds 2 documents, not 6, so 𝔻 is 7 (or 11 only under the union
+> option) and the constants of D21/D24/D33/D43 do not describe this corpus. That
+> finding, both options and every recomputed constant are in
+> `docs/g1_D55_proposal.md` — **PROPOSED, applied to nothing**.
+
+### Historical: what remained at the overnight handoff
+
+Tonight delivered the enforcement mechanics + these mandatory-coverage areas
+(D52(ii)): permutation, sign-flip, Holm, bootstrap, blocks, seed derivation,
+config canonicalization+hash, central run-manifest, minimal sidecar, overwrite
+refusal. **Still open in the G0 set:**
+
+- **conllu_reader** — tests RED (P5); implementation is the next GREEN step
+  (RED checkpoint honoured; not written tonight).
+- **total alphabet mapping (§3.4)** — `test_alphabet.py` placeholders still
+  `@SKIP`; `alphabet.py` is a stub. Not in tonight's scope.
+- **registry build + validation** — `test_registry.py` does not exist yet;
+  `registry.py` is a stub. Not in tonight's scope.
+- **sequences P-RESET / P-BOUND (§3.5, D52(x))** — `test_sequences.py` does not
+  exist yet; `sequences.py` is a stub. Not in tonight's scope.
+
+The `@pytest.mark.g0` set is therefore still a subset, exactly as D52(ii)'s marker
+description ("incomplete until all mandatory coverage is implemented") anticipates.
+
+## Skipped / not done (with reasons)
+- Reader implementation — deliberate RED-only (your checkpoint).
+- alphabet / registry / sequences G0 modules — outside the P1–P6 priority list.
+- G3 suites (context_tree, tree_slices, scores byte-identity, null_calibration)
+  — out of scope; remain skipped.
+- No mirror was improvised for P6 (network was available, so both repos were
+  cloned at r2.18 directly).
+
+---
+
+## Reproduce
+
+At the historical handoff:
+
+```
+git log --oneline master..d82357b      # 10 commits, listed below
+```
+```
+d82357b docs(handoff): overnight Phase-1a run report (P1-P6)
+db1dbda data(provenance): record UD grc/la Perseus r2.18 acquisition (P6)
+4505c34 test(reader): RED-only G0 contract for iter_sentences/ParseError (D54/D54-A1)
+7794d76 feat(manifest): central run manifest, minimal sidecar, overwrite refusal (G0)
+60bf14d feat(config): seed derivation + canonical config hashing (G0)
+8a60ccd feat(blocks): sentence-aligned block segmentation, descriptive only (G0)
+8e95466 feat(stats): Holm step-down and hierarchical document bootstrap (G0)
+e9e4489 feat(stats): exact label-permutation and sign-flip utilities (G0)
+b5ced54 docs(probe): pin conllu 6.0.0 runtime facts for the reader contract
+7559f66 chore(g0): mechanize the D45/D52(iii) G0 enforcement criterion
+```
+Historical branch tip `d82357b`. The owner ratified the implementation readings
+and authorized the remediation commit on 2026-07-27. Nothing merged to master.

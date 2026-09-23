@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "histories_checked": 765,
+  "root_non_cancellation": {
+    "Q": 0.7134571524694422,
+    "incorrect_shortcut": -0.6650544707842875,
+    "root_difference": 1.3785116232537296
+  }
+}

@@ -1,53 +1,50 @@
-# Project HEXIS — standing instructions for Codex (design v2.1, single-instrument)
+# Project HEXIS — standing instructions (design 3.1)
 
-## What this is
-Information-theoretic analysis of morphosyntactic organization (UPOS+DEPREL sequences)
-in Greek/Latin hexameter vs prose (UD v2.18: grc_perseus, la_perseus).
-Sole instrument: Rissanen-style MDL context tree (spec §4). Confirmatory statistics: P1
-(transfer), P2 (context gain).
-Authoritative: docs/01_MASTER_SPEC.md (§N) + docs/02_DECISION_LOG.md (D01–D54). Binding. No
-silent deviations. O7 blocks G2/G5; gate order G0 → G1 → G3 → G2 → G4 → G5 → G6 → G7 (D44(vii)).
+Active authority: docs/01_MASTER_SPEC.md, V3-001 and V3-002 in
+docs/02_DECISION_LOG.md, which adopt
+docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md and its
+byte-identified JSON contracts. Text governs semantics; JSON fixes values.
+Do not silently deviate or regenerate expectations to make tests pass.
 
-## Golden rules
-- Tests first (spec §7); never weaken a test. Analytic targets: 2.000 / <0.02 / 0.7219 /
-  0.4690-vs-≈1.0 bits.
-- log base 2; results in bits. Formulas match spec §4 exactly (pre-update counts in
-  predict-then-update).
-- Freeze: no real-data model fits before gate G2 (synthetic only). Reference models are
-  real-data → post-G2. v2.1: G2 follows G3; O7 (sign-flip calibration) must be resolved first.
-- Determinism: np.random.default_rng(derived_seed); one run manifest + minimal sidecar per
-  artifact (§6.4, D46); no silent overwrites (--force).
-- data/raw/ immutable + gitignored (CC BY-NC-SA 2.5). Fail loudly with precise locations.
+V0–V2 are completed; V3–V5 are not attested and no real fit has ever run.
+V3-002 realigned the repository on 2026-09-22: the active tree is 3.1 only and
+every historical material is preserved byte for byte under archive/, at the
+path it had at 5f1ec06. archive/ is a record: never imported, never collected,
+outside the code identity; it runs at that commit, not here. Retired design
+elements — v2.1 inference, Latin, gates G0–G7, permutation constants,
+sign-stability, D01–D55 — are listed in V3-001 and must never be reintroduced.
 
-## Do not (v2 architecture)
-- Do not reintroduce retired estimators as results: per-chunk entropy/MM/redundancy,
-  standalone conditional entropy, MI (+decay/shuffle), higher-order tables, chunk JSD,
-  PERMANOVA, LZ (D32). Slices = diagnostics only (§4.6). JSD = R1, mandatory descriptive
-  distributional reading, no α, no test (D41).
-- Do not consult regime labels inside pooled_score_core (D36; D52(v): core label-free, labels
-  enter only via annotate_scores); keep the label-invariance test intact.
-- Do not compute unrestricted gain as primary (D35: available_past ≥ 4).
-- Do not do chunk-level inference (D34); blocks serve figure F7 only.
-- Do not use UD train/dev/test splits (D03); documents from sent_id.
-- Do not add a separate model-complexity penalty to the tree (D18/D32): prequential coding
-  includes it.
-- Do not permute labels at chunk level (D21): document level, exact schemes (Greek 462 /
-  2048; Latin 28 / 256; author 20 / 64; Lysias-merged 56 / 256) — sidedness declared per D43.
-- Do not run confirmatory P1 inference or freeze G2 before O7 is resolved (D44).
-- Do not import from candidates/ (quarantined non-canonical implementations; D47).
-- Do not treat the representation-analysis cells (alphabet/boundary) as automatic validity
-  conditions (D42): report and interpret; sign-stability is required only on C0 + OAT.
-- Do not add dependencies, print in library code, or cite sources outside the registry
-  (D39).
+Stop for review before V3; no new real model fits in this tranche. The freeze
+perimeter is code identity over all of src/hexis plus tests, conftest.py,
+pyproject.toml, config and uv.lock: once V2/V3 evidence is published, changing
+any of them forces a new directory and a new run.
 
-## Stack & commands
-Python 3.12 via uv. `uv sync` | `uv run pytest` | `uv run python -m hexis.pipeline.<stage>`.
+Tests first; never weaken a still-valid property; retiring one means replacing
+its test with a reason, not deleting the check. Active acceptance: pytest and
+pytest -m v31 collect the same tests, all marked v31, with no skip or xfail and
+an executed assert each. Obligations are tracked in docs/TEST_INVENTORY.md.
+Use Python 3.12 via uv; keep dependencies and uv.lock. No print in library code.
 
-## Naming (do not rename casually)
-src/hexis; model/ protocols/ stats/ viz/ pipeline/. Regimes HEX, PROSE_CLASS, PROSE_POST,
-OTHER_VERSE, EXCLUDED.
-Alphabet variants ud23, ud23_oth, upos_only. Statistics P1, P2, S1, R1, L1. Config C0.
-Gates G0–G7. Protocols (a)/(b)/(c).
+Three pinned Greek CoNLL-U only; recombine numeric source coordinates, not splits.
+18 prefixes, 17 documents, 11 primary in seven blocks; six inventory_only enter
+census/alphabet only, never training/scoring. Regime and report group are distinct.
+Validate source UPOS, PROPN→NOUN, retention/DEPREL policy, global ADV/PART→ADV_PART,
+then frozen lexicographic IDs: ud23/ud23_oth/upos_only = 100/105/11.
+UPOS shares the exact C0 mask; OTH has its own population. Sentence streams reset,
+including empty streams; target j≥4. No SEP, EOS, UNK or cross-sentence history.
 
-## When unsure
-State the uncertainty and stop. Propose a Decision-Log amendment rather than guessing.
+Implemented instrument: frozen CTW, four losses, Q and G in bits, two declared
+weights, R1 descriptive only. No inference. Core label-free; labels via
+annotate_scores. No extra model-complexity penalty. RNG per the deposited
+SHA-256 contract.
+
+One manifest per run: deterministic identity from contract/code/data/registry/
+alphabets/config/lock; timestamps, machine and paths external. Atomic publication,
+no implicit overwrite; preserve local scripts and every historical result.
+data/raw is immutable and gitignored; reject output inside raw even through symlinks.
+Raw licensing remains CC BY-NC-SA 2.5; what the publication act of V3-002 covers,
+and under which licence, is decided there and nowhere else.
+Sources only from the active registry in docs/BIBLIOGRAPHY.md.
+
+When scientifically uncertain: stop the affected passage, state the discrepancy,
+propose an explicit contract/Decision-Log amendment rather than guessing.

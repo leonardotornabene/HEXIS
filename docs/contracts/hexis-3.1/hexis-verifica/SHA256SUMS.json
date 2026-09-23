@@ -1,0 +1,16 @@
+{
+  "HEXIS_verdetto_consolidato_2026-09-15.md": "9cf75b7618864fa208092f5ed163976a385ef5fb0bad806e846ff84661fa7a12",
+  "evidenze/LEGGIMI_evidenze.md": "9c3e3025210962249c4ba5db7e7e3c7af0893a1b420cca94e0e27d7794d23d06",
+  "evidenze/audit_corpus.md": "a6102b591d7afdefabf550f74b8436979bae313a21eed7d68da426d50c415152",
+  "evidenze/audit_matematico.md": "c14e1a1326501ba45c7464be0d7a668d5c015c68728a85b51a2cd4d48627f9ab",
+  "evidenze/audit_repository.md": "7f5457b5c2459e5a45268e9b9cdca16e736b914361bba21eb3dcb6167f436109",
+  "evidenze/controlli_matematici.txt": "9cb98ff828d5fdb5dbd842566ed44d12fc11f2c87cab5e524b18d1bd117ecec7",
+  "evidenze/corpus_audit.json": "060b08f4d5774520c559555868cf1789e1a4494f66edef001dc6edc95a9aa450",
+  "evidenze/input_verificati.json": "2afbe6f405cdd6794f1ba1def096a2a7090b126f035e53a7a4cd444a4486bc0d",
+  "evidenze/riconteggio_script_verificato.json": "5bd3869253370e8098512e3a5b8144e0381e8afeb05803a75538dd621255b837",
+  "evidenze/sintetici_25.json": "b7f4ed53af1262d42c830632f644713dda12aa6115a23d260508fb604b994521",
+  "evidenze/verifica_consegna.json": "3a26cb40b0a973590909cdce5f200273cb7128d3dd4fdf8d90435472070ea48e",
+  "evidenze/verifica_corpus.py": "c729954588d81132358a9b357f851ac758f83436371e2bb5e4dd7f62894a6930",
+  "evidenze/verifica_matematica.py": "89fbfa27edf129017b777203255e4125f4cd19f0ec4978141b412e56e5a71742",
+  "evidenze/verifica_sintetici.py": "585280e61d910805cc179fb259d81e74be1e20f6a715d60929f66373ee307e69"
+}

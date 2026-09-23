@@ -1,59 +1,72 @@
-"""Configuration loading: config/default.yaml, single source of parameters (Spec §6.3).
+"""Configuration: safe YAML, no duplicate keys, and the deposited projection.
 
-Signatures chosen under the P4 authorization (not fixed in §6.2) and ratified
-by the owner on 2026-07-27, as recorded in docs/HANDOFF.md.
-``config/default.yaml`` is not packaged into the wheel, so it is located by
-walking up from the working directory (the pipeline and the test suite both run
-from the repository root).
+`config/default.yaml` carries no parameter of its own. It is the analytical
+projection of the deposited design, compared field by field against it (§13.1),
+so a divergence is an error here and not a second source of values.
 """
 
-import copy
-import hashlib
-import json
-import zlib
 from pathlib import Path
 
 import yaml
+from yaml.constructor import ConstructorError
+from yaml.nodes import MappingNode
 
 
-def _find_default_config() -> Path:
-    for base in [Path.cwd(), *Path.cwd().parents]:
-        candidate = base / "config" / "default.yaml"
-        if candidate.exists():
-            return candidate
-    raise FileNotFoundError("config/default.yaml not found from the working directory upward")
+class _UniqueKeyLoader(yaml.SafeLoader):
+    """SafeLoader that refuses YAML's silent last-duplicate-wins behaviour."""
 
 
-def load_config(path=None) -> dict:
-    """Load the YAML configuration (defaults to config/default.yaml)."""
-    path = Path(path) if path is not None else _find_default_config()
-    with open(path, encoding="utf-8") as fh:
-        return yaml.safe_load(fh)
+def _construct_unique_mapping(loader, node, deep=False):
+    if not isinstance(node, MappingNode):
+        raise ConstructorError(None, None, "expected a mapping node", node.start_mark)
+    loader.flatten_mapping(node)
+    mapping = {}
+    for key_node, value_node in node.value:
+        key = loader.construct_object(key_node, deep=deep)
+        try:
+            duplicate = key in mapping
+        except TypeError as exc:
+            raise ConstructorError(
+                "while constructing a mapping",
+                node.start_mark,
+                "found an unhashable key",
+                key_node.start_mark,
+            ) from exc
+        if duplicate:
+            raise ConstructorError(
+                "while constructing a mapping",
+                node.start_mark,
+                f"found duplicate key {key!r}",
+                key_node.start_mark,
+            )
+        mapping[key] = loader.construct_object(value_node, deep=deep)
+    return mapping
 
 
-def _deep_merge(base: dict, overrides: dict) -> dict:
-    out = copy.deepcopy(base)
-    for key, value in overrides.items():
-        if isinstance(value, dict) and isinstance(out.get(key), dict):
-            out[key] = _deep_merge(out[key], value)
-        else:
-            out[key] = copy.deepcopy(value)
-    return out
+_UniqueKeyLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _construct_unique_mapping
+)
 
 
-def resolve_config(overrides=None, base=None) -> dict:
-    """Deep-merge ``overrides`` into ``base`` (default config) without mutating either."""
-    if base is None:
-        base = load_config()
-    return _deep_merge(base, overrides or {})
+def load_yaml(path, *, source=None):
+    """Safely load YAML while rejecting duplicate keys at every mapping depth."""
+    path = Path(path)
+    try:
+        return yaml.load(
+            Path(source or path).read_text(encoding="utf-8"), Loader=_UniqueKeyLoader
+        )
+    except yaml.YAMLError as exc:
+        detail = str(exc).replace("<unicode string>", str(path))
+        raise ValueError(f"{path}: not valid YAML — {detail}") from exc
 
 
-def config_hash(cfg: dict) -> str:
-    """SHA-256 of the canonical JSON serialization (sorted keys) of the resolved config."""
-    canonical = json.dumps(cfg, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
-    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-
-
-def derive_seed(analysis_id: str, global_seed: int) -> int:
-    """Per-analysis seed = global XOR crc32(analysis_id) (§6.3)."""
-    return global_seed ^ (zlib.crc32(analysis_id.encode("utf-8")) & 0xFFFFFFFF)
+def load_v31_config(path=None, *, registry_path=None) -> dict:
+    """Load the exact active analytical projection and independently check registry."""
+    from hexis.contracts import ROOT, load_contracts, validate_projection, compare
+    path = Path(path) if path is not None else ROOT / 'config/default.yaml'
+    registry_path = Path(registry_path) if registry_path is not None else ROOT / 'config/registry_overrides.yaml'
+    design = load_contracts()['design']
+    cfg = load_yaml(path)
+    validate_projection(cfg, design)
+    compare(load_yaml(registry_path), {'spec_version': 'HEXIS-3.1', 'registry': design['registry']}, str(registry_path))
+    return cfg

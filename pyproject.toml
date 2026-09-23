@@ -1,7 +1,7 @@
 [project]
 name = "hexis"
 version = "0.1.0"
-description = "HEXIS: morphosyntactic organization under metrical constraint, measured by a single Rissanen-style MDL context-tree instrument (Spec v2.1)"
+description = "HEXIS 3.1: descriptive within-sentence annotation order in a finite Greek corpus"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "numpy",
@@ -22,16 +22,15 @@ build-backend = "hatchling.build"
 packages = ["src/hexis"]
 
 [tool.pytest.ini_options]
-# Collection is confined to tests/ (Spec §7). candidates/ holds quarantined
-# non-canonical implementations (D47) whose test basenames collide with the
-# canonical suite; they must never enter the G0 or G3 test sets.
+# Collection is confined to tests/: archive/ holds the historical suites, which
+# are a record and are never collected, not even when pytest starts from the root.
 testpaths = ["tests"]
-# G0 gate mechanics (D52(iii)/D45): reject unregistered markers and turn an xpass
-# into a failure; the root conftest also requires an executed Python assert.
+norecursedirs = ["archive", ".*", "data", "results", "notebooks"]
+# Reject unregistered markers and turn an xpass into a failure; the root conftest
+# also requires an executed assert and refuses any test without the marker.
 addopts = "--strict-markers"
 enable_assertion_pass_hook = true
 xfail_strict = true
 markers = [
-    "g0: Gate G0 acceptance tests (D52); incomplete until all mandatory coverage is implemented",
+    "v31: active acceptance; no skip, no placeholder",
 ]
-norecursedirs = ["candidates", ".venv", "data", "results", "notebooks"]

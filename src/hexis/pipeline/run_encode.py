@@ -1,10 +1,10 @@
-"""Stage run_encode (Spec §6.1): tokens.parquet, sequences.parquet, alphabet.json
-artifacts with manifests (Spec §3.4–3.7, §6.4)."""
+"""HEXIS 3.1 corpus encoding and verified sentence/coordinate artifacts."""
+from hexis.pipeline.corpus_run import main as _main
 
 
-def main() -> None:
-    raise NotImplementedError
+def main(argv=None):
+    return _main('encode', argv)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -1,0 +1,644 @@
+{
+  "source_hashes": [
+    {
+      "file": "grc_perseus-ud-dev.conllu",
+      "sha256": "7899f809fc250404839694330b9db25f79a5b1f20cfa12e6dc3a368a4ec7cd22"
+    },
+    {
+      "file": "grc_perseus-ud-test.conllu",
+      "sha256": "e18d47c395c0ec8da678fb5e315ce6d90133e88c25ed2a55bc72a2a66e6254d5"
+    },
+    {
+      "file": "grc_perseus-ud-train.conllu",
+      "sha256": "d7471c9b91bcd975848fa5d9b65c31f1fc48a597ed3667796968a82c6d098a7e"
+    }
+  ],
+  "raw_greek": 202989,
+  "sentences_greek": 13919,
+  "alphabet_sizes": {
+    "ud23": 106,
+    "ud23_oth": 112,
+    "upos_only": 12
+  },
+  "blocks": [
+    {
+      "block": "HOMERIC_TRADITION",
+      "docs": [
+        "tlg0012.tlg001.perseus-grc1.tb.xml",
+        "tlg0013.tlg002.perseus-grc1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 71088,
+        "ud23_oth": 71547,
+        "upos_only": 71088
+      },
+      "eligible": {
+        "ud23": 46634,
+        "ud23_oth": 47062,
+        "upos_only": 46634
+      },
+      "sentences": 6169
+    },
+    {
+      "block": "HESIODIC_TRADITION",
+      "docs": [
+        "tlg0020.tlg001.perseus-grc1.tb.xml",
+        "tlg0020.tlg002.perseus-grc1.tb.xml",
+        "tlg0020.tlg003.perseus-grc1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 9282,
+        "ud23_oth": 9308,
+        "upos_only": 9282
+      },
+      "eligible": {
+        "ud23": 6375,
+        "ud23_oth": 6398,
+        "upos_only": 6375
+      },
+      "sentences": 738
+    },
+    {
+      "block": "HERODOTUS",
+      "docs": [
+        "tlg0016.tlg001.perseus-grc1.1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 17301,
+        "ud23_oth": 17349,
+        "upos_only": 17301
+      },
+      "eligible": {
+        "ud23": 12946,
+        "ud23_oth": 12994,
+        "upos_only": 12946
+      },
+      "sentences": 1092
+    },
+    {
+      "block": "THUCYDIDES",
+      "docs": [
+        "tlg0003.tlg001.perseus-grc1.1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 9346,
+        "ud23_oth": 9353,
+        "upos_only": 9346
+      },
+      "eligible": {
+        "ud23": 7227,
+        "ud23_oth": 7234,
+        "upos_only": 7227
+      },
+      "sentences": 532
+    },
+    {
+      "block": "ATHENAEUS",
+      "docs": [
+        "tlg0008.tlg001.perseus-grc1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 23133,
+        "ud23_oth": 23231,
+        "upos_only": 23133
+      },
+      "eligible": {
+        "ud23": 16691,
+        "ud23_oth": 16786,
+        "upos_only": 16691
+      },
+      "sentences": 1630
+    },
+    {
+      "block": "DIODORUS",
+      "docs": [
+        "tlg0060.tlg001.perseus-grc3.11.tb.xml"
+      ],
+      "kept": {
+        "ud23": 15266,
+        "ud23_oth": 15266,
+        "upos_only": 15266
+      },
+      "eligible": {
+        "ud23": 12334,
+        "ud23_oth": 12334,
+        "upos_only": 12334
+      },
+      "sentences": 733
+    },
+    {
+      "block": "PLUTARCH",
+      "docs": [
+        "tlg0007.tlg004.perseus-grc1.tb.xml",
+        "tlg0007.tlg015.perseus-grc1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 8884,
+        "ud23_oth": 8893,
+        "upos_only": 8884
+      },
+      "eligible": {
+        "ud23": 6901,
+        "ud23_oth": 6908,
+        "upos_only": 6901
+      },
+      "sentences": 499
+    }
+  ],
+  "documents": [
+    {
+      "doc_id": "tlg0003.tlg001.perseus-grc1.1.tb.xml",
+      "work": "Histories, book 1",
+      "regime": "PROSE_CLASS",
+      "period": "classical",
+      "raw": 10396,
+      "sentences": 532,
+      "kept": {
+        "ud23": 9346,
+        "ud23_oth": 9353,
+        "upos_only": 9346
+      },
+      "eligible": {
+        "ud23": 7227,
+        "ud23_oth": 7234,
+        "upos_only": 7227
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 104,
+        "ud23_oth": 104,
+        "upos_only": 104
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0007.tlg004.perseus-grc1.tb.xml",
+      "work": "Lycurgus",
+      "regime": "PROSE_POST",
+      "period": "imperial",
+      "raw": 5044,
+      "sentences": 248,
+      "kept": {
+        "ud23": 4481,
+        "ud23_oth": 4486,
+        "upos_only": 4481
+      },
+      "eligible": {
+        "ud23": 3493,
+        "ud23_oth": 3497,
+        "upos_only": 3493
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 50,
+        "ud23_oth": 50,
+        "upos_only": 50
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0007.tlg015.perseus-grc1.tb.xml",
+      "work": "Alcibiades",
+      "regime": "PROSE_POST",
+      "period": "imperial",
+      "raw": 4943,
+      "sentences": 251,
+      "kept": {
+        "ud23": 4403,
+        "ud23_oth": 4407,
+        "upos_only": 4403
+      },
+      "eligible": {
+        "ud23": 3408,
+        "ud23_oth": 3411,
+        "upos_only": 3408
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 85,
+        "ud23_oth": 85,
+        "upos_only": 85
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0008.tlg001.perseus-grc1.tb.xml",
+      "work": "Deipnosophistae, books 12-13",
+      "regime": "PROSE_POST",
+      "period": "imperial",
+      "raw": 26245,
+      "sentences": 1630,
+      "kept": {
+        "ud23": 23133,
+        "ud23_oth": 23231,
+        "upos_only": 23133
+      },
+      "eligible": {
+        "ud23": 16691,
+        "ud23_oth": 16786,
+        "upos_only": 16691
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 70,
+        "ud23_oth": 70,
+        "upos_only": 70
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0011.tlg001.perseus-grc2.tb.xml",
+      "work": "Trachiniae",
+      "regime": "OTHER_VERSE",
+      "period": "classical",
+      "raw": 5229,
+      "sentences": 431,
+      "kept": {
+        "ud23": 4224,
+        "ud23_oth": 4302,
+        "upos_only": 4224
+      },
+      "eligible": {
+        "ud23": 2610,
+        "ud23_oth": 2674,
+        "upos_only": 2610
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 46,
+        "ud23_oth": 46,
+        "upos_only": 46
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0011.tlg002.perseus-grc2.tb.xml",
+      "work": "Antigone",
+      "regime": "OTHER_VERSE",
+      "period": "classical",
+      "raw": 4299,
+      "sentences": 391,
+      "kept": {
+        "ud23": 3573,
+        "ud23_oth": 3618,
+        "upos_only": 3573
+      },
+      "eligible": {
+        "ud23": 2076,
+        "ud23_oth": 2115,
+        "upos_only": 2076
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 35,
+        "ud23_oth": 35,
+        "upos_only": 35
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0011.tlg003.perseus-grc1.tb.xml",
+      "work": "Ajax",
+      "regime": "OTHER_VERSE",
+      "period": "classical",
+      "raw": 5319,
+      "sentences": 490,
+      "kept": {
+        "ud23": 4364,
+        "ud23_oth": 4428,
+        "upos_only": 4364
+      },
+      "eligible": {
+        "ud23": 2503,
+        "ud23_oth": 2558,
+        "upos_only": 2503
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 33,
+        "ud23_oth": 34,
+        "upos_only": 33
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0011.tlg004.perseus-grc1.tb.xml",
+      "work": "Oedipus Tyrannus",
+      "regime": "OTHER_VERSE",
+      "period": "classical",
+      "raw": 5600,
+      "sentences": 520,
+      "kept": {
+        "ud23": 4571,
+        "ud23_oth": 4648,
+        "upos_only": 4571
+      },
+      "eligible": {
+        "ud23": 2610,
+        "ud23_oth": 2680,
+        "upos_only": 2610
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 39,
+        "ud23_oth": 41,
+        "upos_only": 39
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0011.tlg005.perseus-grc2.tb.xml",
+      "work": "Electra",
+      "regime": "OTHER_VERSE",
+      "period": "classical",
+      "raw": 5239,
+      "sentences": 528,
+      "kept": {
+        "ud23": 4259,
+        "ud23_oth": 4334,
+        "upos_only": 4259
+      },
+      "eligible": {
+        "ud23": 2331,
+        "ud23_oth": 2389,
+        "upos_only": 2331
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 42,
+        "ud23_oth": 42,
+        "upos_only": 42
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0012.tlg001.perseus-grc1.tb.xml",
+      "work": "Iliad",
+      "regime": "HEX",
+      "period": "archaic",
+      "raw": 79890,
+      "sentences": 6003,
+      "kept": {
+        "ud23": 69327,
+        "ud23_oth": 69770,
+        "upos_only": 69327
+      },
+      "eligible": {
+        "ud23": 45515,
+        "ud23_oth": 45927,
+        "upos_only": 45515
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 58,
+        "ud23_oth": 58,
+        "upos_only": 58
+      },
+      "file_order_inversions": 2
+    },
+    {
+      "doc_id": "tlg0013.tlg002.perseus-grc1.tb.xml",
+      "work": "Homeric Hymn to Demeter",
+      "regime": "HEX",
+      "period": "archaic",
+      "raw": 2061,
+      "sentences": 166,
+      "kept": {
+        "ud23": 1761,
+        "ud23_oth": 1777,
+        "upos_only": 1761
+      },
+      "eligible": {
+        "ud23": 1119,
+        "ud23_oth": 1135,
+        "upos_only": 1119
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 57,
+        "ud23_oth": 57,
+        "upos_only": 57
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0016.tlg001.perseus-grc1.1.tb.xml",
+      "work": "Histories, book 1",
+      "regime": "PROSE_CLASS",
+      "period": "classical",
+      "raw": 19575,
+      "sentences": 1092,
+      "kept": {
+        "ud23": 17301,
+        "ud23_oth": 17349,
+        "upos_only": 17301
+      },
+      "eligible": {
+        "ud23": 12946,
+        "ud23_oth": 12994,
+        "upos_only": 12946
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 53,
+        "ud23_oth": 53,
+        "upos_only": 53
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0020.tlg001.perseus-grc1.tb.xml",
+      "work": "Theogony",
+      "regime": "HEX",
+      "period": "archaic",
+      "raw": 4610,
+      "sentences": 273,
+      "kept": {
+        "ud23": 4023,
+        "ud23_oth": 4034,
+        "upos_only": 4023
+      },
+      "eligible": {
+        "ud23": 2945,
+        "ud23_oth": 2955,
+        "upos_only": 2945
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 152,
+        "ud23_oth": 152,
+        "upos_only": 152
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0020.tlg002.perseus-grc1.tb.xml",
+      "work": "Works and Days",
+      "regime": "HEX",
+      "period": "archaic",
+      "raw": 3725,
+      "sentences": 283,
+      "kept": {
+        "ud23": 3189,
+        "ud23_oth": 3197,
+        "upos_only": 3189
+      },
+      "eligible": {
+        "ud23": 2077,
+        "ud23_oth": 2084,
+        "upos_only": 2077
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 33,
+        "ud23_oth": 33,
+        "upos_only": 33
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0020.tlg003.perseus-grc1.tb.xml",
+      "work": "Shield of Heracles",
+      "regime": "HEX",
+      "period": "archaic",
+      "raw": 2403,
+      "sentences": 182,
+      "kept": {
+        "ud23": 2070,
+        "ud23_oth": 2077,
+        "upos_only": 2070
+      },
+      "eligible": {
+        "ud23": 1353,
+        "ud23_oth": 1359,
+        "upos_only": 1353
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 37,
+        "ud23_oth": 37,
+        "upos_only": 37
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0060.tlg001.perseus-grc3.11.tb.xml",
+      "work": "Bibliotheca historica, book 11",
+      "regime": "PROSE_POST",
+      "period": "hellenistic",
+      "raw": 16882,
+      "sentences": 733,
+      "kept": {
+        "ud23": 15266,
+        "ud23_oth": 15266,
+        "upos_only": 15266
+      },
+      "eligible": {
+        "ud23": 12334,
+        "ud23_oth": 12334,
+        "upos_only": 12334
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 61,
+        "ud23_oth": 61,
+        "upos_only": 61
+      },
+      "file_order_inversions": 0
+    },
+    {
+      "doc_id": "tlg0085.tlg001.perseus-grc2.tb.xml",
+      "work": "Suppliant Women",
+      "regime": "OTHER_VERSE",
+      "period": "classical",
+      "raw": 1529,
+      "sentences": 166,
+      "kept": {
+        "ud23": 1284,
+        "ud23_oth": 1293,
+        "upos_only": 1284
+      },
+      "eligible": {
+        "ud23": 639,
+        "ud23_oth": 646,
+        "upos_only": 639
+      },
+      "empty": {
+        "ud23": 0,
+        "ud23_oth": 0,
+        "upos_only": 0
+      },
+      "max_sentence": {
+        "ud23": 25,
+        "ud23_oth": 25,
+        "upos_only": 25
+      },
+      "file_order_inversions": 0
+    }
+  ],
+  "q": 8884
+}

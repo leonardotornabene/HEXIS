@@ -1,0 +1,42 @@
+{
+  "02_DECISION_LOG.md": {
+    "original_path": "docs/02_DECISION_LOG.md",
+    "sha256": "a59bf17efe276a56a9bfaeb4eddbc238bd03cefb800682996becd1e84721bc8a"
+  },
+  "00_LEGGIMI_INDICE.md": {
+    "original_path": "docs/00_LEGGIMI_INDICE.md",
+    "sha256": "f144ec184836a84bdaa67648df4bc16032287e8d2b217ff419dee600b2e85020"
+  },
+  "uv.lock": {
+    "original_path": "uv.lock",
+    "sha256": "33db43b00bcb21ab12aedf6dcc4257764770bff0115dc0d1dfab6e5ea89876bf"
+  },
+  "03_ROADMAP_OPERATIVA_IT.md": {
+    "original_path": "docs/03_ROADMAP_OPERATIVA_IT.md",
+    "sha256": "4b9e215083f6831a70eb502c6bb1bb4f9b770b714f777b7e1f9440768ba74aff"
+  },
+  "README.md": {
+    "original_path": "README.md",
+    "sha256": "889788bcbc72230f0907816c12423505d5023f407fa5284d7eb0687d965c7fd4"
+  },
+  "01_MASTER_SPEC.md": {
+    "original_path": "docs/01_MASTER_SPEC.md",
+    "sha256": "3f5e870899fca871b397e54377c93861a64ff18e3f598e7f6b24c44453e3d4ac"
+  },
+  "04_AI_HANDOFF_PROMPT.md": {
+    "original_path": "docs/04_AI_HANDOFF_PROMPT.md",
+    "sha256": "49c99ca47912592c076a5cea0958641e9fa7b7423d1b6eda650fe439f3190c63"
+  },
+  "AGENTS.md": {
+    "original_path": "AGENTS.md",
+    "sha256": "f7431b5482b8530c60190804c1770bd4c0f22084c89ccc84146b657b18f45eea"
+  },
+  "HANDOFF.md": {
+    "original_path": "docs/HANDOFF.md",
+    "sha256": "111e2cf3727bedfb2e8a413ddd92cbdffe5fdd225c922d3c63e6b509b213cd83"
+  },
+  "CLAUDE.md": {
+    "original_path": "CLAUDE.md",
+    "sha256": "9db0c5cd89539577a7ec9bacd6c6ca5be5d83d0efaff99dff996cdbb545880be"
+  }
+}

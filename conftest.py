@@ -1,40 +1,102 @@
-"""Repository-level enforcement for the G0 pytest gate (D45/D52(iii))."""
+"""Repository-level enforcement of the active acceptance (piano §12).
+
+Every collected test is v31 acceptance: no skip, no xfail, no xpass, and no test
+collected without an executed assert. The rule is enforced here rather than read
+off a pytest summary by eye.
+"""
 
 import ast
+import importlib.util
 from pathlib import Path
+
+import pytest
 
 pytest_plugins = ["pytester"]
 
-_ASSERTED_G0: set[str] = set()
-_COLLECTION_SKIPPED_G0: set[str] = set()
-_SKIPPED_G0: set[str] = set()
-_XPASSED_G0: set[str] = set()
+# One acceptance, one marker. The inventory anchor must exist and must carry the
+# marker, or the enforcement would certify nothing.
+GATE_MARKERS = ("v31",)
+GATE_INVENTORIES = {"v31": "test_v31_enforcement.py"}
+
+_ASSERTED: set[str] = set()
+_COLLECTION_SKIPPED: set[str] = set()
+_SKIPPED: set[str] = set()
+_XPASSED: set[str] = set()
 _ROOT = Path()
 
 
 def pytest_configure(config):
     global _ROOT
     _ROOT = Path(config.rootpath)
+    # Only the HEXIS repository has this trust anchor. Pytester copies this
+    # conftest into synthetic projects, which must remain free to define tiny gates.
+    if (_ROOT / "src" / "hexis").is_dir():
+        for marker, filename in GATE_INVENTORIES.items():
+            path = _ROOT / "tests" / filename
+            if not path.is_file() or not _declares_module_marker(path, marker):
+                raise pytest.UsageError(
+                    f"{path}: missing or unmarked {marker} inventory anchor"
+                )
     for configured in config.getini("testpaths") or ["."]:
         test_root = _ROOT / configured
         if test_root.is_dir():
-            for cache in test_root.rglob("*-pytest-*.pyc"):
-                cache.unlink(missing_ok=True)
+            for source in test_root.rglob("*.py"):
+                cache = Path(importlib.util.cache_from_source(str(source)))
+                if cache.parent.is_dir():
+                    for compiled in cache.parent.glob(f"{source.stem}.*.pyc"):
+                        compiled.unlink(missing_ok=True)
+
+
+def _declares_module_marker(path: Path, marker: str) -> bool:
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    for node in tree.body:
+        if not isinstance(node, ast.Assign) or not any(
+            isinstance(target, ast.Name) and target.id == "pytestmark"
+            for target in node.targets
+        ):
+            continue
+        return any(
+            isinstance(part, ast.Attribute)
+            and part.attr == marker
+            and isinstance(part.value, ast.Attribute)
+            and part.value.attr == "mark"
+            and isinstance(part.value.value, ast.Name)
+            and part.value.value.id == "pytest"
+            for part in ast.walk(node.value)
+        )
+    return False
 
 
 def pytest_sessionstart(session):
-    _ASSERTED_G0.clear()
-    _COLLECTION_SKIPPED_G0.clear()
-    _SKIPPED_G0.clear()
-    _XPASSED_G0.clear()
+    _ASSERTED.clear()
+    _COLLECTION_SKIPPED.clear()
+    _SKIPPED.clear()
+    _XPASSED.clear()
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_collection_modifyitems(session, config, items):
+    """Active acceptance is the whole suite: a collected test without the marker
+    would run outside `-m v31`, where nothing checks it (piano §12)."""
+    unmarked = sorted(item.nodeid for item in items if item.get_closest_marker("v31") is None)
+    if unmarked:
+        raise pytest.UsageError(
+            "every collected test must carry pytest.mark.v31; unmarked: "
+            + ", ".join(unmarked[:10])
+            + (f" (+{len(unmarked) - 10} more)" if len(unmarked) > 10 else "")
+        )
+
+
+def _is_gated(item) -> bool:
+    return any(item.get_closest_marker(marker) is not None for marker in GATE_MARKERS)
 
 
 def pytest_assertion_pass(item, lineno, orig, expl):
-    if item.get_closest_marker("g0") is not None:
-        _ASSERTED_G0.add(item.nodeid)
+    if _is_gated(item):
+        _ASSERTED.add(item.nodeid)
 
 
-def _source_declares_g0(nodeid: str) -> bool:
+def _source_declares_gate(nodeid: str) -> bool:
     path = Path(nodeid.split("::", 1)[0])
     if not path.is_absolute():
         path = _ROOT / path
@@ -43,7 +105,7 @@ def _source_declares_g0(nodeid: str) -> bool:
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     return any(
         isinstance(node, ast.Attribute)
-        and node.attr == "g0"
+        and node.attr in GATE_MARKERS
         and (
             isinstance(node.value, ast.Name)
             and node.value.id == "mark"
@@ -55,32 +117,30 @@ def _source_declares_g0(nodeid: str) -> bool:
 
 
 def pytest_collectreport(report):
-    if report.skipped and _source_declares_g0(report.nodeid):
-        _COLLECTION_SKIPPED_G0.add(report.nodeid)
+    if report.skipped and _source_declares_gate(report.nodeid):
+        _COLLECTION_SKIPPED.add(report.nodeid)
 
 
 def pytest_runtest_logreport(report):
-    if "g0" not in report.keywords:
+    if not any(marker in report.keywords for marker in GATE_MARKERS):
         return
     if report.skipped:
-        _SKIPPED_G0.add(report.nodeid)
+        _SKIPPED.add(report.nodeid)
     if report.passed and hasattr(report, "wasxfail"):
-        _XPASSED_G0.add(report.nodeid)
+        _XPASSED.add(report.nodeid)
 
 
 def pytest_sessionfinish(session, exitstatus):
-    # --collect-only runs no test, so every G0 item would look assertion-free.
+    # --collect-only runs no test, so every gated item would look assertion-free.
     # Introspecting the selection is not a gate run; only the real one enforces.
     if session.config.getoption("collectonly", False):
         return
-    selected = {
-        item.nodeid for item in session.items if item.get_closest_marker("g0") is not None
-    }
-    missing_assertion = selected - _ASSERTED_G0
+    selected = {item.nodeid for item in session.items if _is_gated(item)}
+    missing_assertion = selected - _ASSERTED
     failures = {
-        "collection skip": _COLLECTION_SKIPPED_G0,
-        "skip/xfail": _SKIPPED_G0,
-        "xpass": _XPASSED_G0,
+        "collection skip": _COLLECTION_SKIPPED,
+        "skip/xfail": _SKIPPED,
+        "xpass": _XPASSED,
         "no executed assert": missing_assertion,
     }
     failures = {kind: nodeids for kind, nodeids in failures.items() if nodeids}
@@ -88,9 +148,11 @@ def pytest_sessionfinish(session, exitstatus):
         return
     reporter = session.config.pluginmanager.getplugin("terminalreporter")
     if reporter is not None:
+        # The nodeid names the file, and the file names its gate — so the line
+        # does not guess at a gate number it would sometimes get wrong.
         for kind, nodeids in failures.items():
             reporter.write_line(
-                f"G0 GATE FAILURE — {kind}: " + ", ".join(sorted(nodeids)),
+                f"GATE FAILURE — {kind}: " + ", ".join(sorted(nodeids)),
                 red=True,
             )
     if session.exitstatus == 0:

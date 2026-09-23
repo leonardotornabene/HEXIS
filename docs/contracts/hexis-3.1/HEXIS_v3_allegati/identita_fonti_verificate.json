@@ -1,0 +1,86 @@
+[
+  {
+    "file": "tlg0020.tlg001.perseus-grc1.tb.xml",
+    "sha256": "b61e941afc2505dcc09d4dfcee749c8e6cd8791bb0ef6d8c9c4a4ed114726744",
+    "url": "https://raw.githubusercontent.com/PerseusDL/treebank_data/bf4334f0af5e13d16b04c1cccd6237e683ac6f5f/v2.1/Greek/texts/tlg0020.tlg001.perseus-grc1.tb.xml",
+    "first_sentence_attributes": {
+      "subdoc": "1.1-1.4",
+      "id": "2273668",
+      "document_id": "urn:cts:greekLit:tlg0020.tlg001.perseus-grc1"
+    },
+    "cts": "urn:cts:greekLit:tlg0020.tlg001.perseus-grc1.tb",
+    "bibliographic_header": [
+      {
+        "tag": "author",
+        "text": "Hesiod"
+      },
+      {
+        "tag": "title",
+        "text": "The Homeric Hymns and Homerica with an English Translation by Hugh G. Evelyn-White. Theogony."
+      }
+    ]
+  },
+  {
+    "file": "tlg0020.tlg002.perseus-grc1.tb.xml",
+    "sha256": "08d0b42ff35b77dbee44616fc3b026c85c9379fa41261418e961723412a258c6",
+    "url": "https://raw.githubusercontent.com/PerseusDL/treebank_data/bf4334f0af5e13d16b04c1cccd6237e683ac6f5f/v2.1/Greek/texts/tlg0020.tlg002.perseus-grc1.tb.xml",
+    "first_sentence_attributes": {
+      "id": "1715891",
+      "document_id": "urn:cts:greekLit:tlg0020.tlg002.perseus-grc1",
+      "subdoc": "1"
+    },
+    "cts": "urn:cts:greekLit:tlg0020.tlg002.perseus-grc1.tb",
+    "bibliographic_header": [
+      {
+        "tag": "author",
+        "text": "Hesiod"
+      },
+      {
+        "tag": "title",
+        "text": "The Homeric Hymns and Homerica with an English Translation by Hugh G. Evelyn-White. Works and Days."
+      }
+    ]
+  },
+  {
+    "file": "tlg0020.tlg003.perseus-grc1.tb.xml",
+    "sha256": "0a766ff3df38f2fb35f3960503e8d43d07c0406a8ffce40cc0fb90108a073861",
+    "url": "https://raw.githubusercontent.com/PerseusDL/treebank_data/bf4334f0af5e13d16b04c1cccd6237e683ac6f5f/v2.1/Greek/texts/tlg0020.tlg003.perseus-grc1.tb.xml",
+    "first_sentence_attributes": {
+      "subdoc": "1.1-1.3",
+      "id": "2273413",
+      "document_id": "urn:cts:greekLit:tlg0020.tlg003.perseus-grc1"
+    },
+    "cts": "urn:cts:greekLit:tlg0020.tlg003.perseus-grc1.tb",
+    "bibliographic_header": [
+      {
+        "tag": "author",
+        "text": "Hesiod"
+      },
+      {
+        "tag": "title",
+        "text": "The Homeric Hymns and Homerica with an English Translation by Hugh G. Evelyn-White. Shield of Heracles"
+      }
+    ]
+  },
+  {
+    "file": "tlg0060.tlg001.perseus-grc3.11.tb.xml",
+    "sha256": "a33e45ee75bd520e761daa8c3ae07ee010881db454d27249b7fd5c9781933237",
+    "url": "https://raw.githubusercontent.com/PerseusDL/treebank_data/bf4334f0af5e13d16b04c1cccd6237e683ac6f5f/v2.1/Greek/texts/tlg0060.tlg001.perseus-grc3.11.tb.xml",
+    "first_sentence_attributes": {
+      "id": "1",
+      "document_id": "urn:cts:greekLit:tlg0060.tlg001.perseus-grc3",
+      "subdoc": "11.1.1"
+    },
+    "cts": "urn:cts:greekLit:tlg0060.tlg001.perseus-grc3.11.tb",
+    "bibliographic_header": [
+      {
+        "tag": "author",
+        "text": "Diodorus Siculus"
+      },
+      {
+        "tag": "title",
+        "text": "Diodorus of Sicily in Twelve Volumes with an English Translation by C. H. Oldfather. Vol. 4-8"
+      }
+    ]
+  }
+]

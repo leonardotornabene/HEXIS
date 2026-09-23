@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "versions": [
+    "2.3.5",
+    "2.5.1"
+  ],
+  "python": [
+    "3.12.14",
+    "3.12.14"
+  ],
+  "compared_fields": [
+    "ledger_and_shuffle_sha256",
+    "model_and_scores_sha256"
+  ],
+  "identical": {
+    "ledger_and_shuffle_sha256": "c44ed1837e5ce1b18f8cd2f0bad5e43860354d0f3e8db63884888095cb914a8b",
+    "model_and_scores_sha256": "a4656ec24fe71eaa40e3a4e1dd8d3d7762e5630c73572f1e3e96eba86e11c817"
+  },
+  "folds_per_version": 7,
+  "contributions_per_version": 42,
+  "full_dependency_stack_certified": false
+}

@@ -4,13 +4,19 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 
-# Raw UD clones: immutable + gitignored; only PROVENANCE.md committed (Spec §2.5, D28)
+# Raw UD clones: immutable and gitignored; PROVENANCE.md is the acquisition record
+# and stays tracked, so switching commits cannot delete it.
 data/raw/*
 !data/raw/PROVENANCE.md
 
-# Derived corpus data: substantial derivatives of CC BY-NC-SA treebank data (D28);
-# regenerable from the pipeline under fixed seeds (D26).
-# NOTE (G4/G5): add targeted re-include exceptions here for the derived STATISTICS
-# that D28 does publish (alphabet.json, scores/ tables, figures).
+# Derived corpus data from the historical v2.1 layout, which runs at 5f1ec06: never
+# published from here (V3-002).
 data/interim/
 data/processed/
+
+# Local run outputs at the root only: publication is decided by the act in V3-002,
+# not by Git; archive/results/ is part of the record.
+/results/
+
+# Finder metadata (one copy entered and left the V0 deposit; see V3-002)
+.DS_Store

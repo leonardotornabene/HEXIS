@@ -1,0 +1,1084 @@
+{
+  "spec_version": "HEXIS-3.1",
+  "status": "FINAL_PLAN_NOT_APPLIED",
+  "decision_id": "V3-001",
+  "date": "2026-09-15",
+  "base_repository_commit": "852644b6917790877c7b2ca5df2e76b17829d87c",
+  "source_commit": "37837c7a3c592c9563f8c51cc63344b87247f8a5",
+  "source_hashes": [
+    {
+      "file": "grc_perseus-ud-dev.conllu",
+      "sha256": "7899f809fc250404839694330b9db25f79a5b1f20cfa12e6dc3a368a4ec7cd22"
+    },
+    {
+      "file": "grc_perseus-ud-test.conllu",
+      "sha256": "e18d47c395c0ec8da678fb5e315ce6d90133e88c25ed2a55bc72a2a66e6254d5"
+    },
+    {
+      "file": "grc_perseus-ud-train.conllu",
+      "sha256": "d7471c9b91bcd975848fa5d9b65c31f1fc48a597ed3667796968a82c6d098a7e"
+    }
+  ],
+  "languages": [
+    "grc"
+  ],
+  "scientific_scope": "finite_corpus_descriptive_within_sentence",
+  "primary_result": "seven_block_profiles_Q_G_original_G_shuffled_four_CE_with_eleven_document_details",
+  "subordinate_summaries": [
+    "equal_block",
+    "eligible_token_weighted"
+  ],
+  "inference": false,
+  "representation": {
+    "version": "hexis-3.1-adv-part-1",
+    "source_upos_keep_before_merge": [
+      "ADJ",
+      "ADP",
+      "ADV",
+      "AUX",
+      "CCONJ",
+      "DET",
+      "NOUN",
+      "NUM",
+      "PART",
+      "PRON",
+      "SCONJ",
+      "VERB"
+    ],
+    "source_upos_drop": [
+      "PUNCT",
+      "X",
+      "INTJ",
+      "SYM"
+    ],
+    "source_map_before_retention": {
+      "PROPN": "NOUN"
+    },
+    "map_after_retention": {
+      "PART": "ADV_PART",
+      "ADV": "ADV_PART"
+    },
+    "deprel_base_rule": "lower().split(':',1)[0]",
+    "deprel_keep": [
+      "root",
+      "nsubj",
+      "csubj",
+      "obj",
+      "iobj",
+      "ccomp",
+      "xcomp",
+      "obl",
+      "advcl",
+      "advmod",
+      "acl",
+      "amod",
+      "appos",
+      "det",
+      "nummod",
+      "nmod",
+      "case",
+      "mark",
+      "aux",
+      "cop",
+      "cc",
+      "conj",
+      "parataxis"
+    ],
+    "ud23": "drop non-listed base relations",
+    "ud23_oth": "map non-listed base relations to oth after UPOS retention",
+    "upos_only": "same source retention mask as ud23, project to merged UPOS",
+    "unknown_source_upos": "error",
+    "alphabet_scope": "all_17_census_documents",
+    "alphabet_order": "lexicographic",
+    "unknown_after_freeze": "error",
+    "bos_context_only": -1,
+    "sentence_boundary": "reset",
+    "gate_A": {
+      "threshold": 0.02,
+      "operator": ">",
+      "denominator": "all_raw_tokens_in_original_regime",
+      "numerator": "eligible_UPOS_tokens_for_each_excluded_base_relation_separately",
+      "effect": "diagnostic_flag"
+    },
+    "gate_B": {
+      "threshold": 0.7,
+      "operator": "<",
+      "quantity": "document_retention",
+      "effect": "diagnostic_flag"
+    }
+  },
+  "min_available_past": 4,
+  "past_bands": [
+    {
+      "id": "4_7",
+      "lower_inclusive": 4,
+      "upper_exclusive": 8
+    },
+    {
+      "id": "ge8",
+      "lower_inclusive": 8,
+      "upper_exclusive": null
+    }
+  ],
+  "rng": {
+    "version": "hexis-v3-rng-1",
+    "master_seed": 20260706,
+    "generator": "numpy.random.Generator(numpy.random.PCG64(derived_seed))",
+    "canonical_json": {
+      "encoding": "UTF-8",
+      "ensure_ascii": false,
+      "sort_keys": true,
+      "separators": [
+        ",",
+        ":"
+      ],
+      "trailing_newline": false
+    },
+    "block_key": "SHA256(canonical_json(sorted(canonical_doc_ids)))",
+    "seed_fields": [
+      "version",
+      "master",
+      "seed",
+      "held",
+      "block",
+      "purpose",
+      "sid",
+      "start",
+      "end"
+    ],
+    "seed_integer": "first 16 SHA256 bytes, big endian",
+    "active_purposes": [
+      "sample",
+      "fragment",
+      "shuffle_train",
+      "shuffle_eval"
+    ],
+    "shuffle_eval_block": "same as held",
+    "excluded_from_derivation": [
+      "display_labels",
+      "group",
+      "author",
+      "period",
+      "cell",
+      "variant",
+      "q",
+      "D",
+      "a",
+      "rho",
+      "configuration_hash"
+    ],
+    "sample_fixture": {
+      "held_members": [
+        "held"
+      ],
+      "block_members": [
+        "fixture"
+      ],
+      "seed": 0,
+      "derived_seed": 218577625307806857638750380866922209360,
+      "permutation_6": [
+        0,
+        4,
+        3,
+        2,
+        1,
+        5
+      ],
+      "lengths": [
+        5,
+        8,
+        0,
+        2,
+        7,
+        6
+      ],
+      "q": 17,
+      "ledger": [
+        {
+          "sid": "fixture@1",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "sid": "fixture@5",
+          "start": 0,
+          "end": 7
+        },
+        {
+          "sid": "fixture@4",
+          "start": 0,
+          "end": 2
+        },
+        {
+          "sid": "fixture@2",
+          "start": 3,
+          "end": 6
+        }
+      ]
+    }
+  },
+  "cells": [
+    {
+      "id": "C0",
+      "variant": "ud23",
+      "D": 8,
+      "rho": 0.5,
+      "q": 8884,
+      "boundary": "reset",
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "arms": [
+        "original",
+        "shuffled"
+      ],
+      "a_per_symbol": 0.5,
+      "m": 100
+    },
+    {
+      "id": "a_total1",
+      "variant": "ud23",
+      "D": 8,
+      "rho": 0.5,
+      "q": 8884,
+      "boundary": "reset",
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "arms": [
+        "original",
+        "shuffled"
+      ],
+      "a_per_symbol": 0.01,
+      "m": 100
+    },
+    {
+      "id": "q_half",
+      "variant": "ud23",
+      "D": 8,
+      "rho": 0.5,
+      "q": 4442,
+      "boundary": "reset",
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "arms": [
+        "original",
+        "shuffled"
+      ],
+      "a_per_symbol": 0.5,
+      "m": 100
+    },
+    {
+      "id": "D12",
+      "variant": "ud23",
+      "D": 12,
+      "rho": 0.5,
+      "q": 8884,
+      "boundary": "reset",
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "arms": [
+        "original",
+        "shuffled"
+      ],
+      "a_per_symbol": 0.5,
+      "m": 100
+    },
+    {
+      "id": "oth",
+      "variant": "ud23_oth",
+      "D": 8,
+      "rho": 0.5,
+      "q": 8884,
+      "boundary": "reset",
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "arms": [
+        "original",
+        "shuffled"
+      ],
+      "a_per_symbol": 0.5,
+      "m": 105
+    },
+    {
+      "id": "upos",
+      "variant": "upos_only",
+      "D": 8,
+      "rho": 0.5,
+      "q": 8884,
+      "boundary": "reset",
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "arms": [
+        "original",
+        "shuffled"
+      ],
+      "a_per_symbol": 0.5,
+      "m": 11
+    }
+  ],
+  "blocks": [
+    {
+      "block": "HOMERIC_TRADITION",
+      "docs": [
+        "tlg0012.tlg001.perseus-grc1.tb.xml",
+        "tlg0013.tlg002.perseus-grc1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 71088,
+        "ud23_oth": 71547,
+        "upos_only": 71088
+      },
+      "eligible": {
+        "ud23": 46634,
+        "ud23_oth": 47062,
+        "upos_only": 46634
+      },
+      "sentences": 6169,
+      "block_key": "209ee9f27c82f31d31eb16124569039d7847ed327f3a0f2b5c4eae048347e621",
+      "group": "HEX"
+    },
+    {
+      "block": "HESIODIC_TRADITION",
+      "docs": [
+        "tlg0020.tlg001.perseus-grc1.tb.xml",
+        "tlg0020.tlg002.perseus-grc1.tb.xml",
+        "tlg0020.tlg003.perseus-grc1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 9282,
+        "ud23_oth": 9308,
+        "upos_only": 9282
+      },
+      "eligible": {
+        "ud23": 6375,
+        "ud23_oth": 6398,
+        "upos_only": 6375
+      },
+      "sentences": 738,
+      "block_key": "c4c0c7eaeca0d61d2e53f4f0642bfa382e91dd28b470d2f4da2ba8539fe0e7f7",
+      "group": "HEX"
+    },
+    {
+      "block": "HERODOTUS",
+      "docs": [
+        "tlg0016.tlg001.perseus-grc1.1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 17301,
+        "ud23_oth": 17349,
+        "upos_only": 17301
+      },
+      "eligible": {
+        "ud23": 12946,
+        "ud23_oth": 12994,
+        "upos_only": 12946
+      },
+      "sentences": 1092,
+      "block_key": "89f0804afded8e7a0f4e1b507030d5ef4ecaf17e422c8b2969bd6b23e62818e6",
+      "group": "PROSE_ALL"
+    },
+    {
+      "block": "THUCYDIDES",
+      "docs": [
+        "tlg0003.tlg001.perseus-grc1.1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 9346,
+        "ud23_oth": 9353,
+        "upos_only": 9346
+      },
+      "eligible": {
+        "ud23": 7227,
+        "ud23_oth": 7234,
+        "upos_only": 7227
+      },
+      "sentences": 532,
+      "block_key": "1a32cf6857284fff7c7f006f8d0cd4ab15a047af7a4bcd5613d1fd50789dd4ee",
+      "group": "PROSE_ALL"
+    },
+    {
+      "block": "ATHENAEUS",
+      "docs": [
+        "tlg0008.tlg001.perseus-grc1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 23133,
+        "ud23_oth": 23231,
+        "upos_only": 23133
+      },
+      "eligible": {
+        "ud23": 16691,
+        "ud23_oth": 16786,
+        "upos_only": 16691
+      },
+      "sentences": 1630,
+      "block_key": "4352f04fcfd7cbe580caddf69f309034ffb967d5d1bc8a8e809498de5bf8d329",
+      "group": "PROSE_ALL"
+    },
+    {
+      "block": "DIODORUS",
+      "docs": [
+        "tlg0060.tlg001.perseus-grc3.11.tb.xml"
+      ],
+      "kept": {
+        "ud23": 15266,
+        "ud23_oth": 15266,
+        "upos_only": 15266
+      },
+      "eligible": {
+        "ud23": 12334,
+        "ud23_oth": 12334,
+        "upos_only": 12334
+      },
+      "sentences": 733,
+      "block_key": "d91dad02f8da03cf6702fa7edec531da5e56f526f466e2f04180f2a23a1cf315",
+      "group": "PROSE_ALL"
+    },
+    {
+      "block": "PLUTARCH",
+      "docs": [
+        "tlg0007.tlg004.perseus-grc1.tb.xml",
+        "tlg0007.tlg015.perseus-grc1.tb.xml"
+      ],
+      "kept": {
+        "ud23": 8884,
+        "ud23_oth": 8893,
+        "upos_only": 8884
+      },
+      "eligible": {
+        "ud23": 6901,
+        "ud23_oth": 6908,
+        "upos_only": 6901
+      },
+      "sentences": 499,
+      "block_key": "ef8134329970f595ef9ccf4198217affef5c01fa243d5bf4e59ee6daebb04e1d",
+      "group": "PROSE_ALL"
+    }
+  ],
+  "registry": [
+    {
+      "source_prefix": "tlg0012.tlg001.perseus-grc1.tb.xml",
+      "canonical_doc_id": "tlg0012.tlg001.perseus-grc1.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0012.tlg001.perseus-grc1",
+      "part_order": 0,
+      "author_label": "Homer",
+      "work": "Iliad",
+      "regime": "HEX",
+      "period_label": "archaic",
+      "meter_label": "hexameter",
+      "role": "primary",
+      "dependence_block": "HOMERIC_TRADITION",
+      "flags": []
+    },
+    {
+      "source_prefix": "tlg0020.tlg001.perseus-grc1.tb.xml",
+      "canonical_doc_id": "tlg0020.tlg001.perseus-grc1.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0020.tlg001.perseus-grc1",
+      "part_order": 0,
+      "author_label": "Hesiod",
+      "work": "Theogony",
+      "regime": "HEX",
+      "period_label": "archaic",
+      "meter_label": "hexameter",
+      "role": "primary",
+      "dependence_block": "HESIODIC_TRADITION",
+      "flags": []
+    },
+    {
+      "source_prefix": "tlg0020.tlg002.perseus-grc1.tb.xml",
+      "canonical_doc_id": "tlg0020.tlg002.perseus-grc1.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0020.tlg002.perseus-grc1",
+      "part_order": 0,
+      "author_label": "Hesiod",
+      "work": "Works and Days",
+      "regime": "HEX",
+      "period_label": "archaic",
+      "meter_label": "hexameter",
+      "role": "primary",
+      "dependence_block": "HESIODIC_TRADITION",
+      "flags": []
+    },
+    {
+      "source_prefix": "tlg0020.tlg003.perseus-grc1.tb.xml",
+      "canonical_doc_id": "tlg0020.tlg003.perseus-grc1.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0020.tlg003.perseus-grc1",
+      "part_order": 0,
+      "author_label": "Hesiod",
+      "work": "Shield of Heracles",
+      "regime": "HEX",
+      "period_label": "archaic",
+      "meter_label": "hexameter",
+      "role": "primary",
+      "dependence_block": "HESIODIC_TRADITION",
+      "flags": [
+        "traditional_hesiodic_attribution_not_authorship_claim"
+      ]
+    },
+    {
+      "source_prefix": "tlg0013.tlg002.perseus-grc1.tb.xml",
+      "canonical_doc_id": "tlg0013.tlg002.perseus-grc1.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0013.tlg002.perseus-grc1",
+      "part_order": 0,
+      "author_label": "Anonymous",
+      "work": "Homeric Hymn to Demeter",
+      "regime": "HEX",
+      "period_label": "archaic",
+      "meter_label": "hexameter",
+      "role": "primary",
+      "dependence_block": "HOMERIC_TRADITION",
+      "flags": [
+        "traditional_grouping_not_same_author"
+      ]
+    },
+    {
+      "source_prefix": "tlg0016.tlg001.perseus-grc1.1.tb.xml",
+      "canonical_doc_id": "tlg0016.tlg001.perseus-grc1.1.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0016.tlg001.perseus-grc1",
+      "part_order": 0,
+      "author_label": "Herodotus",
+      "work": "Histories, book 1",
+      "regime": "PROSE_CLASS",
+      "period_label": "classical",
+      "meter_label": "prose",
+      "role": "primary",
+      "dependence_block": "HERODOTUS",
+      "flags": [
+        "partial_work_single_book"
+      ]
+    },
+    {
+      "source_prefix": "tlg0003.tlg001.perseus-grc1.1.tb.xml",
+      "canonical_doc_id": "tlg0003.tlg001.perseus-grc1.1.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0003.tlg001.perseus-grc1",
+      "part_order": 0,
+      "author_label": "Thucydides",
+      "work": "Histories, book 1",
+      "regime": "PROSE_CLASS",
+      "period_label": "classical",
+      "meter_label": "prose",
+      "role": "primary",
+      "dependence_block": "THUCYDIDES",
+      "flags": [
+        "partial_work_single_book"
+      ]
+    },
+    {
+      "source_prefix": "tlg0008.tlg001.perseus-grc1.12.tb.xml",
+      "canonical_doc_id": "tlg0008.tlg001.perseus-grc1.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0008.tlg001.perseus-grc1",
+      "part_order": 12,
+      "author_label": "Athenaeus",
+      "work": "Deipnosophistae, books 12-13",
+      "regime": "PROSE_POST",
+      "period_label": "imperial",
+      "meter_label": "prose",
+      "role": "primary",
+      "dependence_block": "ATHENAEUS",
+      "flags": [
+        "partial_work_two_books",
+        "merged_prefixes"
+      ]
+    },
+    {
+      "source_prefix": "tlg0008.tlg001.perseus-grc1.13.tb.xml",
+      "canonical_doc_id": "tlg0008.tlg001.perseus-grc1.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0008.tlg001.perseus-grc1",
+      "part_order": 13,
+      "author_label": "Athenaeus",
+      "work": "Deipnosophistae, books 12-13",
+      "regime": "PROSE_POST",
+      "period_label": "imperial",
+      "meter_label": "prose",
+      "role": "primary",
+      "dependence_block": "ATHENAEUS",
+      "flags": [
+        "partial_work_two_books",
+        "merged_prefixes"
+      ]
+    },
+    {
+      "source_prefix": "tlg0060.tlg001.perseus-grc3.11.tb.xml",
+      "canonical_doc_id": "tlg0060.tlg001.perseus-grc3.11.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0060.tlg001.perseus-grc3",
+      "part_order": 0,
+      "author_label": "Diodorus Siculus",
+      "work": "Bibliotheca historica, book 11",
+      "regime": "PROSE_POST",
+      "period_label": "hellenistic",
+      "meter_label": "prose",
+      "role": "primary",
+      "dependence_block": "DIODORUS",
+      "flags": [
+        "partial_work_single_book"
+      ]
+    },
+    {
+      "source_prefix": "tlg0007.tlg004.perseus-grc1.tb.xml",
+      "canonical_doc_id": "tlg0007.tlg004.perseus-grc1.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0007.tlg004.perseus-grc1",
+      "part_order": 0,
+      "author_label": "Plutarch",
+      "work": "Lycurgus",
+      "regime": "PROSE_POST",
+      "period_label": "imperial",
+      "meter_label": "prose",
+      "role": "primary",
+      "dependence_block": "PLUTARCH",
+      "flags": []
+    },
+    {
+      "source_prefix": "tlg0007.tlg015.perseus-grc1.tb.xml",
+      "canonical_doc_id": "tlg0007.tlg015.perseus-grc1.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0007.tlg015.perseus-grc1",
+      "part_order": 0,
+      "author_label": "Plutarch",
+      "work": "Alcibiades",
+      "regime": "PROSE_POST",
+      "period_label": "imperial",
+      "meter_label": "prose",
+      "role": "primary",
+      "dependence_block": "PLUTARCH",
+      "flags": []
+    },
+    {
+      "source_prefix": "tlg0011.tlg001.perseus-grc2.tb.xml",
+      "canonical_doc_id": "tlg0011.tlg001.perseus-grc2.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0011.tlg001.perseus-grc2",
+      "part_order": 0,
+      "author_label": "Sophocles",
+      "work": "Trachiniae",
+      "regime": "OTHER_VERSE",
+      "period_label": "classical",
+      "meter_label": "iambic trimeter + lyric (mixed)",
+      "role": "inventory_only",
+      "dependence_block": null,
+      "flags": []
+    },
+    {
+      "source_prefix": "tlg0011.tlg002.perseus-grc2.tb.xml",
+      "canonical_doc_id": "tlg0011.tlg002.perseus-grc2.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0011.tlg002.perseus-grc2",
+      "part_order": 0,
+      "author_label": "Sophocles",
+      "work": "Antigone",
+      "regime": "OTHER_VERSE",
+      "period_label": "classical",
+      "meter_label": "iambic trimeter + lyric (mixed)",
+      "role": "inventory_only",
+      "dependence_block": null,
+      "flags": []
+    },
+    {
+      "source_prefix": "tlg0011.tlg003.perseus-grc1.tb.xml",
+      "canonical_doc_id": "tlg0011.tlg003.perseus-grc1.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0011.tlg003.perseus-grc1",
+      "part_order": 0,
+      "author_label": "Sophocles",
+      "work": "Ajax",
+      "regime": "OTHER_VERSE",
+      "period_label": "classical",
+      "meter_label": "iambic trimeter + lyric (mixed)",
+      "role": "inventory_only",
+      "dependence_block": null,
+      "flags": []
+    },
+    {
+      "source_prefix": "tlg0011.tlg004.perseus-grc1.tb.xml",
+      "canonical_doc_id": "tlg0011.tlg004.perseus-grc1.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0011.tlg004.perseus-grc1",
+      "part_order": 0,
+      "author_label": "Sophocles",
+      "work": "Oedipus Tyrannus",
+      "regime": "OTHER_VERSE",
+      "period_label": "classical",
+      "meter_label": "iambic trimeter + lyric (mixed)",
+      "role": "inventory_only",
+      "dependence_block": null,
+      "flags": []
+    },
+    {
+      "source_prefix": "tlg0011.tlg005.perseus-grc2.tb.xml",
+      "canonical_doc_id": "tlg0011.tlg005.perseus-grc2.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0011.tlg005.perseus-grc2",
+      "part_order": 0,
+      "author_label": "Sophocles",
+      "work": "Electra",
+      "regime": "OTHER_VERSE",
+      "period_label": "classical",
+      "meter_label": "iambic trimeter + lyric (mixed)",
+      "role": "inventory_only",
+      "dependence_block": null,
+      "flags": []
+    },
+    {
+      "source_prefix": "tlg0085.tlg001.perseus-grc2.tb.xml",
+      "canonical_doc_id": "tlg0085.tlg001.perseus-grc2.tb.xml",
+      "source_urn": "urn:cts:greekLit:tlg0085.tlg001.perseus-grc2",
+      "part_order": 0,
+      "author_label": "Aeschylus",
+      "work": "Suppliant Women",
+      "regime": "OTHER_VERSE",
+      "period_label": "classical",
+      "meter_label": "iambic trimeter + lyric (mixed)",
+      "role": "inventory_only",
+      "dependence_block": null,
+      "flags": [
+        "e1_only_one_aeschylus_play_present"
+      ]
+    }
+  ],
+  "expected": {
+    "raw_tokens": 202989,
+    "raw_sentences": 13919,
+    "source_prefixes": 18,
+    "canonical_documents": 17,
+    "primary_documents": 11,
+    "inventory_only_documents": 6,
+    "blocks": 7,
+    "HEX_blocks": 2,
+    "PROSE_ALL_blocks": 5,
+    "alphabet_sizes": {
+      "ud23": 100,
+      "ud23_oth": 105,
+      "upos_only": 11
+    },
+    "primary_tokens": {
+      "ud23": 154300,
+      "ud23_oth": 154947,
+      "upos_only": 154300
+    },
+    "primary_eligible": {
+      "ud23": 109108,
+      "ud23_oth": 109716,
+      "upos_only": 109108
+    },
+    "inventory_only_tokens": {
+      "ud23": 22275,
+      "ud23_oth": 22623,
+      "upos_only": 22275
+    },
+    "inventory_only_potential_eligible": {
+      "ud23": 12769,
+      "ud23_oth": 13062,
+      "upos_only": 12769
+    },
+    "cells": 6,
+    "model_pairs": 490,
+    "models": 980,
+    "technical_pairs": 42,
+    "technical_models": 84,
+    "probe_evaluations": 0,
+    "C0_paired_position_rows": 2182160,
+    "all_cells_theoretical_position_rows": 7643640,
+    "paired_document_band_rows_C0": 440,
+    "paired_document_band_rows_sensitivities": 1100,
+    "logical_document_arm_rows_before_bands": 1540
+  },
+  "sampling": {
+    "unit": "sentences_with_one_optional_final_contiguous_fragment_per_contributor",
+    "sort": [
+      "canonical_doc_id",
+      "part_order",
+      "source_ordinal",
+      "sent_id"
+    ],
+    "exact_budget": true,
+    "replacement": false,
+    "include_empty_in_permutation": true,
+    "fragment_history": "reset_no_excluded_context",
+    "ledger_reuse_C0": [
+      "a_total1",
+      "D12",
+      "upos"
+    ],
+    "permutation_reuse_C0": [
+      "q_half",
+      "oth"
+    ],
+    "q_half_token_nesting_guaranteed": false,
+    "fragment_metrics": [
+      "fragment_count",
+      "internal_start_count",
+      "fragment_tokens",
+      "direct_context_targets"
+    ],
+    "direct_context_targets": "sum(min(D,fragment_length)) for start>0"
+  },
+  "shuffle": {
+    "per_seed": 1,
+    "training_and_test": true,
+    "within": "each sentence or sampled fragment",
+    "symbol": "whole composite",
+    "pair_by": "eligible_slot",
+    "resample_for_change": false
+  },
+  "model": {
+    "family": "finite_alphabet_CTW_BOS",
+    "evaluation": "frozen_counts_evidence_weights",
+    "prior_stop": 0.5,
+    "both_weights_from_log_contribution_difference": true,
+    "extra_complexity_penalty": false,
+    "SEP_enabled": false,
+    "empty_subtree_evidence": 1,
+    "empty_subtree_prediction": "1/m",
+    "min_alphabet_size": 2
+  },
+  "R1": {
+    "variants": [
+      "ud23",
+      "ud23_oth",
+      "upos_only"
+    ],
+    "population": "all_retained_original_tokens_in_seven_primary_blocks",
+    "a_per_symbol": 0.5,
+    "pairs_per_variant": 21,
+    "group_centroid_weights": "equal_block",
+    "raw_counts_and_frequencies": true,
+    "all_symbol_contributions": true,
+    "log_base": 2,
+    "inference": false
+  },
+  "aggregation": {
+    "within_document_and_block": "sum_losses/sum_eligible_targets",
+    "between_blocks": [
+      "equal_block",
+      "eligible_token_weighted"
+    ],
+    "seed_summary": [
+      "mean",
+      "sample_sd_ddof1",
+      "min",
+      "max",
+      "S"
+    ],
+    "sensitivity_reference": "same_C0_seeds_0_to_9",
+    "sign_stability_required": false
+  },
+  "runtime": {
+    "python": "3.12",
+    "policy": "preserve_existing_repository_lock",
+    "lock_source_commit": "852644b6917790877c7b2ca5df2e76b17829d87c",
+    "lock_sha256": "33db43b00bcb21ab12aedf6dcc4257764770bff0115dc0d1dfab6e5ea89876bf",
+    "new_dependencies": false
+  },
+  "validation": {
+    "test_ids": [
+      "T01",
+      "T02",
+      "T03",
+      "T04",
+      "T05",
+      "T06",
+      "T07",
+      "T08",
+      "T09",
+      "T10",
+      "T11",
+      "T12",
+      "T13",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19",
+      "T20",
+      "T21",
+      "T22",
+      "T23",
+      "T24",
+      "T25",
+      "T26",
+      "T27",
+      "T28",
+      "T29",
+      "T30"
+    ],
+    "skips_in_active_acceptance": false,
+    "small_synthetic_cases": 25,
+    "synthetic_training_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "synthetic_test_seed_offset": 10000,
+    "synthetic_n_train": 53304,
+    "synthetic_n_test": 100000,
+    "variable_oracle_population": "historical_i_ge_2_N_minus_2; scoring_i_ge_4_N_minus_4",
+    "historical_stress_alphabet": 106,
+    "effective_alphabet_checks": [
+      100,
+      105,
+      11
+    ],
+    "probability_atol": 1e-12,
+    "log_evidence_atol": 1e-10,
+    "CE_reconstruction_atol_bits": 1e-09,
+    "cross_platform_CE_atol_bits": 1e-08,
+    "replication": {
+      "seed": 0,
+      "cells": [
+        "C0",
+        "a_total1",
+        "q_half",
+        "D12",
+        "oth",
+        "upos"
+      ],
+      "held_blocks": [
+        "209ee9f27c82f31d31eb16124569039d7847ed327f3a0f2b5c4eae048347e621",
+        "c4c0c7eaeca0d61d2e53f4f0642bfa382e91dd28b470d2f4da2ba8539fe0e7f7",
+        "89f0804afded8e7a0f4e1b507030d5ef4ecaf17e422c8b2969bd6b23e62818e6",
+        "1a32cf6857284fff7c7f006f8d0cd4ab15a047af7a4bcd5613d1fd50789dd4ee",
+        "4352f04fcfd7cbe580caddf69f309034ffb967d5d1bc8a8e809498de5bf8d329",
+        "d91dad02f8da03cf6702fa7edec531da5e56f526f466e2f04180f2a23a1cf315",
+        "ef8134329970f595ef9ccf4198217affef5c01fa243d5bf4e59ee6daebb04e1d"
+      ],
+      "arms": [
+        "original",
+        "shuffled"
+      ],
+      "pairs": 42,
+      "models": 84,
+      "adds_scientific_identities": false
+    }
+  },
+  "historical_fixture_source": {
+    "outer_zip": "HEXIS_allegati_operativi_v3_2026-09-11.zip",
+    "outer_zip_sha256": "6f2e5935b0d0bd70e98028414d085f74e1bd617fc5e293c0b61c8b99a266db8f",
+    "inner_zip": "HEXIS_v3_allegati/verifiche_CTW_precedenti.zip",
+    "inner_dir": "ctw_validation",
+    "files_sha256": {
+      "verify_synthetic.py": "e6a55b08d5709d8966c4431b5bfec5d9c1cb64a5d3ba4dbf6e291b3b3c8479f0",
+      "verify_heterogeneity.py": "f5b1563a143eaa0d93782983d9bdfb58c4f5eb692bd22ffc75382b1b9c37fc7e",
+      "verify_shuffle.py": "19f31012e680ca8240bcdf7125de905a51ffe28fec405ab6bd3bd3609ceb1207",
+      "verify_exact.py": "46f68319bf0a5b879841aad4aa73eca54c0ef0e8c64a0db6c7aacd9807fe3acc"
+    },
+    "execution_warning": "Historical main functions can fit real data or use obsolete success flags; extract pure fixtures and apply current acceptance assertions only."
+  },
+  "governance": {
+    "design_freeze": "V0",
+    "implementation_freeze": "V3",
+    "ordered_checklist": [
+      "V0",
+      "V1",
+      "V2",
+      "V3",
+      "V4",
+      "V5"
+    ],
+    "new_real_fits_start": "V3_after_V0_V1_V2_under_migrated_authorized_contract",
+    "report_emitter": "run_report",
+    "one_manifest_per_run": true,
+    "separate_certificates": false,
+    "run_id": "SHA256(canonical_json(run_contract))",
+    "complete_key_set_equality": true,
+    "tracked_scientific_code_clean": true,
+    "no_untracked_scientific_producers": true,
+    "publication": "later_separate_action",
+    "historical_authorization": "report_source_and_verifiability_no_retroactive_G2"
+  },
+  "decisions_received": [
+    "C01",
+    "C02",
+    "C03",
+    "C04",
+    "C05",
+    "C06",
+    "C07",
+    "C08",
+    "C09",
+    "C10",
+    "C11",
+    "C12",
+    "C13",
+    "C14",
+    "C15",
+    "C16",
+    "C17",
+    "C18",
+    "C19",
+    "C20",
+    "C21",
+    "C22",
+    "C23",
+    "C24",
+    "C25",
+    "C26",
+    "C27",
+    "C28",
+    "C29",
+    "C30"
+  ]
+}

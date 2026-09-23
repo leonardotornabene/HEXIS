@@ -1,0 +1,28 @@
+{
+  "date": "2026-09-15",
+  "status": "DOCUMENT_CHECKS_PASSED_NOT_SOFTWARE_GATE",
+  "source_verdict_sha256": "9cf75b7618864fa208092f5ed163976a385ef5fb0bad806e846ff84661fa7a12",
+  "evidence_package_hashes_verified": 14,
+  "old_operational_package_hashes_verified": 33,
+  "historical_CTW_hashes_verified_by_independent_corpus_check": 103,
+  "raw_hashes_verified": 3,
+  "fresh_corpus_recount": "exact equality with supplied riconteggio_script_verificato.json; stdlib verification; no fitting",
+  "merged_alphabet_sizes": [
+    100,
+    105,
+    11
+  ],
+  "C01_C30_coverage": "all 30 explicitly mapped and reconciled in the text",
+  "T01_T30_present": true,
+  "design_corpus_alphabets_report_consistency": true,
+  "unique_expected_model_keys": 980,
+  "C0_position_rows": 2182160,
+  "markdown_fences_and_local_links": true,
+  "math_review": "CTW/BOS/log-weights/RNG/aggregates independently checked; four concrete wording/denominator issues corrected",
+  "fresh_canonical_pytest_run": false,
+  "fresh_synthetic_model_fits": 0,
+  "new_real_data_fits": 0,
+  "repository_modified": false,
+  "remaining_work": "V0 migration and V1-V5 implementation/campaign checks; no final scientific results certified",
+  "plan_sha256": "9fd6fd832df783f7e8c3f5e1ba17e349bdb0e2e6993bbdad9a3f32dc2844bd18"
+}

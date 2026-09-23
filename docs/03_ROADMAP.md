@@ -8,7 +8,7 @@
 | V1 | Corpus, mapping, audit, coordinates and persistence | COMPLETED — `7afdd3a`; the delivered corpus is `results/hexis31/v1` |
 | V2 | CTW, RNG/sample/shuffle, four losses, diagnostics, R1, resume | COMPLETED — closure `0a6f644`, pre-V3 review `0dc69b5`; re-attested after the realignment and after the rename |
 | — | Realignment of the repository and publication act (V3-002) | COMPLETED — full code review and conformity check; published on 2026-09-23, merged into `master` as `73df64d` |
-| — | Project name HORMATHOS and English as the project language (V3-003) | COMPLETED in the repository on 2026-09-23; the GitHub repository and the local directory follow, each with its own go |
+| — | Project name HORMATHOS and English as the project language (V3-003) | COMPLETED — published on 2026-09-23 at `c738c73`; GitHub repository `leonardotornabene/HORMATHOS` |
 | V3 | Seed 0, six cells, seven folds: 42 pairs/84 models; freeze | PENDING — stop for review before opening |
 | V4 | 490 pairs/980 models; all cells, seeds and arms | PENDING |
 | V5 | Report, five figures, two weightings, regeneration and completeness | PENDING — code ready; execution and verification |

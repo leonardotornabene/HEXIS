@@ -24,7 +24,7 @@ def test_active_authority_and_instructions_are_aligned():
         assert 'V3-001' in text and 'V3-002' in text, name
         assert '3.1' in text, name
     readme = (ROOT/'README.md').read_text()
-    assert '**V0–V2 completati; V3–V5 non attestati; nessun fit reale è mai stato eseguito.**' in readme
+    assert '**V0–V2 completed; V3–V5 not attested; no real fit has ever been run.**' in readme
     assert 'archive/' in readme
     assert 'Arresto per revisione prima di V3.' in (ROOT/'docs/HANDOFF.md').read_text()
 

@@ -1,33 +1,33 @@
 # HEXIS 3.1
 
-Studio descrittivo dell'ordine entro frase delle annotazioni morfosintattiche nel corpus finito greco UD Perseus r2.18. L'autorità è il [piano depositato](docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md) con i suoi JSON identificati byte per byte, adottato da [V3-001](docs/02_DECISION_LOG.md); [V3-002](docs/02_DECISION_LOG.md) ha riallineato la repository e regola la pubblicazione.
+A descriptive study of within-sentence order in the morphosyntactic annotations of the finite Greek corpus UD Perseus r2.18. The authority is the [deposited plan](docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md) with its byte-identified JSON contracts, adopted by [V3-001](docs/02_DECISION_LOG.md); [V3-002](docs/02_DECISION_LOG.md) realigned the repository and governs its publication.
 
-## Stato
+## Status
 
-**V0–V2 completati; V3–V5 non attestati; nessun fit reale è mai stato eseguito.** Sono implementati e verificati su fixture sintetiche e analitiche: lettore e codifica del corpus, CTW congelato, campionamento con RNG del contratto e rimescolamento, quattro perdite con G e Q, diagnostiche, R1, persistenza atomica con ripresa, tabelle del report e cinque figure. Il corpus reale è stato letto e codificato una sola volta (V1), e i suoi nove artefatti sono riproducibili byte per byte. Campagna, contrasti finali e risultati appartengono a V3–V5 e non esistono. La tranche si ferma per revisione prima di V3.
+**V0–V2 completed; V3–V5 not attested; no real fit has ever been run.** Implemented and verified on synthetic and analytical fixtures: the corpus reader and encoding, the frozen CTW, sampling with the contract RNG and the shuffle, the four losses with G and Q, diagnostics, R1, atomic persistence with resume, the report tables and the five figures. The real corpus has been read and encoded once (V1), and its nine artifacts are reproducible byte for byte. The campaign, the final contrasts and the results belong to V3–V5 and do not exist. Work stops for review before V3.
 
-L'albero attivo contiene soltanto il percorso 3.1. La storia — v2.1, gate G0/G1, `candidates/`, utility statistiche, proposal precedente, risultati pre-audit — è conservata byte per byte in `archive/`, al percorso che aveva a `5f1ec06`, con lo stato di ogni voce dichiarato in [V3-002](docs/02_DECISION_LOG.md); l'archivio non è un'autorità e non viene eseguito.
+The active tree holds the 3.1 path only. The history — v2.1, the G0/G1 gates, `candidates/`, the statistical utilities, the previous proposal, the pre-audit results — is preserved byte for byte under `archive/`, at the path it had at `5f1ec06`, with the status of each item declared in [V3-002](docs/02_DECISION_LOG.md); the archive is not an authority and is never executed.
 
-## Uso
+## Usage
 
 ```bash
 uv sync --frozen
 uv run pytest
 uv run python -m hexis.pipeline.run_tree_validation --config config/default.yaml
-uv run python -m hexis.pipeline.run_audit  --config config/default.yaml --data-root data/raw/UD_Ancient_Greek-Perseus --output-dir results/hexis31/<nuovo>
-uv run python -m hexis.pipeline.run_encode --config config/default.yaml --data-root data/raw/UD_Ancient_Greek-Perseus --output-dir results/hexis31/<nuovo>
+uv run python -m hexis.pipeline.run_audit  --config config/default.yaml --data-root data/raw/UD_Ancient_Greek-Perseus --output-dir results/hexis31/<new>
+uv run python -m hexis.pipeline.run_encode --config config/default.yaml --data-root data/raw/UD_Ancient_Greek-Perseus --output-dir results/hexis31/<new>
 ```
 
-Il corpus non è incluso: `data/raw` è immutabile, ignorato da Git e mai ridistribuito qui. La destinazione di un run deve essere nuova; un secondo avvio dello stesso stadio è rifiutato e nessuna scrittura è implicita. `run_descriptive` e `run_report` sono implementati e verificati su fixture: sulla configurazione depositata si eseguono a partire da V3, a codice congelato.
+The corpus is not included: `data/raw` is immutable, ignored by Git and never redistributed here. A run's destination must be new; a second launch of the same stage is refused, and no write is implicit. `run_descriptive` and `run_report` are implemented and verified on fixtures: on the deposited configuration they run from V3 onwards, with frozen code.
 
-Accettazione attiva: `uv run pytest` e `uv run pytest -m v31` raccolgono gli stessi test, tutti marcati, senza skip e con un assert eseguito ciascuno. Conteggi verbatim nell'[handoff](docs/HANDOFF.md); mappa e obblighi nell'[inventario](docs/TEST_INVENTORY.md).
+Active acceptance: `uv run pytest` and `uv run pytest -m v31` collect the same tests, all marked, with no skip and one executed assert each. Verbatim counts are in the [handoff](docs/HANDOFF.md); the map and the obligations are in the [inventory](docs/TEST_INVENTORY.md).
 
-## Perimetro scientifico
+## Scientific scope
 
-Diciassette documenti censiti: undici primari in sette blocchi, sei soltanto d'inventario, mai addestrati né valutati. Alfabeto con accorpamento globale ADV/PART, tre varianti di dimensione 100, 105 e 11. Target con almeno quattro predecessori nella stessa frase, nessuna storia fra frasi. Le misure sono perdite predittive fuori dal training in bit per simbolo: nessuna inferenza, nessun p-value, nessun intervallo. I semi sono repliche computazionali, non incertezza di popolazione, e gli undici documenti non sono undici repliche indipendenti.
+Seventeen documents are censused: eleven primary documents in seven blocks, and six inventory-only documents that are never trained on or scored. The alphabet merges ADV and PART globally, in three variants of size 100, 105 and 11. Targets have at least four predecessors in the same sentence, and there is no history across sentences. The measures are out-of-training predictive losses in bits per symbol: no inference, no p-values, no intervals. Seeds are computational replicates, not population uncertainty, and the eleven documents are not eleven independent replicates.
 
-## Licenze e dati
+## Licences and data
 
-Le licenze sono decise dall'atto di pubblicazione in [V3-002](docs/02_DECISION_LOG.md), e soltanto lì; [LICENSE](LICENSE) copre il codice e rinvia all'atto per documenti e dati. I raw non vengono ridistribuiti da questo repository. [Bibliografia attiva](docs/BIBLIOGRAPHY.md).
+Licences are set by the publication act in [V3-002](docs/02_DECISION_LOG.md), and nowhere else; [LICENSE](LICENSE) covers the code and refers to the act for documents and data. The raw data are not redistributed by this repository. [Active bibliography](docs/BIBLIOGRAPHY.md).
 
-Python 3.12 via uv, con il lock conservato. Il research proposal 3.1 (§17.1) non è ancora depositato.
+Python 3.12 via uv, with the lock preserved. The 3.1 research proposal (§17.1) has not been deposited yet. The project documents under `docs/`, including the deposited plan and the Decision Log, are written in Italian.

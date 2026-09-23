@@ -2,6 +2,14 @@
 
 **V0–V2 completati; V3–V5 non attestati; nessun fit reale; nessun push.** Ramo di lavoro `codex/hexis31-realign`, creato da `5f1ec06afa192c8d0f006d7f39cdb97df72c2983`. La cronologia dettagliata delle tranche precedenti non è ripetuta qui: sta nella storia Git e, nella sua ultima forma pre-riallineamento, in [archive/docs/HANDOFF.md](../archive/docs/HANDOFF.md).
 
+## Code review del 23 settembre 2026
+
+Due review integrali di `5f1ec06..a4a8871`, ciascun rilievo verificato sul repository prima di agire.
+
+**Accolti e corretti.** L'archivio era raccolto da `pytest .`: il riallineamento aveva tolto `norecursedirs`, e il docstring che prometteva il contrario non aveva un assert. L'attestazione del trasferimento da `legacy_audit` diceva «senza modifiche», mentre il messaggio di `verify_inputs_unchanged` era cambiato. L'atto dava due licenze agli stessi byte e non copriva `config/`, i metadati di `data/`, gli script del deposito né il codice sotto `archive/`. `LICENSE` non dichiarava il proprio ambito, e il README ripeteva l'atto. `archive/README.md` era una nota nuova al posto del README storico. `.gitignore` non ignorava più `data/interim/` e `data/processed/`, e ignorava anche `archive/results/`. `CANONICAL_DATA_ROOT` dipendeva dalla directory corrente. Restavano una docstring falsa in `manifest.py`, un commento orfano e righe vuote residue. Due test nuovi vincolano l'archivio: `test_the_archive_is_never_collected_even_from_the_root` e `test_every_archived_file_has_its_bytes_at_the_base`.
+
+**Respinti.** Limitare al solo repository la regola «ogni test raccolto è v31»: `test_every_collected_test_is_active_acceptance` la verifica proprio in un progetto sintetico, e nessun progetto sintetico ha test senza marker. Modificare i due test che rifiutano un `hexis.stats` importabile: il rifiuto è corretto, e la causa si evita come dice «Eseguire la storia».
+
 ## Riallineamento del 22 settembre 2026 — verifica
 
 Commit del riallineamento su `codex/hexis31-realign`: atto `1294f55`, migrazione dei test `90dffc0`, codice e gate `f6ffe51`, documenti e archivio `08ba6cd`, residui `1f441ff`. Questa sezione è documentale e non cita il proprio commit.
@@ -19,7 +27,7 @@ uv lock --check                                   Resolved 23 packages
 
 Le due selezioni coincidono, nessuno skip e nessun deselected. Base di confronto a `5f1ec06`: 672 passed più 17 skip nella suite completa, 351 nell'accettazione.
 
-**Nessun file perso.** Ogni percorso esistente a `5f1ec06` è oggi o nell'albero attivo o in `archive/`: 101 file archiviati, tutti con lo stesso blob dell'originale; 30 file attivi modificati; nessun file attivo nuovo fuori dall'archivio.
+**Nessun file perso.** Ogni percorso esistente a `5f1ec06` è oggi o nell'albero attivo o in `archive/`: 102 file archiviati, tutti con lo stesso blob dell'originale; 34 file attivi modificati; nessun file attivo nuovo fuori dall'archivio. Fino alla correzione del 23 settembre questa riga contava 101 e 30: la centoduesima voce era una nota nuova al posto del README storico, e i file modificati erano già 33.
 
 **Invarianti.** I 69 file tracciati del deposito, del record, del lock, della configurazione, della provenienza e di `data/raw/PROVENANCE.md` hanno blob identici a `5f1ec06`. I 98 file locali di `data/raw`, `scripts/` e `results/hexis31` hanno gli stessi sha256 del baseline.
 
@@ -43,7 +51,7 @@ Le due selezioni coincidono, nessuno skip e nessun deselected. Base di confronto
 
 ## Decisioni del proprietario del 22 settembre 2026 (D1–D4)
 
-- **D1** — nessun push pubblico finché un atto di pubblicazione non decide sui derivati. Superata da V3-002, che diventa efficace al primo push e richiede prima la decisione sulla licenza.
+- **D1** — nessun push pubblico finché un atto di pubblicazione non decide sui derivati. Superata dall'atto di pubblicazione di V3-002, efficace al primo push.
 - **D2** — il validatore del report rigenera ledger, conteggi di rimescolamento e provenienza C0 (attuata in `0dc69b5`).
 - **D3** — la deviazione della CLI dal §14.1 è registrata nella nota V3-001 del [Decision Log](02_DECISION_LOG.md).
 - **D4** — le cinque figure sono corrette nei difetti e nella leggibilità (attuata in `0dc69b5`).
@@ -52,7 +60,11 @@ La nota sul `.DS_Store` entrato e uscito dal deposito è ora in V3-002, che la r
 
 ## Perimetro del congelamento
 
-`_code_identity()` copre tutto `src/hexis`; l'evidenza V2 (`validation_run.context`) lega anche `tests/*.py`, `conftest.py`, `pyproject.toml`, il file di configurazione, `uv.lock` e il manifest del corpus usato. Dopo la pubblicazione di una validazione, modificare uno di questi impedisce la ripresa e impone una directory nuova con V2 e V3 rifatti. I documenti e `archive/` restano fuori dal perimetro e modificabili. Il riallineamento ha riaperto questo congelamento **prima** che qualunque evidenza V2 o V3 fosse pubblicata: sotto `results/hexis31/` esistono solo i run V1.
+`_code_identity()` copre tutto `src/hexis`; l'evidenza V2 (`validation_run.context`) lega anche `tests/*.py`, `conftest.py`, `pyproject.toml`, il file di configurazione, `uv.lock` e il manifest del corpus usato. Dopo la pubblicazione di una validazione, modificare uno di questi impedisce la ripresa e impone una directory nuova con V2 e V3 rifatti. I documenti restano fuori dal perimetro e modificabili; `archive/` è fuori dal perimetro ma vincolato ai byte di `5f1ec06` da `test_every_archived_file_has_its_bytes_at_the_base`. Il riallineamento ha riaperto questo congelamento **prima** che qualunque evidenza V2 o V3 fosse pubblicata: sotto `results/hexis31/` esistono solo i run V1.
+
+## Eseguire la storia
+
+La storia si esegue soltanto in un worktree separato: `git worktree add ../hexis-pre-realign archive/pre-realign`. Un checkout di `5f1ec06` nella copia principale lascerebbe file ignorati che il ritorno al ramo non toglie. `src/hexis/stats/__pycache__/` renderebbe `hexis.stats` importabile come namespace package, e due test attivi lo rifiutano, giustamente. Gli output v2.1 in `data/interim/` e `data/processed/` sono derivati del corpus, e per questo sono ignorati.
 
 ## Sequenza operativa prevista per V3–V5, non eseguita
 
@@ -73,8 +85,8 @@ uv run python -m hexis.pipeline.run_report --config config/default.yaml --corpus
 
 ## Obblighi aperti
 
-1. **Code review integrale**, sull'albero finale e sul diff `5f1ec06..HEAD`, con la [mappa dei test](TEST_INVENTORY.md) come ingresso.
-2. **Licenze**: decise ed espresse nell'atto (MIT / CC BY 4.0 / CC BY-NC-SA 2.5). Resta da verificare con la sede editoriale, prima del push, che la clausola NonCommercial sia compatibile con i suoi materiali supplementari.
+1. **Code review integrale**: eseguita il 23 settembre 2026, con due review; esiti e correzioni nella sezione in testa.
+2. **Licenze**: decise nell'atto di pubblicazione di V3-002, e soltanto lì. Resta da verificare con la sede editoriale, prima del push, che la clausola NonCommercial sia compatibile con i suoi materiali supplementari.
 3. **Research proposal 3.1 (§17.1)**: non ancora depositato. In `docs/proposal/` esistono file locali non tracciati; tracciarli è una decisione separata, perché entrerebbero nel perimetro della pubblicazione.
 4. **V3–V5**: prova tecnica, campagna, report e figure, nell'ordine del §14.
 

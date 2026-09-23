@@ -6,6 +6,6 @@ Studio descrittivo dell'ordine entro frase delle annotazioni nel corpus finito g
 
 **V0–V2 completati; V3–V5 non attestati; nessun fit reale.** Le proprietà verificate su fixture sintetiche e analitiche conservano il loro credito; l'attestazione V2 di `0dc69b5` resta prova di quel commit ed è riattestata sul commit del riallineamento ([handoff](HANDOFF.md)). Arresto per revisione prima di V3. I fit iniziano soltanto in V3 dopo V0–V2. Il completamento del corpus è distinto dal completamento scientifico.
 
-L'albero attivo contiene soltanto il percorso 3.1. Tutto il resto — v2.1, G0/G1, `candidates/`, utility statistiche, proposal precedente, risultati pre-audit — è conservato byte per byte in [archivio](../archive/README.md), al percorso che aveva a `5f1ec06`, come storia con stato dichiarato in V3-002 e senza autorità sulle nuove esecuzioni. Nessuna apertura storica è dichiarata risolta.
+L'albero attivo contiene soltanto il percorso 3.1. Tutto il resto — v2.1, G0/G1, `candidates/`, utility statistiche, proposal precedente, risultati pre-audit — è conservato byte per byte in `archive/`, al percorso che aveva a `5f1ec06`, come storia con stato dichiarato in [V3-002](02_DECISION_LOG.md) e senza autorità sulle nuove esecuzioni. Nessuna apertura storica è dichiarata risolta.
 
 Una divergenza scientifica arresta il passaggio interessato: richiede una correzione esplicita del contratto, mai l'aggiornamento degli attesi per ottenere un test verde.

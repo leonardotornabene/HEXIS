@@ -6,7 +6,7 @@ Studio descrittivo dell'ordine entro frase delle annotazioni morfosintattiche ne
 
 **V0–V2 completati; V3–V5 non attestati; nessun fit reale è mai stato eseguito.** Sono implementati e verificati su fixture sintetiche e analitiche: lettore e codifica del corpus, CTW congelato, campionamento con RNG del contratto e rimescolamento, quattro perdite con G e Q, diagnostiche, R1, persistenza atomica con ripresa, tabelle del report e cinque figure. Il corpus reale è stato letto e codificato una sola volta (V1), e i suoi nove artefatti sono riproducibili byte per byte. Campagna, contrasti finali e risultati appartengono a V3–V5 e non esistono. La tranche si ferma per revisione prima di V3.
 
-L'albero attivo contiene soltanto il percorso 3.1. La storia — v2.1, gate G0/G1, `candidates/`, utility statistiche, proposal precedente, risultati pre-audit — è conservata byte per byte in [archive/](archive/README.md), che non è un'autorità e non viene eseguito.
+L'albero attivo contiene soltanto il percorso 3.1. La storia — v2.1, gate G0/G1, `candidates/`, utility statistiche, proposal precedente, risultati pre-audit — è conservata byte per byte in `archive/`, al percorso che aveva a `5f1ec06`, con lo stato di ogni voce dichiarato in [V3-002](docs/02_DECISION_LOG.md); l'archivio non è un'autorità e non viene eseguito.
 
 ## Uso
 
@@ -28,6 +28,6 @@ Diciassette documenti censiti: undici primari in sette blocchi, sei soltanto d'i
 
 ## Licenze e dati
 
-Tre licenze, per tre cose diverse (atto di pubblicazione in V3-002). Il **codice** — `src/`, `tests/`, configurazione e lock — è **MIT**. I **documenti dell'autore**, compresi i testi e i JSON del deposito, sono **CC BY 4.0**. Tutto ciò che **deriva dal corpus** — vettori per posizione, ledger con coordinate, aggregati — è **CC BY-NC-SA 2.5**, come la fonte, con attribuzione a UD Ancient Greek Perseus r2.18 al commit `37837c7a`: ShareAlike vincola l'adattamento alla licenza della fonte, e la licenza del codice non si estende né ai documenti né ai dati. I raw non vengono ridistribuiti da questo repository. [Bibliografia attiva](docs/BIBLIOGRAPHY.md).
+Le licenze sono decise dall'atto di pubblicazione in [V3-002](docs/02_DECISION_LOG.md), e soltanto lì; [LICENSE](LICENSE) copre il codice e rinvia all'atto per documenti e dati. I raw non vengono ridistribuiti da questo repository. [Bibliografia attiva](docs/BIBLIOGRAPHY.md).
 
 Python 3.12 via uv, con il lock conservato. Il research proposal 3.1 (§17.1) non è ancora depositato.

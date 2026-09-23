@@ -56,8 +56,8 @@ del CTW, e le quattro fixture CTW depositate sono identificate, non eseguite.
 | `test_v31_r1.py` | T23: JSD, simmetria, centroidi e contributi |
 | `test_v31_descriptive.py`, `test_v31_completion.py`, `test_v31_report_semantics.py` | Esecutore e report su fixture: partizioni, resume, evidenze, chiavi, rigenerazione, guardie semantiche; assenza dei moduli ritirati |
 | `test_v31_figures.py` | Le cinque figure del §11.6, derivate dalle tabelle verificate |
-| `test_v31_docs.py` | Autorità attiva, integrità dell'archivio e del deposito, identità delle tre copie delle istruzioni, assenza di import ritirati |
-| `test_v31_enforcement.py`, `test_gate_inventory_anchor.py` | Il gate stesso: inventario esaustivo nei due versi, rifiuto di skip, xfail, xpass anche non stretto, assert mancante o morto, `.pyc` senza hook, test privo di marker, ancora assente o non marcata |
+| `test_v31_docs.py` | Autorità attiva, integrità del deposito, archivio ai byte di `5f1ec06` file per file, identità delle tre copie delle istruzioni, assenza di import ritirati |
+| `test_v31_enforcement.py`, `test_gate_inventory_anchor.py` | Il gate stesso: inventario esaustivo nei due versi, rifiuto di skip, xfail, xpass anche non stretto, assert mancante o morto, `.pyc` senza hook, test privo di marker, ancora assente o non marcata, archivio mai raccolto nemmeno dalla radice |
 
 ## Mappa dei test precedenti (§13.2: mantenuto, sostituito, ritirato)
 

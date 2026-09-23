@@ -1,6 +1,6 @@
 # Handoff HEXIS 3.1 — stato attuale
 
-**V0–V2 completati; V3–V5 non attestati; nessun fit reale.** Pubblicazione del 2026-09-23: il push del ramo `codex/hexis31-realign` a `2ebb3464b871c1f831d0608edba052ccb4b92be9` e dei tag `archive/pre-realign` e `archive/v2.1`; seguono l'unione in `master` con merge commit, senza squash né rebase, e la cancellazione del ramo remoto `g1/pre-audit` (V3-002, E5). Ramo di lavoro `codex/hexis31-realign`, creato da `5f1ec06afa192c8d0f006d7f39cdb97df72c2983`. La cronologia dettagliata delle tranche precedenti non è ripetuta qui: sta nella storia Git e, nella sua ultima forma pre-riallineamento, in [archive/docs/HANDOFF.md](../archive/docs/HANDOFF.md).
+**V0–V2 completati; V3–V5 non attestati; nessun fit reale.** Pubblicazione del 2026-09-23: il push del ramo `codex/hexis31-realign` a `2ebb3464b871c1f831d0608edba052ccb4b92be9` e dei tag `archive/pre-realign` e `archive/v2.1`; poi il merge in `master` (`73df64d`, merge commit senza squash né rebase) e la cancellazione dei rami remoti `g1/pre-audit` (V3-002, E5) e `codex/hexis31-realign`, contenuto in `master`. Ramo attivo: `master`; il riallineamento era partito da `5f1ec06afa192c8d0f006d7f39cdb97df72c2983`. La cronologia dettagliata delle tranche precedenti non è ripetuta qui: sta nella storia Git e, nella sua ultima forma pre-riallineamento, in [archive/docs/HANDOFF.md](../archive/docs/HANDOFF.md).
 
 ## Code review del 23 settembre 2026
 

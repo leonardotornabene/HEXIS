@@ -7,7 +7,7 @@ Il [contratto depositato](contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-0
 | V0 | Deposito, autorità, configurazione, registro e test | COMPLETATO — `e98fb8e` |
 | V1 | Corpus, mapping, audit, coordinate e persistenza | COMPLETATO — `7afdd3a`; il corpus consegnato è `results/hexis31/v1` |
 | V2 | CTW, RNG/campione/shuffle, quattro perdite, diagnostiche, R1, resume | COMPLETATO — chiusura `0a6f644`, revisione pre-V3 `0dc69b5`; riattestato dopo il riallineamento |
-| — | Riallineamento della repository e atto di pubblicazione (V3-002) | COMPLETATO — ramo `codex/hexis31-realign`; segue la code review integrale |
+| — | Riallineamento della repository e atto di pubblicazione (V3-002) | COMPLETATO — code review integrale e verifica di conformità; pubblicato il 2026-09-23, merge in `master` `73df64d` |
 | V3 | Seme 0, sei celle, sette fold: 42 coppie/84 modelli; freeze | PENDING — arresto per revisione prima dell'apertura |
 | V4 | 490 coppie/980 modelli; tutte le celle, i semi e i bracci | PENDING |
 | V5 | Report, cinque figure, due pesi, rigenerazione e completezza | PENDING — codice pronto; esecuzione e verifica |

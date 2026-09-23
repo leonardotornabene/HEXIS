@@ -19,11 +19,11 @@ from pathlib import Path
 
 import pandas as pd
 
-from hexis.contracts import compare, digest, load_contracts
-from hexis.model import diagnostics
-from hexis.pipeline import scientific_run, validation_run
-from hexis.protocols import r1, sampling, scores
-from hexis.viz import plots
+from hormathos.contracts import compare, digest, load_contracts
+from hormathos.model import diagnostics
+from hormathos.pipeline import scientific_run, validation_run
+from hormathos.protocols import r1, sampling, scores
+from hormathos.viz import plots
 
 KEY_COLUMNS = ('cell', 'variant', 'held_block', 'held_block_key', 'seed')
 RECORD_FIELDS = (*KEY_COLUMNS, 'q', 'depth', 'm', 'a_per_symbol', 'rho', 'min_available_past',
@@ -654,7 +654,7 @@ def r1_tables(cfg, coordinates, alphabets) -> dict:
 
 def main(argv=None):
     parser = argparse.ArgumentParser(
-        description='HEXIS 3.1 report: six-step validator, one aggregation, five figures')
+        description='HORMATHOS report: six-step validator, one aggregation, five figures')
     parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--corpus-dir', type=Path, required=True)
     parser.add_argument('--output-dir', type=Path, required=True)

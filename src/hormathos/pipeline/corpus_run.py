@@ -15,10 +15,10 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from hexis.config import load_v31_config
-from hexis.contracts import ROOT, BUNDLE, canonical_json, compare, digest, load_contracts
-from hexis.corpus import build_corpus, verify_corpus
-from hexis.manifest import sha256_file, _package_versions
+from hormathos.config import load_v31_config
+from hormathos.contracts import ROOT, BUNDLE, canonical_json, compare, digest, load_contracts
+from hormathos.corpus import build_corpus, verify_corpus
+from hormathos.manifest import sha256_file, _package_versions
 
 AUDIT_FILES = {'documents.csv','alphabets.json','source_audit.json','audit_summary.csv','audit_contingency.csv','audit_A.csv','exclusions.parquet'}
 
@@ -67,7 +67,7 @@ def staged_inputs(paths):
     parse consumes a copy no one else has a path to. Digest and content then
     describe the same bytes by construction rather than by timing.
     """
-    with tempfile.TemporaryDirectory(prefix="hexis-audit-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="hormathos-audit-") as tmp:
         staging = Path(tmp)
         snapshot: dict[Path, str] = {}
         staged: dict[Path, Path] = {}
@@ -291,12 +291,12 @@ def publish_stage(output, stage, artifacts, contract, metadata, *, before_publis
 
 def _code_identity():
     # All package sources are identified; local acquisition scripts are not producers.
-    files=sorted((ROOT/'src/hexis').rglob('*.py'))
+    files=sorted((ROOT/'src/hormathos').rglob('*.py'))
     return {str(p.relative_to(ROOT)):sha256_file(p) for p in files}
 
 
 def main(stage, argv=None):
-    parser=argparse.ArgumentParser(description=f'HEXIS 3.1 {stage}: corpus only, no model fits')
+    parser=argparse.ArgumentParser(description=f'HORMATHOS {stage}: corpus only, no model fits')
     parser.add_argument('--config',type=Path,required=True)
     parser.add_argument('--data-root',type=Path,required=True)
     parser.add_argument('--output-dir',type=Path,required=True)
@@ -319,7 +319,7 @@ def main(stage, argv=None):
         compare(snapshot[ROOT/'uv.lock'],cfg['runtime']['lock_sha256'],'uv.lock')
         compare(json.loads(staged[provenance_path].read_bytes()),provenance,'snapshot.provenance')
         # Re-read configuration from the same staged bytes named by the identity.
-        from hexis.config import load_yaml
+        from hormathos.config import load_yaml
         compare(load_yaml(args.config,source=staged[args.config]),cfg,'snapshot.config')
         compare(load_yaml(registry,source=staged[registry]),{'spec_version':'HEXIS-3.1','registry':cfg['registry']},'snapshot.registry')
         for path in contract_files:

@@ -7,9 +7,9 @@ import pandas as pd
 import pytest
 import yaml
 
-from hexis.contracts import digest
-from hexis.pipeline import run_descriptive, run_report, scientific_run
-from hexis.protocols import sampling, scores
+from hormathos.contracts import digest
+from hormathos.pipeline import run_descriptive, run_report, scientific_run
+from hormathos.protocols import sampling, scores
 from test_v31_descriptive import toy_config, toy_frames
 
 pytestmark = pytest.mark.v31

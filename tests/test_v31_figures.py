@@ -11,10 +11,10 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.collections import PathCollection
 from matplotlib.text import Text
 
-from hexis.contracts import load_contracts
-from hexis.model import diagnostics
-from hexis.protocols import scores
-from hexis.viz import plots
+from hormathos.contracts import load_contracts
+from hormathos.model import diagnostics
+from hormathos.protocols import scores
+from hormathos.viz import plots
 from test_v31_descriptive import campaign, cell, describe, report
 
 pytestmark = pytest.mark.v31
@@ -112,13 +112,13 @@ def test_structured_model_columns_are_canonical_json(reported):
 def test_figures_read_tables_only():
     """No model, sample, ledger or pipeline reaches the figures; no global pyplot state."""
     imported = []
-    for node in ast.walk(ast.parse((ROOT/'src/hexis/viz/plots.py').read_text(encoding='utf-8'))):
+    for node in ast.walk(ast.parse((ROOT/'src/hormathos/viz/plots.py').read_text(encoding='utf-8'))):
         if isinstance(node, ast.Import):
             imported.extend(alias.name for alias in node.names)
         elif isinstance(node, ast.ImportFrom):
             imported.extend(f'{node.module}.{alias.name}' for alias in node.names)
     assert imported
-    forbidden = ('context_tree', 'sampling', 'hexis.pipeline', 'pyplot', 'hexis.stats', 'candidates')
+    forbidden = ('context_tree', 'sampling', 'hormathos.pipeline', 'pyplot', 'hormathos.stats', 'candidates')
     assert not [name for name in imported if any(word in name for word in forbidden)]
 
 

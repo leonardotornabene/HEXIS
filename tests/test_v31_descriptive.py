@@ -22,11 +22,11 @@ import pandas as pd
 import pytest
 import yaml
 
-from hexis.contracts import digest
-from hexis.manifest import sha256_file
-from hexis.pipeline import corpus_run, run_descriptive, run_report, scientific_run
-from hexis.protocols import sampling, scores
-from hexis.viz import plots
+from hormathos.contracts import digest
+from hormathos.manifest import sha256_file
+from hormathos.pipeline import corpus_run, run_descriptive, run_report, scientific_run
+from hormathos.protocols import sampling, scores
+from hormathos.viz import plots
 
 pytestmark = pytest.mark.v31
 
@@ -196,7 +196,7 @@ def test_every_pair_persists_its_exact_sampling_ledger(tmp_path):
         ledger = pd.DataFrame(ledger_rows)
         assert int((ledger['end'] - ledger['start']).sum()) == record['q']
         streams = sampling.sample_streams(ledger, sequences, record['variant'])
-        from hexis.model.context_tree import CTW, CTWParams
+        from hormathos.model.context_tree import CTW, CTWParams
         rebuilt = CTW(CTWParams.from_rho(m=record['m'], depth=record['depth'],
                                           a=record['a_per_symbol'], rho=record['rho'])).fit(
                                               [stream['symbols'] for stream in streams])
@@ -337,7 +337,7 @@ def test_resume_refuses_a_changed_contract_or_a_changed_corpus(tmp_path, monkeyp
         describe(config, other, output, '--cell', 'all', '--resume')
     assert 'alphabets' in str(exc.value)
     # Changed code under an unchanged configuration is a different run, never a resume.
-    monkeypatch.setattr(scientific_run, '_code_identity', lambda: {'src/hexis/ghost.py': '0' * 64})
+    monkeypatch.setattr(scientific_run, '_code_identity', lambda: {'src/hormathos/ghost.py': '0' * 64})
     with pytest.raises(ValueError, match='run_contract') as rewritten:
         describe(config, corpus, output, '--cell', 'all', '--resume')
     assert 'code' in str(rewritten.value)
@@ -633,12 +633,12 @@ def test_retired_stages_do_not_exist(module):
     """Stronger than refusing to run: the retired stages are not importable at all,
     so no call site can reach them by name (§13.2)."""
     import importlib.util
-    assert importlib.util.find_spec(f'hexis.pipeline.{module}') is None
-    assert not (ROOT/'src/hexis/pipeline'/f'{module}.py').exists()
+    assert importlib.util.find_spec(f'hormathos.pipeline.{module}') is None
+    assert not (ROOT/'src/hormathos/pipeline'/f'{module}.py').exists()
 
 
-@pytest.mark.parametrize('module', ['hexis.blocks', 'hexis.registry', 'hexis.sequences',
-                                    'hexis.model.lexicon', 'hexis.stats'])
+@pytest.mark.parametrize('module', ['hormathos.blocks', 'hormathos.registry', 'hormathos.sequences',
+                                    'hormathos.model.lexicon', 'hormathos.stats'])
 def test_retired_v21_modules_do_not_exist(module):
     """The statistical utilities, the v2.1 registry, sequences, chunks and lexicon are
     history in `archive/`, outside the package and outside the code identity."""
@@ -648,7 +648,7 @@ def test_retired_v21_modules_do_not_exist(module):
 
 def test_the_v21_configuration_api_is_gone():
     """No second loader and no configuration merge: one deposited projection (§13.1)."""
-    import hexis.config as config
+    import hormathos.config as config
     for name in ('load_config', 'resolve_config', 'load_legacy_config', 'config_hash',
                  'derive_seed', 'check_against_default'):
         assert not hasattr(config, name), name
@@ -668,11 +668,11 @@ def test_the_descriptive_path_imports_no_retired_scientific_module():
                 modules.extend(f'{node.module or ""}.{alias.name}' for alias in node.names)
         return modules
 
-    # The detector first: `from hexis.model import blocks` names the module in the alias,
+    # The detector first: `from hormathos.model import blocks` names the module in the alias,
     # not in `node.module`, so reading `node.module` alone would miss the import it forbids.
-    assert any('blocks' in module for module in imported('from hexis.model import blocks'))
+    assert any('blocks' in module for module in imported('from hormathos.model import blocks'))
     for name in ('run_descriptive.py', 'run_report.py', 'scientific_run.py'):
-        modules = imported((ROOT / 'src/hexis/pipeline' / name).read_text(encoding='utf-8'))
+        modules = imported((ROOT / 'src/hormathos/pipeline' / name).read_text(encoding='utf-8'))
         assert not any('lexicon' in module or 'blocks' in module for module in modules), name
 
 
@@ -682,8 +682,8 @@ def test_the_documented_command_lines_run_the_whole_toy_campaign(tmp_path):
     config, corpus, output = campaign(tmp_path)
     common = ['--config', str(config), '--corpus-dir', str(corpus), '--output-dir', str(output),
               '--fixture']
-    for argv in ([sys.executable, '-m', 'hexis.pipeline.run_descriptive', *common, '--cell', 'all'],
-                 [sys.executable, '-m', 'hexis.pipeline.run_report', *common]):
+    for argv in ([sys.executable, '-m', 'hormathos.pipeline.run_descriptive', *common, '--cell', 'all'],
+                 [sys.executable, '-m', 'hormathos.pipeline.run_report', *common]):
         done = subprocess.run(argv, cwd=ROOT, capture_output=True, text=True)
         assert done.returncode == 0, done.stderr
     manifest = scientific_run.validate_run(output)

@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from hexis.pipeline import corpus_run, run_descriptive, run_report, run_tree_validation, scientific_run
+from hormathos.pipeline import corpus_run, run_descriptive, run_report, run_tree_validation, scientific_run
 from test_v31_descriptive import campaign, describe, cell, report
 
 pytestmark = pytest.mark.v31
@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_acceptance_checks_actual_junit_collection_and_process(tmp_path, monkeypatch):
-    from hexis.pipeline import validation_run
+    from hormathos.pipeline import validation_run
     (tmp_path/'test_small.py').write_text('import pytest\npytestmark=pytest.mark.v31\ndef test_one(): assert 1 == 1\n')
     (tmp_path/'pyproject.toml').write_text('[tool.pytest.ini_options]\nmarkers=["v31: test"]\nenable_assertion_pass_hook=true\n')
     (tmp_path/'conftest.py').write_bytes((ROOT/'conftest.py').read_bytes())
@@ -37,7 +37,7 @@ def test_acceptance_checks_actual_junit_collection_and_process(tmp_path, monkeyp
 
 @pytest.mark.parametrize('body', ['pass', 'pytest.skip("pending")', 'assert False'])
 def test_acceptance_rejects_vacuity_skip_and_failure(tmp_path, monkeypatch, body):
-    from hexis.pipeline import validation_run
+    from hormathos.pipeline import validation_run
     (tmp_path/'test_small.py').write_text('import pytest\npytestmark=pytest.mark.v31\ndef test_one(): '+body+'\n')
     (tmp_path/'pyproject.toml').write_text('[tool.pytest.ini_options]\nmarkers=["v31: test"]\nenable_assertion_pass_hook=true\n')
     (tmp_path/'conftest.py').write_bytes((ROOT/'conftest.py').read_bytes())
@@ -74,8 +74,8 @@ def test_new_schema_refuses_old_run_without_rewriting_it(tmp_path):
 
 
 def test_seed_zero_technical_keys_are_distinct_from_campaign_keys():
-    from hexis.config import load_v31_config
-    from hexis.pipeline import validation_run
+    from hormathos.config import load_v31_config
+    from hormathos.pipeline import validation_run
     cfg = load_v31_config(ROOT/'config/default.yaml')
     technical = validation_run.technical_keys(cfg)
     full = run_report.expected_keys(cfg)
@@ -90,7 +90,7 @@ def test_seed_zero_technical_keys_are_distinct_from_campaign_keys():
 @pytest.fixture(scope='module')
 def executed_validation(tmp_path_factory):
     """Real battery and real pytest output from a tiny project, never scientific evidence."""
-    from hexis.pipeline import validation_run
+    from hormathos.pipeline import validation_run
     directory = tmp_path_factory.mktemp('evidence-source')
     (directory/'test_one.py').write_text('import pytest\npytestmark=pytest.mark.v31\ndef test_one(): assert True\n')
     (directory/'pyproject.toml').write_text('[tool.pytest.ini_options]\nmarkers=["v31: fixture"]\nenable_assertion_pass_hook=true\n')
@@ -102,7 +102,7 @@ def executed_validation(tmp_path_factory):
 
 
 def validation_fixture(monkeypatch, executed_validation):
-    from hexis.pipeline import validation_run
+    from hormathos.pipeline import validation_run
     rows, process, xml = executed_validation
     monkeypatch.setattr(run_tree_validation, 'run_battery', lambda: copy.deepcopy(rows))
     monkeypatch.setattr(validation_run, 'run_acceptance', lambda directory: (copy.deepcopy(process), xml))
@@ -196,7 +196,7 @@ def test_validation_refuses_changed_execution_context_without_publication(tmp_pa
 
 
 def test_technical_completion_is_fixture_only_and_requires_the_exact_seed_zero_set(tmp_path):
-    from hexis.pipeline import validation_run
+    from hormathos.pipeline import validation_run
     config, corpus, output = campaign(tmp_path, cells=[cell('C0', q=12, seeds=(0, 1)), cell('tiny', q=6, seeds=(0, 1))])
     cfg = yaml.safe_load(config.read_text())
     manifest = describe(config, corpus, output, '--seed', '0')
@@ -229,7 +229,7 @@ def test_seed_zero_single_cell_keeps_v3_pending(tmp_path, monkeypatch, executed_
 
 
 def test_real_fit_requires_clean_tracked_producers(tmp_path, monkeypatch):
-    source = tmp_path/'src/hexis/core.py'
+    source = tmp_path/'src/hormathos/core.py'
     source.parent.mkdir(parents=True)
     source.write_text('value = 1\n')
     def git(*args):

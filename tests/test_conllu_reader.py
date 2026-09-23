@@ -9,7 +9,7 @@ boundaries, label validation and newdoc-id recovery. The reader is the active
 import pytest
 from conllu import TokenList
 
-from hexis import conllu_reader
+from hormathos import conllu_reader
 
 pytestmark = pytest.mark.v31
 

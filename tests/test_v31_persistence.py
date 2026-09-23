@@ -5,9 +5,9 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from hexis.contracts import digest, load_contracts
-from hexis.pipeline.corpus_run import discover_inputs, publish_stage, validate_run, run_identity
-from hexis.manifest import sha256_file
+from hormathos.contracts import digest, load_contracts
+from hormathos.pipeline.corpus_run import discover_inputs, publish_stage, validate_run, run_identity
+from hormathos.manifest import sha256_file
 
 pytestmark = pytest.mark.v31
 
@@ -87,7 +87,7 @@ def test_corruption_prevents_stage_reuse(tmp_path,fault):
 
 
 def test_interrupted_write_never_publishes_stage(tmp_path,monkeypatch):
-    from hexis.pipeline import corpus_run
+    from hormathos.pipeline import corpus_run
     out=tmp_path/'run'
     def fail(path, value):
         path.write_text('partial')
@@ -107,7 +107,7 @@ def test_destinations_with_existing_files_are_preserved(tmp_path):
 
 
 def test_output_raw_and_symlink_rejected(tmp_path):
-    from hexis.pipeline.corpus_run import check_destination
+    from hormathos.pipeline.corpus_run import check_destination
     raw=tmp_path/'raw';raw.mkdir();link=tmp_path/'alias';link.symlink_to(raw,target_is_directory=True)
     for path in [raw/'output',link/'output']:
         with pytest.raises(ValueError,match='raw') as exc:check_destination(path,raw)
@@ -115,7 +115,7 @@ def test_output_raw_and_symlink_rejected(tmp_path):
 
 
 def test_input_staging_binds_hash_to_processed_bytes_and_detects_changes(tmp_path):
-    from hexis.pipeline.corpus_run import staged_inputs, verify_inputs_unchanged
+    from hormathos.pipeline.corpus_run import staged_inputs, verify_inputs_unchanged
     path=tmp_path/'one.conllu';path.write_bytes(b'original')
     with staged_inputs([path]) as (snapshot, staged):
         path.write_bytes(b'changed')
@@ -149,7 +149,7 @@ def test_before_publication_input_failure_leaves_prior_stage_intact(tmp_path):
 
 
 def test_concurrent_reservation_refuses_second_writer(tmp_path,monkeypatch):
-    from hexis.pipeline import corpus_run
+    from hormathos.pipeline import corpus_run
     out=tmp_path/'run';observed=[];real=corpus_run.write_artifact
     def write(path,value):
         if not observed:
@@ -188,7 +188,7 @@ def test_sha256_file_is_the_hash_of_the_bytes_on_disk(tmp_path):
 def test_a_destination_inside_the_repository_raw_root_is_refused_under_any_data_root(tmp_path, monkeypatch):
     """Both immutable roots are checked, not only the one this run was given, and the
     repository's own root does not depend on the working directory."""
-    from hexis.pipeline.corpus_run import check_destination
+    from hormathos.pipeline.corpus_run import check_destination
     monkeypatch.chdir(tmp_path)
     raw=Path(__file__).resolve().parents[1]/'data/raw'
     for destination in (raw, raw/'UD_Ancient_Greek-Perseus'/'out'):

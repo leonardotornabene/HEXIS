@@ -19,8 +19,8 @@ import hashlib
 import numpy as np
 import pandas as pd
 
-from hexis.contracts import canonical_json
-from hexis.corpus import SENTENCE_KEY
+from hormathos.contracts import canonical_json
+from hormathos.corpus import SENTENCE_KEY
 
 VERSION = 'hexis-v3-rng-1'
 MASTER = 20260706

@@ -28,9 +28,9 @@ _ROOT = Path()
 def pytest_configure(config):
     global _ROOT
     _ROOT = Path(config.rootpath)
-    # Only the HEXIS repository has this trust anchor. Pytester copies this
+    # Only the HORMATHOS repository has this trust anchor. Pytester copies this
     # conftest into synthetic projects, which must remain free to define tiny gates.
-    if (_ROOT / "src" / "hexis").is_dir():
+    if (_ROOT / "src" / "hormathos").is_dir():
         for marker, filename in GATE_INVENTORIES.items():
             path = _ROOT / "tests" / filename
             if not path.is_file() or not _declares_module_marker(path, marker):

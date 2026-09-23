@@ -16,8 +16,8 @@ import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.ticker import MaxNLocator
 
-from hexis.model import diagnostics
-from hexis.protocols import scores
+from hormathos.model import diagnostics
+from hormathos.protocols import scores
 
 FIGURES = ('corpus_annotation', 'block_document_profiles', 'sensitivities_two_weights', 'R1',
            'supports_mixture_masses')  # report_contract_v3.1.json `figures`, in order
@@ -26,7 +26,7 @@ REFERENCE_CELL = 'C0'  # the profiles and the R1 matrix are drawn in C0's repres
 PROFILE = (('g_original', 'G original'), ('g_shuffled', 'G shuffled'), ('q', 'Q'))
 BITS = 'bits per eligible target'
 SUPPORT_CLASSES = ('1', '2to4', '5to9', '10plus')
-SVG_SETTINGS = {'svg.hashsalt': 'hexis-3.1', 'svg.fonttype': 'none'}  # stable ids, searchable text
+SVG_SETTINGS = {'svg.hashsalt': 'hormathos', 'svg.fonttype': 'none'}  # stable ids, searchable text
 COLORS = {'equal_block': 'tab:blue', 'eligible_token_weighted': 'tab:orange', '4_7': 'tab:blue',
           'ge8': 'tab:green', 'original': 'tab:blue', 'shuffled': 'tab:orange', '1': 'tab:blue',
           '2to4': 'tab:orange', '5to9': 'tab:green', '10plus': 'tab:red'}
@@ -41,7 +41,7 @@ def _block_order(blocks, groups):
 
 
 def _footer(figure, run_id):
-    figure.supxlabel(f'HEXIS 3.1 · run_id {run_id}', x=0.99, ha='right', fontsize=6)
+    figure.supxlabel(f'HORMATHOS · run_id {run_id}', x=0.99, ha='right', fontsize=6)
 
 
 def _spread(axis, positions, rows, *, label=None, color='black'):

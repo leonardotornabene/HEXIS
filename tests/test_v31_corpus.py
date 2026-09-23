@@ -6,10 +6,10 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from hexis.alphabet import map_token, map_tokens, strip_subtype
-from hexis.config import load_v31_config
-from hexis.contracts import load_contracts
-from hexis.corpus import read_corpus, encode_corpus, build_corpus, verify_corpus, diagnostic_a
+from hormathos.alphabet import map_token, map_tokens, strip_subtype
+from hormathos.config import load_v31_config
+from hormathos.contracts import load_contracts
+from hormathos.corpus import read_corpus, encode_corpus, build_corpus, verify_corpus, diagnostic_a
 
 pytestmark = pytest.mark.v31
 
@@ -152,7 +152,7 @@ def test_exact_validator_detects_equal_length_content_and_key_corruption(real_co
 
 @pytest.mark.parametrize('fault',['duplicate_metadata','short','long','invalid_id','zero_id','missing_head','empty_sent_id'])
 def test_source_parser_rejects_malformed_rows_with_location(tmp_path,fault):
-    from hexis.conllu_reader import iter_sentences, ParseError
+    from hormathos.conllu_reader import iter_sentences, ParseError
     sid='alpha@1';content=sentence(sid,[('NOUN','root')])
     if fault=='duplicate_metadata':content='# sent_id = alpha@1\n'+content
     if fault=='short':content=f'# sent_id = {sid}\n1\tw\tw\tNOUN\n\n'
@@ -169,7 +169,7 @@ def test_source_parser_rejects_malformed_rows_with_location(tmp_path,fault):
 
 
 def test_mwt_and_empty_nodes_do_not_change_source_word_ids(tmp_path,conllu_samples):
-    from hexis.conllu_reader import iter_sentences
+    from hormathos.conllu_reader import iter_sentences
     source=list(iter_sentences(conllu_samples['valid']))[0]
     assert [t['id'] for t in source]==[1,2,3,4]
     assert source.metadata['sent_id']=='alpha@1'

@@ -7,8 +7,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-from hexis.config import load_v31_config, load_yaml
-from hexis.contracts import BUNDLE, load_contracts, validate_projection
+from hormathos.config import load_v31_config, load_yaml
+from hormathos.contracts import BUNDLE, load_contracts, validate_projection
 
 pytestmark = pytest.mark.v31
 
@@ -75,7 +75,7 @@ def test_deposit_refuses_altered_missing_extra_contracts(tmp_path, fault):
 
 def test_the_alphabet_reads_the_active_projection_only():
     """The mapping refuses any configuration that is not the deposited 3.1 one."""
-    from hexis.alphabet import map_token
+    from hormathos.alphabet import map_token
     with pytest.raises(ValueError, match='HEXIS-3.1') as exc:
         map_token('NOUN', 'nsubj', {'spec_version': 'HEXIS-2.1', 'alphabet': {}})
     assert str(exc.value)

@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from hexis.protocols import r1
+from hormathos.protocols import r1
 
 pytestmark = pytest.mark.v31
 

@@ -120,6 +120,7 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                         'test_an_unknown_alphabet_variant_is_refused'],
  'test_v31_docs.py': ['test_active_authority_and_instructions_are_aligned',
                       'test_the_v3_001_acts_are_never_rewritten',
+                      'test_the_package_is_hormathos_and_hexis_names_only_the_design',
                       'test_the_deposit_and_the_lock_are_byte_preserved',
                       'test_all_preserved_v21_documents_match_the_original_hash_inventory',
                       'test_the_archive_is_a_record_and_never_a_dependency',

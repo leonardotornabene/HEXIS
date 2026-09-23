@@ -17,10 +17,10 @@ from pathlib import Path
 
 import pandas as pd
 
-from hexis.contracts import compare, digest
-from hexis.model.context_tree import CTW, CTWParams
-from hexis.pipeline import scientific_run, validation_run
-from hexis.protocols import sampling, scores
+from hormathos.contracts import compare, digest
+from hormathos.model.context_tree import CTW, CTWParams
+from hormathos.pipeline import scientific_run, validation_run
+from hormathos.protocols import sampling, scores
 
 POSITION_CELL = 'C0'  # §11.4: positional persistence in C0 alone
 
@@ -102,7 +102,7 @@ def run_pair(cfg, frames, cell, held, seed, *, resources=None):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(
-        description='HEXIS 3.1 descriptive campaign: six cells, two arms, one partition per pair')
+        description='HORMATHOS descriptive campaign: six cells, two arms, one partition per pair')
     parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--corpus-dir', type=Path, required=True)
     parser.add_argument('--output-dir', type=Path, required=True)
@@ -134,7 +134,7 @@ def main(argv=None):
             validation_run.verify_evidence(args.output_dir, prior,
                 current=validation_run.context(args.config, args.corpus_dir, contract))
         evidence = dict(prior['evidence'])
-        from hexis.pipeline.run_report import validate_partitions
+        from hormathos.pipeline.run_report import validate_partitions
         validate_partitions(args.output_dir, prior, cfg, frames)
     if deposited and (not prior or 'validation' not in prior['completed_stages']):
         raise ValueError('V2 validation evidence is required before any real fit')

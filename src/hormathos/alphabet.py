@@ -58,7 +58,7 @@ def map_token(upos_raw: str, deprel_raw: str, cfg: Mapping, *, variant=None) -> 
     with it the evaluated positions — stays identical to C0.
     """
     section, variant, policy = _alphabet_policy(cfg, variant)
-    from hexis.conllu_reader import UD_UPOS_TAGS
+    from hormathos.conllu_reader import UD_UPOS_TAGS
     if not isinstance(upos_raw, str) or upos_raw not in UD_UPOS_TAGS:
         raise ValueError(f"UPOS {upos_raw!r} is not a source UD tag")
     if not isinstance(deprel_raw, str) or not deprel_raw.strip() or deprel_raw == "_":

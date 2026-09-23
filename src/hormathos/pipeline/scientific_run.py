@@ -32,13 +32,13 @@ import numpy as np
 import pandas as pd
 import pyarrow as pa
 
-from hexis.config import load_v31_config, load_yaml
-from hexis.contracts import ROOT, compare, digest, load_contracts
-from hexis.manifest import sha256_file, _package_versions
-from hexis.pipeline import corpus_run
-from hexis.pipeline.corpus_run import (_code_identity, _read_json, artifact_record as _artifact_record,
+from hormathos.config import load_v31_config, load_yaml
+from hormathos.contracts import ROOT, compare, digest, load_contracts
+from hormathos.manifest import sha256_file, _package_versions
+from hormathos.pipeline import corpus_run
+from hormathos.pipeline.corpus_run import (_code_identity, _read_json, artifact_record as _artifact_record,
                                        check_destination, write_artifact as _write_artifact)
-from hexis.protocols import sampling
+from hormathos.protocols import sampling
 
 SCHEMA = 'hexis-scientific-manifest-2'
 STAGES = ('validation', 'descriptive', 'report')
@@ -167,8 +167,8 @@ def require_clean_producers():
                               text=True).stdout
     if git('status', '--porcelain', '--untracked-files=no').strip():
         raise ValueError('real fits require clean tracked code and environment')
-    tracked = set(git('ls-files', '-z', 'src/hexis').split('\0'))
-    untracked = [str(path.relative_to(ROOT)) for path in (ROOT/'src/hexis').rglob('*.py')
+    tracked = set(git('ls-files', '-z', 'src/hormathos').split('\0'))
+    untracked = [str(path.relative_to(ROOT)) for path in (ROOT/'src/hormathos').rglob('*.py')
                  if str(path.relative_to(ROOT)) not in tracked]
     if untracked:
         raise ValueError(f'untracked scientific producers: {untracked}')
@@ -386,11 +386,11 @@ def validate_run(output, *, locked=False) -> dict:
         listed_ledgers = {name for name in manifest['artifacts'] if name.startswith('sample_ledger__')}
         if listed_ledgers != ledgers:
             raise ValueError('manifest: sample ledger artifacts do not match the pair references')
-        from hexis.pipeline.run_report import TABLES
-        from hexis.viz.plots import ARTIFACTS as FIGURES
+        from hormathos.pipeline.run_report import TABLES
+        from hormathos.viz.plots import ARTIFACTS as FIGURES
         families = expected | positions | ledgers | (set(TABLES) | set(FIGURES) if 'report' in stages else set())
         if 'validation' in stages:
-            from hexis.pipeline.validation_run import ARTIFACTS, verify_evidence
+            from hormathos.pipeline.validation_run import ARTIFACTS, verify_evidence
             families |= ARTIFACTS
             verify_evidence(output, manifest)
         if set(manifest['artifacts']) != families:

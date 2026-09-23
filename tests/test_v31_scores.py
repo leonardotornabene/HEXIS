@@ -14,9 +14,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from hexis.model import diagnostics
-from hexis.model.context_tree import CTW, CTWParams
-from hexis.protocols import sampling, scores
+from hormathos.model import diagnostics
+from hormathos.model.context_tree import CTW, CTWParams
+from hormathos.protocols import sampling, scores
 
 pytestmark = pytest.mark.v31
 

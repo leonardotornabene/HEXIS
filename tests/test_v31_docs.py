@@ -10,8 +10,9 @@ pytestmark = pytest.mark.v31
 ROOT = Path(__file__).resolve().parents[1]
 
 # The three V3-001 blocks are the acts of 16, 17 and 22 September: V3-002 supersedes
-# sentences of theirs, it never rewrites their bytes.
-V3_001_SHA256 = 'df5ca735f4d9f0f450c147518d138e994a2818e0119e3fec95827c9e81760e6f'
+# sentences of theirs, it never rewrites their bytes. The hash starts at the first
+# V3-001 heading: the file title is not an act and follows the project name (V3-003).
+V3_001_SHA256 = '8ee0f130ac59085862c940c0804fc25733a7a12f9e83bb0abf95c18c9fba8864'
 LOCK_SHA256 = '33db43b00bcb21ab12aedf6dcc4257764770bff0115dc0d1dfab6e5ea89876bf'
 REALIGNMENT_BASE = '5f1ec06afa192c8d0f006d7f39cdb97df72c2983'
 
@@ -31,9 +32,19 @@ def test_active_authority_and_instructions_are_aligned():
 
 def test_the_v3_001_acts_are_never_rewritten():
     log = (ROOT/'docs/02_DECISION_LOG.md').read_text()
-    acts = log[:log.index('## V3-002 —')]
+    acts = log[log.index('## V3-001 —'):log.index('## V3-002 —')]
     assert hashlib.sha256(acts.encode()).hexdigest() == V3_001_SHA256
     assert 'V3-002 — Riallineamento della repository' in log
+
+
+def test_the_package_is_hormathos_and_hexis_names_only_the_design():
+    """V3-003: the project and its package are HORMATHOS; `hexis` survives only as the
+    name of the deposited design and in its identifiers, never as a package."""
+    import importlib.util
+    assert importlib.util.find_spec('hexis') is None
+    assert not (ROOT/'src/hexis').exists()
+    spec = importlib.util.find_spec('hormathos')
+    assert spec is not None and Path(spec.origin).resolve() == ROOT/'src/hormathos/__init__.py'
 
 
 def test_the_deposit_and_the_lock_are_byte_preserved():
@@ -60,7 +71,7 @@ def test_the_archive_is_a_record_and_never_a_dependency():
                      'src/hexis/pipeline/legacy_audit.py', 'tests/test_run_audit.py',
                      'docs/history/v2.1/02_DECISION_LOG.md', 'candidates/README.md']:
         assert (archive/expected).is_file(), expected
-    assert not (ROOT/'src/hexis/stats').exists()
+    assert not (ROOT/'src/hormathos/stats').exists()
 
 
 def test_every_archived_file_has_its_bytes_at_the_base():
@@ -92,7 +103,7 @@ def test_test_inventory_explicitly_tracks_future_obligations():
 
 def test_pipeline_does_not_import_candidates_or_inferential_utilities():
     import ast
-    for path in (ROOT/'src/hexis').rglob('*.py'):
+    for path in (ROOT/'src/hormathos').rglob('*.py'):
         tree = ast.parse(path.read_text())
         imports = []
         for node in ast.walk(tree):
@@ -100,7 +111,7 @@ def test_pipeline_does_not_import_candidates_or_inferential_utilities():
                 imports.extend(a.name for a in node.names)
             elif isinstance(node, ast.ImportFrom):
                 imports.append(node.module or '')
-        assert not any(name.startswith(('candidates', 'archive', 'hexis.stats'))
+        assert not any(name.startswith(('candidates', 'archive', 'hormathos.stats'))
                        for name in imports), path
 
 

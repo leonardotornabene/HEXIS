@@ -21,10 +21,10 @@ from pathlib import Path
 
 import numpy as np
 
-from hexis.contracts import ROOT, load_contracts
-from hexis.config import load_v31_config
-from hexis.model.context_tree import CTW, CTWParams
-from hexis.pipeline.corpus_run import check_destination, write_artifact
+from hormathos.contracts import ROOT, load_contracts
+from hormathos.config import load_v31_config
+from hormathos.model.context_tree import CTW, CTWParams
+from hormathos.pipeline.corpus_run import check_destination, write_artifact
 
 # §12.1 table. The historical script hardcodes 0.03 for iid/order1/lag2/variable
 # and 0.02 only for cycle; the plan text, which governs semantics (§0), fixes
@@ -175,7 +175,7 @@ def exit_code(rows):
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(description='HEXIS 3.1 frozen synthetic CTW battery (§12.1)')
+    parser = argparse.ArgumentParser(description='HORMATHOS frozen synthetic CTW battery (§12.1)')
     parser.add_argument('--config', type=Path, help='validate the deposited analytical projection')
     parser.add_argument('--out', type=Path, help='write the battery results as JSON')
     parser.add_argument('--force', action='store_true', help='overwrite an existing --out')
@@ -188,7 +188,7 @@ def main(argv=None) -> int:
     if args.corpus_dir is not None:
         if args.out is not None or args.force:
             parser.error('--out/--force belong to battery-only mode')
-        from hexis.pipeline.validation_run import publish_validation
+        from hormathos.pipeline.validation_run import publish_validation
         publish_validation(args.config or ROOT/'config/default.yaml', args.corpus_dir,
                            args.output_dir, fixture=args.fixture)
         return 0

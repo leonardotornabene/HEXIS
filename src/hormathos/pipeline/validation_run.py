@@ -11,9 +11,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from hexis.contracts import ROOT, compare, digest
-from hexis.manifest import sha256_file
-from hexis.pipeline import scientific_run, run_tree_validation
+from hormathos.contracts import ROOT, compare, digest
+from hormathos.manifest import sha256_file
+from hormathos.pipeline import scientific_run, run_tree_validation
 
 BATTERY = 'tree_validation.json'
 PROCESS = 'v31_process.json'
@@ -124,7 +124,7 @@ def publish_validation(config, corpus_dir, output, *, fixture=False):
     rows = run_tree_validation.run_battery()
     if run_tree_validation.exit_code(rows):
         raise ValueError('V2 synthetic battery failed; no validation stage published')
-    with tempfile.TemporaryDirectory(prefix='hexis-v31-') as directory:
+    with tempfile.TemporaryDirectory(prefix='hormathos-v31-') as directory:
         process, xml = run_acceptance(directory)
     # Re-read source/corpus/configuration and lock before publishing any acceptance.
     latest_corpus, _ = scientific_run.load_corpus(corpus_dir)
@@ -136,7 +136,7 @@ def publish_validation(config, corpus_dir, output, *, fixture=False):
     evidence['V2'] = {'code': before['code'], 'lock': before['lock'], 'context': before,
                       'artifacts': {}}
     # Hash exactly the representation the shared publisher will write.
-    with tempfile.TemporaryDirectory(prefix='hexis-evidence-') as directory:
+    with tempfile.TemporaryDirectory(prefix='hormathos-evidence-') as directory:
         for name, value in artifacts.items():
             path = Path(directory)/name
             scientific_run.write_artifact(path, value)
@@ -159,15 +159,15 @@ def publish_validation(config, corpus_dir, output, *, fixture=False):
 
 def technical_keys(cfg):
     """The predefined seed-zero integration set, distinct from full-campaign acceptance."""
-    from hexis.pipeline.run_report import expected_keys
+    from hormathos.pipeline.run_report import expected_keys
     keys = expected_keys(cfg)
     return {kind: [list(key) for key in keys[kind] if key[2] == 0] for kind in ('pair', 'model')}
 
 
 def check_technical(output, manifest, cfg, frames, *, scientific):
     """Verify seed zero without confusing 42/84 technical fits with the 490/980 campaign."""
-    from hexis.config import load_v31_config
-    from hexis.pipeline import run_report
+    from hormathos.config import load_v31_config
+    from hormathos.pipeline import run_report
     expected = scientific_run.key_sets(technical_keys(cfg))
     published = scientific_run.key_sets(manifest['keys'])
     complete = run_report.expected_keys(cfg)
@@ -253,7 +253,7 @@ def compare_regeneration(campaign, regenerated, cfg, frames) -> dict:
     identity, count and key exact — a fingerprint hashes float bits, so it is then reported
     through the values it hashes rather than required. Nothing here fits a model.
     """
-    from hexis.pipeline import run_report
+    from hormathos.pipeline import run_report
     campaign, regenerated = Path(campaign), Path(regenerated)
     if campaign.resolve() == regenerated.resolve():
         raise ValueError('regeneration requires a distinct directory')

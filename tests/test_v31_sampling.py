@@ -2,7 +2,7 @@
 
 `derive` below is a second, deliberately plain implementation of the §5.3
 convention (hashlib and json only) used as the oracle for T08; it shares no code
-with ``hexis.protocols.sampling``. The §12.2 vector and the seven deposited
+with ``hormathos.protocols.sampling``. The §12.2 vector and the seven deposited
 block keys are reproduced through it before any value of the module is trusted.
 """
 import ast
@@ -16,10 +16,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from hexis.config import load_v31_config
-from hexis.contracts import load_contracts
-from hexis.corpus import build_corpus
-from hexis.protocols import sampling
+from hormathos.config import load_v31_config
+from hormathos.contracts import load_contracts
+from hormathos.corpus import build_corpus
+from hormathos.protocols import sampling
 
 pytestmark = pytest.mark.v31
 
@@ -493,5 +493,5 @@ def test_module_imports_no_retired_v21_helper():
             imported.update(alias.name for alias in node.names)
         elif isinstance(node, ast.ImportFrom):
             imported.add(node.module or '')
-    assert imported == {'hashlib', 'numpy', 'pandas', 'hexis.contracts', 'hexis.corpus'}
+    assert imported == {'hashlib', 'numpy', 'pandas', 'hormathos.contracts', 'hormathos.corpus'}
     assert 'print(' not in Path(sampling.__file__).read_text(encoding='utf-8')

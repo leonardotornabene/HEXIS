@@ -3,7 +3,7 @@
 The enumeration helpers below are a second, deliberately naive implementation of
 the piano §6.1–§6.4 contract (explicit sum over admissible trees, counts matched
 by scanning the streams) used as the oracle for T10; they share no code with
-``hexis.model.context_tree``.
+``hormathos.model.context_tree``.
 """
 import ast
 import itertools
@@ -14,9 +14,9 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from hexis.contracts import load_contracts
-from hexis.model.context_tree import BOS, CTW, CTWParams
-from hexis.pipeline import run_tree_validation as validation
+from hormathos.contracts import load_contracts
+from hormathos.model.context_tree import BOS, CTW, CTWParams
+from hormathos.pipeline import run_tree_validation as validation
 
 pytestmark = pytest.mark.v31
 

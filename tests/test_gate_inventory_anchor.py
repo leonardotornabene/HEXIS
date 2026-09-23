@@ -17,7 +17,7 @@ def test_repository_gate_rejects_a_missing_or_unmarked_inventory(pytester, broke
         '[tool.pytest.ini_options]\nmarkers = ["v31: active"]\n'
         'testpaths = ["tests"]\nenable_assertion_pass_hook = true\n'
     )
-    (pytester.path / "src" / "hexis").mkdir(parents=True)
+    (pytester.path / "src" / "hormathos").mkdir(parents=True)
     tests = pytester.path / "tests"
     tests.mkdir()
     if broken == "unmarked":

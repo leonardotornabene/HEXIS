@@ -62,7 +62,7 @@ def load_yaml(path, *, source=None):
 
 def load_v31_config(path=None, *, registry_path=None) -> dict:
     """Load the exact active analytical projection and independently check registry."""
-    from hexis.contracts import ROOT, load_contracts, validate_projection, compare
+    from hormathos.contracts import ROOT, load_contracts, validate_projection, compare
     path = Path(path) if path is not None else ROOT / 'config/default.yaml'
     registry_path = Path(registry_path) if registry_path is not None else ROOT / 'config/registry_overrides.yaml'
     design = load_contracts()['design']

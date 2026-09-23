@@ -1,4 +1,4 @@
-"""HEXIS 3.1 corpus census and encoding. No model fitting or inference."""
+"""HORMATHOS corpus census and encoding. No model fitting or inference."""
 import json
 import math
 from numbers import Integral
@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from hexis import alphabet, conllu_reader
-from hexis.contracts import compare, digest
+from hormathos import alphabet, conllu_reader
+from hormathos.contracts import compare, digest
 
 VARIANTS = ('ud23', 'ud23_oth', 'upos_only')
 SENTENCE_KEY = ['doc_id', 'part_order', 'source_ordinal', 'sent_id']

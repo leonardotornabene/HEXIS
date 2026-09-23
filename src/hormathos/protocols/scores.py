@@ -16,7 +16,7 @@ import time
 import numpy as np
 import pandas as pd
 
-from hexis.model import diagnostics
+from hormathos.model import diagnostics
 
 MIN_AVAILABLE_PAST = 4  # §4.4: four ordinary predecessors kept in the same sentence
 BANDS = ('4_7', 'ge8')

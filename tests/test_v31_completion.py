@@ -6,8 +6,8 @@ import pandas as pd
 import pytest
 import yaml
 
-from hexis.manifest import sha256_file
-from hexis.pipeline import corpus_run, scientific_run
+from hormathos.manifest import sha256_file
+from hormathos.pipeline import corpus_run, scientific_run
 from test_v31_descriptive import campaign, describe, report, LENGTHS
 
 pytestmark = pytest.mark.v31
@@ -132,7 +132,7 @@ def test_resource_records_are_complete_valid_and_bound_to_model_keys(tmp_path, f
 
 def test_diagnostics_carry_the_report_contract_names(tmp_path):
     """report_contract_v3.1.json fixes the names; `_by_reason`/`_by_length` name column families."""
-    from hexis.contracts import load_contracts
+    from hormathos.contracts import load_contracts
     contract = load_contracts()['report']
     aggregate = contract['paired_aggregate_all_cells']
 
@@ -155,7 +155,7 @@ def test_diagnostics_carry_the_report_contract_names(tmp_path):
 def test_report_summarizes_every_level_and_pairs_sensitivities_per_block_and_seed(tmp_path):
     """§8.2/§10/§5.1/§11.5, each recomputed here from the per-seed tables of the same report."""
     import numpy as np
-    from hexis.protocols import scores
+    from hormathos.protocols import scores
     from test_v31_descriptive import cell
     blocks = {'ALPHA': (['a'], 'HEX'), 'BETA': (['b'], 'PROSE_ALL'), 'GAMMA': (['c'], 'PROSE_ALL')}
     config, corpus, output = campaign(tmp_path, blocks=blocks, lengths={**LENGTHS, 'c': [9, 8, 7]},
@@ -224,7 +224,7 @@ def test_empty_document_summaries_stay_null_with_their_reason(tmp_path):
 
 
 def test_seed_zero_regeneration_is_compared_and_recorded_by_the_report(tmp_path):
-    from hexis.pipeline import validation_run
+    from hormathos.pipeline import validation_run
     from test_v31_descriptive import cell
     config, corpus, output = campaign(tmp_path, cells=[cell('C0', q=12, seeds=(0, 1)), cell('tiny', q=6, seeds=(0, 1))])
     describe(config, corpus, output, '--cell', 'all')
@@ -261,7 +261,7 @@ def test_seed_zero_regeneration_is_compared_and_recorded_by_the_report(tmp_path)
 
 
 def test_a_scientific_report_requires_the_seed_zero_regeneration(tmp_path, monkeypatch):
-    from hexis.pipeline import run_report
+    from hormathos.pipeline import run_report
     config, corpus, output = campaign(tmp_path)
     cfg = yaml.safe_load(config.read_text())
     monkeypatch.setattr(scientific_run, 'load_projection', lambda path, fixture: (cfg, True))

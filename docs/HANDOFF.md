@@ -26,6 +26,20 @@ uv lock --check                                   Resolved 23 packages
 
 The three collections have the same node IDs and none under `archive/`, and `uv.lock` keeps SHA-256 `33db43b0…`. The count rises from 400 by the three cases of `7f3f641` and by the package guard of `4a82f7e`. Each new test failed before its change: the two tests of `7f3f641` with their source file restored from `d7c8f21`, the package guard while the package was still `src/hexis`, and the new assertions on the documents against the Italian documents.
 
+**Attestation after the review.** Fixes in `348b8da` (sdist, test and docstrings) and `39bb7ec` (documents); measured on `39bb7ec`, with a clean tracked tree before and after:
+
+```text
+uv run --frozen pytest -q -p no:cacheprovider
+405 passed in 180.00s (0:03:00)
+
+uv run --frozen pytest --collect-only -q          405 tests collected
+uv run --frozen pytest -m v31 --collect-only -q   405 tests collected
+uv run --frozen pytest . --collect-only -q        405 tests collected
+uv lock --check                                   Resolved 23 packages
+```
+
+The three collections have the same 405 node IDs and none under `archive/`; the count rises by the sdist test. `uv.lock` keeps SHA-256 `33db43b0…`. The sdist built in this working copy, with the five proposal drafts, `scripts/`, `.superpowers/` and `.claude/` present, holds exactly the 228 tracked files plus `PKG-INFO`. The V1 corpus regenerated at `39bb7ec` reproduces the nine artifacts byte for byte, and every field of its run contract other than the code equals V1.
+
 ## Code review of 23 September 2026
 
 Two full reviews of `5f1ec06..a4a8871`, each finding verified on the repository before acting.

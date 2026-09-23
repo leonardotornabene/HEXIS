@@ -99,7 +99,7 @@ uv run python -m hexis.pipeline.run_report --config config/default.yaml --corpus
 
 ## Obblighi aperti
 
-1. **Code review integrale**: eseguita il 23 settembre 2026, con due review; esiti e correzioni nella sezione in testa.
+1. **Code review integrale**: eseguita il 23 settembre 2026, con due review; esiti e correzioni nella sezione in testa. La verifica di conformità al piano dello stesso giorno non trova scostamenti di sostanza; le due letture di V2 non ancora dichiarate nell'albero attivo sono ora le deviazioni 4 e 5 di V3-002.
 2. **Licenze**: decise nell'atto di pubblicazione di V3-002, e soltanto lì. La sede editoriale non è determinabile: l'atto registra la pubblicazione senza sede (E9).
 3. **Research proposal 3.1 (§17.1)**: non ancora depositato. In `docs/proposal/` esistono file locali non tracciati; tracciarli è una decisione separata, perché entrerebbero nel perimetro della pubblicazione.
 4. **V3–V5**: prova tecnica, campagna, report e figure, nell'ordine del §14.

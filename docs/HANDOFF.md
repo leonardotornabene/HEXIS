@@ -10,6 +10,20 @@ Due review integrali di `5f1ec06..a4a8871`, ciascun rilievo verificato sul repos
 
 **Respinti.** Limitare al solo repository la regola «ogni test raccolto è v31»: `test_every_collected_test_is_active_acceptance` la verifica proprio in un progetto sintetico, e nessun progetto sintetico ha test senza marker. Modificare i due test che rifiutano un `hexis.stats` importabile: il rifiuto è corretto, e la causa si evita come dice «Eseguire la storia».
 
+**Attestazione.** Correzioni in `61d4a08` (test prima, poi codice e configurazione) e `2eabcb6` (atto e documenti); questa sezione non cita il proprio commit. Misurata su `2eabcb6`, albero tracciato pulito prima e dopo:
+
+```text
+uv run --frozen pytest -q -p no:cacheprovider
+400 passed in 163.67s (0:02:43)
+
+uv run --frozen pytest --collect-only -q          400 tests collected
+uv run --frozen pytest -m v31 --collect-only -q   400 tests collected
+uv run --frozen pytest . --collect-only -q        400 tests collected
+uv lock --check                                   Resolved 23 packages
+```
+
+Le tre raccolte hanno gli stessi node ID e nessuno sotto `archive/`. Prima delle correzioni, i due test nuovi fallivano ciascuno sul proprio rilievo: `archive/tests/test_old.py` raccolto da `pytest .`, e `archive/README.md` con blob `d8c0353` invece di `d0e062e`. L'archivio ha 102 file su 102 identici a `5f1ec06`, nessun percorso perso. Rispetto a `legacy_audit` a `5f1ec06`, l'AST differisce soltanto per `verify_inputs_unchanged` e `CANONICAL_DATA_ROOT`, come dichiara V3-002. Il corpus V1 rigenerato con `run_encode` a `2eabcb6`, in una directory esterna, riproduce i nove artefatti byte per byte; nel manifest differiscono soltanto `run_id`, l'identità del codice e i campi esterni già dichiarati.
+
 ## Riallineamento del 22 settembre 2026 — verifica
 
 Commit del riallineamento su `codex/hexis31-realign`: atto `1294f55`, migrazione dei test `90dffc0`, codice e gate `f6ffe51`, documenti e archivio `08ba6cd`, residui `1f441ff`. Questa sezione è documentale e non cita il proprio commit.

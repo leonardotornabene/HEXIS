@@ -1,6 +1,6 @@
 # HORMATHOS
 
-*Hormathos* (ὁρμαθός) is Greek for a chain of things hanging one from another: in Plato's *Ion* (533e), the iron rings that hang from a magnet, each drawing its force from the ring above. Here each annotation symbol is predicted from its predecessors in the same sentence, and the chain breaks where the sentence ends.
+*Hormathos* (ὁρμαθός) is Greek for a chain of things hanging one from another: in Plato's *Ion* (533e), the long chain of iron rings below a magnet, whose force passes through each ring to the next. Here each annotation symbol is predicted from its predecessors in the same sentence, and the chain breaks where the sentence ends.
 
 A descriptive study of within-sentence order in the morphosyntactic annotations of the finite Greek corpus UD Perseus r2.18. HORMATHOS implements the deposited HEXIS 3.1 design: the authority is the [deposited plan](docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md) with its byte-identified JSON contracts, adopted by [V3-001](docs/02_DECISION_LOG.md); [V3-002](docs/02_DECISION_LOG.md) realigned the repository and governs its publication; [V3-003](docs/02_DECISION_LOG.md) gave the project its name. `hexis` survives only as the name of the design and in the identifiers the contract fixes, including the distribution name that the contract-fixed `uv.lock` records; the package is `hormathos`.
 
@@ -20,7 +20,7 @@ uv run python -m hormathos.pipeline.run_audit  --config config/default.yaml --da
 uv run python -m hormathos.pipeline.run_encode --config config/default.yaml --data-root data/raw/UD_Ancient_Greek-Perseus --output-dir results/hexis31/<new>
 ```
 
-The corpus is not included: `data/raw` is immutable, ignored by Git and never redistributed here. A run's destination must be new; a second launch of the same stage is refused, and no write is implicit. `run_descriptive` and `run_report` are implemented and verified on fixtures: on the deposited configuration they run from V3 onwards, with frozen code.
+The pipeline runs from a checkout of this repository: it reads the deposit under `docs/contracts/`, the configuration and, for real fits, the Git state of the tracked sources (§11.3). The wheel carries only the `hormathos` package and cannot run the pipeline on its own. The corpus is not included: `data/raw` is immutable, ignored by Git and never redistributed here. A run's destination must be new; a second launch of the same stage is refused, and no write is implicit. `run_descriptive` and `run_report` are implemented and verified on fixtures: on the deposited configuration they run from V3 onwards, with frozen code.
 
 Active acceptance: `uv run pytest` and `uv run pytest -m v31` collect the same tests, all marked, with no skip and one executed assert each. Verbatim counts are in the [handoff](docs/HANDOFF.md); the map and the obligations are in the [inventory](docs/TEST_INVENTORY.md).
 

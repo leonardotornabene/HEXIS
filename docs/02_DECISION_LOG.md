@@ -139,7 +139,7 @@ D2–D4 restano attuate da `0dc69b5`.
 
 **Status: ADOPTED.** Source of authorization: the owner's requests of 23 September 2026 — the name HORMATHOS, the rename of both the project and its package, the variant that keeps the distribution name, and English as the language of every project artifact — with the decisions A1–A6 and B1–B5 below. The act changes no byte of the deposit, and no byte of the V3-001 and V3-002 acts, which remain as adopted.
 
-**Name.** The project and its software are HORMATHOS, from Greek ὁρμαθός, a chain of things hanging one from another: in Plato's *Ion* (533e) the iron rings that hang from a magnet, each drawing its force from the ring above. The name describes the method: each annotation symbol is predicted from its predecessors in the same sentence, and the chain breaks where the sentence ends. HEXIS 3.1 remains the name of the deposited design that HORMATHOS implements; `hexis` survives only where the design or its history fixes it.
+**Name.** The project and its software are HORMATHOS, from Greek ὁρμαθός, a chain of things hanging one from another: in Plato's *Ion* (533e) the long chain of iron rings below a magnet, whose force passes through each ring to the next (B11). The name describes the method: each annotation symbol is predicted from its predecessors in the same sentence, and the chain breaks where the sentence ends. HEXIS 3.1 remains the name of the deposited design that HORMATHOS implements; `hexis` survives only where the design or its history fixes it.
 
 **What keeps the name `hexis`, and why.**
 - The deposit, `docs/contracts/hexis-3.1/`, with its file names: `SHA256SUMS.json`, `design_lock.json` and `V3-001-deposit.json` identify them.
@@ -170,3 +170,4 @@ D2–D4 restano attuate da `0dc69b5`.
 - B3: the companion translations of the plan, of V3-001 and V3-002 and of the other Italian texts of the deposit are a separate tranche.
 - B4: the English version of the research proposal comes with the decision to track it.
 - B5: the index and the roadmap become `00_INDEX.md` and `03_ROADMAP.md`.
+- R1–R4, from the review of the rename before its publication (23 September 2026): the sdist is a closed list equal to the tracked tree (R1); the pipeline runs from a checkout and the wheel alone does not run it, as declared in the README (R2); the per-pair revalidation of the V1 corpus is kept as it is, with its cost recorded in the handoff (R3); Plato's *Ion* is registered as B11, and the Italian left in docstrings and comments is translated (R4).

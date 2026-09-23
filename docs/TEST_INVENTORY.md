@@ -57,7 +57,7 @@ deposited CTW fixtures are identified, not executed.
 | `test_v31_descriptive.py`, `test_v31_completion.py`, `test_v31_report_semantics.py` | Runner and report on fixtures: partitions, resume, evidence, keys, regeneration, semantic guards; absence of the retired modules |
 | `test_v31_validation_run.py` | V2/V3 evidence executed and rechecked; the report refuses a changed V2 context, also during generation; a single cell at seed 0 leaves V3 pending; real fits require clean tracked producers |
 | `test_v31_figures.py` | The five figures of §11.6, derived from the verified tables |
-| `test_v31_docs.py` | Active authority, deposit integrity, archive at the bytes of `5f1ec06` file by file, identity of the three instruction copies, absence of retired imports; the package is `hormathos` and `hexis` is not importable (V3-003) |
+| `test_v31_docs.py` | Active authority, deposit integrity, archive at the bytes of `5f1ec06` file by file, identity of the three instruction copies, absence of retired imports; the package is `hormathos` and `hexis` is not importable, and the sdist is exactly the tracked tree (V3-003) |
 | `test_v31_enforcement.py`, `test_gate_inventory_anchor.py` | The gate itself: exhaustive inventory in both directions, refusal of skip, xfail, xpass even when not strict, missing or dead assert, `.pyc` without the hook, test without marker, missing or unmarked anchor, archive never collected, not even from the root |
 
 ## Map of the previous tests (§13.2: kept, replaced, retired)

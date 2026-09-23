@@ -10,6 +10,8 @@
 
 **Verification of the renamed package, in a separate clone with its own environment.** `uv lock --check` resolves 23 packages and `uv.lock` keeps SHA-256 `33db43b0…`. The V1 corpus `results/hexis31/v1` is still accepted: `load_corpus` and `run_contract` on the deposited configuration give lock `33db43b0…` and 25 code files under `src/hormathos`. `run_audit` and `run_encode` regenerate the nine V1 artifacts byte for byte; in the manifest every `run_contract` field other than `code` equals V1, the input snapshots are identical once their paths are made relative, and the rest is `run_id` and the external fields. Against `7f3f641`, 11 of the 25 sources are byte-identical and 14 carry the changes of `4a82f7e`.
 
+**Review before the push (R1–R4).** An independent review found four residues, each fixed or decided before publication (V3-003, decisions R1–R4). R1: the sdist took every file not ignored by the root `.gitignore` — the five proposal drafts, `scripts/`, and the tools' notes under `.superpowers/` and `.claude/`; it is now a closed list equal to the tracked tree, which `test_the_sdist_ships_exactly_the_tracked_tree` enforces, and an sdist built with those local files present holds exactly the 228 tracked files plus `PKG-INFO`. R2: the pipeline runs from a checkout, and the README says so. R3: the cost of the per-pair revalidation is accepted, see the V3–V5 sequence. R4: Plato's *Ion* is B11, its passage checked against the Greek text, and the Italian left in the docstrings and comments of 17 files is translated; with docstrings set aside, the syntax tree of every changed module is unchanged.
+
 **Attestation.** Measured on `e086482`, with a clean tracked tree before and after:
 
 ```text
@@ -119,6 +121,8 @@ uv run python -m hormathos.pipeline.run_descriptive --config config/default.yaml
 # V5
 uv run python -m hormathos.pipeline.run_report --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run> --regenerated-dir results/hexis31/<regen>
 ```
+
+**Accepted cost (V3-003, R3).** Each published pair revalidates the V1 corpus before publication (`unchanged` in `run_descriptive`, 6.8 s per call measured on 23 September) and the whole run: about 5 minutes for the 42 pairs of V3 and about 55 minutes for the 490 of V4, plus the revalidation of the run, which grows with it (the comment in the code estimates about 2 hours in all). It stays as it is: after V3, a change would be a new code identity and V3 would be redone.
 
 ## Open obligations
 

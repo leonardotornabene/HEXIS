@@ -19,15 +19,15 @@ REALIGNMENT_BASE = '5f1ec06afa192c8d0f006d7f39cdb97df72c2983'
 
 def test_active_authority_and_instructions_are_aligned():
     for name in ['README.md', 'AGENTS.md', 'CLAUDE.md', 'docs/01_MASTER_SPEC.md',
-                 'docs/02_DECISION_LOG.md', 'docs/03_ROADMAP_OPERATIVA_IT.md',
-                 'docs/00_LEGGIMI_INDICE.md', 'docs/HANDOFF.md']:
+                 'docs/02_DECISION_LOG.md', 'docs/03_ROADMAP.md',
+                 'docs/00_INDEX.md', 'docs/HANDOFF.md']:
         text = (ROOT/name).read_text()
-        assert 'V3-001' in text and 'V3-002' in text, name
+        assert 'V3-001' in text and 'V3-002' in text and 'V3-003' in text, name
         assert '3.1' in text, name
     readme = (ROOT/'README.md').read_text()
     assert '**V0–V2 completed; V3–V5 not attested; no real fit has ever been run.**' in readme
     assert 'archive/' in readme
-    assert 'Arresto per revisione prima di V3.' in (ROOT/'docs/HANDOFF.md').read_text()
+    assert 'Stop for review before V3.' in (ROOT/'docs/HANDOFF.md').read_text()
 
 
 def test_the_v3_001_acts_are_never_rewritten():

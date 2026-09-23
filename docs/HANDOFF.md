@@ -1,16 +1,24 @@
-# Handoff HEXIS 3.1 — stato attuale
+# HORMATHOS handoff — current state (design HEXIS 3.1)
 
-**V0–V2 completati; V3–V5 non attestati; nessun fit reale.** Pubblicazione del 2026-09-23: il push del ramo `codex/hexis31-realign` a `2ebb3464b871c1f831d0608edba052ccb4b92be9` e dei tag `archive/pre-realign` e `archive/v2.1`; poi il merge in `master` (`73df64d`, merge commit senza squash né rebase) e la cancellazione dei rami remoti `g1/pre-audit` (V3-002, E5) e `codex/hexis31-realign`, contenuto in `master`. Ramo attivo: `master`; il riallineamento era partito da `5f1ec06afa192c8d0f006d7f39cdb97df72c2983`. La cronologia dettagliata delle tranche precedenti non è ripetuta qui: sta nella storia Git e, nella sua ultima forma pre-riallineamento, in [archive/docs/HANDOFF.md](../archive/docs/HANDOFF.md).
+**V0–V2 completed; V3–V5 not attested; no real fit.** Publication of 2026-09-23: the push of the branch `codex/hexis31-realign` at `2ebb3464b871c1f831d0608edba052ccb4b92be9` and of the tags `archive/pre-realign` and `archive/v2.1`; then the merge into `master` (`73df64d`, a merge commit with neither squash nor rebase) and the deletion of the remote branches `g1/pre-audit` (V3-002, E5) and `codex/hexis31-realign`, whose content is in `master`. Active branch: `master`; the realignment started from `5f1ec06afa192c8d0f006d7f39cdb97df72c2983`. On the same day the project was named HORMATHOS (V3-003); the GitHub repository and the local directory keep the old name until their own go. The detailed chronology of the earlier tranches is not repeated here: it is in the Git history and, in its last pre-realignment form, in [archive/docs/HANDOFF.md](../archive/docs/HANDOFF.md).
 
-## Code review del 23 settembre 2026
+## Project name HORMATHOS — 23 September 2026 (V3-003)
 
-Due review integrali di `5f1ec06..a4a8871`, ciascun rilievo verificato sul repository prima di agire.
+**Commits.** `7f3f641`: fixes prepared by Codex, reviewed and committed — the report rechecks the recorded V2 execution context before its first step and again before publication, and a seed-0 run of a single cell leaves V3 pending instead of failing after publishing its pairs; each of the two new tests failed with its fix removed. `4a82f7e`: the package moves from `src/hexis` to `src/hormathos`, tests first. The documents, their English translation and V3-003 follow in the commit that carries this section, which does not cite its own commit.
 
-**Accolti e corretti.** L'archivio era raccolto da `pytest .`: il riallineamento aveva tolto `norecursedirs`, e il docstring che prometteva il contrario non aveva un assert. L'attestazione del trasferimento da `legacy_audit` diceva «senza modifiche», mentre il messaggio di `verify_inputs_unchanged` era cambiato. L'atto dava due licenze agli stessi byte e non copriva `config/`, i metadati di `data/`, gli script del deposito né il codice sotto `archive/`. `LICENSE` non dichiarava il proprio ambito, e il README ripeteva l'atto. `archive/README.md` era una nota nuova al posto del README storico. `.gitignore` non ignorava più `data/interim/` e `data/processed/`, e ignorava anche `archive/results/`. `CANONICAL_DATA_ROOT` dipendeva dalla directory corrente. Restavano una docstring falsa in `manifest.py`, un commento orfano e righe vuote residue. Due test nuovi vincolano l'archivio: `test_the_archive_is_never_collected_even_from_the_root` e `test_every_archived_file_has_its_bytes_at_the_base`.
+**What changed and what stays.** Imports, paths, CLI descriptions, temporary-directory prefixes, the figure footer and the SVG hash salt follow the package. The distribution keeps the name `hexis`: `uv.lock` records it, and the deposited design fixes the lock bytes (`runtime.lock_sha256`), which `corpus_run` and `scientific_run.run_contract` enforce. The contract identifiers, the deposit, the persisted schema names, `results/hexis31/` and `archive/` keep `hexis`. The V3-001 hash now starts at the first V3-001 heading, so the title of the log can change; the act bytes are unchanged. `00_LEGGIMI_INDICE.md` and `03_ROADMAP_OPERATIVA_IT.md` are now `00_INDEX.md` and `03_ROADMAP.md`. The rest is in V3-003.
 
-**Respinti.** Limitare al solo repository la regola «ogni test raccolto è v31»: `test_every_collected_test_is_active_acceptance` la verifica proprio in un progetto sintetico, e nessun progetto sintetico ha test senza marker. Modificare i due test che rifiutano un `hexis.stats` importabile: il rifiuto è corretto, e la causa si evita come dice «Eseguire la storia».
+**Verification of the renamed package, in a separate clone with its own environment.** `uv lock --check` resolves 23 packages and `uv.lock` keeps SHA-256 `33db43b0…`. The V1 corpus `results/hexis31/v1` is still accepted: `load_corpus` and `run_contract` on the deposited configuration give lock `33db43b0…` and 25 code files under `src/hormathos`. `run_audit` and `run_encode` regenerate the nine V1 artifacts byte for byte; in the manifest every `run_contract` field other than `code` equals V1, the input snapshots are identical once their paths are made relative, and the rest is `run_id` and the external fields. Against `7f3f641`, 11 of the 25 sources are byte-identical and 14 carry the changes of `4a82f7e`.
 
-**Attestazione.** Correzioni in `61d4a08` (test prima, poi codice e configurazione) e `2eabcb6` (atto e documenti); questa sezione non cita il proprio commit. Misurata su `2eabcb6`, albero tracciato pulito prima e dopo:
+## Code review of 23 September 2026
+
+Two full reviews of `5f1ec06..a4a8871`, each finding verified on the repository before acting.
+
+**Accepted and fixed.** The archive was collected by `pytest .`: the realignment had removed `norecursedirs`, and the docstring that promised the opposite had no assert. The attestation of the transfer from `legacy_audit` said "without changes", while the message of `verify_inputs_unchanged` had changed. The act gave two licences to the same bytes and did not cover `config/`, the metadata of `data/`, the scripts of the deposit or the code under `archive/`. `LICENSE` did not declare its own scope, and the README repeated the act. `archive/README.md` was a new note in place of the historical README. `.gitignore` no longer ignored `data/interim/` and `data/processed/`, and also ignored `archive/results/`. `CANONICAL_DATA_ROOT` depended on the current directory. A false docstring in `manifest.py`, an orphan comment and leftover blank lines remained. Two new tests bind the archive: `test_the_archive_is_never_collected_even_from_the_root` and `test_every_archived_file_has_its_bytes_at_the_base`.
+
+**Rejected.** Limiting the rule "every collected test is v31" to the repository alone: `test_every_collected_test_is_active_acceptance` verifies it precisely in a synthetic project, and no synthetic project has tests without the marker. Changing the two tests that refuse an importable `hexis.stats` (now `hormathos.stats`): the refusal is correct, and the cause is avoided as "Running the history" says.
+
+**Attestation.** Fixes in `61d4a08` (tests first, then code and configuration) and `2eabcb6` (act and documents); this section did not cite its own commit. Measured on `2eabcb6`, with a clean tracked tree before and after:
 
 ```text
 uv run --frozen pytest -q -p no:cacheprovider
@@ -22,13 +30,13 @@ uv run --frozen pytest . --collect-only -q        400 tests collected
 uv lock --check                                   Resolved 23 packages
 ```
 
-Le tre raccolte hanno gli stessi node ID e nessuno sotto `archive/`. Prima delle correzioni, i due test nuovi fallivano ciascuno sul proprio rilievo: `archive/tests/test_old.py` raccolto da `pytest .`, e `archive/README.md` con blob `d8c0353` invece di `d0e062e`. L'archivio ha 102 file su 102 identici a `5f1ec06`, nessun percorso perso. Rispetto a `legacy_audit` a `5f1ec06`, l'AST differisce soltanto per `verify_inputs_unchanged` e `CANONICAL_DATA_ROOT`, come dichiara V3-002. Il corpus V1 rigenerato con `run_encode` a `2eabcb6`, in una directory esterna, riproduce i nove artefatti byte per byte; nel manifest differiscono soltanto `run_id`, l'identità del codice e i campi esterni già dichiarati.
+The three collections have the same node IDs and none under `archive/`. Before the fixes, each of the two new tests failed on its own finding: `archive/tests/test_old.py` collected by `pytest .`, and `archive/README.md` with blob `d8c0353` instead of `d0e062e`. The archive has 102 of 102 files identical to `5f1ec06`, no path lost. Compared with `legacy_audit` at `5f1ec06`, the AST differs only in `verify_inputs_unchanged` and `CANONICAL_DATA_ROOT`, as V3-002 declares. The V1 corpus regenerated with `run_encode` at `2eabcb6`, in an external directory, reproduces the nine artifacts byte for byte; in the manifest only `run_id`, the code identity and the external fields already declared differ.
 
-## Riallineamento del 22 settembre 2026 — verifica
+## Realignment of 22 September 2026 — verification
 
-Commit del riallineamento su `codex/hexis31-realign`: atto `1294f55`, migrazione dei test `90dffc0`, codice e gate `f6ffe51`, documenti e archivio `08ba6cd`, residui `1f441ff`. Questa sezione è documentale e non cita il proprio commit.
+Commits of the realignment on `codex/hexis31-realign`: act `1294f55`, test migration `90dffc0`, code and gate `f6ffe51`, documents and archive `08ba6cd`, leftovers `1f441ff`. This section is documentary and did not cite its own commit.
 
-**Suite e gate.** Righe finali verbatim:
+**Suite and gate.** Final lines, verbatim:
 
 ```text
 uv run --frozen pytest -q -p no:cacheprovider
@@ -39,69 +47,72 @@ uv run --frozen pytest -m v31 --collect-only -q   398 tests collected
 uv lock --check                                   Resolved 23 packages
 ```
 
-Le due selezioni coincidono, nessuno skip e nessun deselected. Base di confronto a `5f1ec06`: 672 passed più 17 skip nella suite completa, 351 nell'accettazione.
+The two selections coincide, with no skip and nothing deselected. Baseline at `5f1ec06`: 672 passed plus 17 skips in the full suite, 351 in the acceptance.
 
-**Nessun file perso.** Ogni percorso esistente a `5f1ec06` è oggi o nell'albero attivo o in `archive/`: 102 file archiviati, tutti con lo stesso blob dell'originale; 34 file attivi modificati; nessun file attivo nuovo fuori dall'archivio. Fino alla correzione del 23 settembre questa riga contava 101 e 30: la centoduesima voce era una nota nuova al posto del README storico, e i file modificati erano già 33.
+**No file lost.** Every path existing at `5f1ec06` is today either in the active tree or in `archive/`: 102 archived files, all with the same blob as the original; 34 active files modified; no new active file outside the archive. Until the correction of 23 September this line counted 101 and 30: the hundred-and-second item was a new note in place of the historical README, and the modified files were already 33.
 
-**Invarianti.** I 69 file tracciati del deposito, del record, del lock, della configurazione, della provenienza e di `data/raw/PROVENANCE.md` hanno blob identici a `5f1ec06`. I 98 file locali di `data/raw`, `scripts/` e `results/hexis31` hanno gli stessi sha256 del baseline.
+**Invariants.** The 69 tracked files of the deposit, the record, the lock, the configuration, the provenance and `data/raw/PROVENANCE.md` have blobs identical to `5f1ec06`. The 98 local files of `data/raw`, `scripts/` and `results/hexis31` have the same sha256 as the baseline.
 
-**Equivalenza del percorso 3.1.** La batteria sintetica congelata è identica byte per byte alla sua esecuzione a `5f1ec06`. Il corpus V1 rigenerato riproduce i nove artefatti byte per byte; nel manifest differiscono soltanto `run_id`, l'identità del codice e i quattro campi esterni dichiarati in anticipo (`created_utc`, `output_dir`, `implementation_commit`, e `tracked_dirty` quando l'albero non è pulito).
+**Equivalence of the 3.1 path.** The frozen synthetic battery is identical byte for byte to its run at `5f1ec06`. The regenerated V1 corpus reproduces the nine artifacts byte for byte; in the manifest only `run_id`, the code identity and the four external fields declared in advance differ (`created_utc`, `output_dir`, `implementation_commit`, and `tracked_dirty` when the tree is not clean).
 
-**Copertura.** Differenziale per riga fra suite completa e `-m v31`, misurato a codice invariato con `sys.monitoring` della libreria standard: 231 righe erano raggiunte solo dai test non v31, tutte e sole nel codice v2.1 poi rimosso. Nessuna riga del percorso 3.1 ha perso copertura.
+**Coverage.** Line differential between the full suite and `-m v31`, measured on unchanged code with the standard library's `sys.monitoring`: 231 lines were reached only by the non-v31 tests, all of them, and only them, in the v2.1 code later removed. No line of the 3.1 path lost coverage.
 
-**Mutazioni.** Le 40 mutazioni della revisione pre-V3 si ancorano ancora tutte al codice attuale: **35 uccise, 5 sopravvissute — M3, M6, M14, A1, P1 — le stesse di `0dc69b5`**, dominate da controlli più forti.
+**Mutations.** The 40 mutations of the pre-V3 review all still anchor to the current code: **35 killed, 5 survived — M3, M6, M14, A1, P1 — the same as at `0dc69b5`**, dominated by stronger checks.
 
-**Residui.** Fuori dal deposito, dall'archivio e dagli atti restano soltanto menzioni della storia come storia e guardie che ne vietano il ritorno. Due link relativi dentro V3-001 restano rotti per scelta, perché i byte di un atto non si riscrivono: V3-002 li risolve con la regola `archive/<percorso>`. Il commento di `config/registry_overrides.yaml` cita ancora `history/v2.1`: la configurazione è un invariante di questo riallineamento e non è stata toccata.
+**Leftovers.** Outside the deposit, the archive and the acts, only mentions of history as history and guards that forbid its return remain. Two relative links inside V3-001 stay broken by choice, because the bytes of an act are not rewritten: V3-002 resolves them with the rule `archive/<path>`. The comment in `config/registry_overrides.yaml` still cites `history/v2.1`: the configuration is an invariant of this realignment and was not touched.
 
-## Identità
+## Identity
 
-| Oggetto | Identità |
+| Object | Identity |
 |---|---|
-| Deposito V0 | `e98fb8edde91e821c415e26f33b7bdeb549b50ba`; 63 digest in [V3-001-deposit.json](V3-001-deposit.json) |
-| Corpus V1 | `7afdd3a4f87341110b0f15a77179febe9075ee9b`; run consegnato `results/hexis31/v1`, manifest SHA-256 `154433c772f41e444f86b8787e0ee0003c546d9fb398b6ee0f634ce193f3421f` |
-| Chiusura V2 | `0a6f644`; revisione pre-V3 `0dc69b5`, attestato **351 v31 / 672 passed + 17 skip** |
-| Base del riallineamento | `5f1ec06`, tag `archive/pre-realign`; storia v2.1 al tag `archive/v2.1` = `852644b6917790877c7b2ca5df2e76b17829d87c` |
-| Ambiente | Python 3.12.13, `uv.lock` `33db43b00bcb21ab12aedf6dcc4257764770bff0115dc0d1dfab6e5ea89876bf`, 23 pacchetti |
+| V0 deposit | `e98fb8edde91e821c415e26f33b7bdeb549b50ba`; 63 digests in [V3-001-deposit.json](V3-001-deposit.json) |
+| V1 corpus | `7afdd3a4f87341110b0f15a77179febe9075ee9b`; delivered run `results/hexis31/v1`, manifest SHA-256 `154433c772f41e444f86b8787e0ee0003c546d9fb398b6ee0f634ce193f3421f` |
+| V2 closure | `0a6f644`; pre-V3 review `0dc69b5`, attested **351 v31 / 672 passed + 17 skips** |
+| Realignment base | `5f1ec06`, tag `archive/pre-realign`; v2.1 history at tag `archive/v2.1` = `852644b6917790877c7b2ca5df2e76b17829d87c` |
+| Name | HORMATHOS (V3-003); package `src/hormathos`, distribution `hexis` |
+| Environment | Python 3.12.13, `uv.lock` `33db43b00bcb21ab12aedf6dcc4257764770bff0115dc0d1dfab6e5ea89876bf`, 23 packages |
 
-## Decisioni del proprietario del 22 settembre 2026 (D1–D4)
+## Owner decisions of 22 September 2026 (D1–D4)
 
-- **D1** — nessun push pubblico finché un atto di pubblicazione non decide sui derivati. Superata dall'atto di pubblicazione di V3-002, efficace al primo push.
-- **D2** — il validatore del report rigenera ledger, conteggi di rimescolamento e provenienza C0 (attuata in `0dc69b5`).
-- **D3** — la deviazione della CLI dal §14.1 è registrata nella nota V3-001 del [Decision Log](02_DECISION_LOG.md).
-- **D4** — le cinque figure sono corrette nei difetti e nella leggibilità (attuata in `0dc69b5`).
+- **D1** — no public push until a publication act decides on the derivatives. Superseded by the publication act of V3-002, effective at the first push.
+- **D2** — the report validator regenerates ledgers, shuffle counts and C0 provenance (implemented in `0dc69b5`).
+- **D3** — the deviation of the CLI from §14.1 is recorded in the V3-001 note of the [Decision Log](02_DECISION_LOG.md).
+- **D4** — the five figures are corrected in their defects and readability (implemented in `0dc69b5`).
 
-La nota sul `.DS_Store` entrato e uscito dal deposito è ora in V3-002, che la registra come parte dell'atto.
+The note on the `.DS_Store` that entered and left the deposit is now in V3-002, which records it as part of the act.
 
-## Perimetro del congelamento
+## Freeze perimeter
 
-`_code_identity()` copre tutto `src/hexis`; l'evidenza V2 (`validation_run.context`) lega anche `tests/*.py`, `conftest.py`, `pyproject.toml`, il file di configurazione, `uv.lock` e il manifest del corpus usato. Dopo la pubblicazione di una validazione, modificare uno di questi impedisce la ripresa e impone una directory nuova con V2 e V3 rifatti. I documenti restano fuori dal perimetro e modificabili; `archive/` è fuori dal perimetro ma vincolato ai byte di `5f1ec06` da `test_every_archived_file_has_its_bytes_at_the_base`. Il riallineamento ha riaperto questo congelamento **prima** che qualunque evidenza V2 o V3 fosse pubblicata: sotto `results/hexis31/` esistono solo i run V1.
+`_code_identity()` covers all of `src/hormathos`; the V2 evidence (`validation_run.context`) also binds `tests/*.py`, `conftest.py`, `pyproject.toml`, the configuration file, `uv.lock` and the manifest of the corpus used. After a validation is published, changing any of these prevents resuming and forces a new directory with V2 and V3 redone. The documents stay outside the perimeter and can be changed; `archive/` is outside the perimeter but bound to the bytes of `5f1ec06` by `test_every_archived_file_has_its_bytes_at_the_base`. The realignment and the rename changed the code identity **before** any V2 or V3 evidence was published: under `results/hexis31/` there are only the V1 runs.
 
-## Eseguire la storia
+## Running the history
 
-La storia si esegue soltanto in un worktree separato: `git worktree add ../hexis-pre-realign archive/pre-realign`. Un checkout di `5f1ec06` nella copia principale lascerebbe file ignorati che il ritorno al ramo non toglie. `src/hexis/stats/__pycache__/` renderebbe `hexis.stats` importabile come namespace package, e due test attivi lo rifiutano, giustamente. Gli output v2.1 in `data/interim/` e `data/processed/` sono derivati del corpus, e per questo sono ignorati.
+The history runs only in a separate worktree: `git worktree add ../hexis-pre-realign archive/pre-realign`. A checkout of `5f1ec06` in the main copy would leave ignored files that switching back does not remove. A leftover `src/hexis/…/__pycache__/` would make `hexis` importable as a namespace package, and `test_the_package_is_hormathos_and_hexis_names_only_the_design` refuses it, rightly. The v2.1 outputs in `data/interim/` and `data/processed/` are corpus derivatives, and are therefore ignored.
 
-## Sequenza operativa prevista per V3–V5, non eseguita
+## Planned sequence for V3–V5, not executed
 
-Albero tracciato pulito (`scripts/` e `docs/proposal/` non tracciati sono ammessi), corpus `results/hexis31/v1`, destinazioni nuove sotto `results/hexis31/`:
+Clean tracked tree (untracked `scripts/` and `docs/proposal/` are allowed), corpus `results/hexis31/v1`, new destinations under `results/hexis31/`:
 
 ```bash
 uv sync --frozen
-uv run python -m hexis.pipeline.run_tree_validation --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run>
-uv run python -m hexis.pipeline.run_descriptive --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run> --seed 0
-# §12.2: stessa coppia di comandi in una directory distinta, stesso codice
-uv run python -m hexis.pipeline.run_tree_validation --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<regen>
-uv run python -m hexis.pipeline.run_descriptive --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<regen> --seed 0
-# V4, dopo la revisione di V3
-uv run python -m hexis.pipeline.run_descriptive --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run> --resume
+uv run python -m hormathos.pipeline.run_tree_validation --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run>
+uv run python -m hormathos.pipeline.run_descriptive --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run> --seed 0
+# §12.2: the same pair of commands in a distinct directory, same code
+uv run python -m hormathos.pipeline.run_tree_validation --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<regen>
+uv run python -m hormathos.pipeline.run_descriptive --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<regen> --seed 0
+# V4, after the review of V3
+uv run python -m hormathos.pipeline.run_descriptive --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run> --resume
 # V5
-uv run python -m hexis.pipeline.run_report --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run> --regenerated-dir results/hexis31/<regen>
+uv run python -m hormathos.pipeline.run_report --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run> --regenerated-dir results/hexis31/<regen>
 ```
 
-## Obblighi aperti
+## Open obligations
 
-1. **Code review integrale**: eseguita il 23 settembre 2026, con due review; esiti e correzioni nella sezione in testa. La verifica di conformità al piano dello stesso giorno non trova scostamenti di sostanza; le due letture di V2 non ancora dichiarate nell'albero attivo sono ora le deviazioni 4 e 5 di V3-002.
-2. **Licenze**: decise nell'atto di pubblicazione di V3-002, e soltanto lì. La sede editoriale non è determinabile: l'atto registra la pubblicazione senza sede (E9).
-3. **Research proposal 3.1 (§17.1)**: non ancora depositato. In `docs/proposal/` esistono file locali non tracciati; tracciarli è una decisione separata, perché entrerebbero nel perimetro della pubblicazione.
-4. **V3–V5**: prova tecnica, campagna, report e figure, nell'ordine del §14.
+1. **Full code review**: carried out on 23 September 2026, with two reviews; outcomes and fixes in the code-review section. The conformity check against the plan on the same day finds no substantive divergence; the two readings of V2 not yet declared in the active tree are now deviations 4 and 5 of V3-002.
+2. **Licences**: decided in the publication act of V3-002, and only there. The publication venue cannot be determined: the act records the publication without a venue (E9).
+3. **Research proposal 3.1 (§17.1)**: not deposited yet. Untracked local files exist in `docs/proposal/`, in Italian; tracking them is a separate decision, because they would enter the perimeter of the publication, and their English version comes with that decision (V3-003).
+4. **Rename outside the repository (V3-003)**: the GitHub repository HEXIS becomes HORMATHOS, with its description and the local remote URL; then the local directory, with the virtual environment rebuilt. Each step needs the owner's explicit go.
+5. **English companions (V3-003)**: non-normative translations of the deposited plan, of the V3-001 and V3-002 acts and of the other Italian texts of the deposit, in a separate tranche; the Italian originals govern.
+6. **V3–V5**: technical trial, campaign, report and figures, in the order of §14.
 
-Arresto per revisione prima di V3.
+Stop for review before V3.

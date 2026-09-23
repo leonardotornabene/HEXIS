@@ -1,10 +1,10 @@
-# Istruzioni HEXIS 3.1 — V3-001 e V3-002
+# HORMATHOS standing instructions — V3-001, V3-002, V3-003
 
 ````markdown
-# Project HEXIS — standing instructions (design 3.1)
+# Project HORMATHOS — standing instructions (design HEXIS 3.1)
 
-Active authority: docs/01_MASTER_SPEC.md, V3-001 and V3-002 in
-docs/02_DECISION_LOG.md, which adopt
+Active authority: docs/01_MASTER_SPEC.md, V3-001, V3-002 and V3-003 in
+docs/02_DECISION_LOG.md. V3-001 adopts
 docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md and its
 byte-identified JSON contracts. Text governs semantics; JSON fixes values.
 Do not silently deviate or regenerate expectations to make tests pass.
@@ -17,8 +17,15 @@ outside the code identity; it runs at that commit, not here. Retired design
 elements — v2.1 inference, Latin, gates G0–G7, permutation constants,
 sign-stability, D01–D55 — are listed in V3-001 and must never be reintroduced.
 
+V3-003 named the project HORMATHOS on 2026-09-23. It implements the deposited
+HEXIS 3.1 design: hexis survives only in the deposit, the contract identifiers,
+the distribution name that the contract-fixed uv.lock records, results/hexis31
+and archive/. The package is src/hormathos. Every artifact is in English; the
+Italian originals of the deposit and of V3-001 and V3-002 govern and are never
+rewritten.
+
 Stop for review before V3; no new real model fits in this tranche. The freeze
-perimeter is code identity over all of src/hexis plus tests, conftest.py,
+perimeter is code identity over all of src/hormathos plus tests, conftest.py,
 pyproject.toml, config and uv.lock: once V2/V3 evidence is published, changing
 any of them forces a new directory and a new run.
 

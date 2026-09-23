@@ -1,4 +1,6 @@
-# Decision Log attivo — HEXIS 3.1
+# Active Decision Log — HORMATHOS (design HEXIS 3.1)
+
+V3-001 and V3-002 are kept in their Italian originals, which govern and are never rewritten; V3-003 and every later entry are in English.
 
 ## V3-001 — Adozione della v3.1 e prima tranche V0–V1
 
@@ -130,3 +132,41 @@ D2–D4 restano attuate da `0dc69b5`.
 - N4: regola `archive/P`.
 - Resta tracciato `data/raw/PROVENANCE.md`.
 - Il merge in master avverrà con merge commit, senza squash o rebase.
+
+---
+
+## V3-003 — Project name HORMATHOS and project language, 2026-09-23
+
+**Status: ADOPTED.** Source of authorization: the owner's requests of 23 September 2026 — the name HORMATHOS, the rename of both the project and its package, the variant that keeps the distribution name, and English as the language of every project artifact — with the decisions A1–A6 and B1–B5 below. The act changes no byte of the deposit, and no byte of the V3-001 and V3-002 acts, which remain as adopted.
+
+**Name.** The project and its software are HORMATHOS, from Greek ὁρμαθός, a chain of things hanging one from another: in Plato's *Ion* (533e) the iron rings that hang from a magnet, each drawing its force from the ring above. The name describes the method: each annotation symbol is predicted from its predecessors in the same sentence, and the chain breaks where the sentence ends. HEXIS 3.1 remains the name of the deposited design that HORMATHOS implements; `hexis` survives only where the design or its history fixes it.
+
+**What keeps the name `hexis`, and why.**
+- The deposit, `docs/contracts/hexis-3.1/`, with its file names: `SHA256SUMS.json`, `design_lock.json` and `V3-001-deposit.json` identify them.
+- The contract identifiers `spec_version: HEXIS-3.1`, `representation_version: hexis-3.1-adv-part-1` and `rng.version: hexis-v3-rng-1`. The last one is part of the SHA-256 payload of every draw (§12.2): changing it would change every sample and break the deposited vector.
+- The persisted schema names `hexis-corpus-manifest-1` and `hexis-scientific-manifest-2`: the V1 corpus manifest carries the first, and `validate_run` accepts no other.
+- The distribution name in `pyproject.toml`. `uv.lock` records it, and the deposited design fixes the lock bytes (`runtime.policy: preserve_existing_repository_lock`, `runtime.lock_sha256: 33db43b00bcb21ab12aedf6dcc4257764770bff0115dc0d1dfab6e5ea89876bf`); `config/default.yaml` repeats the value, `corpus_run` refuses a different lock and `scientific_run.run_contract` compares the present lock with the corpus's. Renaming the distribution would make the V1 corpus unusable and V3 impossible without a new deposit.
+- `archive/`, the Git history and tags, and the local run directory `results/hexis31/`, whose V1 manifest SHA-256 is recorded in the handoff.
+
+**Declared deviations.**
+1. **Names in the text of the plan and of the acts.** The package is `src/hormathos`. Where §13.2 names `src/hexis/<module>` and §14.1 names `python -m hexis.pipeline.<stage>`, read `src/hormathos/<module>` and `python -m hormathos.pipeline.<stage>`; modules, stages and semantics are unchanged. The same reading applies where V3-001 and V3-002 name `src/hexis` as the active package (the code identity, the freeze perimeter, deviation 1 of V3-002); archive paths `archive/src/hexis/…` stay as they are. Where §13.1 names `docs/00_LEGGIMI_INDICE.md` and `docs/03_ROADMAP_OPERATIVA_IT.md`, read `docs/00_INDEX.md` and `docs/03_ROADMAP.md`.
+2. **Hash of the V3-001 acts.** The test that keeps the V3-001 acts unchanged now hashes from the first V3-001 heading instead of from the first byte of the file: the title of this log is not an act, and it follows the project name. The act bytes are unchanged: the old prefix (SHA-256 `df5ca735f4d9f0f450c147518d138e994a2818e0119e3fec95827c9e81760e6f`) is exactly the old title followed by the acts, whose SHA-256 is `8ee0f130ac59085862c940c0804fc25733a7a12f9e83bb0abf95c18c9fba8864`.
+
+**Language.** From this act on every project artifact is written in English: code, tests, configuration, commit messages and documents. The Italian originals of the deposit and of V3-001 and V3-002 govern and are never translated in place; English translations of them, when added, are companions without authority. The active documents are translated, and the index and the roadmap take English file names.
+
+**Identity and freeze.** The rename changes the code identity before any V2 or V3 evidence is published, as the realignment did (V3-002, deviation 3): under `results/hexis31/` there are only the V1 runs. The V1 corpus remains the V3 corpus: under the renamed package it is accepted as it is, its regeneration reproduces the nine artifacts byte for byte, and every field of its run contract other than the code equals the regenerated one.
+
+**Outside the repository.** The GitHub repository is renamed HORMATHOS with the description "Project HORMATHOS", and the local remote URL follows; then the local directory is renamed and the virtual environment rebuilt. Each step needs the owner's explicit go, and until then the old names remain.
+
+**Decisions.**
+- A1: rename the project and the package (scope A+B); the package in the variant that keeps the distribution name `hexis`.
+- A2: identity formula — HORMATHOS is the project and its software; HEXIS 3.1 is the deposited design it implements.
+- A3: strings that name the software become HORMATHOS; strings that name the design or a contract identifier stay.
+- A4: `results/hexis31/`, `docs/proposal/` and `scripts/` keep their paths; the message in `scripts/reacquire_raw_data.sh` names HORMATHOS.
+- A5: order — tests, package, documents, verification, local commits, push, GitHub, local directory, with a stop for review after each phase.
+- A6: English for every artifact; Italian is only the language of the owner's requests.
+- B1: the V3-001 hash starts at the first V3-001 heading (deviation 2).
+- B2: the Italian originals govern; translations are companions without authority.
+- B3: the companion translations of the plan, of V3-001 and V3-002 and of the other Italian texts of the deposit are a separate tranche.
+- B4: the English version of the research proposal comes with the decision to track it.
+- B5: the index and the roadmap become `00_INDEX.md` and `03_ROADMAP.md`.

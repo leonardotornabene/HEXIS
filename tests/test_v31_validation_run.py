@@ -124,6 +124,40 @@ def test_validation_evidence_survives_descriptive_progress_and_resume(tmp_path, 
     assert all((output/name).read_bytes() == value for name, value in before.items())
 
 
+@pytest.mark.parametrize('during_report', [False, True])
+def test_report_refuses_changed_v2_execution_context(tmp_path, monkeypatch, executed_validation,
+                                                     during_report):
+    validation = validation_fixture(monkeypatch, executed_validation)
+    config, corpus, output = campaign(tmp_path)
+    validation.publish_validation(config, corpus, output, fixture=True)
+    describe(config, corpus, output)
+    original_context = validation.context
+    changed = not during_report
+
+    if during_report:
+        original_render = run_report.plots.render
+
+        def render(*args, **kwargs):
+            nonlocal changed
+            figures = original_render(*args, **kwargs)
+            changed = True
+            return figures
+
+        monkeypatch.setattr(run_report.plots, 'render', render)
+
+    def changed_context(*args):
+        current = original_context(*args)
+        if changed:
+            current['tests'] = {**current['tests'], 'tests/changed.py': '0' * 64}
+        return current
+
+    monkeypatch.setattr(validation, 'context', changed_context)
+    expected = 'report execution context changed' if during_report else 'evidence V2 context'
+    with pytest.raises(ValueError, match=expected):
+        report(config, corpus, output)
+    assert not (output/'contrasts.csv').exists()
+
+
 @pytest.mark.parametrize('fault', ['missing', 'pass_only', 'context', 'junit', 'process'])
 def test_invalid_validation_evidence_blocks_fits(tmp_path, monkeypatch, executed_validation, fault):
     validation = validation_fixture(monkeypatch, executed_validation)
@@ -179,6 +213,19 @@ def test_technical_completion_is_fixture_only_and_requires_the_exact_seed_zero_s
     with pytest.raises(ValueError) as error:
         validation_run.check_technical(output, manifest, cfg, frames, scientific=True)
     assert str(error.value)
+
+
+def test_seed_zero_single_cell_keeps_v3_pending(tmp_path, monkeypatch, executed_validation):
+    validation = validation_fixture(monkeypatch, executed_validation)
+    config, corpus, output = campaign(tmp_path)
+    validation.publish_validation(config, corpus, output, fixture=True)
+    cfg = yaml.safe_load(config.read_text())
+    monkeypatch.setattr(scientific_run, 'load_projection', lambda path, fixture: (cfg, True))
+    monkeypatch.setattr(scientific_run, 'require_clean_producers', lambda: None)
+    manifest = describe(config, corpus, output, '--cell', 'C0', '--seed', '0')
+    assert len(manifest['keys']['pair']) == 2
+    assert 'V3' not in manifest['evidence']
+    assert manifest['completed_stages'] == ['validation', 'descriptive']
 
 
 def test_real_fit_requires_clean_tracked_producers(tmp_path, monkeypatch):

@@ -675,6 +675,17 @@ def main(argv=None):
         raise ValueError(f'{args.output_dir}: no published descriptive run to report on')
     scientific_run.check_stage_open(args.output_dir, 'report', prior, resume=False)
     compare(contract, prior['run_contract'], 'run_contract')
+    before = validation_run.context(args.config, args.corpus_dir, contract)
+    if 'validation' in prior['completed_stages']:
+        validation_run.verify_evidence(args.output_dir, prior, current=before)
+
+    def unchanged():
+        current_cfg = scientific_run.load_projection(args.config, args.fixture)[0]
+        current_corpus = scientific_run.load_corpus(args.corpus_dir)[0]
+        current_contract = scientific_run.run_contract(current_cfg, current_corpus)
+        compare(before, validation_run.context(args.config, args.corpus_dir, current_contract),
+                'report execution context changed')
+
     steps = []
     scientific = check_deposit(contract, deposited)
     steps.append(1)
@@ -730,7 +741,7 @@ def main(argv=None):
             'metadata': scientific_run.stage_metadata('report', corpus_dir=args.corpus_dir,
                                                       output_dir=args.output_dir, started=started)}
     manifest = scientific_run.publish_stage(args.output_dir, 'report', {**tables, **figures}, contract,
-                                            body, corpus_dir=args.corpus_dir)
+                                            body, corpus_dir=args.corpus_dir, before_publish=unchanged)
     scientific_run.validate_run(args.output_dir)
     return manifest
 

@@ -200,7 +200,9 @@ def main(argv=None):
         del artifacts, record, vectors, ledger
     if not checks['published_partitions']:
         manifest = publish({})
-    if deposited and args.seed == 0:
+    if (deposited and args.seed == 0
+            and scientific_run.key_sets(manifest['keys']) == scientific_run.key_sets(
+                validation_run.technical_keys(cfg))):
         evidence['V3'] = validation_run.check_technical(args.output_dir, manifest, cfg, frames,
                                                        scientific=True)
         manifest = publish({})

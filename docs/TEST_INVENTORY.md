@@ -350,7 +350,7 @@ Summary: 270 non-`v31` functions at `5f1ec06` — 11 v31 in place, 22 migrated, 
 
 ## Remaining obligations
 
-- **V3**: executed on 24 September 2026, reviewed, and re-attested under V3-005 in `results/hexis31/v3-seed0-r4-r6` (see HANDOFF): technical trial at seed 0 on six cells and seven folds (42 pairs / 84 models), resource measurements, freeze of code and environment; publication of the V2/V3 evidence in the manifest.
+- **V3**: executed on 24 September 2026, reviewed, re-attested under V3-005 and, after the pre-V4 review, under V3-006 in `results/hexis31/v3-seed0-v3006` (see HANDOFF): technical trial at seed 0 on six cells and seven folds (42 pairs / 84 models), resource measurements, freeze of code and environment; publication of the V2/V3 evidence in the manifest.
 - **V4**: full campaign, 490 pairs / 980 model identities, three R1, equality of the key sets (T25).
 - **V5**: report, five figures, two weightings, resume and the prescribed regeneration of seed 0 (T24, T27, T29, T30).
 - None of these obligations is covered by fixtures: executing them requires real fits, which started in V3.

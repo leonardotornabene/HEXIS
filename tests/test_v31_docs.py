@@ -25,7 +25,13 @@ def test_active_authority_and_instructions_are_aligned():
         assert 'V3-001' in text and 'V3-002' in text and 'V3-003' in text, name
         assert '3.1' in text, name
     readme = (ROOT/'README.md').read_text()
-    assert '**V0–V2 completed; V3–V5 not attested; no real fit has ever been run.**' in readme
+    # Retired on 2026-09-24 (V3-005): this test pinned the V2-phase sentence "V0–V2 completed;
+    # V3–V5 not attested; no real fit has ever been run", false since V3. A phase sentence would
+    # go stale again in V4 while the tests stay frozen, so the pin is replaced by properties
+    # true in every phase: the status defers to the handoff and never denies the real fits.
+    status = readme.partition('## Status')[2].partition('\n## ')[0]
+    assert '(docs/HANDOFF.md)' in status
+    assert 'no real fit has ever been run' not in readme
     assert 'archive/' in readme
     assert 'Stop for review before V3.' in (ROOT/'docs/HANDOFF.md').read_text()
 

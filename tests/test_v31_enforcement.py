@@ -291,6 +291,9 @@ REQUIRED['test_v31_pre_v3_audit.py'] = [
     'test_parser_consumes_the_copied_v1_input',
     'test_descriptive_context_change_cannot_publish_a_pair',
     'test_acceptance_rejects_junit_failure_even_with_zero_process_status',
+    'test_category_order_cannot_hide_swapped_coordinate_order',
+    'test_rollback_keeps_artifacts_when_the_manifest_is_unreadable',
+    'test_raw_alias_is_rejected_even_when_resolve_misses_it',
 ]
 REQUIRED['test_v31_enforcement.py'] += [
     'test_collection_skip_without_marker_fails_the_gate',

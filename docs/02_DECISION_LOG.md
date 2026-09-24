@@ -179,3 +179,17 @@ D2–D4 restano attuate da `0dc69b5`.
 **Status: ADOPTED.** This act records the pre-V3 audit correction before changing the implementation. For §12.2 regeneration, the absolute tolerance is 10⁻⁸ bit per eligible target. A sum of losses over `n` eligible targets has absolute tolerance `n × 10⁻⁸` bit. There is no relative tolerance. Identities, keys, counts and other discrete fields remain exact. This rule applies to JSON and Parquet comparisons; a fingerprint of floating point bytes may differ only when its underlying values satisfy this rule.
 
 Two local directories establish matching identities and values, not how their bytes were produced. Independent execution of the §12.2 commands remains procedural evidence to record during the campaign; a copied directory cannot be identified from the directories alone. No real fit is authorized by this act.
+
+---
+
+## V3-005 — Closure of the V3 review and re-attestation of V2 and seed 0, 2026-09-24
+
+**Status: ADOPTED.** This act closes the review of V3 held on 24 September 2026.
+
+**(a) Outcome of the review.** The review found no defect in the V3 results. It found three fixes of `2a16a81` that no test failed without: the coordinate-order check when `doc_id` is categorical (R4), the rollback branch that keeps every artifact when the manifest on disk is unreadable (R5), and the `samefile` refusal of a raw-data alias that path resolution misses (R6). One test is added for each, and the existing raw-alias test asserts its message in place of `assert True`. The README test that pinned the V2-phase status sentence is replaced by properties that hold in every phase. `src/hormathos` does not change.
+
+**(b) The runs of 24 September.** The V2 evidence binds `tests/*.py` (`validation_run.context`), and V4 (`run_descriptive --resume`) and V5 (`run_report`) recheck that context against the current tree. After this act `results/hexis31/v2-pre-v3-audit-2026-09-24`, `v3-seed0` and `v3-seed0-regeneration` can no longer be resumed or reported: they remain historical evidence, unchanged, and are never resumed. The run ID does not change, because the tests are outside the run contract.
+
+**(c) Authorized fits.** This act authorizes only the rerun of V2 and of seed 0 in `results/hexis31/v3-seed0-r4-r6` (`run_tree_validation`, then `run_descriptive --seed 0` in the three invocations of 24 September: `--cell C0`, `--cell D12 --resume`, `--cell all --resume`) and its §12.2 regeneration in `results/hexis31/v3-seed0-r4-r6-regeneration` (`run_tree_validation`, then one `run_descriptive --seed 0`): 42 pairs and 84 models per directory. No other real fit is authorized; V4 waits for the owner's review.
+
+**(d) Scope of the regeneration comparator.** The comparator of `validation_run` (`_same`, `_regenerated`) applies V3-004 as follows. In JSON, every float other than a loss sum is compared at 10⁻⁸ absolute in its native unit; a `sum_loss_*` field at `n × 10⁻⁸`, with `n` taken from the same record. In Parquet, every float column is compared at 10⁻⁸ absolute. Identities, keys, counts, strings, integers and numeric dtypes are exact. The `fingerprint` field is excluded, because the tree it hashes is not saved and its values cannot be recompared from the artifacts. This narrows the sentence of V3-004 on fingerprints, and the comment and docstring of the comparator that say the same, to what the code does; the comparator does not change. If a future regeneration yields a different fingerprint, the passage stops and the difference is assessed before any acceptance.

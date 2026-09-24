@@ -2,6 +2,12 @@
 
 **V0–V3 completed; V4–V5 not attested; real fits only at seed 0 (V3).** Publication of 2026-09-23: the push of the branch `codex/hexis31-realign` at `2ebb3464b871c1f831d0608edba052ccb4b92be9` and of the tags `archive/pre-realign` and `archive/v2.1`; then the merge into `master` (`73df64d`, a merge commit with neither squash nor rebase) and the deletion of the remote branches `g1/pre-audit` (V3-002, E5) and `codex/hexis31-realign`, whose content is in `master`. At that point the active branch was `master`; the realignment started from `5f1ec06afa192c8d0f006d7f39cdb97df72c2983`. On the same day the project was named HORMATHOS (V3-003), published at `c738c73`, and the GitHub repository became `leonardotornabene/HORMATHOS`; the old address redirects. The detailed chronology of the earlier tranches is not repeated here: it is in the Git history and, in its last pre-realignment form, in [archive/docs/HANDOFF.md](../archive/docs/HANDOFF.md).
 
+## Review of V3 and re-attestation — 24 September 2026 (V3-005)
+
+The review of V3 found no defect in its results; the details are in V3-005. Three fixes of `2a16a81` had no test that failed without them: the coordinate-order check with a categorical `doc_id` (R4), the rollback that keeps every artifact when the manifest is unreadable (R5), and the `samefile` refusal of a raw alias that `resolve()` misses, exercised only on case-insensitive file systems and closed by `assert True` (R6). Each now has its own test, and the README test that pinned the V2-phase status sentence is replaced by phase-independent properties. `src/hormathos` does not change, so the run ID stays `1563452a…`; the tests do change, so the V2 context of the directories of 24 September no longer matches and they are not resumed. V2 and seed 0 are rerun in `results/hexis31/v3-seed0-r4-r6` and `results/hexis31/v3-seed0-r4-r6-regeneration`, to be executed.
+
+The comparator's scope (R7) is fixed in V3-005 (d). One residue stays without action (R9): `load_corpus` validates and reads a private copy of the corpus, but `evidence()` and `context()` hash the corpus manifest by rereading the original directory; a change in that window cannot yield a silent wrong result, because `run_contract` detects it at the report.
+
 ## V3 technical trial — 24 September 2026
 
 Measured on `01d1883` with a clean tracked tree (untracked `scripts/` and `docs/proposal/` preserved), Python 3.12.13 through `uv run --no-sync` with `UV_NO_CACHE=1`, `uv.lock` SHA-256 `33db43b0…` unchanged, corpus `results/hexis31/v1`. Commands and logs are in `results/hexis31/v3-seed0-logs/`.
@@ -10,15 +16,37 @@ Measured on `01d1883` with a clean tracked tree (untracked `scripts/` and `docs/
 
 Resources over the 84 model measurements: fit 61.26 s, evaluation 43.58 s, maximum peak RSS 1 471 389 696 bytes (D12); directory 29 365 072 bytes. Wall time: validation 249.6 s; descriptive 88.2 s (C0), 103.9 s (D12), 349.1 s (the other 28 pairs). `new_model_fits` counts one invocation (14, 14, 56).
 
+The manifest keeps in `metadata` and `checks` only the last of the three invocations (`selection: all`, `resume: true`); the C0 and D12 invocations are documented only by the local logs in `v3-seed0-logs/`, which Git ignores, while the per-model resource list accumulates and is complete (R8). Logs 01–07 capture the pipeline commands and the checks run through the package; `08-independent-check.py` imports `hormathos` and applies its validators, so it is a recomputation through the package, not an independent one.
+
 §12.2 regeneration, separately executed with the same code: `results/hexis31/v3-seed0-regeneration`, `run_tree_validation` then one `run_descriptive --seed 0` (239.7 s and 694.6 s wall). Manifest SHA-256 `3486804df9732ff36770b8dc28ea37b7e0ae5850bdca101dbc8fd22256b87552`, same run ID; `compare_regeneration` finds all 70 artifacts byte-identical. Fit 60.71 s, evaluation 43.34 s, peak RSS 1 500 229 632 bytes. Its verification in the report remains a V5 obligation.
 
 Stop for review before V4.
 
 ## Pre-V3 audit closure — 24 September 2026 (V3-004)
 
-Commit `2a16a81` on `pre-v3-audit-closure` closes audit findings A–C before the code freeze. `uv run --python 3.12 --no-sync pytest -q` passed **426 tests** in 212.30 seconds. `pytest --collect-only -q` and `pytest -m v31 --collect-only -q` collected the same 426 node IDs; there were no skips or xfails. `uv lock --check` resolved 23 packages without changing `uv.lock`. A separate `run_audit`/`run_encode` invocation with this final source tree regenerated all nine V1 artifacts byte for byte against `results/hexis31/v1`.
+Commit `2a16a81` on `pre-v3-audit-closure` closes the findings of the pre-V3 audit before the code freeze. `uv run --python 3.12 --no-sync pytest -q` passed **426 tests** in 212.30 seconds. `pytest --collect-only -q` and `pytest -m v31 --collect-only -q` collected the same 426 node IDs; there were no skips or xfails. `uv lock --check` resolved 23 packages without changing `uv.lock`. A separate `run_audit`/`run_encode` invocation with this final source tree regenerated all nine V1 artifacts byte for byte against `results/hexis31/v1`.
 
 The new V2 evidence is in `results/hexis31/v2-pre-v3-audit-2026-09-24`. `scientific_run.validate_run` accepted its manifest (SHA-256 `98b8341dc7e8a2be85c1abeb35ba11ffb428b9da707ea57ba7528b31fd4e7b8f`), run ID `1563452ad4b644d1ec8ea00f38300192f95fad8c4d34761a570a22f5b6a78855`. It records 34 synthetic battery cases, 426 acceptance cases, only the `validation` stage, and empty pair/model keys. No real fit ran. Stop for review before V3.
+
+**Findings, reconstructed (R1).** The original list of findings is lost, and the commit message of `2a16a81` has no body. The review of V3 recalled fifteen findings — ten code fixes, two procedural, the tolerance fixed by V3-004, gaps in the tests and one reasoned rejection on `peak_rss` — but neither their numbering nor that rejection survives. What follows is reconstructed from the diff of `2a16a81` and its tests; it is not certified to match the original one to one, and no record shows that each test failed before its fix.
+
+| Change in `2a16a81` | Tests |
+|---|---|
+| A failed manifest replacement no longer removes artifacts that a committed manifest lists (`rollback_uncommitted`, corpus and scientific runs) | `test_manifest_commit_exception_preserves_the_published_state`, `test_scientific_manifest_commit_exception_keeps_a_valid_fixture_run`; unreadable-manifest branch: `test_rollback_keeps_artifacts_when_the_manifest_is_unreadable` (V3-005) |
+| Extra files in a run or in the deposit are named in the error | `test_extra_ds_store_is_named_in_v1_and_deposit` |
+| Plot spreads accept a mean up to one rounding unit outside min/max and refuse anything beyond | `test_spread_accepts_one_rounding_unit_only` |
+| Regeneration tolerance absolute, scaled only for loss sums (V3-004) | `test_regeneration_tolerance_is_absolute_and_scales_only_loss_sums` |
+| Parquet numeric dtypes regenerated exactly | `test_regeneration_rejects_changed_integer_identity_in_parquet` |
+| An alias of the raw data is refused through `samefile` | `test_raw_alias_is_rejected_even_when_case_differs`; `test_raw_alias_is_rejected_even_when_resolve_misses_it` (V3-005) |
+| `--fixture` cannot reuse `spec_version` HEXIS-3.1 | `test_fixture_cannot_reuse_the_deposited_spec_version` |
+| A document in two blocks is refused before training | `test_sample_fold_rejects_a_document_in_two_blocks_before_training` |
+| `load_corpus` reads the private copy it validated | `test_load_corpus_reads_the_validated_private_copy` |
+| Sentence and coordinate order checked on string `doc_id` | `test_category_order_cannot_hide_swapped_document_order`; `test_category_order_cannot_hide_swapped_coordinate_order` (V3-005) |
+| Every collection skip fails the gate, with or without a gate marker | `test_collection_skip_without_marker_fails_the_gate`, `test_nested_conftest_collection_skip_fails_the_gate` |
+| Reviewed case counts pinned for every parametrized test | `test_parameterized_case_counts_match_the_reviewed_inventory`, `test_parameterized_case_gate_catches_one_removed_case` |
+| Procedural: a copied directory is not a regeneration; recovery after SIGTERM/SIGHUP | `compare_regeneration` records `comparison_scope` and `independent_execution` (`test_seed_zero_regeneration_is_compared_and_recorded_by_the_report`); runbook in the V3–V5 sequence |
+
+Three tests of `2a16a81` guard properties that its diff does not change in `src`: `test_parser_consumes_the_copied_v1_input`, `test_descriptive_context_change_cannot_publish_a_pair` and `test_acceptance_rejects_junit_failure_even_with_zero_process_status`.
 
 ## Project name HORMATHOS — 23 September 2026 (V3-003)
 
@@ -131,15 +159,15 @@ The note on the `.DS_Store` that entered and left the deposit is now in V3-002, 
 
 ## Freeze perimeter
 
-`_code_identity()` covers all of `src/hormathos`; the V2 evidence (`validation_run.context`) also binds `tests/*.py`, `conftest.py`, `pyproject.toml`, the configuration file, `uv.lock` and the manifest of the corpus used. After a validation is published, changing any of these prevents resuming and forces a new directory with V2 and V3 redone. The documents stay outside the perimeter and can be changed; `archive/` is outside the perimeter but bound to the bytes of `5f1ec06` by `test_every_archived_file_has_its_bytes_at_the_base`. The realignment and the rename changed the code identity **before** any V2 or V3 evidence was published: under `results/hexis31/` there are only the V1 runs.
+`_code_identity()` covers all of `src/hormathos`; the V2 evidence (`validation_run.context`) also binds `tests/*.py`, `conftest.py`, `pyproject.toml`, the configuration file, `uv.lock` and the manifest of the corpus used. After a validation is published, changing any of these prevents resuming and forces a new directory with V2 and V3 redone. The documents stay outside the perimeter and can be changed; `archive/` is outside the perimeter but bound to the bytes of `5f1ec06` by `test_every_archived_file_has_its_bytes_at_the_base`. The realignment and the rename changed the code identity **before** any V2 or V3 evidence was published: at that time, under `results/hexis31/` there were only the V1 runs. The tests added by V3-005 are such a change after publication: the directories of 24 September are not resumed, and V2 and seed 0 are rerun in new ones.
 
 ## Running the history
 
 The history runs only in a separate worktree: `git worktree add ../hexis-pre-realign archive/pre-realign`. A checkout of `5f1ec06` in the main copy would leave ignored files that switching back does not remove. A leftover `src/hexis/…/__pycache__/` would make `hexis` importable as a namespace package, and `test_the_package_is_hormathos_and_hexis_names_only_the_design` refuses it, rightly. The v2.1 outputs in `data/interim/` and `data/processed/` are corpus derivatives, and are therefore ignored.
 
-## Sequence for V3–V5; V3 executed on 24 September 2026
+## Sequence for V3–V5; V3 executed on 24 September 2026, rerun under V3-005
 
-Clean tracked tree (untracked `scripts/` and `docs/proposal/` are allowed), corpus `results/hexis31/v1`, new destinations under `results/hexis31/`:
+Clean tracked tree (untracked `scripts/` and `docs/proposal/` are allowed), corpus `results/hexis31/v1`, new destinations under `results/hexis31/`. Under V3-005, `<run>` is `results/hexis31/v3-seed0-r4-r6` and `<regen>` is `results/hexis31/v3-seed0-r4-r6-regeneration`, both to be executed; V4 and V5 use them, never the directories of 24 September:
 
 ```bash
 uv sync --frozen
@@ -167,6 +195,6 @@ uv run python -m hormathos.pipeline.run_report --config config/default.yaml --co
 3. **Research proposal 3.1 (§17.1)**: not deposited yet. Untracked local files exist in `docs/proposal/`, in Italian; tracking them is a separate decision, because they would enter the perimeter of the publication, and their English version comes with that decision (V3-003).
 4. **Rename outside the repository (V3-003)**: done on 23 September 2026 — the GitHub repository is `leonardotornabene/HORMATHOS`, with the description "Project HORMATHOS", and `origin` points to it.
 5. **English companions (V3-003)**: non-normative translations of the deposited plan, of the V3-001 and V3-002 acts and of the other Italian texts of the deposit, in a separate tranche; the Italian originals govern.
-6. **V4–V5**: campaign, report and figures, in the order of §14; V3 attested on 24 September 2026.
+6. **V4–V5**: campaign, report and figures, in the order of §14; V3 executed on 24 September 2026 and reviewed, its re-attestation under V3-005 pending.
 
 Stop for review before V4.

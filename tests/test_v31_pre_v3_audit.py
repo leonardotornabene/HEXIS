@@ -2,6 +2,7 @@
 
 import os
 import shutil
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -124,12 +125,24 @@ def test_raw_alias_is_rejected_even_when_case_differs(tmp_path):
     raw.mkdir(parents=True)
     alias = tmp_path/'alias'
     alias.symlink_to(raw, target_is_directory=True)
-    with pytest.raises(ValueError, match='raw'):
+    with pytest.raises(ValueError, match='raw') as error:
         corpus_run.check_output_locations([alias/'run'], data_root=raw)
+    assert 'raw data is immutable' in str(error.value)
     if (tmp_path/'data'/'RAW').exists():  # APFS case-insensitive volumes
         with pytest.raises(ValueError, match='raw'):
             corpus_run.check_output_locations([tmp_path/'data'/'RAW'/'run'], data_root=raw)
-    assert True
+
+
+def test_raw_alias_is_rejected_even_when_resolve_misses_it(tmp_path, monkeypatch):
+    """R6: with `resolve` blind to the alias, only the `samefile` check can refuse it."""
+    raw = tmp_path/'data'/'raw'
+    raw.mkdir(parents=True)
+    alias = tmp_path/'alias'
+    alias.symlink_to(raw, target_is_directory=True)
+    monkeypatch.setattr(Path, 'resolve', lambda self, strict=False: self.absolute())
+    with pytest.raises(ValueError, match='raw data is immutable') as error:
+        corpus_run.check_output_locations([alias/'run'], data_root=raw)
+    assert str(alias/'run') in str(error.value)
 
 
 def test_fixture_cannot_reuse_the_deposited_spec_version(tmp_path):
@@ -196,6 +209,24 @@ def test_category_order_cannot_hide_swapped_document_order(real_corpus):
     assert 'noncanonical' in str(error.value)
 
 
+def test_category_order_cannot_hide_swapped_coordinate_order(real_corpus):
+    """R4: coordinates sorted by a categorical order must fail on their order, not later
+    on their slot_uid."""
+    from hormathos.corpus import SENTENCE_KEY, verify_sequences
+    coordinates = real_corpus['coordinates.parquet'].copy()
+    docs = list(dict.fromkeys(coordinates['doc_id'].astype(str)))
+    categories = [docs[1], docs[0], *docs[2:]]
+    coordinates['doc_id'] = pd.Categorical(coordinates['doc_id'].astype(str),
+                                           categories=categories, ordered=True)
+    coordinates = coordinates.sort_values(['variant', *SENTENCE_KEY, 'encoded_index']
+                                          ).reset_index(drop=True)
+    contracts = load_contracts()
+    with pytest.raises(ValueError, match='noncanonical coordinate order') as error:
+        verify_sequences(coordinates, real_corpus['sequences.parquet'], contracts['design'],
+                         contracts['alphabets'])
+    assert 'noncanonical coordinate order' in str(error.value)
+
+
 def test_parser_consumes_the_copied_v1_input(tmp_path):
     from hormathos.corpus import read_corpus
     cfg, path, prefix = mini(tmp_path)
@@ -208,6 +239,17 @@ def test_parser_consumes_the_copied_v1_input(tmp_path):
             path.write_bytes(saved)
     assert 'NOUN' in set(tokens['upos_raw'])
     assert 'VERB' not in set(tokens['upos_raw'])
+
+
+def test_rollback_keeps_artifacts_when_the_manifest_is_unreadable(tmp_path):
+    """R5: an unreadable manifest may list the orphan, so rollback must leave it."""
+    output = tmp_path/'run'
+    corpus_run.publish_stage(output, 'audit', {'one.json': {}}, {'fixture': 'v1'}, {})
+    orphan = output/'orphan.json'
+    orphan.write_text('{}')
+    (output/'manifest.json').write_text('{not json')
+    corpus_run.rollback_uncommitted(output, [orphan])
+    assert orphan.exists()
 
 
 def test_descriptive_context_change_cannot_publish_a_pair(tmp_path, monkeypatch):

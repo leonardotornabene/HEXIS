@@ -21,10 +21,10 @@ and archive/. The package is src/hormathos. Every artifact is in English; the
 Italian originals of the deposit and of V3-001 and V3-002 govern and are never
 rewritten.
 
-Stop for review before V4; no new real model fits in this tranche. The freeze
-perimeter is code identity over all of src/hormathos plus tests, conftest.py,
-pyproject.toml, config and uv.lock: once V2/V3 evidence is published, changing
-any of them forces a new directory and a new run.
+Stop for review before V4; no real fit beyond the seed-0 rerun authorized by
+V3-005. The freeze perimeter is code identity over all of src/hormathos plus
+tests, conftest.py, pyproject.toml, config and uv.lock: once V2/V3 evidence is
+published, changing any of them forces a new directory and a new run.
 
 Tests first; never weaken a still-valid property; retiring one means replacing
 its test with a reason, not deleting the check. Active acceptance: pytest and

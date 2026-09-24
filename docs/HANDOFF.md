@@ -1,6 +1,18 @@
 # HORMATHOS handoff — current state (design HEXIS 3.1)
 
-**V0–V2 completed; V3–V5 not attested; no real fit.** Publication of 2026-09-23: the push of the branch `codex/hexis31-realign` at `2ebb3464b871c1f831d0608edba052ccb4b92be9` and of the tags `archive/pre-realign` and `archive/v2.1`; then the merge into `master` (`73df64d`, a merge commit with neither squash nor rebase) and the deletion of the remote branches `g1/pre-audit` (V3-002, E5) and `codex/hexis31-realign`, whose content is in `master`. At that point the active branch was `master`; the realignment started from `5f1ec06afa192c8d0f006d7f39cdb97df72c2983`. On the same day the project was named HORMATHOS (V3-003), published at `c738c73`, and the GitHub repository became `leonardotornabene/HORMATHOS`; the old address redirects. The detailed chronology of the earlier tranches is not repeated here: it is in the Git history and, in its last pre-realignment form, in [archive/docs/HANDOFF.md](../archive/docs/HANDOFF.md).
+**V0–V3 completed; V4–V5 not attested; real fits only at seed 0 (V3).** Publication of 2026-09-23: the push of the branch `codex/hexis31-realign` at `2ebb3464b871c1f831d0608edba052ccb4b92be9` and of the tags `archive/pre-realign` and `archive/v2.1`; then the merge into `master` (`73df64d`, a merge commit with neither squash nor rebase) and the deletion of the remote branches `g1/pre-audit` (V3-002, E5) and `codex/hexis31-realign`, whose content is in `master`. At that point the active branch was `master`; the realignment started from `5f1ec06afa192c8d0f006d7f39cdb97df72c2983`. On the same day the project was named HORMATHOS (V3-003), published at `c738c73`, and the GitHub repository became `leonardotornabene/HORMATHOS`; the old address redirects. The detailed chronology of the earlier tranches is not repeated here: it is in the Git history and, in its last pre-realignment form, in [archive/docs/HANDOFF.md](../archive/docs/HANDOFF.md).
+
+## V3 technical trial — 24 September 2026
+
+Measured on `01d1883` with a clean tracked tree (untracked `scripts/` and `docs/proposal/` preserved), Python 3.12.13 through `uv run --no-sync` with `UV_NO_CACHE=1`, `uv.lock` SHA-256 `33db43b0…` unchanged, corpus `results/hexis31/v1`. Commands and logs are in `results/hexis31/v3-seed0-logs/`.
+
+`results/hexis31/v3-seed0`: `run_tree_validation` (34 synthetic cases, 426 acceptance cases), then `run_descriptive --seed 0` in three invocations — `--cell C0`, `--cell D12 --resume`, `--cell all --resume`. `validate_run` accepts the manifest (SHA-256 `b48bd60bdebbc20a1dec6b57a5dc10c6a096dd6a9f0afe1d8e38f35c29af28bd`); the run ID `1563452ad4b644d1ec8ea00f38300192f95fad8c4d34761a570a22f5b6a78855` equals that of the V2 evidence in `v2-pre-v3-audit-2026-09-24`, so the code identity did not change. Stages `validation` and `descriptive`, evidence V0–V3, 42 pair and 84 model keys, all at seed 0, seven pairs in each of C0, D12, a_total1, oth, q_half and upos. `verify_technical` recomputes the recorded V3 over its 70 artifacts (42 pairs, 21 ledgers, 7 C0 position files).
+
+Resources over the 84 model measurements: fit 61.26 s, evaluation 43.58 s, maximum peak RSS 1 471 389 696 bytes (D12); directory 29 365 072 bytes. Wall time: validation 249.6 s; descriptive 88.2 s (C0), 103.9 s (D12), 349.1 s (the other 28 pairs). `new_model_fits` counts one invocation (14, 14, 56).
+
+§12.2 regeneration, separately executed with the same code: `results/hexis31/v3-seed0-regeneration`, `run_tree_validation` then one `run_descriptive --seed 0` (239.7 s and 694.6 s wall). Manifest SHA-256 `3486804df9732ff36770b8dc28ea37b7e0ae5850bdca101dbc8fd22256b87552`, same run ID; `compare_regeneration` finds all 70 artifacts byte-identical. Fit 60.71 s, evaluation 43.34 s, peak RSS 1 500 229 632 bytes. Its verification in the report remains a V5 obligation.
+
+Stop for review before V4.
 
 ## Pre-V3 audit closure — 24 September 2026 (V3-004)
 
@@ -125,7 +137,7 @@ The note on the `.DS_Store` that entered and left the deposit is now in V3-002, 
 
 The history runs only in a separate worktree: `git worktree add ../hexis-pre-realign archive/pre-realign`. A checkout of `5f1ec06` in the main copy would leave ignored files that switching back does not remove. A leftover `src/hexis/…/__pycache__/` would make `hexis` importable as a namespace package, and `test_the_package_is_hormathos_and_hexis_names_only_the_design` refuses it, rightly. The v2.1 outputs in `data/interim/` and `data/processed/` are corpus derivatives, and are therefore ignored.
 
-## Planned sequence for V3–V5, not executed
+## Sequence for V3–V5; V3 executed on 24 September 2026
 
 Clean tracked tree (untracked `scripts/` and `docs/proposal/` are allowed), corpus `results/hexis31/v1`, new destinations under `results/hexis31/`:
 
@@ -155,6 +167,6 @@ uv run python -m hormathos.pipeline.run_report --config config/default.yaml --co
 3. **Research proposal 3.1 (§17.1)**: not deposited yet. Untracked local files exist in `docs/proposal/`, in Italian; tracking them is a separate decision, because they would enter the perimeter of the publication, and their English version comes with that decision (V3-003).
 4. **Rename outside the repository (V3-003)**: done on 23 September 2026 — the GitHub repository is `leonardotornabene/HORMATHOS`, with the description "Project HORMATHOS", and `origin` points to it.
 5. **English companions (V3-003)**: non-normative translations of the deposited plan, of the V3-001 and V3-002 acts and of the other Italian texts of the deposit, in a separate tranche; the Italian originals govern.
-6. **V3–V5**: technical trial, campaign, report and figures, in the order of §14.
+6. **V4–V5**: campaign, report and figures, in the order of §14; V3 attested on 24 September 2026.
 
-Stop for review before V3.
+Stop for review before V4.

@@ -9,7 +9,7 @@ docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md and its
 byte-identified JSON contracts. Text governs semantics; JSON fixes values.
 Do not silently deviate or regenerate expectations to make tests pass.
 
-V0–V2 are completed; V3–V5 are not attested and no real fit has ever run.
+V0–V3 are completed; V4–V5 are not attested; real fits exist only for seed 0 (V3).
 V3-002 realigned the repository on 2026-09-22: the active tree is 3.1 only and
 every historical material is preserved byte for byte under archive/, at the
 path it had at 5f1ec06. archive/ is a record: never imported, never collected,
@@ -24,7 +24,7 @@ and archive/. The package is src/hormathos. Every artifact is in English; the
 Italian originals of the deposit and of V3-001 and V3-002 govern and are never
 rewritten.
 
-Stop for review before V3; no new real model fits in this tranche. The freeze
+Stop for review before V4; no new real model fits in this tranche. The freeze
 perimeter is code identity over all of src/hormathos plus tests, conftest.py,
 pyproject.toml, config and uv.lock: once V2/V3 evidence is published, changing
 any of them forces a new directory and a new run.

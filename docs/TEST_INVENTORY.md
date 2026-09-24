@@ -62,6 +62,7 @@ parameter case fails acceptance.
 | `test_v31_docs.py` | Active authority, deposit integrity, archive at the bytes of `5f1ec06` file by file, identity of the three instruction copies, absence of retired imports; the package is `hormathos` and `hexis` is not importable, and the sdist is exactly the tracked tree (V3-003) |
 | `test_v31_enforcement.py`, `test_gate_inventory_anchor.py` | The gate itself: exhaustive inventory in both directions, refusal of skip, xfail, xpass even when not strict, missing or dead assert, `.pyc` without the hook, test without marker, missing or unmarked anchor, archive never collected, not even from the root |
 | `test_v31_pre_v3_audit.py` | Pre-V3 audit regressions: publication commit, named extras, plotting rounding, regeneration tolerance and exact Parquet identities, raw aliases, fixtures, block overlap, private corpus read, lexical order of sentences and coordinates, staged parser input, descriptive context and JUnit outcomes; the coordinate order, the unreadable-manifest rollback and the raw alias missed by `resolve()` added by V3-005 |
+| `test_v31_pre_v4_review.py` | Pre-V4 review regressions (V3-006): sequence eligibility read from `min_available_past`, and the scorer's bounded history window with losses equal to the full-prefix prediction |
 
 ## Map of the previous tests (§13.2: kept, replaced, retired)
 

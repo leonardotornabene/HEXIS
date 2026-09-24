@@ -9,7 +9,8 @@ docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md and its
 byte-identified JSON contracts. Text governs semantics; JSON fixes values.
 Do not silently deviate or regenerate expectations to make tests pass.
 
-V0–V3 are completed; V4–V5 are not attested; real fits exist only for seed 0 (V3).
+V0–V3 are completed; V4–V5 are not attested; real fits exist only for seed 0 (V3),
+re-attested under V3-005 in results/hexis31/v3-seed0-r4-r6.
 V3-002 realigned the repository on 2026-09-22: the active tree is 3.1 only and
 every historical material is preserved byte for byte under archive/, at the
 path it had at 5f1ec06. archive/ is a record: never imported, never collected,

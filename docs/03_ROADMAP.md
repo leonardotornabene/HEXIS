@@ -9,7 +9,7 @@
 | V2 | CTW, RNG/sample/shuffle, four losses, diagnostics, R1, resume | COMPLETED — closure `0a6f644`, pre-V3 review `0dc69b5`; re-attested after the realignment and after the rename |
 | — | Realignment of the repository and publication act (V3-002) | COMPLETED — full code review and conformity check; published on 2026-09-23, merged into `master` as `73df64d` |
 | — | Project name HORMATHOS and English as the project language (V3-003) | COMPLETED — published on 2026-09-23 at `c738c73`; GitHub repository `leonardotornabene/HORMATHOS` |
-| V3 | Seed 0, six cells, seven folds: 42 pairs/84 models; freeze | COMPLETED — 24 September 2026 on `01d1883`: `results/hexis31/v3-seed0`, regeneration `v3-seed0-regeneration`; stop for review before V4 |
+| V3 | Seed 0, six cells, seven folds: 42 pairs/84 models; freeze | COMPLETED — executed on 24 September 2026 on `01d1883` (`results/hexis31/v3-seed0`, historical, not resumed); reviewed and re-attested under V3-005 on `602ff90`: `results/hexis31/v3-seed0-r4-r6`, regeneration `v3-seed0-r4-r6-regeneration`; stop for review before V4 |
 | V4 | 490 pairs/980 models; all cells, seeds and arms | PENDING |
 | V5 | Report, five figures, two weightings, regeneration and completeness | PENDING — code ready; execution and verification |
 
@@ -17,4 +17,4 @@ Neither the realignment nor the rename changed the contract or the data: deposit
 
 Active acceptance: `uv run pytest` and `uv run pytest -m v31` collect the same tests, with no skip. Verbatim counts and commands in the [handoff](HANDOFF.md); remaining obligations and the test map in the [inventory](TEST_INVENTORY.md).
 
-No real fit beyond seed 0 before the review of V3. Corpus completion is distinct from scientific completion. The 3.1 research proposal (§17.1) and publication remain separate activities, the second governed by the act in V3-002. [Active bibliography](BIBLIOGRAPHY.md); historical register in the [archive](../archive/docs/history/v2.1/03_ROADMAP_OPERATIVA_IT.md).
+No real fit beyond seed 0 before the owner's review of the re-attested V3. Corpus completion is distinct from scientific completion. The 3.1 research proposal (§17.1) and publication remain separate activities, the second governed by the act in V3-002. [Active bibliography](BIBLIOGRAPHY.md); historical register in the [archive](../archive/docs/history/v2.1/03_ROADMAP_OPERATIVA_IT.md).

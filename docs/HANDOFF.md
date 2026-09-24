@@ -4,11 +4,44 @@
 
 ## Review of V3 and re-attestation — 24 September 2026 (V3-005)
 
-The review of V3 found no defect in its results; the details are in V3-005. Three fixes of `2a16a81` had no test that failed without them: the coordinate-order check with a categorical `doc_id` (R4), the rollback that keeps every artifact when the manifest is unreadable (R5), and the `samefile` refusal of a raw alias that `resolve()` misses, exercised only on case-insensitive file systems and closed by `assert True` (R6). Each now has its own test, and the README test that pinned the V2-phase status sentence is replaced by phase-independent properties. `src/hormathos` does not change, so the run ID stays `1563452a…`; the tests do change, so the V2 context of the directories of 24 September no longer matches and they are not resumed. V2 and seed 0 are rerun in `results/hexis31/v3-seed0-r4-r6` and `results/hexis31/v3-seed0-r4-r6-regeneration`, to be executed.
+Three moments, in order: the V3 technical trial of 24 September on `01d1883` (next section, historical evidence, not resumed); its review; the re-attestation below.
+
+The review of V3 found no defect in its results; the details are in V3-005. Three fixes of `2a16a81` had no test that failed without them: the coordinate-order check with a categorical `doc_id` (R4), the rollback that keeps every artifact when the manifest is unreadable (R5), and the `samefile` refusal of a raw alias that `resolve()` misses, exercised only on case-insensitive file systems and closed by `assert True` (R6). Each now has its own test, and the README test that pinned the V2-phase status sentence is replaced by phase-independent properties. `src/hormathos` does not change, so the run ID stays `1563452a…`; the tests do change, so the V2 context of the directories of 24 September no longer matches and they are not resumed. V2 and seed 0 are rerun in `results/hexis31/v3-seed0-r4-r6` and `results/hexis31/v3-seed0-r4-r6-regeneration`.
 
 The comparator's scope (R7) is fixed in V3-005 (d). One residue stays without action (R9): `load_corpus` validates and reads a private copy of the corpus, but `evidence()` and `context()` hash the corpus manifest by rereading the original directory; a change in that window cannot yield a silent wrong result, because `run_contract` detects it at the report.
 
-## V3 technical trial — 24 September 2026
+**Re-attestation.** The suite of `602ff90` first, then the runs on the same commit, with a clean tracked tree (untracked `scripts/` and `docs/proposal/` preserved), Python 3.12.13 through `uv run --no-sync` with `UV_NO_CACHE=1`, `uv.lock` SHA-256 `33db43b0…`, corpus `results/hexis31/v1`. Commands and logs: `results/hexis31/v3-seed0-r4-r6-logs/` (01–06 runs, 07–12 checks, `commands.txt`).
+
+```text
+uv run --frozen pytest -q -p no:cacheprovider
+429 passed in 197.20s (0:03:17)
+
+uv run --frozen pytest --collect-only -q          429 tests collected
+uv run --frozen pytest -m v31 --collect-only -q   429 tests collected
+uv run --frozen pytest . --collect-only -q        429 tests collected
+uv lock --check                                   Resolved 23 packages
+```
+
+The three collections have the same 429 node IDs and none under `archive/`; the count rises from 426 by the three tests of V3-005. Eighteen mutants, numbered afresh N01–N18 without claiming the identity of the lost pre-V3 mutants, each revert or disable one fix of `2a16a81` in a temporary copy of `602ff90`; for each, the target tests pass on the unmutated copy and fail on the mutant, rerun one by one: 18 killed, none survived. They include R4 (N01), R5 (N03) and R6 (N04), each killed by its own new test. The script and its log are outside the repository, in the verification workspace `hexis-verifica-riallineamento/revisione_v3_2026-09-24/`.
+
+`results/hexis31/v3-seed0-r4-r6`: `run_tree_validation` (34 synthetic cases, 429 acceptance cases; 249.6 s wall), then `run_descriptive --seed 0` in the three invocations of 24 September — `--cell C0` (88.6 s), `--cell D12 --resume` (102.6 s), `--cell all --resume` (354.9 s). Manifest SHA-256 `b9c94d7a5dd46befcd50eef53056dd88baec0d7dccbf6cd49f74275d18efb8cf`, run ID `1563452ad4b644d1ec8ea00f38300192f95fad8c4d34761a570a22f5b6a78855`, stages `validation` and `descriptive`, evidence V0–V3, 42 pair and 84 model keys at seed 0, seven pairs per cell. The manifest records the last invocation (56 new fits, 14 reused partitions, 28 published); as on 24 September, the C0 and D12 invocations are documented only by their commands and times in the logs. Resources over the 84 models: fit 61.07 s, evaluation 45.84 s, maximum peak RSS 1 418 235 904 bytes (D12); directory 29 366 010 bytes.
+
+`results/hexis31/v3-seed0-r4-r6-regeneration`, separately executed with the same code: `run_tree_validation` (247.9 s), then one `run_descriptive --seed 0` (551.5 s). Manifest SHA-256 `eba21d35bd6dd8a4086f87b39eaaa47e44fbc50e7a2a9221f3b2462c40694892`, same run ID; fit 62.90 s, evaluation 48.35 s, peak RSS 1 554 911 232 bytes (D12). Its verification in the report remains a V5 obligation.
+
+Checks, each with its own log:
+
+- `validate_run` accepts both manifests; `verify_evidence` with the current context and `verify_technical` pass on both (V3 over 70 artifacts: 42 pairs, 21 ledgers, 7 C0 position files).
+- `compare_regeneration(v3-seed0-r4-r6, v3-seed0-r4-r6-regeneration)`: 70 of 70 artifacts byte-identical.
+- `compare_regeneration(v3-seed0, v3-seed0-r4-r6)`: 70 of 70 byte-identical. This is an identity check across the two test contexts, same code and run ID, not §12.2 evidence.
+- A recomputation from the deposited contract that does not import `hormathos` (`indep_check.py`, rebuilt, summing over sorted keys) finds 0 problems in both directories. It checks the §12.2 fixture, the eligible totals 109 108 / 109 716 / 109 108 by block and variant, the 21 ledgers row by row with their subseeds, training and fragment metrics, shuffle counts, root counts and the root losses q₀ of both arms, the 109 108 C0 position rows with the reconstruction of all four loss sums, and zero probe evaluations. Its first pass flagged every ledger hash, because it hashed the file bytes; the hash is the SHA-256 of the canonical JSON of the rows (deviation 4 of V3-002). The check was corrected and rerun; the first log is kept (`10a`).
+- The preconditions of `run_descriptive --resume` for V4 pass on a copy of `v3-seed0-r4-r6`; on a copy of `v3-seed0`, `verify_evidence` refuses the run, because the recorded test context no longer matches (`tests/test_v31_docs.py`).
+- `v1`, `v2-pre-v3-audit-2026-09-24`, `v3-seed0` and `v3-seed0-regeneration` keep their manifest SHA-256.
+
+Observation without contrasts (R11): G_R = CE₀ᴿ − CE_CTWᴿ, summed over the document and band records in sorted order, is 0 in the seven C0 folds and about 2.0363×10⁻⁵ bit/target for `upos` held out on PLUTARCH (§7: an observed result, not an identity). Forecast, not measured (R10): V4, with 448 new pairs, about 2–2.5 hours and about 0.3 GB of disk.
+
+Stop for review before V4.
+
+## V3 technical trial — 24 September 2026 (historical, not resumed)
 
 Measured on `01d1883` with a clean tracked tree (untracked `scripts/` and `docs/proposal/` preserved), Python 3.12.13 through `uv run --no-sync` with `UV_NO_CACHE=1`, `uv.lock` SHA-256 `33db43b0…` unchanged, corpus `results/hexis31/v1`. Commands and logs are in `results/hexis31/v3-seed0-logs/`.
 
@@ -167,7 +200,7 @@ The history runs only in a separate worktree: `git worktree add ../hexis-pre-rea
 
 ## Sequence for V3–V5; V3 executed on 24 September 2026, rerun under V3-005
 
-Clean tracked tree (untracked `scripts/` and `docs/proposal/` are allowed), corpus `results/hexis31/v1`, new destinations under `results/hexis31/`. Under V3-005, `<run>` is `results/hexis31/v3-seed0-r4-r6` and `<regen>` is `results/hexis31/v3-seed0-r4-r6-regeneration`, both to be executed; V4 and V5 use them, never the directories of 24 September:
+Clean tracked tree (untracked `scripts/` and `docs/proposal/` are allowed), corpus `results/hexis31/v1`, new destinations under `results/hexis31/`. Under V3-005, `<run>` is `results/hexis31/v3-seed0-r4-r6` and `<regen>` is `results/hexis31/v3-seed0-r4-r6-regeneration`, both executed on 24 September 2026; V4 and V5 use them, never the directories of the first trial:
 
 ```bash
 uv sync --frozen
@@ -195,6 +228,6 @@ uv run python -m hormathos.pipeline.run_report --config config/default.yaml --co
 3. **Research proposal 3.1 (§17.1)**: not deposited yet. Untracked local files exist in `docs/proposal/`, in Italian; tracking them is a separate decision, because they would enter the perimeter of the publication, and their English version comes with that decision (V3-003).
 4. **Rename outside the repository (V3-003)**: done on 23 September 2026 — the GitHub repository is `leonardotornabene/HORMATHOS`, with the description "Project HORMATHOS", and `origin` points to it.
 5. **English companions (V3-003)**: non-normative translations of the deposited plan, of the V3-001 and V3-002 acts and of the other Italian texts of the deposit, in a separate tranche; the Italian originals govern.
-6. **V4–V5**: campaign, report and figures, in the order of §14; V3 executed on 24 September 2026 and reviewed, its re-attestation under V3-005 pending.
+6. **V4–V5**: campaign, report and figures, in the order of §14; V3 executed on 24 September 2026, reviewed, and re-attested under V3-005 in `results/hexis31/v3-seed0-r4-r6`.
 
 Stop for review before V4.

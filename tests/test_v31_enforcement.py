@@ -1,5 +1,5 @@
 """Active V0–V2 must collect all required tests and execute real assertions."""
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -218,6 +218,87 @@ REQUIRED = {'test_gate_inventory_anchor.py': ['test_repository_gate_rejects_a_mi
                              'test_a_destination_inside_the_repository_raw_root_is_refused_under_any_data_root']}
 
 
+EXPECTED_CASES = {
+    ('test_conllu_reader.py', 'test_invalid_required_labels_raise_parse_error'): 2,
+    ('test_gate_inventory_anchor.py', 'test_repository_gate_rejects_a_missing_or_unmarked_inventory'): 2,
+    ('test_v31_completion.py', 'test_model_keys_reject_noninteger_seed_without_coercion'): 2,
+    ('test_v31_completion.py', 'test_resource_records_are_complete_valid_and_bound_to_model_keys'): 4,
+    ('test_v31_completion.py', 'test_resume_rejects_invalid_artifact_families_and_model_arms'): 4,
+    ('test_v31_config.py', 'test_application_contract_rejects_drift'): 6,
+    ('test_v31_config.py', 'test_deposit_refuses_altered_missing_extra_contracts'): 3,
+    ('test_v31_config.py', 'test_duplicate_yaml_keys_are_rejected_at_every_depth'): 2,
+    ('test_v31_config.py', 'test_schema_refuses_wrong_numeric_types_and_values'): 6,
+    ('test_v31_context_tree.py', 'test_battery_gate_rejects_incomplete_or_invalid_recorded_results'): 10,
+    ('test_v31_context_tree.py', 'test_core_rejects_invalid_parameters_and_symbols'): 23,
+    ('test_v31_context_tree.py', 'test_empty_training_is_a_valid_core_case'): 3,
+    ('test_v31_context_tree.py', 'test_independent_enumeration_matches_evidence_and_prediction'): 3,
+    ('test_v31_context_tree.py', 'test_normalization_rare_and_unseen_support_across_alphabets'): 3,
+    ('test_v31_context_tree.py', 'test_prequential_identity_uses_pre_update_counts'): 3,
+    ('test_v31_context_tree.py', 'test_support_histogram_counts_observations_including_bos'): 6,
+    ('test_v31_context_tree.py', 'test_validation_output_refuses_raw_including_symlinks'): 2,
+    ('test_v31_corpus.py', 'test_ambiguous_identities_fail_with_source'): 5,
+    ('test_v31_corpus.py', 'test_excluded_source_upos_drops_before_any_deprel_rule'): 12,
+    ('test_v31_corpus.py', 'test_public_mapping_rejects_unknown_source_upos'): 4,
+    ('test_v31_corpus.py', 'test_source_parser_rejects_malformed_rows_with_location'): 7,
+    ('test_v31_corpus.py', 'test_validator_rejects_semantic_corruption_at_unchanged_cardinality'): 6,
+    ('test_v31_descriptive.py', 'test_a_corrupted_partition_is_detected_and_never_reused'): 6,
+    ('test_v31_descriptive.py', 'test_retired_stages_do_not_exist'): 6,
+    ('test_v31_descriptive.py', 'test_retired_v21_modules_do_not_exist'): 5,
+    ('test_v31_descriptive.py', 'test_sensitivity_checks_coordinate_slot_sets_before_discarding_vectors'): 2,
+    ('test_v31_descriptive.py', 'test_the_manifest_refuses_duplicate_extra_and_missing_keys'): 8,
+    ('test_v31_enforcement.py', 'test_v31_enforcement_rejects_a_static_skip_and_an_xpass_without_strict_xfail'): 3,
+    ('test_v31_enforcement.py', 'test_v31_enforcement_rejects_vacuity_skip_and_xfail'): 5,
+    ('test_v31_persistence.py', 'test_corruption_prevents_stage_reuse'): 6,
+    ('test_v31_persistence.py', 'test_manifest_schema_rejects_ambiguous_json'): 3,
+    ('test_v31_pre_v3_audit.py', 'test_acceptance_rejects_junit_failure_even_with_zero_process_status'): 2,
+    ('test_v31_pre_v3_audit.py', 'test_manifest_commit_exception_preserves_the_published_state'): 2,
+    ('test_v31_pre_v3_audit.py', 'test_scientific_manifest_commit_exception_keeps_a_valid_fixture_run'): 2,
+    ('test_v31_report_semantics.py', 'test_each_c0_guard_names_its_own_corruption'): 4,
+    ('test_v31_report_semantics.py', 'test_partition_semantic_corruption_is_rejected'): 25,
+    ('test_v31_report_semantics.py', 'test_sensitivity_partitions_enforce_diagnostic_denominators_and_bounds'): 2,
+    ('test_v31_report_semantics.py', 'test_shuffle_counts_and_c0_provenance_are_the_contract_regeneration'): 2,
+    ('test_v31_report_semantics.py', 'test_the_persisted_ledger_is_the_contract_sample_even_after_rehashing'): 3,
+    ('test_v31_sampling.py', 'test_canonical_order_and_fragment_offset_match_an_independent_transcription'): 6,
+    ('test_v31_sampling.py', 'test_impossible_budgets_fail_explicitly'): 5,
+    ('test_v31_scores.py', 'test_annotation_refuses_ambiguous_missing_or_overwriting_registry'): 4,
+    ('test_v31_scores.py', 'test_scoring_rejects_invalid_slot_bijections_and_symbols'): 5,
+    ('test_v31_validation_run.py', 'test_acceptance_rejects_vacuity_skip_and_failure'): 3,
+    ('test_v31_validation_run.py', 'test_invalid_validation_evidence_blocks_fits'): 5,
+    ('test_v31_validation_run.py', 'test_recorded_v3_evidence_is_recomputed_never_trusted'): 3,
+    ('test_v31_validation_run.py', 'test_report_refuses_changed_v2_execution_context'): 2,
+}
+
+
+def parameterized_counts(items):
+    counts = Counter((Path(item.path).name,
+                      getattr(item, 'originalname', None) or item.name.split('[', 1)[0])
+                     for item in items if hasattr(item, 'callspec'))
+    return dict(counts)
+
+
+REQUIRED['test_v31_pre_v3_audit.py'] = [
+    'test_manifest_commit_exception_preserves_the_published_state',
+    'test_scientific_manifest_commit_exception_keeps_a_valid_fixture_run',
+    'test_extra_ds_store_is_named_in_v1_and_deposit',
+    'test_spread_accepts_one_rounding_unit_only',
+    'test_regeneration_tolerance_is_absolute_and_scales_only_loss_sums',
+    'test_regeneration_rejects_changed_integer_identity_in_parquet',
+    'test_raw_alias_is_rejected_even_when_case_differs',
+    'test_fixture_cannot_reuse_the_deposited_spec_version',
+    'test_sample_fold_rejects_a_document_in_two_blocks_before_training',
+    'test_load_corpus_reads_the_validated_private_copy',
+    'test_category_order_cannot_hide_swapped_document_order',
+    'test_parser_consumes_the_copied_v1_input',
+    'test_descriptive_context_change_cannot_publish_a_pair',
+    'test_acceptance_rejects_junit_failure_even_with_zero_process_status',
+]
+REQUIRED['test_v31_enforcement.py'] += [
+    'test_collection_skip_without_marker_fails_the_gate',
+    'test_nested_conftest_collection_skip_fails_the_gate',
+    'test_parameterized_case_counts_match_the_reviewed_inventory',
+    'test_parameterized_case_gate_catches_one_removed_case',
+]
+
 def missing_coverage(items, required):
     collected=defaultdict(set)
     for item in items:
@@ -241,6 +322,17 @@ def test_v31_actual_collection_covers_required_behaviors(request):
 def test_v31_inventory_lists_every_collected_active_test(request):
     """Exhaustive inventory: an active test outside REQUIRED could be deleted unnoticed."""
     assert not unlisted_tests(request.session.items, REQUIRED)
+
+
+def test_parameterized_case_counts_match_the_reviewed_inventory(request):
+    assert parameterized_counts(request.session.items) == EXPECTED_CASES
+
+
+def test_parameterized_case_gate_catches_one_removed_case(request):
+    items = request.session.items
+    target = next(item for item in items if item.nodeid.startswith(
+        'tests/test_v31_context_tree.py::test_core_rejects_invalid_parameters_and_symbols['))
+    assert parameterized_counts([item for item in items if item is not target]) != EXPECTED_CASES
 
 
 def test_v31_inventory_rejects_missing_test_and_marker():
@@ -273,6 +365,27 @@ def test_v31_enforcement_accepts_executed_assert(pytester):
     pytester.makepyfile('import pytest\npytestmark=pytest.mark.v31\ndef test_good(): assert 2+2==4')
     result=pytester.runpytest_subprocess('-m','v31','--strict-markers')
     assert result.ret==0
+
+
+def test_collection_skip_without_marker_fails_the_gate(pytester):
+    run = _project(pytester)
+    pytester.makepyfile(test_good='import pytest\npytestmark=pytest.mark.v31\ndef test_good(): assert True',
+                        test_skipped='import pytest\npytest.skip("module skip", allow_module_level=True)')
+    result = run()
+    assert result.ret != 0
+    result.stdout.fnmatch_lines(['*GATE FAILURE*collection skip*'])
+
+
+def test_nested_conftest_collection_skip_fails_the_gate(pytester):
+    run = _project(pytester)
+    pytester.makepyfile(test_good='import pytest\npytestmark=pytest.mark.v31\ndef test_good(): assert True')
+    nested = pytester.path/'nested'
+    nested.mkdir()
+    (nested/'conftest.py').write_text('import pytest\npytest.skip("nested skip", allow_module_level=True)')
+    (nested/'test_nested.py').write_text('import pytest\npytestmark=pytest.mark.v31\ndef test_nested(): assert True')
+    result = run()
+    assert result.ret != 0
+    result.stdout.fnmatch_lines(['*GATE FAILURE*collection skip*'])
 
 
 # --- enforcement mechanics carried over from the v2.1 gate suite -----------------

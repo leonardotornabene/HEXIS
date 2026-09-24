@@ -233,6 +233,8 @@ def test_seed_zero_regeneration_is_compared_and_recorded_by_the_report(tmp_path)
     cfg, frames = yaml.safe_load(config.read_text()), scientific_run.load_corpus(corpus)[1]
     result = validation_run.compare_regeneration(output, regenerated, cfg, frames)
     assert result['pair_count'] == 4 and result['model_count'] == 8
+    assert result['comparison_scope'] == 'identity_and_values'
+    assert result['independent_execution'] == 'record_command_and_log_evidence'
     assert set(result['artifacts'].values()) == {'identical'}
     assert {name.split('__')[0] for name in result['artifacts']} == {'pair', 'sample_ledger', 'positions'}
     with pytest.raises(ValueError, match='distinct') as error:

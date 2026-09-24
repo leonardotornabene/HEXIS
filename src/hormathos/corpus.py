@@ -270,11 +270,13 @@ def verify_sequences(coords, seqs, cfg, alphabets):
         s=seqs[seqs['variant'].eq(variant)].reset_index(drop=True)
         if set(s['sent_id'])!=reference_ids:
             raise ValueError('variant sentence key mismatch')
-        if not c.equals(c.sort_values(SENTENCE_KEY+['encoded_index']).reset_index(drop=True)):
+        if c.assign(doc_id=c['doc_id'].astype(str)).sort_values(
+                SENTENCE_KEY+['encoded_index']).index.tolist()!=list(range(len(c))):
             raise ValueError(f'{variant}: noncanonical coordinate order')
         if c['slot_uid'].tolist()!=list(range(len(c))):
             raise ValueError(f'{variant}: nonconsecutive slot_uid')
-        if not s.equals(s.sort_values(SENTENCE_KEY).reset_index(drop=True)):
+        if s.assign(doc_id=s['doc_id'].astype(str)).sort_values(
+                SENTENCE_KEY).index.tolist()!=list(range(len(s))):
             raise ValueError(f'{variant}: noncanonical sentence order')
         if not s['boundary'].eq('reset').all():
             raise ValueError('sentence boundary must reset')

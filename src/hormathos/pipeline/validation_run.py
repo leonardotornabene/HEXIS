@@ -19,7 +19,7 @@ BATTERY = 'tree_validation.json'
 PROCESS = 'v31_process.json'
 JUNIT = 'v31.junit.xml'
 ARTIFACTS = {BATTERY, PROCESS, JUNIT}
-REGENERATION_TOLERANCE = 1e-8  # §6.5 reproduction between platforms; identities, counts and keys exact
+REGENERATION_TOLERANCE = 1e-8  # V3-004: absolute bits/target; identities, counts and keys exact
 
 
 def context(config, corpus_dir, contract):
@@ -204,7 +204,7 @@ def verify_technical(output, manifest, cfg, frames, *, scientific):
             check_technical(output, manifest, cfg, frames, scientific=scientific), 'evidence V3')
 
 
-def _same(left, right, where):
+def _same(left, right, where, *, tolerance=REGENERATION_TOLERANCE):
     """Exact on every identity, count, key and string; floats within the §6.5 tolerance."""
     if type(left) is not type(right):
         raise ValueError(f'{where}: {type(left).__name__} regenerated as {type(right).__name__}')
@@ -213,14 +213,16 @@ def _same(left, right, where):
             raise ValueError(f'{where}: fields differ')
         for key in left:
             if key != 'fingerprint':  # hashes float bits: compared through the values it hashes
-                _same(left[key], right[key], f'{where}.{key}')
+                scale = left.get('n', 1) if key.startswith('sum_loss_') else 1
+                _same(left[key], right[key], f'{where}.{key}',
+                      tolerance=tolerance * scale)
     elif isinstance(left, list):
         if len(left) != len(right):
             raise ValueError(f'{where}: length differs')
         for index, (a, b) in enumerate(zip(left, right)):
-            _same(a, b, f'{where}[{index}]')
+            _same(a, b, f'{where}[{index}]', tolerance=tolerance)
     elif isinstance(left, float):
-        if not math.isclose(left, right, rel_tol=REGENERATION_TOLERANCE, abs_tol=REGENERATION_TOLERANCE):
+        if not math.isclose(left, right, rel_tol=0, abs_tol=tolerance):
             raise ValueError(f'{where}: {left!r} regenerated as {right!r}')
     elif left != right:
         raise ValueError(f'{where}: {left!r} regenerated as {right!r}')
@@ -235,8 +237,12 @@ def _regenerated(original, regenerated) -> str:
         if list(left.columns) != list(right.columns) or len(left) != len(right):
             raise ValueError(f'{original.name}: regenerated schema or cardinality differs')
         for column in left.columns:
+            if ((pd.api.types.is_numeric_dtype(left[column]) or
+                 pd.api.types.is_numeric_dtype(right[column])) and
+                    left[column].dtype != right[column].dtype):
+                raise ValueError(f'{original.name}.{column}: regenerated numeric type differs')
             a, b = left[column].to_numpy(), right[column].to_numpy()
-            if (not np.allclose(a, b, rtol=REGENERATION_TOLERANCE, atol=REGENERATION_TOLERANCE, equal_nan=True)
+            if (not np.allclose(a, b, rtol=0, atol=REGENERATION_TOLERANCE, equal_nan=True)
                     if pd.api.types.is_float_dtype(left[column]) else not (a == b).all()):
                 raise ValueError(f'{original.name}.{column}: regenerated values differ')
     else:
@@ -249,7 +255,7 @@ def compare_regeneration(campaign, regenerated, cfg, frames) -> dict:
 
     Both runs are validated whole and share the run identity; the regenerated keys are exactly
     the predefined seed-0 set. Every pair record, ledger and C0 positional partition is
-    byte-identical to the campaign's, or equal within the §6.5 reproduction tolerance with every
+    byte-identical to the campaign's, or equal within the V3-004 absolute tolerance with every
     identity, count and key exact — a fingerprint hashes float bits, so it is then reported
     through the values it hashes rather than required. Nothing here fits a model.
     """
@@ -274,4 +280,6 @@ def compare_regeneration(campaign, regenerated, cfg, frames) -> dict:
             artifacts[artifact] = _regenerated(campaign/artifact, regenerated/artifact)
     return {'run_id': left['run_id'], 'pair_count': len(expected['pair']),
             'model_count': len(expected['model']), 'tolerance': REGENERATION_TOLERANCE,
+            'comparison_scope': 'identity_and_values',
+            'independent_execution': 'record_command_and_log_evidence',
             'artifacts': artifacts}

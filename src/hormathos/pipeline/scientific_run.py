@@ -20,6 +20,7 @@ import math
 import os
 import platform
 import resource
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -79,6 +80,8 @@ def load_projection(path, fixture: bool):
     if deposited and fixture:
         raise ValueError(f'{path}: --fixture refuses the deposited analytical projection; a '
                          'fixture must not impersonate the scientific configuration')
+    if fixture and cfg.get('spec_version') == 'HEXIS-3.1':
+        raise ValueError(f'{path}: --fixture requires a spec_version distinct from HEXIS-3.1')
     missing = [field for field in PROJECTION_FIELDS if field not in cfg]
     if missing:
         raise ValueError(f'{path}: the analytical projection is missing {missing}')
@@ -177,14 +180,17 @@ def require_clean_producers():
 def load_corpus(corpus_dir):
     """Re-verify the published corpus and return its frames; this *is* the V1 evidence."""
     corpus_dir = Path(corpus_dir)
-    manifest = corpus_run.validate_run(corpus_dir)
-    if 'encode' not in manifest['completed_stages']:
-        raise ValueError(f'{corpus_dir}: the corpus run stopped at {manifest["completed_stages"]}; '
-                         'the descriptive stage needs published sequences and coordinates')
-    frames = {name: pd.read_parquet(corpus_dir / name)
-              for name in ('sequences.parquet', 'coordinates.parquet')}
-    frames['documents.csv'] = pd.read_csv(corpus_dir / 'documents.csv')
-    frames['alphabets.json'] = _read_json(corpus_dir / 'alphabets.json')  # verified with the run
+    with tempfile.TemporaryDirectory(prefix='hormathos-corpus-') as temporary:
+        private = Path(temporary)/'corpus'
+        shutil.copytree(corpus_dir, private, symlinks=True)
+        manifest = corpus_run.validate_run(private)
+        if 'encode' not in manifest['completed_stages']:
+            raise ValueError(f'{corpus_dir}: the corpus run stopped at {manifest["completed_stages"]}; '
+                             'the descriptive stage needs published sequences and coordinates')
+        frames = {name: pd.read_parquet(private / name)
+                  for name in ('sequences.parquet', 'coordinates.parquet')}
+        frames['documents.csv'] = pd.read_csv(private / 'documents.csv')
+        frames['alphabets.json'] = _read_json(private / 'alphabets.json')
     return manifest, frames
 
 
@@ -490,8 +496,7 @@ def publish_stage(output, stage, artifacts, contract, body, *, resume=False, cor
             os.replace(tmp / 'manifest.json', output / 'manifest.json')
         return manifest
     except BaseException:
-        for path in published:
-            path.unlink(missing_ok=True)
+        corpus_run.rollback_uncommitted(output, published)
         raise
     finally:
         lock.unlink(missing_ok=True)

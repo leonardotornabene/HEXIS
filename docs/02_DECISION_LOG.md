@@ -171,3 +171,11 @@ D2–D4 restano attuate da `0dc69b5`.
 - B4: the English version of the research proposal comes with the decision to track it.
 - B5: the index and the roadmap become `00_INDEX.md` and `03_ROADMAP.md`.
 - R1–R4, from the review of the rename before its publication (23 September 2026): the sdist is a closed list equal to the tracked tree (R1); the pipeline runs from a checkout and the wheel alone does not run it, as declared in the README (R2); the per-pair revalidation of the V1 corpus is kept as it is, with its cost recorded in the handoff (R3); Plato's *Ion* is registered as B11, and the Italian left in docstrings and comments is translated (R4).
+
+---
+
+## V3-004 — Pre-V3 audit closure and regeneration tolerance, 2026-09-24
+
+**Status: ADOPTED.** This act records the pre-V3 audit correction before changing the implementation. For §12.2 regeneration, the absolute tolerance is 10⁻⁸ bit per eligible target. A sum of losses over `n` eligible targets has absolute tolerance `n × 10⁻⁸` bit. There is no relative tolerance. Identities, keys, counts and other discrete fields remain exact. This rule applies to JSON and Parquet comparisons; a fingerprint of floating point bytes may differ only when its underlying values satisfy this rule.
+
+Two local directories establish matching identities and values, not how their bytes were produced. Independent execution of the §12.2 commands remains procedural evidence to record during the campaign; a copied directory cannot be identified from the directories alone. No real fit is authorized by this act.

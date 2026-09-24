@@ -1,6 +1,12 @@
 # HORMATHOS handoff — current state (design HEXIS 3.1)
 
-**V0–V2 completed; V3–V5 not attested; no real fit.** Publication of 2026-09-23: the push of the branch `codex/hexis31-realign` at `2ebb3464b871c1f831d0608edba052ccb4b92be9` and of the tags `archive/pre-realign` and `archive/v2.1`; then the merge into `master` (`73df64d`, a merge commit with neither squash nor rebase) and the deletion of the remote branches `g1/pre-audit` (V3-002, E5) and `codex/hexis31-realign`, whose content is in `master`. Active branch: `master`; the realignment started from `5f1ec06afa192c8d0f006d7f39cdb97df72c2983`. On the same day the project was named HORMATHOS (V3-003), published at `c738c73`, and the GitHub repository became `leonardotornabene/HORMATHOS`; the old address redirects. The detailed chronology of the earlier tranches is not repeated here: it is in the Git history and, in its last pre-realignment form, in [archive/docs/HANDOFF.md](../archive/docs/HANDOFF.md).
+**V0–V2 completed; V3–V5 not attested; no real fit.** Publication of 2026-09-23: the push of the branch `codex/hexis31-realign` at `2ebb3464b871c1f831d0608edba052ccb4b92be9` and of the tags `archive/pre-realign` and `archive/v2.1`; then the merge into `master` (`73df64d`, a merge commit with neither squash nor rebase) and the deletion of the remote branches `g1/pre-audit` (V3-002, E5) and `codex/hexis31-realign`, whose content is in `master`. At that point the active branch was `master`; the realignment started from `5f1ec06afa192c8d0f006d7f39cdb97df72c2983`. On the same day the project was named HORMATHOS (V3-003), published at `c738c73`, and the GitHub repository became `leonardotornabene/HORMATHOS`; the old address redirects. The detailed chronology of the earlier tranches is not repeated here: it is in the Git history and, in its last pre-realignment form, in [archive/docs/HANDOFF.md](../archive/docs/HANDOFF.md).
+
+## Pre-V3 audit closure — 24 September 2026 (V3-004)
+
+Commit `2a16a81` on `pre-v3-audit-closure` closes audit findings A–C before the code freeze. `uv run --python 3.12 --no-sync pytest -q` passed **426 tests** in 212.30 seconds. `pytest --collect-only -q` and `pytest -m v31 --collect-only -q` collected the same 426 node IDs; there were no skips or xfails. `uv lock --check` resolved 23 packages without changing `uv.lock`. A separate `run_audit`/`run_encode` invocation with this final source tree regenerated all nine V1 artifacts byte for byte against `results/hexis31/v1`.
+
+The new V2 evidence is in `results/hexis31/v2-pre-v3-audit-2026-09-24`. `scientific_run.validate_run` accepted its manifest (SHA-256 `98b8341dc7e8a2be85c1abeb35ba11ffb428b9da707ea57ba7528b31fd4e7b8f`), run ID `1563452ad4b644d1ec8ea00f38300192f95fad8c4d34761a570a22f5b6a78855`. It records 34 synthetic battery cases, 426 acceptance cases, only the `validation` stage, and empty pair/model keys. No real fit ran. Stop for review before V3.
 
 ## Project name HORMATHOS — 23 September 2026 (V3-003)
 
@@ -135,6 +141,10 @@ uv run python -m hormathos.pipeline.run_descriptive --config config/default.yaml
 # V5
 uv run python -m hormathos.pipeline.run_report --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run> --regenerated-dir results/hexis31/<regen>
 ```
+
+**§12.2 evidence.** The comparison checks run identity, keys and values within V3-004's absolute tolerance. Two local directories do not establish independent execution: `cp -R` is indistinguishable from a genuine rerun by inspection of those directories. Record the separately executed commands and their logs as procedural campaign evidence.
+
+**Recovery after SIGTERM/SIGHUP.** First confirm the process has exited (`ps -p <pid>`). Compare the directory entries with `manifest.json`'s artifact list; keep every artifact listed by a valid manifest. Remove only `.lock`, `.stage-*`, and artifacts absent from that list, after identifying them as interrupted output. Then run `scientific_run.validate_run` on the directory; use `--resume` only if it validates. If no valid manifest remains, reconcile the directory manually before starting a new run. Do not remove a listed artifact merely because the process reported an exception after publication.
 
 **Accepted cost (V3-003, R3).** Each published pair revalidates the V1 corpus before publication (`unchanged` in `run_descriptive`, 6.8 s per call measured on 23 September) and the whole run: about 5 minutes for the 42 pairs of V3 and about 55 minutes for the 490 of V4, plus the revalidation of the run, which grows with it (the comment in the code estimates about 2 hours in all). It stays as it is: after V3, a change would be a new code identity and V3 would be redone.
 

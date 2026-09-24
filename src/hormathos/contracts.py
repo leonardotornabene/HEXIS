@@ -60,8 +60,10 @@ def load_contracts(root=None):
         sums = json.loads((root / 'SHA256SUMS.json').read_bytes())
         # The delivery has exactly these files; no unreviewed second contract.
         names = {Path(name).name for name in sums if not name.startswith('../')} | {'SHA256SUMS.json'}
-        if {p.name for p in root.iterdir()} != names:
-            raise ValueError(f'{root}: missing or extra contract files')
+        present = {p.name for p in root.iterdir()}
+        if present != names:
+            raise ValueError(f'{root}: extra {sorted(present - names)}, missing '
+                             f'{sorted(names - present)} contract files')
         for name, sha in {**sums, **lock['contracts'], lock['plan']['path']: lock['plan']['sha256']}.items():
             if hashlib.sha256((root / name).read_bytes()).hexdigest() != sha:
                 raise ValueError(f'{root / name}: digest mismatch')

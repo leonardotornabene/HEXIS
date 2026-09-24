@@ -25,9 +25,16 @@ _XPASSED: set[str] = set()
 _ROOT = Path()
 
 
+class _CollectionGate:
+    def pytest_collectreport(self, report):
+        if report.skipped:
+            _COLLECTION_SKIPPED.add(report.nodeid)
+
+
 def pytest_configure(config):
     global _ROOT
     _ROOT = Path(config.rootpath)
+    config.pluginmanager.register(_CollectionGate(), name="hormathos-collection-gate")
     # Only the HORMATHOS repository has this trust anchor. Pytester copies this
     # conftest into synthetic projects, which must remain free to define tiny gates.
     if (_ROOT / "src" / "hormathos").is_dir():
@@ -94,31 +101,6 @@ def _is_gated(item) -> bool:
 def pytest_assertion_pass(item, lineno, orig, expl):
     if _is_gated(item):
         _ASSERTED.add(item.nodeid)
-
-
-def _source_declares_gate(nodeid: str) -> bool:
-    path = Path(nodeid.split("::", 1)[0])
-    if not path.is_absolute():
-        path = _ROOT / path
-    if path.suffix != ".py" or not path.is_file():
-        return False
-    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-    return any(
-        isinstance(node, ast.Attribute)
-        and node.attr in GATE_MARKERS
-        and (
-            isinstance(node.value, ast.Name)
-            and node.value.id == "mark"
-            or isinstance(node.value, ast.Attribute)
-            and node.value.attr == "mark"
-        )
-        for node in ast.walk(tree)
-    )
-
-
-def pytest_collectreport(report):
-    if report.skipped and _source_declares_gate(report.nodeid):
-        _COLLECTION_SKIPPED.add(report.nodeid)
 
 
 def pytest_runtest_logreport(report):

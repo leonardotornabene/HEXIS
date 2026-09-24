@@ -6,6 +6,8 @@ in `conftest.py` at collection, not read off the summary by eye. The named inven
 `tests/test_v31_enforcement.py` must match the actual collection in both directions.
 The comparison with the deposited contract does not replace the CTW tests, and the four
 deposited CTW fixtures are identified, not executed.
+The named inventory also pins reviewed case counts for every parametrized test; removing one
+parameter case fails acceptance.
 
 ## Obligations T01–T30 of §12
 
@@ -59,6 +61,7 @@ deposited CTW fixtures are identified, not executed.
 | `test_v31_figures.py` | The five figures of §11.6, derived from the verified tables |
 | `test_v31_docs.py` | Active authority, deposit integrity, archive at the bytes of `5f1ec06` file by file, identity of the three instruction copies, absence of retired imports; the package is `hormathos` and `hexis` is not importable, and the sdist is exactly the tracked tree (V3-003) |
 | `test_v31_enforcement.py`, `test_gate_inventory_anchor.py` | The gate itself: exhaustive inventory in both directions, refusal of skip, xfail, xpass even when not strict, missing or dead assert, `.pyc` without the hook, test without marker, missing or unmarked anchor, archive never collected, not even from the root |
+| `test_v31_pre_v3_audit.py` | Pre-V3 audit regressions: publication commit, named extras, plotting rounding, regeneration tolerance and exact Parquet identities, raw aliases, fixtures, block overlap, private corpus read, lexical order, staged parser input, descriptive context and JUnit outcomes |
 
 ## Map of the previous tests (§13.2: kept, replaced, retired)
 

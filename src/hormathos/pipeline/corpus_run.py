@@ -40,7 +40,9 @@ def check_output_locations(paths, *, data_root: Path) -> None:
     for path in map(Path, paths):
         resolved = path.resolve()
         for label, root in roots:
-            if resolved == root or root in resolved.parents:
+            if (resolved == root or root in resolved.parents or any(
+                    root.exists() and ancestor.exists() and ancestor.samefile(root)
+                    for ancestor in (path, *path.parents))):
                 raise ValueError(
                     f"output destination {path} resolves to {resolved}, inside the "
                     f"{label} {root}: raw data is immutable"
@@ -179,6 +181,19 @@ def _read_json(path):
     return json.loads(path.read_bytes(),object_pairs_hook=unique,parse_constant=nonfinite)
 
 
+def rollback_uncommitted(output, published):
+    """Remove only links absent from the manifest currently on disk."""
+    try:
+        listed = set(_read_json(output/'manifest.json')['artifacts'])
+    except FileNotFoundError:
+        listed = set()
+    except (OSError, ValueError, KeyError, TypeError):
+        return  # An unreadable manifest needs manual recovery; preserve its possible artifacts.
+    for path in published:
+        if path.name not in listed:
+            path.unlink(missing_ok=True)
+
+
 def validate_run(output, *, locked=False):
     output=Path(output)
     try:
@@ -192,8 +207,10 @@ def validate_run(output, *, locked=False):
         if m['run_id']!=run_identity(m['run_contract']):
             raise ValueError('manifest: run identity mismatch')
         names=set(m['artifacts'])|{'manifest.json'}|({'.lock'} if locked else set())
-        if {p.name for p in output.iterdir()}!=names:
-            raise ValueError('run: missing/extra artifacts or interrupted temporary stage')
+        present={p.name for p in output.iterdir()}
+        if present!=names:
+            raise ValueError(f'run: extra {sorted(present-names)}, missing {sorted(names-present)} '
+                             'artifacts or interrupted temporary stage')
         if m['schema_version']!='hexis-corpus-manifest-1' or m['scientific_complete'] is not False:
             raise ValueError('manifest: unsupported schema/scientific status')
         stages=m['completed_stages']
@@ -280,8 +297,7 @@ def publish_stage(output, stage, artifacts, contract, metadata, *, before_publis
             os.replace(tmp/'manifest.json',output/'manifest.json')
         return manifest
     except BaseException:
-        for path in published:
-            path.unlink(missing_ok=True)
+        rollback_uncommitted(output, published)
         raise
     finally:
         lock.unlink(missing_ok=True)

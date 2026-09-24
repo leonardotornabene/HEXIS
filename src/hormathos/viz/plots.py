@@ -48,6 +48,11 @@ def _spread(axis, positions, rows, *, label=None, color='black'):
     """Mean marker and the computational min–max across seeds, read from seed_summaries."""
     means = rows['mean'].to_numpy(dtype=float)
     low, high = means - rows['min'].to_numpy(dtype=float), rows['max'].to_numpy(dtype=float) - means
+    tolerance = np.spacing(np.maximum.reduce((np.abs(means), np.abs(rows['min'].to_numpy(dtype=float)),
+                                              np.abs(rows['max'].to_numpy(dtype=float)))))
+    if np.any(low < -tolerance) or np.any(high < -tolerance):
+        raise ValueError('mean lies outside the min/max range')
+    low, high = np.maximum(low, 0), np.maximum(high, 0)
     axis.errorbar(positions, means, yerr=[low, high], fmt='D', color=color, capsize=3, label=label)
 
 

@@ -156,6 +156,9 @@ def sample_fold(sequences, *, variant, blocks, held_block, q, seed) -> pd.DataFr
     members and every `inventory_only` document are excluded before the draw.
     The record order of `sequences` is irrelevant: §5.2 step 1 sorts.
     """
+    members = [doc for docs in blocks.values() for doc in docs]
+    if len(members) != len(set(members)):
+        raise ValueError('a document belongs to multiple blocks')
     keys = {name: block_key(docs) for name, docs in blocks.items()}
     if held_block not in keys:
         raise ValueError(f'held_block={held_block!r}: not one of {sorted(keys)}')

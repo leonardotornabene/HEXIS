@@ -136,6 +136,10 @@ uv run python -m hormathos.pipeline.run_descriptive --config config/default.yaml
 uv run python -m hormathos.pipeline.run_report --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/<run> --regenerated-dir results/hexis31/<regen>
 ```
 
+**§12.2 evidence.** The comparison checks run identity, keys and values within V3-004's absolute tolerance. Two local directories do not establish independent execution: `cp -R` is indistinguishable from a genuine rerun by inspection of those directories. Record the separately executed commands and their logs as procedural campaign evidence.
+
+**Recovery after SIGTERM/SIGHUP.** First confirm the process has exited (`ps -p <pid>`). Compare the directory entries with `manifest.json`'s artifact list; keep every artifact listed by a valid manifest. Remove only `.lock`, `.stage-*`, and artifacts absent from that list, after identifying them as interrupted output. Then run `scientific_run.validate_run` on the directory; use `--resume` only if it validates. If no valid manifest remains, reconcile the directory manually before starting a new run. Do not remove a listed artifact merely because the process reported an exception after publication.
+
 **Accepted cost (V3-003, R3).** Each published pair revalidates the V1 corpus before publication (`unchanged` in `run_descriptive`, 6.8 s per call measured on 23 September) and the whole run: about 5 minutes for the 42 pairs of V3 and about 55 minutes for the 490 of V4, plus the revalidation of the run, which grows with it (the comment in the code estimates about 2 hours in all). It stays as it is: after V3, a change would be a new code identity and V3 would be redone.
 
 ## Open obligations

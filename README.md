@@ -1,35 +1,21 @@
 # HORMATHOS
 
-*Hormathos* (ὁρμαθός) is Greek for a chain of things hanging one from another: in Plato's *Ion* (533e), the long chain of iron rings below a magnet, whose force passes through each ring to the next. Here each annotation symbol is predicted from its predecessors in the same sentence, and the chain breaks where the sentence ends.
+*Hormathos* (ὁρμαθός) means a chain of things hanging one from another. In Plato's *Ion* (533e), it is the chain of iron rings suspended from a magnet. The name reflects the question behind this project: how much does a symbol's place in a sentence help us predict it from the symbols that came before? At the end of each sentence, the chain of predictions starts again.
 
-A descriptive study of within-sentence order in the morphosyntactic annotations of the finite Greek corpus UD Perseus r2.18. HORMATHOS implements the deposited HEXIS 3.1 design: the authority is the [deposited plan](docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md) with its byte-identified JSON contracts, adopted by [V3-001](docs/02_DECISION_LOG.md); [V3-002](docs/02_DECISION_LOG.md) realigned the repository and governs its publication; [V3-003](docs/02_DECISION_LOG.md) gave the project its name. `hexis` survives only as the name of the design and in the identifiers the contract fixes, including the distribution name that the contract-fixed `uv.lock` records; the package is `hormathos`.
+HORMATHOS studies the order of grammatical and syntactic annotations in a defined corpus of ancient Greek texts. It asks whether patterns learned from other texts make the attested order more predictable than a comparison in which the same annotations are shuffled *within each sentence*. The study measures a difference in predictive performance; it does not claim to identify a single linguistic cause.
 
-## Status
+## How the project developed
 
-**V0–V2 completed; V3–V5 not attested; no real fit has ever been run.** Implemented and verified on synthetic and analytical fixtures: the corpus reader and encoding, the frozen CTW, sampling with the contract RNG and the shuffle, the four losses with G and Q, diagnostics, R1, atomic persistence with resume, the report tables and the five figures. The real corpus has been read and encoded once (V1), and its nine artifacts are reproducible byte for byte. The campaign, the final contrasts and the results belong to V3–V5 and do not exist. Work stops for review before V3.
+The work began with a question about Homeric composition and the possibilities of information theory. It then considered a comparison between hexameter and prose. Limited comparable annotated data, uneven coverage of authors and works, and too few independent units made broad claims about composition or genre difficult to support. The present design therefore asks a narrower question: how large and how consistent is the predictive advantage of attested order across the texts available, and how sensitive is it to reasonable choices in the analysis? Hexameter and prose remain a descriptive comparison within that study.
 
-The active tree holds the 3.1 path only. The history — v2.1, the G0/G1 gates, `candidates/`, the statistical utilities, the previous proposal, the pre-audit results — is preserved byte for byte under `archive/`, at the path it had at `5f1ec06`, with the status of each item declared in [V3-002](docs/02_DECISION_LOG.md); the archive is not an authority and is never executed.
+The project is now called **HORMATHOS**. **HEXIS 3.1** remains the name of the [deposited research design](docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md) that governs it. Earlier approaches are preserved in the [archive](archive/); the active repository follows the deposited design. The [decision log](docs/02_DECISION_LOG.md) records that transition.
 
-## Usage
+## Current status
 
-```bash
-uv sync --frozen
-uv run pytest
-uv run python -m hormathos.pipeline.run_tree_validation --config config/default.yaml
-uv run python -m hormathos.pipeline.run_audit  --config config/default.yaml --data-root data/raw/UD_Ancient_Greek-Perseus --output-dir results/hexis31/<new>
-uv run python -m hormathos.pipeline.run_encode --config config/default.yaml --data-root data/raw/UD_Ancient_Greek-Perseus --output-dir results/hexis31/<new>
-```
+The corpus has been acquired and encoded, and the prediction method and analysis workflow have been checked against analytical and synthetic cases. A first technical run on the real corpus, using one computational seed, has also been completed and reproduced byte for byte. It shows that the workflow can execute and be verified; it is not the completed study. The planned runs across all seeds, the final comparisons and the research report are still pending review and completion. The [handoff](docs/HANDOFF.md) gives the precise technical record.
 
-The pipeline runs from a checkout of this repository: it reads the deposit under `docs/contracts/`, the configuration and, for real fits, the Git state of the tracked sources (§11.3). The wheel carries only the `hormathos` package and cannot run the pipeline on its own. The corpus is not included: `data/raw` is immutable, ignored by Git and never redistributed here. A run's destination must be new; a second launch of the same stage is refused, and no write is implicit. `run_descriptive` and `run_report` are implemented and verified on fixtures: on the deposited configuration they run from V3 onwards, with frozen code.
+## Scope and materials
 
-Active acceptance: `uv run pytest` and `uv run pytest -m v31` collect the same tests, all marked, with no skip and one executed assert each. Verbatim counts are in the [handoff](docs/HANDOFF.md); the map and the obligations are in the [inventory](docs/TEST_INVENTORY.md).
+The study inventories 17 documents from UD Ancient Greek Perseus r2.18. Eleven documents in seven blocks enter the predictive analysis; six others help define the annotation inventory but are never used to train or score the models. Predictions use earlier retained annotations in the same sentence, and performance is reported as predictive loss in bits per symbol. Results will be descriptive: computational repetitions are not independent samples of ancient texts, and the study does not report population-level significance tests.
 
-## Scientific scope
-
-Seventeen documents are censused: eleven primary documents in seven blocks, and six inventory-only documents that are never trained on or scored. The alphabet merges ADV and PART globally, in three variants of size 100, 105 and 11. Targets have at least four predecessors in the same sentence, and there is no history across sentences. The measures are out-of-training predictive losses in bits per symbol: no inference, no p-values, no intervals. Seeds are computational replicates, not population uncertainty, and the eleven documents are not eleven independent replicates.
-
-## Licences and data
-
-Licences are set by the publication act in [V3-002](docs/02_DECISION_LOG.md), and nowhere else; [LICENSE](LICENSE) covers the code and refers to the act for documents and data. The raw data are not redistributed by this repository. [Active bibliography](docs/BIBLIOGRAPHY.md).
-
-Python 3.12 via uv, with the lock preserved. The 3.1 research proposal (§17.1) has not been deposited yet. The project is written in English. The deposited plan and its attachments, and the V3-001 and V3-002 acts, keep their Italian originals, which govern and are never rewritten; English translations of them, when added, are companions without authority.
+The raw corpus is not included or redistributed here. The pipeline runs from a checkout of this repository; setup, validation and run instructions are in the [handoff](docs/HANDOFF.md) and [roadmap](docs/03_ROADMAP.md). The [bibliography](docs/BIBLIOGRAPHY.md) lists the project's active sources. [LICENSE](LICENSE) and the [publication decision](docs/02_DECISION_LOG.md) specify the terms for code, documents and data.

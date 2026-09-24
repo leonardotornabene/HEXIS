@@ -442,18 +442,7 @@ def publish_stage(output, stage, artifacts, contract, body, *, resume=False, cor
         raise ValueError(f'manifest body: {sorted(body)}, expected keys/checks/evidence/metadata')
     if any(Path(name).name != name or name in ('manifest.json', '.lock') for name in artifacts):
         raise ValueError('unsafe or reserved artifact name')
-    output.parent.mkdir(parents=True, exist_ok=True)
-    created = False
-    try:
-        output.mkdir()
-        created = True
-    except FileExistsError:
-        pass
-    lock = output / '.lock'
-    with lock.open('x'):
-        pass
-    published = []
-    try:
+    with corpus_run.reserved(output) as (created, published):
         prior = validate_run(output, locked=True) if not created else None
         stages = list(prior['completed_stages']) if prior else []
         if prior:
@@ -469,39 +458,18 @@ def publish_stage(output, stage, artifacts, contract, body, *, resume=False, cor
         if stage == 'descriptive' and contract['spec_version'] == 'HEXIS-3.1' and 'validation' not in stages:
             raise ValueError('V2 validation is required before any real fit')
         old = dict(prior['artifacts']) if prior else {}
-        artifact_records = dict(old)
-        with tempfile.TemporaryDirectory(prefix='.stage-', dir=output) as tmp:
-            tmp = Path(tmp)
-            for name, value in artifacts.items():
-                path = tmp / name
-                write_artifact(path, value)
-                artifact_records[name] = artifact_record(path)
-                if name in old:
-                    compare(artifact_records[name], old[name], f'existing/{name}')
-                _verify_roundtrip(path, value)
-            if before_publish is not None:
-                before_publish()
-            manifest = {'schema_version': SCHEMA, 'run_id': digest(contract),
-                        'run_contract': contract,
-                        'completed_stages': stages if stage in stages else [*stages, stage],
-                        'keys': body['keys'], 'artifacts': artifact_records,
-                        'evidence': body['evidence'],
-                        'checks': {**(prior['checks'] if prior else {}), **body['checks']},
-                        'metadata': {**(prior['metadata'] if prior else {}), **body['metadata']}}
-            write_artifact(tmp / 'manifest.json', manifest)
-            for name in artifacts:
-                if name not in old:
-                    os.link(tmp / name, output / name)
-                    published.append(output / name)
-            os.replace(tmp / 'manifest.json', output / 'manifest.json')
-        return manifest
-    except BaseException:
-        corpus_run.rollback_uncommitted(output, published)
-        raise
-    finally:
-        lock.unlink(missing_ok=True)
-        if created and not any(output.iterdir()):
-            output.rmdir()
+
+        def manifest(records):
+            return {'schema_version': SCHEMA, 'run_id': digest(contract),
+                    'run_contract': contract,
+                    'completed_stages': stages if stage in stages else [*stages, stage],
+                    'keys': body['keys'], 'artifacts': records,
+                    'evidence': body['evidence'],
+                    'checks': {**(prior['checks'] if prior else {}), **body['checks']},
+                    'metadata': {**(prior['metadata'] if prior else {}), **body['metadata']}}
+        return corpus_run.stage_artifacts(output, artifacts, old, published, write=write_artifact,
+                                          record=artifact_record, verify=_verify_roundtrip,
+                                          build_manifest=manifest, before_publish=before_publish)
 
 
 def peak_rss_bytes():

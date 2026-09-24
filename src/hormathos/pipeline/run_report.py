@@ -411,14 +411,6 @@ def check_positions(output, record, cfg, coordinates):
     return frame, eligible
 
 
-def reconstruct(frame, eligible) -> pd.DataFrame:
-    """Step 6 for C0: losses -> documents, through the coordinate dictionary (§11.5)."""
-    joined = scores.pair_positions(frame, eligible[['slot_uid', 'doc_id', 'available_past']])
-    joined = joined.assign(doc_id=joined['doc_id'].astype(str),
-                           past_band=joined['available_past'].map(scores.past_band))
-    return scores.aggregate(joined, keys=['doc_id'])
-
-
 # --- one aggregation -----------------------------------------------------------
 
 def document_scores(records) -> pd.DataFrame:

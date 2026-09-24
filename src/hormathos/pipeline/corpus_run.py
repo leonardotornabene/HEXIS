@@ -232,6 +232,77 @@ def validate_run(output, *, locked=False):
         raise ValueError(f'{output}: unreadable/corrupt run: {exc}') from exc
 
 
+@contextmanager
+def reserved(output):
+    """Exclusive reservation of `output` for one stage publication.
+
+    Yields whether the directory was created here and the list of links the stage
+    publishes. On any failure only links absent from the manifest on disk are removed;
+    the lock always goes, and so does a directory created here and left empty.
+    """
+    output.parent.mkdir(parents=True, exist_ok=True)
+    created = False
+    try:
+        output.mkdir()
+        created = True
+    except FileExistsError:
+        pass
+    lock = output / '.lock'
+    with lock.open('x'):
+        pass
+    published = []
+    try:
+        yield created, published
+    except BaseException:
+        rollback_uncommitted(output, published)
+        raise
+    finally:
+        lock.unlink(missing_ok=True)
+        if created and not any(output.iterdir()):
+            output.rmdir()
+
+
+def stage_artifacts(output, artifacts, old, published, *, write, record, verify, build_manifest,
+                    before_publish=None):
+    """Write and read back every temporary, link the new ones, replace the manifest last.
+
+    Atomic hard-link publication refuses destination collisions even between a
+    preflight and publication; only the existing manifest is atomically replaced.
+    """
+    records = dict(old)
+    with tempfile.TemporaryDirectory(prefix='.stage-', dir=output) as tmp:
+        tmp = Path(tmp)
+        for name, value in artifacts.items():
+            path = tmp / name
+            write(path, value)
+            records[name] = record(path)
+            if name in old:
+                compare(records[name], old[name], f'existing/{name}')
+            verify(path, value)
+        if before_publish is not None:
+            before_publish()
+        manifest = build_manifest(records)
+        write(tmp / 'manifest.json', manifest)
+        for name in artifacts:
+            if name not in old:
+                os.link(tmp / name, output / name)
+                published.append(output / name)
+        os.replace(tmp / 'manifest.json', output / 'manifest.json')
+    return manifest
+
+
+def _verify_roundtrip(path, value):
+    """Validate round-trip content, independently of its recorded hash."""
+    if path.suffix == '.parquet':
+        pd.testing.assert_frame_equal(pd.read_parquet(path), value, check_dtype=False,
+                                      check_categorical=False)
+    elif path.suffix == '.json':
+        compare(json.loads(path.read_bytes()), value, f'roundtrip/{path.name}')
+    elif path.suffix == '.csv':
+        if pd.read_csv(path).to_csv(index=False) != pd.read_csv(io.StringIO(value.to_csv(index=False))).to_csv(index=False):
+            raise ValueError(f'{path.name}: CSV round-trip mismatch')
+
+
 def publish_stage(output, stage, artifacts, contract, metadata, *, before_publish=None, data_root=None):
     """Exclusive stage reservation; verify temporaries, publish manifest last.
 
@@ -245,64 +316,22 @@ def publish_stage(output, stage, artifacts, contract, metadata, *, before_publis
         raise ValueError(f'unknown stage {stage}')
     if any(Path(name).name!=name or name in ('manifest.json','.lock') for name in artifacts):
         raise ValueError('unsafe/reserved artifact name')
-    output.parent.mkdir(parents=True,exist_ok=True)
-    created=False
-    try:
-        output.mkdir(); created=True
-    except FileExistsError:
-        pass
-    lock=output/'.lock'
-    with lock.open('x'):
-        pass
-    published=[]
-    try:
+    with reserved(output) as (created,published):
         prior=validate_run(output,locked=True) if not created else None
         if prior:
             compare(contract,prior['run_contract'],'run_contract')
             if stage in prior['completed_stages']:
                 raise FileExistsError(f'{output}: {stage} already complete; outputs immutable')
-        old_records=dict(prior['artifacts']) if prior else {}
-        records=dict(old_records)
-        with tempfile.TemporaryDirectory(prefix='.stage-',dir=output) as tmp:
-            tmp=Path(tmp)
-            for name,value in artifacts.items():
-                path=tmp/name
-                write_artifact(path,value)
-                records[name]=artifact_record(path)
-                if name in old_records:
-                    compare(records[name],old_records[name],f'existing/{name}')
-                # Validate round-trip content, independently of its recorded hash.
-                if path.suffix=='.parquet':
-                    restored=pd.read_parquet(path)
-                    pd.testing.assert_frame_equal(restored,value,check_dtype=False,check_categorical=False)
-                elif path.suffix=='.json':
-                    compare(json.loads(path.read_bytes()),value,f'roundtrip/{name}')
-                elif path.suffix=='.csv':
-                    if pd.read_csv(path).to_csv(index=False)!=pd.read_csv(io.StringIO(value.to_csv(index=False))).to_csv(index=False):
-                        raise ValueError(f'{name}: CSV round-trip mismatch')
-            if before_publish is not None:
-                before_publish()
-            completed=['audit','encode'] if stage=='encode' else ['audit']
-            manifest={'schema_version':'hexis-corpus-manifest-1','run_id':run_identity(contract),
-                      'run_contract':contract,'completed_stages':completed,
-                      'corpus_complete':stage=='encode','scientific_complete':False,
-                      'artifacts':records,'metadata':metadata,
-                      'checks':{'stage_artifacts_roundtrip':'passed', 'stage':stage,
-                                'contract_and_input_checks':metadata.get('checks',{})}}
-            write_artifact(tmp/'manifest.json',manifest)
-            for name in artifacts:
-                if name not in old_records:
-                    os.link(tmp/name,output/name)
-                    published.append(output/name)
-            os.replace(tmp/'manifest.json',output/'manifest.json')
-        return manifest
-    except BaseException:
-        rollback_uncommitted(output, published)
-        raise
-    finally:
-        lock.unlink(missing_ok=True)
-        if created and not any(output.iterdir()):
-            output.rmdir()
+        completed=['audit','encode'] if stage=='encode' else ['audit']
+        manifest=lambda records:{'schema_version':'hexis-corpus-manifest-1','run_id':run_identity(contract),
+                                 'run_contract':contract,'completed_stages':completed,
+                                 'corpus_complete':stage=='encode','scientific_complete':False,
+                                 'artifacts':records,'metadata':metadata,
+                                 'checks':{'stage_artifacts_roundtrip':'passed', 'stage':stage,
+                                           'contract_and_input_checks':metadata.get('checks',{})}}
+        return stage_artifacts(output,artifacts,dict(prior['artifacts']) if prior else {},published,
+                               write=write_artifact,record=artifact_record,verify=_verify_roundtrip,
+                               build_manifest=manifest,before_publish=before_publish)
 
 
 def _code_identity():

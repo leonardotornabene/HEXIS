@@ -295,6 +295,10 @@ REQUIRED['test_v31_pre_v3_audit.py'] = [
     'test_rollback_keeps_artifacts_when_the_manifest_is_unreadable',
     'test_raw_alias_is_rejected_even_when_resolve_misses_it',
 ]
+REQUIRED['test_v31_pre_v4_review.py'] = [
+    'test_sequence_eligibility_follows_the_configured_min_available_past',
+    'test_scoring_hands_the_model_only_the_last_depth_symbols',
+]
 REQUIRED['test_v31_enforcement.py'] += [
     'test_collection_skip_without_marker_fails_the_gate',
     'test_nested_conftest_collection_skip_fails_the_gate',

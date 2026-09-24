@@ -114,7 +114,9 @@ def pooled_score_core(original, shuffled, *, model_original, model_shuffled,
                    'shuffled_origin_slot_uid': right['source_slot_uids'][position]}
             for arm, symbols in (('original', left['symbols']), ('shuffled', right['symbols'])):
                 started = time.perf_counter()
-                model, target, history = models[arm], symbols[position], symbols[:position]
+                # Only the last D symbols decide the path (§6.4): a bounded window, not the prefix.
+                model, target = models[arm], symbols[position]
+                history = symbols[max(0, position - depth):position]
                 record = diagnostics.resolved(model.mixture(history))
                 row[f'loss_ctw_{arm}'] = -math.log2(model.predict_proba(history)[target])
                 row[f'loss_root_{arm}'] = -math.log2(roots[arm][target])

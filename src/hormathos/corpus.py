@@ -292,10 +292,10 @@ def verify_sequences(coords, seqs, cfg, alphabets):
             if row.role!=r['role'] or row.regime!=r['regime'] or row.group!=group or block!=r['dependence_block']:
                 raise ValueError(f'{row.sent_id}: role/regime mismatch')
         lengths=s['symbols'].map(len)
-        if not lengths.eq(s['encoded_length']).all() or not (lengths-4).clip(lower=0).eq(s['eligible_count']).all():
+        if not lengths.eq(s['encoded_length']).all() or not (lengths-cfg['min_available_past']).clip(lower=0).eq(s['eligible_count']).all():
             raise ValueError('sequence length/eligibility mismatch')
         ranks=c.groupby('sent_id',sort=False,observed=True).cumcount()
-        if not ranks.eq(c['encoded_index']).all() or not ranks.eq(c['available_past']).all() or not ranks.ge(4).eq(c['eligible']).all():
+        if not ranks.eq(c['encoded_index']).all() or not ranks.eq(c['available_past']).all() or not ranks.ge(cfg['min_available_past']).eq(c['eligible']).all():
             raise ValueError('coordinates: index/history/eligibility mismatch')
         try:
             expected=s.loc[lengths.gt(0),SOURCE_COLUMNS+['symbols','raw_token_ids','slot_uids']].explode(['symbols','raw_token_ids','slot_uids']).rename(columns={'symbols':'symbol_id','raw_token_ids':'raw_token_id','slot_uids':'slot_uid'}).reset_index(drop=True)

@@ -1,0 +1,23 @@
+HEAD ff0388a53985bf836b7eb3e700c6ba097cc13d3f; $ uv run --no-sync python results/hexis31/v3-seed0-v3006-logs/checks.py validate results/hexis31/v3-seed0-v3006 results/hexis31/v3-seed0-v3006-regeneration
+current run_id 6aa1b719e274116c5660790cf9b2ad73c7e1853cec672688e1dc27d6b7d60e05
+results/hexis31/v3-seed0-v3006
+ manifest_sha256 b6bb403d01d345ecb3a79ff58f004ea763a3b1690e729b5253b009707085c611
+ run_id 6aa1b719e274116c5660790cf9b2ad73c7e1853cec672688e1dc27d6b7d60e05 stages ['validation', 'descriptive'] evidence ['V0', 'V1', 'V2', 'V3']
+ pairs 42 models 84 seeds [0] cells {'C0': 7, 'D12': 7, 'a_total1': 7, 'oth': 7, 'q_half': 7, 'upos': 7}
+ V3 pair_count 42 model_count 84 artifacts 70 scientific True
+ verify_evidence(current context) OK; verify_technical OK
+ checks {'acceptance_cases': 431, 'deposited_configuration': True, 'new_model_fits': 56, 'positions_cell': 'C0', 'published_partitions': 28, 'reused_partitions': 14, 'scientific': False, 'validation_cases': 34}
+ metadata selection all resume True tracked_dirty False implementation_commit ff0388a53985bf836b7eb3e700c6ba097cc13d3f
+ fit_s 60.11 eval_s 46.17 max_peak_rss 1411035136 (None)
+ disk_bytes 29366776 files 74
+results/hexis31/v3-seed0-v3006-regeneration
+ manifest_sha256 72b6cdee3220cbea97ba0bfb969bd2f3b871f244e62a8f3da3182d6d84c3790a
+ run_id 6aa1b719e274116c5660790cf9b2ad73c7e1853cec672688e1dc27d6b7d60e05 stages ['validation', 'descriptive'] evidence ['V0', 'V1', 'V2', 'V3']
+ pairs 42 models 84 seeds [0] cells {'C0': 7, 'D12': 7, 'a_total1': 7, 'oth': 7, 'q_half': 7, 'upos': 7}
+ V3 pair_count 42 model_count 84 artifacts 70 scientific True
+ verify_evidence(current context) OK; verify_technical OK
+ checks {'acceptance_cases': 431, 'deposited_configuration': True, 'new_model_fits': 84, 'positions_cell': 'C0', 'published_partitions': 42, 'reused_partitions': 0, 'scientific': False, 'validation_cases': 34}
+ metadata selection all resume False tracked_dirty False implementation_commit ff0388a53985bf836b7eb3e700c6ba097cc13d3f
+ fit_s 61.28 eval_s 45.87 max_peak_rss 1560363008 (None)
+ disk_bytes 29366805 files 74
+exit 0

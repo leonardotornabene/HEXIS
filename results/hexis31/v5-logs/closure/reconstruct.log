@@ -1,0 +1,23 @@
+/Users/runner/work/crossbow/crossbow/arrow/cpp/src/arrow/util/cpu_info.cc:181: IOError: sysctlbyname failed for 'hw.l1dcachesize'. Detail: [errno 1] Operation not permitted
+/Users/runner/work/crossbow/crossbow/arrow/cpp/src/arrow/util/cpu_info.cc:181: IOError: sysctlbyname failed for 'hw.l2cachesize'. Detail: [errno 1] Operation not permitted
+/Users/runner/work/crossbow/crossbow/arrow/cpp/src/arrow/util/cpu_info.cc:181: IOError: sysctlbyname failed for 'hw.l3cachesize'. Detail: [errno 1] Operation not permitted
+Matplotlib is building the font cache; this may take a moment.
+byte-identical root_distributions.csv
+byte-identical jsd_pairs.csv
+byte-identical jsd_centroids.csv
+byte-identical jsd_contributions.csv
+byte-identical document_scores.csv
+byte-identical block_pairs.csv
+byte-identical aggregation_weights.csv
+byte-identical contrasts.csv
+byte-identical seed_summaries.csv
+byte-identical sensitivity_pairs.csv
+byte-identical fragment_diagnostics.csv
+byte-identical model_diagnostics.csv
+byte-identical arm_diagnostics.csv
+byte-identical figure__corpus_annotation.svg
+byte-identical figure__block_document_profiles.svg
+byte-identical figure__sensitivities_two_weights.svg
+byte-identical figure__R1.svg
+byte-identical figure__supports_mixture_masses.svg
+PASS: 13 tables and 5 figures reconstructed byte for byte; no fits

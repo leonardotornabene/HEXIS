@@ -1,0 +1,14 @@
+V3-006 rerun of V2 and seed 0, HEAD ff0388a53985bf836b7eb3e700c6ba097cc13d3f
+Environment for each command: UV_NO_CACHE=1 MPLCONFIGDIR=/private/tmp/claude-502/-Users-leonardoTornabene-Projects-hormathos/f9221339-50ec-4d60-8f5b-addc61ff74fb/scratchpad/mpl
+Python: uv run --no-sync (Python 3.12.13); lock SHA-256 33db43b00bcb21ab12aedf6dcc4257764770bff0115dc0d1dfab6e5ea89876bf
+Tracked tree clean at start; untracked: ?? docs/proposal/ ?? scripts/ 
+Started 2026-09-24T19:05:29Z
+
+uv run --no-sync python -m hormathos.pipeline.run_tree_validation --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/v3-seed0-v3006
+uv run --no-sync python -m hormathos.pipeline.run_descriptive --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/v3-seed0-v3006 --cell C0 --seed 0
+uv run --no-sync python -m hormathos.pipeline.run_descriptive --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/v3-seed0-v3006 --cell D12 --seed 0 --resume
+uv run --no-sync python -m hormathos.pipeline.run_descriptive --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/v3-seed0-v3006 --cell all --seed 0 --resume
+
+uv run --no-sync python -m hormathos.pipeline.run_tree_validation --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/v3-seed0-v3006-regeneration
+uv run --no-sync python -m hormathos.pipeline.run_descriptive --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/v3-seed0-v3006-regeneration --seed 0
+Finished 2026-09-24T19:31:38Z

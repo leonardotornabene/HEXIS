@@ -1,0 +1,8 @@
+V5 of 2026-09-25 on results/hexis31/v3-seed0-v3006, HEAD 1cf3bda32180e1acf7f28d05946d93f05b7d8c70
+
+01-report.log (run by the owner; tracked tree clean: only ?? docs/proposal/ and ?? scripts/)
+mkdir -p results/hexis31/v5-logs && ls -d results/hexis31/v5-logs
+UV_NO_CACHE=1 caffeinate -i /usr/bin/time -p uv run --no-sync python -m hormathos.pipeline.run_report --config config/default.yaml --corpus-dir results/hexis31/v1 --output-dir results/hexis31/v3-seed0-v3006 --regenerated-dir results/hexis31/v3-seed0-v3006-regeneration 2>&1 | tee results/hexis31/v5-logs/01-report.log; echo "exit ${PIPESTATUS[0]}" | tee -a results/hexis31/v5-logs/01-report.log
+
+02-report-checks.log (read-only; script report_checks.py in this directory)
+UV_NO_CACHE=1 uv run --no-sync python results/hexis31/v5-logs/report_checks.py results/hexis31/v3-seed0-v3006

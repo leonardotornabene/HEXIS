@@ -1,0 +1,17 @@
+HEAD ff0388a53985bf836b7eb3e700c6ba097cc13d3f; $ uv run --no-sync python results/hexis31/v3-seed0-v3006-logs/checks.py resume results/hexis31/v3-seed0-r4-r6 /private/tmp/claude-502/-Users-leonardoTornabene-Projects-hormathos/f9221339-50ec-4d60-8f5b-addc61ff74fb/scratchpad/resume
+Traceback (most recent call last):
+  File "/Users/leonardoTornabene/Projects/hormathos/results/hexis31/v3-seed0-v3006-logs/checks.py", line 87, in <module>
+    {'validate': lambda: validate(sys.argv[2:]), 'compare': lambda: compare(*sys.argv[2:4]),
+  File "/Users/leonardoTornabene/Projects/hormathos/results/hexis31/v3-seed0-v3006-logs/checks.py", line 88, in <lambda>
+    'resume': lambda: resume(*sys.argv[2:4])}[sys.argv[1]]()
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leonardoTornabene/Projects/hormathos/results/hexis31/v3-seed0-v3006-logs/checks.py", line 76, in resume
+    same(contract, prior['run_contract'], 'run_contract')
+  File "/Users/leonardoTornabene/Projects/hormathos/src/hormathos/contracts.py", line 35, in compare
+    compare(actual[key], expected[key], f'{path}.{key}')
+  File "/Users/leonardoTornabene/Projects/hormathos/src/hormathos/contracts.py", line 35, in compare
+    compare(actual[key], expected[key], f'{path}.{key}')
+  File "/Users/leonardoTornabene/Projects/hormathos/src/hormathos/contracts.py", line 42, in compare
+    raise ValueError(f'{path}: {actual!r}, expected {expected!r}')
+ValueError: run_contract.code.src/hormathos/corpus.py: 'c210853b44e130e759fe8f0ffe8c87c214324c83da725a22f47ccce6d5884441', expected 'b49fb876572f973def5d07a0f0bae3ad3893c70373e32ca1773d155edd1ce9e7'
+exit 1

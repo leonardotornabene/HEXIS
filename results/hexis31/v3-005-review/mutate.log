@@ -1,0 +1,92 @@
+HEAD 602ff90c69d65428d93ba260f5e099a97e11a7a5; copy /var/folders/kv/nslgn9f56ns7m1pz7j2m236r0000gp/T/hormathos-mutate-n528rst1/repo; python /Users/leonardoTornabene/Projects/hormathos/.venv/bin/python
+N01 R4 coordinate order via categorical .equals
+  file src/hormathos/corpus.py; targets ['tests/test_v31_pre_v3_audit.py::test_category_order_cannot_hide_swapped_coordinate_order']
+  baseline rc=0 1 passed in 21.89s
+  mutant   rc=1 1 failed in 11.48s
+  => KILLED
+N02 sentence order via categorical .equals
+  file src/hormathos/corpus.py; targets ['tests/test_v31_pre_v3_audit.py::test_category_order_cannot_hide_swapped_document_order']
+  baseline rc=0 1 passed in 11.91s
+  mutant   rc=1 1 failed in 11.85s
+  => KILLED
+N03 R5 unreadable manifest deletes everything
+  file src/hormathos/pipeline/corpus_run.py; targets ['tests/test_v31_pre_v3_audit.py::test_rollback_keeps_artifacts_when_the_manifest_is_unreadable']
+  baseline rc=0 1 passed in 0.63s
+  mutant   rc=1 1 failed in 0.66s
+  => KILLED
+N04 R6 samefile disabled
+  file src/hormathos/pipeline/corpus_run.py; targets ['tests/test_v31_pre_v3_audit.py::test_raw_alias_is_rejected_even_when_resolve_misses_it']
+  baseline rc=0 1 passed in 0.74s
+  mutant   rc=1 1 failed in 0.65s
+  => KILLED
+N05 corpus rollback unlinks all published
+  file src/hormathos/pipeline/corpus_run.py; targets ['tests/test_v31_pre_v3_audit.py::test_manifest_commit_exception_preserves_the_published_state']
+  baseline rc=0 2 passed in 0.63s
+  mutant   rc=1 1 failed, 1 passed in 0.65s
+  => KILLED
+N06 scientific rollback unlinks all published
+  file src/hormathos/pipeline/scientific_run.py; targets ['tests/test_v31_pre_v3_audit.py::test_scientific_manifest_commit_exception_keeps_a_valid_fixture_run']
+  baseline rc=0 2 passed in 0.96s
+  mutant   rc=1 1 failed, 1 passed in 0.98s
+  => KILLED
+N07 run extras unnamed
+  file src/hormathos/pipeline/corpus_run.py; targets ['tests/test_v31_pre_v3_audit.py::test_extra_ds_store_is_named_in_v1_and_deposit']
+  baseline rc=0 1 passed in 0.63s
+  mutant   rc=1 1 failed in 0.66s
+  => KILLED
+N08 deposit extras unnamed
+  file src/hormathos/contracts.py; targets ['tests/test_v31_pre_v3_audit.py::test_extra_ds_store_is_named_in_v1_and_deposit']
+  baseline rc=0 1 passed in 0.63s
+  mutant   rc=1 1 failed in 0.66s
+  => KILLED
+N09 spread without rounding tolerance
+  file src/hormathos/viz/plots.py; targets ['tests/test_v31_pre_v3_audit.py::test_spread_accepts_one_rounding_unit_only']
+  baseline rc=0 1 passed in 0.63s
+  mutant   rc=1 1 failed in 0.67s
+  => KILLED
+N10 JSON relative tolerance restored
+  file src/hormathos/pipeline/validation_run.py; targets ['tests/test_v31_pre_v3_audit.py::test_regeneration_tolerance_is_absolute_and_scales_only_loss_sums']
+  baseline rc=0 1 passed in 0.66s
+  mutant   rc=1 1 failed in 0.66s
+  => KILLED
+N11 loss sums not scaled by n
+  file src/hormathos/pipeline/validation_run.py; targets ['tests/test_v31_pre_v3_audit.py::test_regeneration_tolerance_is_absolute_and_scales_only_loss_sums']
+  baseline rc=0 1 passed in 0.66s
+  mutant   rc=1 1 failed in 0.66s
+  => KILLED
+N12 Parquet relative tolerance restored
+  file src/hormathos/pipeline/validation_run.py; targets ['tests/test_v31_pre_v3_audit.py::test_regeneration_tolerance_is_absolute_and_scales_only_loss_sums']
+  baseline rc=0 1 passed in 0.66s
+  mutant   rc=1 1 failed in 0.69s
+  => KILLED
+N13 Parquet numeric dtype not checked
+  file src/hormathos/pipeline/validation_run.py; targets ['tests/test_v31_pre_v3_audit.py::test_regeneration_rejects_changed_integer_identity_in_parquet']
+  baseline rc=0 1 passed in 0.66s
+  mutant   rc=1 1 failed in 0.69s
+  => KILLED
+N14 fixture may reuse HEXIS-3.1
+  file src/hormathos/pipeline/scientific_run.py; targets ['tests/test_v31_pre_v3_audit.py::test_fixture_cannot_reuse_the_deposited_spec_version']
+  baseline rc=0 1 passed in 7.43s
+  mutant   rc=1 1 failed in 0.73s
+  => KILLED
+N15 block overlap not refused
+  file src/hormathos/protocols/sampling.py; targets ['tests/test_v31_pre_v3_audit.py::test_sample_fold_rejects_a_document_in_two_blocks_before_training']
+  baseline rc=0 1 passed in 0.63s
+  mutant   rc=1 1 failed in 0.66s
+  => KILLED
+N16 load_corpus reads the original directory
+  file src/hormathos/pipeline/scientific_run.py; targets ['tests/test_v31_pre_v3_audit.py::test_load_corpus_reads_the_validated_private_copy']
+  baseline rc=0 1 passed in 0.69s
+  mutant   rc=1 1 failed in 0.73s
+  => KILLED
+N17 collection gate not registered
+  file conftest.py; targets ['tests/test_v31_enforcement.py::test_collection_skip_without_marker_fails_the_gate', 'tests/test_v31_enforcement.py::test_nested_conftest_collection_skip_fails_the_gate']
+  baseline rc=0 2 passed in 0.25s
+  mutant   rc=1 2 failed in 0.26s
+  => KILLED
+N18 regeneration scope not recorded
+  file src/hormathos/pipeline/validation_run.py; targets ['tests/test_v31_completion.py::test_seed_zero_regeneration_is_compared_and_recorded_by_the_report']
+  baseline rc=0 1 passed in 3.46s
+  mutant   rc=1 1 failed in 1.93s
+  => KILLED
+TOTAL 18 mutants: 18 killed, 0 survived

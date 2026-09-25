@@ -14,9 +14,21 @@ data/raw/*
 data/interim/
 data/processed/
 
-# Local run outputs at the root only: publication is decided by the act in V3-002,
-# not by Git; archive/results/ is part of the record.
-/results/
+# Run outputs: V3-007 publishes in Git the delivered corpus, the readable layer of the
+# final campaign and its logs. The per-pair records, sample ledgers and C0 position
+# vectors, and the superseded runs, are published as archives of the GitHub Release
+# (results/README.md); a local or extracted copy stays ignored.
+/results/hexis31/*
+!/results/hexis31/v1/
+!/results/hexis31/v3-seed0-v3006/
+!/results/hexis31/v3-seed0-v3006-regeneration/
+!/results/hexis31/v3-seed0-v3006-logs/
+!/results/hexis31/v3-005-review/
+!/results/hexis31/v4-logs/
+!/results/hexis31/v5-logs/
+/results/hexis31/v3-seed0-v3006*/pair__*
+/results/hexis31/v3-seed0-v3006*/sample_ledger__*
+/results/hexis31/v3-seed0-v3006*/positions__*
 
 # Finder metadata (one copy entered and left the V0 deposit; see V3-002)
 .DS_Store

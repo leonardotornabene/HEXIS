@@ -1,0 +1,23 @@
+V4 --resume of 2026-09-24, HEAD 1cf3bda32180e1acf7f28d05946d93f05b7d8c70.
+The intended log 01-v4-resume.log does not exist: the preceding
+`mkdir -p results/hexis31/v4-logs` was typed as `kdir` (command not found),
+so tee could not open the file. The run itself was not affected.
+
+Command, verbatim:
+UV_NO_CACHE=1 caffeinate -i /usr/bin/time -p \
+  uv run --no-sync python -m hormathos.pipeline.run_descriptive \
+  --config config/default.yaml --corpus-dir results/hexis31/v1 \
+  --output-dir results/hexis31/v3-seed0-v3006 --resume \
+  2>&1 | tee results/hexis31/v4-logs/01-v4-resume.log
+
+Terminal output, verbatim:
+tee: results/hexis31/v4-logs/01-v4-resume.log: No such file or directory
+real 7477,33
+user 7497,45
+sys 160,21
+
+Lost: the Python exit status (the pipeline status is tee's; macOS time -p
+does not report it). A successful resume writes nothing else
+(cf. v3-seed0-v3006-logs/04-all-resume.log).
+Completion evidence: manifest.json published 2026-09-24 23:45:12 local,
+after the last pair (23:45:05); 02-validate.log, exit 0.

@@ -1,0 +1,40 @@
+HEAD 1cf3bda32180e1acf7f28d05946d93f05b7d8c70; $ uv run --no-sync python results/hexis31/v5-logs/report_checks.py results/hexis31/v3-seed0-v3006
+manifest_sha256 3243fc329351e45e1d1c2c2f68a5be57fec2ea197ef5a81a170a5c11f4ca6dab
+run_id 6aa1b719e274116c5660790cf9b2ad73c7e1853cec672688e1dc27d6b7d60e05 stages ['validation', 'descriptive', 'report'] evidence ['V0', 'V1', 'V2', 'V3']
+report implementation_commit 1cf3bda32180e1acf7f28d05946d93f05b7d8c70 tracked_dirty False created_utc 2026-09-25T08:28:32.543432+00:00 wall_seconds 352.554382958
+  acceptance_cases 431
+  cells ["C0", "D12", "a_total1", "oth", "q_half", "upos"]
+  deposited_configuration true
+  new_model_fits 896
+  positional_partitions 140
+  positions_cell "C0"
+  published_partitions 448
+  r1_pairs 63
+  reported_partitions 490
+  reused_partitions 42
+  scientific true
+  steps [1, 2, 3, 4, 5, 6]
+  validation_cases 34
+regeneration {'comparison_scope': 'identity_and_values', 'independent_execution': 'record_command_and_log_evidence', 'model_count': 84, 'pair_count': 42, 'run_id': '6aa1b719e274116c5660790cf9b2ad73c7e1853cec672688e1dc27d6b7d60e05', 'tolerance': 1e-08} {'identical': 70}
+artifacts in manifest 931 hash mismatches 0
+files on disk == artifacts + manifest True
+files modified on 2026-09-25 besides the manifest: 18
+  aggregation_weights.csv                  rows 980
+  arm_diagnostics.csv                      rows 3080
+  block_pairs.csv                          rows 1470
+  contrasts.csv                            rows 420
+  document_scores.csv                      rows 1540
+  figure__R1.svg                           bytes 119591
+  figure__block_document_profiles.svg      bytes 252143
+  figure__corpus_annotation.svg            bytes 61033
+  figure__sensitivities_two_weights.svg    bytes 88766
+  figure__supports_mixture_masses.svg      bytes 64306
+  fragment_diagnostics.csv                 rows 2940
+  jsd_centroids.csv                        rows 3
+  jsd_contributions.csv                    rows 4752
+  jsd_pairs.csv                            rows 63
+  model_diagnostics.csv                    rows 980
+  root_distributions.csv                   rows 1512
+  seed_summaries.csv                       rows 3465
+  sensitivity_pairs.csv                    rows 9450
+exit 0

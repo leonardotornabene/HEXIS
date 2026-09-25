@@ -1,0 +1,7 @@
+HEAD 1cf3bda32180e1acf7f28d05946d93f05b7d8c70; $ checks.py compare v3-seed0-v3006 v3-seed0-v3006-regeneration
+Matplotlib is building the font cache; this may take a moment.
+results/hexis31/v3-seed0-v3006 manifest_sha256 d1e79bfc1082edc97ae34dde4c0bb8b681cf06196087d6c6775b724b326c44e4
+results/hexis31/v3-seed0-v3006-regeneration manifest_sha256 72b6cdee3220cbea97ba0bfb969bd2f3b871f244e62a8f3da3182d6d84c3790a
+{'run_id': '6aa1b719e274116c5660790cf9b2ad73c7e1853cec672688e1dc27d6b7d60e05', 'pair_count': 42, 'model_count': 84, 'tolerance': 1e-08, 'comparison_scope': 'identity_and_values', 'independent_execution': 'record_command_and_log_evidence'}
+artifact_comparisons {'identical': 70} of 70
+exit 0

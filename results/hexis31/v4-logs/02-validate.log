@@ -1,0 +1,14 @@
+HEAD 1cf3bda32180e1acf7f28d05946d93f05b7d8c70; $ uv run --no-sync python results/hexis31/v3-seed0-v3006-logs/checks.py validate results/hexis31/v3-seed0-v3006
+Matplotlib is building the font cache; this may take a moment.
+current run_id 6aa1b719e274116c5660790cf9b2ad73c7e1853cec672688e1dc27d6b7d60e05
+results/hexis31/v3-seed0-v3006
+ manifest_sha256 d1e79bfc1082edc97ae34dde4c0bb8b681cf06196087d6c6775b724b326c44e4
+ run_id 6aa1b719e274116c5660790cf9b2ad73c7e1853cec672688e1dc27d6b7d60e05 stages ['validation', 'descriptive'] evidence ['V0', 'V1', 'V2', 'V3']
+ pairs 490 models 980 seeds [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19] cells {'C0': 140, 'D12': 70, 'a_total1': 70, 'oth': 70, 'q_half': 70, 'upos': 70}
+ V3 pair_count 42 model_count 84 artifacts 70 scientific True
+ verify_evidence(current context) OK; verify_technical OK
+ checks {'acceptance_cases': 431, 'deposited_configuration': True, 'new_model_fits': 896, 'positions_cell': 'C0', 'published_partitions': 448, 'reused_partitions': 42, 'scientific': False, 'validation_cases': 34}
+ metadata selection all resume True tracked_dirty False implementation_commit 1cf3bda32180e1acf7f28d05946d93f05b7d8c70
+ fit_s 713.32 eval_s 535.60 max_peak_rss 1654919168 (None)
+ disk_bytes 417224100 files 914
+exit 0

@@ -1,0 +1,12 @@
+Verification of the V4 run of 2026-09-24, executed on 2026-09-25, HEAD 1cf3bda32180e1acf7f28d05946d93f05b7d8c70
+Read-only: no fit, nothing written in results/hexis31/v3-seed0-v3006 or in the tracked tree.
+The first line of 03 and 04 abbreviates the command; the commands executed, verbatim:
+
+03-regeneration-comparison.log
+MPLCONFIGDIR=/private/tmp/claude-502/-Users-leonardoTornabene-Projects-hormathos/a34f8146-20eb-4145-bff6-195900cd12f4/scratchpad/mpl UV_NO_CACHE=1 uv run --no-sync python results/hexis31/v3-seed0-v3006-logs/checks.py compare results/hexis31/v3-seed0-v3006 results/hexis31/v3-seed0-v3006-regeneration
+
+04-independent-check.log
+time UV_NO_CACHE=1 uv run --no-sync python /private/tmp/claude-502/-Users-leonardoTornabene-Projects-hormathos/a34f8146-20eb-4145-bff6-195900cd12f4/scratchpad/indep_check_v4.py . results/hexis31/v3-seed0-v3006
+(the script is indep_check_v4.py in this directory, same bytes; derived from
+results/hexis31/v3-seed0-v3006-logs/indep_check.py for all seeds, with key-set
+equality against the contract and files == manifest artifacts added)

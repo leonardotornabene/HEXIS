@@ -1,0 +1,7 @@
+HEAD ff0388a53985bf836b7eb3e700c6ba097cc13d3f; $ uv run --no-sync python results/hexis31/v3-seed0-v3006-logs/cross_check.py results/hexis31/v3-seed0-r4-r6 results/hexis31/v3-seed0-v3006
+old run_id 1563452ad4b644d1ec8ea00f38300192f95fad8c4d34761a570a22f5b6a78855
+new run_id 6aa1b719e274116c5660790cf9b2ad73c7e1853cec672688e1dc27d6b7d60e05
+run_contract differs only in: code, files ['src/hormathos/corpus.py', 'src/hormathos/pipeline/corpus_run.py', 'src/hormathos/pipeline/run_report.py', 'src/hormathos/pipeline/scientific_run.py', 'src/hormathos/protocols/scores.py']
+keys and stages equal: ['validation', 'descriptive'] {'pair': 42, 'model': 84}
+artifacts 71 {'identical': 71} not compared (V2 context): ['v31.junit.xml', 'v31_process.json']
+exit 0

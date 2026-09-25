@@ -10,7 +10,9 @@ byte-identified JSON contracts. Text governs semantics; JSON fixes values.
 Do not silently deviate or regenerate expectations to make tests pass.
 
 V0–V5 are completed: the campaign (490 pairs/980 models) and its report are in
-results/hexis31/v3-seed0-v3006; results and limits are stated in docs/HANDOFF.md.
+results/hexis31/v3-seed0-v3006; results and limits are stated in docs/RESULTS.md.
+V3-007 published them: the readable layer in results/, the complete runs in the
+GitHub Release hexis31-v5-evidence; results/hexis31 is otherwise gitignored.
 V3-002 realigned the repository on 2026-09-22: the active tree is 3.1 only and
 every historical material is preserved byte for byte under archive/, at the
 path it had at 5f1ec06. archive/ is a record: never imported, never collected,
@@ -28,7 +30,9 @@ rewritten.
 Stop for review before any new run or publication; no real fit beyond V4, the
 last one authorized (V3-006). The freeze perimeter is code identity over all of src/hormathos plus
 tests, conftest.py, pyproject.toml, config and uv.lock: once V2/V3 evidence is
-published, changing any of them forces a new directory and a new run.
+published, changing any of them forces a new directory and a new run. V3-007
+changed only the sdist list of pyproject.toml after V5; resume and report of the
+published campaign run from the tag hexis31-v5-evidence.
 
 Tests first; never weaken a still-valid property; retiring one means replacing
 its test with a reason, not deleting the check. Active acceptance: pytest and
@@ -53,8 +57,8 @@ One manifest per run: deterministic identity from contract/code/data/registry/
 alphabets/config/lock; timestamps, machine and paths external. Atomic publication,
 no implicit overwrite; preserve local scripts and every historical result.
 data/raw is immutable and gitignored; reject output inside raw even through symlinks.
-Raw licensing remains CC BY-NC-SA 2.5; what the publication act of V3-002 covers,
-and under which licence, is decided there and nowhere else.
+Raw licensing remains CC BY-NC-SA 2.5; what the publication acts V3-002 and V3-007
+cover, and under which licence, is decided there and nowhere else.
 Sources only from the active registry in docs/BIBLIOGRAPHY.md.
 
 When scientifically uncertain: stop the affected passage, state the discrepancy,

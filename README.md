@@ -10,15 +10,25 @@ The study is complete as specified by its deposited design (phases V0–V5, 25 S
 
 ## Main result
 
-![Per-block and per-document profiles: gain of the trained model over the frequency baseline, attested versus shuffled order](results/hexis31/v3-seed0-v3006/figure__block_document_profiles.svg)
+Each block is evaluated by a model trained on the other blocks. Q is the model's gain over a frequency-only baseline in the attested order minus its gain when the same annotations are shuffled within each sentence. Its unit is bits per eligible target.
 
-Under the frozen predictor and the block-by-block training of this design:
+**Main setting (C0):** mean Q over 20 computational seeds. Eligible target counts are per seed.
 
-- In each of the seven text blocks, a model trained on the other texts gains more over a frequency-only baseline on the attested order of the annotations than on the same annotations shuffled within each sentence. In the main setting the mean advantage ranges from about 0.25 bits per predicted symbol (Hesiodic tradition) to about 0.54 (Plutarch); the Homeric tradition has about 0.26.
-- In the main setting the two hexameter blocks show a smaller advantage than each of the five prose blocks. The hexameter-minus-prose difference is about −0.21 bits per symbol when blocks are weighted equally and about −0.20 when every predicted symbol counts equally. It is negative in all six analysis settings and under both weightings.
-- Changing the prior, halving the training data, adding other dependency labels, using part of speech alone or deepening the model changes these values by amounts reported in full. Deepening from eight to twelve symbols changes them only at the 10⁻¹⁰ scale, which does not show that longer dependencies are absent.
+| Block | Eligible targets per seed | Mean Q (bits/target) |
+|---|---:|---:|
+| Homeric tradition | 46,634 | 0.262 |
+| Hesiodic tradition | 6,375 | 0.253 |
+| Herodotus | 12,946 | 0.393 |
+| Thucydides | 7,227 | 0.430 |
+| Athenaeus | 16,691 | 0.452 |
+| Diodorus | 12,334 | 0.526 |
+| Plutarch | 6,901 | 0.543 |
 
-These are descriptions of a finite corpus, not general claims about Greek, metre or authors. There are two hexameter blocks and five prose blocks, and the *Iliad* dominates its block. Chronology, genre and annotation practice cannot be separated. Each block is scored by a model trained on a different mixture of the other texts. The variation across computational seeds is not uncertainty about the ancient texts, and the study reports no significance tests. [RESULTS.md](docs/RESULTS.md) lists every limitation and the questions the design deliberately leaves out.
+[Open the full-size profiles figure](results/hexis31/v3-seed0-v3006/figure__block_document_profiles.svg).
+
+The two hexameter blocks have lower Q than each of the five prose blocks. In C0, the hexameter-minus-prose contrast is −0.211 bits/target with equal block weights and −0.202 with eligible-target weights; it remains negative in all six settings under both weightings.
+
+This is a descriptive contrast in a finite corpus, not an attribution to metre. There are only two hexameter and five prose blocks; the *Iliad* supplies 45,515 of the Homeric block's 46,634 eligible targets. Chronology, genre, annotation practice and the different training mixtures cannot be separated. Seed variation is computational, not uncertainty about the ancient texts; the study reports no significance tests. [RESULTS.md](docs/RESULTS.md) gives complete values, dispersion, sensitivity analyses and limitations.
 
 ## Where to start
 

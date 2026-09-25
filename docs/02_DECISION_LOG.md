@@ -1,4 +1,4 @@
-# Active Decision Log — HORMATHOS (design HEXIS 3.1)
+# Active Decision Log — HORMATHOS (deposited design 3.1)
 
 V3-001 and V3-002 are kept in their Italian originals, which govern and are never rewritten; V3-003 and every later entry are in English.
 
@@ -230,3 +230,27 @@ Every run extracted from the two archives passes `validate_run`.
 **(e) Reorganization for readers.** The statement of results and limitations of V5 moves from the handoff to `docs/RESULTS.md`, with its wording unchanged except a preface and six sentences that said where its evidence was. The README becomes the entry page: result, reading map, layout, reproduction, how the project was made — declaring the use of AI coding assistants — and licences. `results/README.md` describes the published files; `docs/00_INDEX.md` becomes a reading guide. No file is renamed.
 
 **(f) Not published:** the raw data, as V3-002 decides; the drafts in `docs/proposal/`, whose publication belongs to the proposal (§17.1); `scripts/`, a local acquisition aid.
+
+---
+
+## V3-008 — Reader-facing name HORMATHOS and the release alias tag, 2026-09-25
+
+**Status: ADOPTED.** Source of authorization: the owner's request of 25 September 2026 that the name HORMATHOS replace HEXIS 3.1 wherever possible, in the Release above all, frozen documents included if needed, provided scientific integrity is not compromised; with the decisions C1–C2 below. It amends A2 and A3 of V3-003. It modifies no byte of the deposit, of the acts V3-001 to V3-007, of `archive/`, of `results/` or of the freeze perimeter, and authorizes no run.
+
+**Name.** HORMATHOS names the project, its software and the study. Reader-facing texts present the design as the deposited design (plan 3.1). HEXIS 3.1 is the working title under which the design was deposited on 15 September 2026; the README records it once, as provenance. It is not renamed where it is part of what was deposited or of what the evidence fixes.
+
+**What keeps `hexis`, and why.** Everything V3-003 lists, for the reasons given there, and further:
+- the English companions in `docs/contracts/hexis-3.1-en/`: they translate texts titled HEXIS, and a translation does not rename its original; their path mirrors the deposit and is published with `pairs_all.json` (V3-007 (a));
+- `results/hexis31/`: the published manifests record `corpus_dir` and `output_dir` under this path, `test_v31_pre_v3_audit` reads the delivered corpus there, and the published logs quote it;
+- the logs, check scripts and closure aids under `results/hexis31/`, published byte for byte by V3-007;
+- the adopted acts, the historical records of the handoff and of the roadmap, and the tag `hexis31-v5-evidence`, which V3-007 names as the anchor of the evidence.
+
+**Freeze perimeter.** No file of the perimeter changes: the occurrences of `hexis` in `src/hormathos`, `tests/`, `config/` and `pyproject.toml` are contract identifiers, schema names, the distribution name and the paths above. The code identity and the run ID `6aa1b719…` are unchanged.
+
+**Documents.** The titles of the active documents read "deposited design 3.1" instead of "design HEXIS 3.1". The README, `results/README.md`, the specification, the bibliographic register (B03), the index, the roadmap, the handoff, the test inventory and the three instruction copies name the study HORMATHOS and the Release by its new tag. Of `docs/RESULTS.md` only the title changes; the wording that V3-007 (e) fixes is unchanged.
+
+**Release.** The annotated tag `hormathos-v5-evidence` points to `9814871726bfec9dc96da316f61eeafbe58b3f48`, the commit of `hexis31-v5-evidence`, which remains and is never deleted. The GitHub Release moves to the new tag and takes the title "HORMATHOS evidence: complete campaign and superseded runs"; its assets and their SHA-256 are unchanged. As for the archive tags of V3-002, the normative anchor is the commit SHA, not the tag name.
+
+**Decisions.**
+- C1: reader-facing texts name the study HORMATHOS; HEXIS 3.1 survives once, as the working title of the deposit, and in the identifiers and paths listed above.
+- C2: a new annotated tag `hormathos-v5-evidence` on the same commit carries the Release; the tag `hexis31-v5-evidence` stays.

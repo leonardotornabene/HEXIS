@@ -1,6 +1,6 @@
-# Project HORMATHOS — standing instructions (design HEXIS 3.1)
+# Project HORMATHOS — standing instructions (deposited design 3.1)
 
-Active authority: docs/01_MASTER_SPEC.md, V3-001, V3-002 and V3-003 in
+Active authority: docs/01_MASTER_SPEC.md, V3-001, V3-002, V3-003 and V3-008 in
 docs/02_DECISION_LOG.md. V3-001 adopts
 docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md and its
 byte-identified JSON contracts. Text governs semantics; JSON fixes values.
@@ -9,7 +9,7 @@ Do not silently deviate or regenerate expectations to make tests pass.
 V0–V5 are completed: the campaign (490 pairs/980 models) and its report are in
 results/hexis31/v3-seed0-v3006; results and limits are stated in docs/RESULTS.md.
 V3-007 published them: the readable layer in results/, the complete runs in the
-GitHub Release hexis31-v5-evidence; results/hexis31 is otherwise gitignored.
+GitHub Release hormathos-v5-evidence; results/hexis31 is otherwise gitignored.
 V3-002 realigned the repository on 2026-09-22: the active tree is 3.1 only and
 every historical material is preserved byte for byte under archive/, at the
 path it had at 5f1ec06. archive/ is a record: never imported, never collected,
@@ -17,10 +17,12 @@ outside the code identity; it runs at that commit, not here. Retired design
 elements — v2.1 inference, Latin, gates G0–G7, permutation constants,
 sign-stability, D01–D55 — are listed in V3-001 and must never be reintroduced.
 
-V3-003 named the project HORMATHOS on 2026-09-23. It implements the deposited
-HEXIS 3.1 design: hexis survives only in the deposit, the contract identifiers,
-the distribution name that the contract-fixed uv.lock records, results/hexis31
-and archive/. The package is src/hormathos. Every artifact is in English; the
+V3-003 named the project HORMATHOS on 2026-09-23; V3-008 extended the name to
+every reader-facing text and to the release. HEXIS 3.1 is only the working title
+of the deposit: hexis survives in the deposit and its companions, the contract
+identifiers, the distribution name that the contract-fixed uv.lock records,
+results/hexis31, archive/ and the records that quote them. The package is
+src/hormathos. Every artifact is in English; the
 Italian originals of the deposit and of V3-001 and V3-002 govern and are never
 rewritten.
 
@@ -29,7 +31,8 @@ last one authorized (V3-006). The freeze perimeter is code identity over all of 
 tests, conftest.py, pyproject.toml, config and uv.lock: once V2/V3 evidence is
 published, changing any of them forces a new directory and a new run. V3-007
 changed only the sdist list of pyproject.toml after V5; resume and report of the
-published campaign run from the tag hexis31-v5-evidence.
+published campaign run from the tag hormathos-v5-evidence, the same commit
+as hexis31-v5-evidence.
 
 Tests first; never weaken a still-valid property; retiring one means replacing
 its test with a reason, not deleting the check. Active acceptance: pytest and

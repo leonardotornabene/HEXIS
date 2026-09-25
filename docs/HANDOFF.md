@@ -1,6 +1,6 @@
-# HORMATHOS handoff — current state (design HEXIS 3.1)
+# HORMATHOS handoff — current state (deposited design 3.1)
 
-**V0–V5 completed: the campaign (980 models) and its report are in `results/hexis31/v3-seed0-v3006`; results and limitations are stated in [RESULTS.md](RESULTS.md) (25 September 2026). The finished results are published under V3-007 (next section).** Publication of 2026-09-23: the push of the branch `codex/hexis31-realign` at `2ebb3464b871c1f831d0608edba052ccb4b92be9` and of the tags `archive/pre-realign` and `archive/v2.1`; then the merge into `master` (`73df64d`, a merge commit with neither squash nor rebase) and the deletion of the remote branches `g1/pre-audit` (V3-002, E5) and `codex/hexis31-realign`, whose content is in `master`. At that point the active branch was `master`; the realignment started from `5f1ec06afa192c8d0f006d7f39cdb97df72c2983`. On the same day the project was named HORMATHOS (V3-003), published at `c738c73`, and the GitHub repository became `leonardotornabene/HORMATHOS`; the old address redirects. The detailed chronology of the earlier tranches is not repeated here: it is in the Git history and, in its last pre-realignment form, in [archive/docs/HANDOFF.md](../archive/docs/HANDOFF.md).
+**V0–V5 completed: the campaign (980 models) and its report are in `results/hexis31/v3-seed0-v3006`; results and limitations are stated in [RESULTS.md](RESULTS.md) (25 September 2026). The finished results are published under V3-007 (next section); since V3-008 the reader-facing texts and the Release, now at the alias tag `hormathos-v5-evidence`, carry the name HORMATHOS.** Publication of 2026-09-23: the push of the branch `codex/hexis31-realign` at `2ebb3464b871c1f831d0608edba052ccb4b92be9` and of the tags `archive/pre-realign` and `archive/v2.1`; then the merge into `master` (`73df64d`, a merge commit with neither squash nor rebase) and the deletion of the remote branches `g1/pre-audit` (V3-002, E5) and `codex/hexis31-realign`, whose content is in `master`. At that point the active branch was `master`; the realignment started from `5f1ec06afa192c8d0f006d7f39cdb97df72c2983`. On the same day the project was named HORMATHOS (V3-003), published at `c738c73`, and the GitHub repository became `leonardotornabene/HORMATHOS`; the old address redirects. The detailed chronology of the earlier tranches is not repeated here: it is in the Git history and, in its last pre-realignment form, in [archive/docs/HANDOFF.md](../archive/docs/HANDOFF.md).
 
 ## Publication of the results and reorganization — 25 September 2026 (V3-007)
 
@@ -221,8 +221,8 @@ The two selections coincide, with no skip and nothing deselected. Baseline at `5
 | V1 corpus | `7afdd3a4f87341110b0f15a77179febe9075ee9b`; delivered run `results/hexis31/v1`, manifest SHA-256 `154433c772f41e444f86b8787e0ee0003c546d9fb398b6ee0f634ce193f3421f` |
 | V2 closure | `0a6f644`; pre-V3 review `0dc69b5`, attested **351 v31 / 672 passed + 17 skips** |
 | Realignment base | `5f1ec06`, tag `archive/pre-realign`; v2.1 history at tag `archive/v2.1` = `852644b6917790877c7b2ca5df2e76b17829d87c` |
-| Name | HORMATHOS (V3-003); package `src/hormathos`, distribution `hexis` |
-| Evidence tag | `hexis31-v5-evidence` = `9814871726bfec9dc96da316f61eeafbe58b3f48`: code and perimeter of the published V3–V5 evidence (V3-007) |
+| Name | HORMATHOS (V3-003, V3-008); package `src/hormathos`, distribution `hexis`; HEXIS 3.1 is the working title of the deposit |
+| Evidence tag | `hexis31-v5-evidence` = `9814871726bfec9dc96da316f61eeafbe58b3f48`: code and perimeter of the published V3–V5 evidence (V3-007); alias `hormathos-v5-evidence`, same commit, carries the Release (V3-008) |
 | Environment | Python 3.12.13, `uv.lock` `33db43b00bcb21ab12aedf6dcc4257764770bff0115dc0d1dfab6e5ea89876bf`, 23 packages |
 
 ## Owner decisions of 22 September 2026 (D1–D4)

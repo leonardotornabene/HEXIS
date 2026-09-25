@@ -1,4 +1,4 @@
-# HORMATHOS — results and limitations (design HEXIS 3.1)
+# HORMATHOS — results and limitations (deposited design 3.1)
 
 This is the statement of results and limitations that closed phase V5 of the deposited
 design on 25 September 2026 (§14 V5, §16). Until V3-007 it was the first section of the

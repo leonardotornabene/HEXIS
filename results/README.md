@@ -1,6 +1,6 @@
 # HORMATHOS results
 
-The finished results of the HEXIS 3.1 study, published under V3-007 in the [decision log](../docs/02_DECISION_LOG.md). The [statement of results and limitations](../docs/RESULTS.md) reads them; this page says what each file is. Every file here is byte for byte the one the pipeline or a check wrote; nothing was edited for publication.
+The finished results of the HORMATHOS study, published under V3-007 in the [decision log](../docs/02_DECISION_LOG.md). The [statement of results and limitations](../docs/RESULTS.md) reads them; this page says what each file is. Every file here is byte for byte the one the pipeline or a check wrote; nothing was edited for publication.
 
 ## The final campaign: `hexis31/v3-seed0-v3006/`
 
@@ -33,7 +33,7 @@ The logs are verbatim. Local paths in them (`/Users/…`, `/tmp/…`) are those 
 
 ## Complete archives
 
-The [GitHub Release `hexis31-v5-evidence`](https://github.com/leonardotornabene/HORMATHOS/releases/tag/hexis31-v5-evidence) holds what is too large for the repository:
+The [GitHub Release `hormathos-v5-evidence`](https://github.com/leonardotornabene/HORMATHOS/releases/tag/hormathos-v5-evidence) holds what is too large for the repository:
 
 | Archive | SHA-256 | Content |
 |---|---|---|

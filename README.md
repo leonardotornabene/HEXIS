@@ -26,7 +26,7 @@ These are descriptions of a finite corpus, not general claims about Greek, metre
 |---|---|
 | the results, with every number traced to its table, and their limits | [docs/RESULTS.md](docs/RESULTS.md) |
 | the data: tables, figures, manifests, logs and the full archives | [results/README.md](results/README.md) |
-| the research design, fixed before the campaign was run | [plan HEXIS 3.1, English companion](docs/contracts/hexis-3.1-en/HEXIS_piano_definitivo_v3.1_2026-09-15.md) (the [Italian original](docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md) governs) |
+| the research design, fixed before the campaign was run | [deposited plan 3.1, English companion](docs/contracts/hexis-3.1-en/HEXIS_piano_definitivo_v3.1_2026-09-15.md) (the [Italian original](docs/contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md) governs) |
 | why the project looks the way it does: every decision since the design | [decision log](docs/02_DECISION_LOG.md) |
 | how the results were produced, checked and re-checked | [handoff](docs/HANDOFF.md) and [test inventory](docs/TEST_INVENTORY.md) |
 | a map of all documents | [docs/00_INDEX.md](docs/00_INDEX.md) |
@@ -35,7 +35,7 @@ These are descriptions of a finite corpus, not general claims about Greek, metre
 
 The work began with a question about Homeric composition and the possibilities of information theory. It then considered a comparison between hexameter and prose, first also in Latin. Limited comparable annotated data, uneven coverage of authors and works, and too few independent units made broad claims about composition or genre difficult to support. The present design therefore asks a narrower question: how large and how consistent is the predictive advantage of attested order across the texts available, and how sensitive is it to reasonable choices in the analysis? Hexameter and prose remain a descriptive comparison within that study.
 
-The design was written, reviewed and deposited as **HEXIS 3.1** on 15 September 2026, before the campaign was run; results of earlier pilots were already known to the author, a limitation the results statement records. The code implements the deposited design, and every deviation from it is declared in the decision log. The project was later named **HORMATHOS**; HEXIS survives as the name of the design. Earlier approaches, including the abandoned inferential design, are kept unchanged in [archive/](archive/). The [decision log](docs/02_DECISION_LOG.md) records every transition: V3-001 adopts the design, V3-002 realigns the repository and sets the licences, V3-003 gives the project its name, V3-004 to V3-006 close the reviews before the campaign, and V3-007 publishes the results.
+The design was written, reviewed and deposited on 15 September 2026, under the working title HEXIS 3.1, before the campaign was run; results of earlier pilots were already known to the author, a limitation the results statement records. The code implements the deposited design, and every deviation from it is declared in the decision log. The project was later named **HORMATHOS**, the name it carries throughout; HEXIS survives only in the deposit, in the identifiers and paths that it and the published evidence fix, and in historical records. Earlier approaches, including the abandoned inferential design, are kept unchanged in [archive/](archive/). The [decision log](docs/02_DECISION_LOG.md) records every transition: V3-001 adopts the design, V3-002 realigns the repository and sets the licences, V3-003 gives the project its name, V3-004 to V3-006 close the reviews before the campaign, V3-007 publishes the results, and V3-008 extends the name HORMATHOS to every reader-facing text and to the release.
 
 ## How this project was made
 
@@ -65,7 +65,7 @@ git -C data/raw/UD_Ancient_Greek-Perseus checkout 37837c7a3c592c9563f8c51cc63344
 uv run pytest            # 431 passed, no skip
 ```
 
-The SHA-256 of each input file is in [data/raw/PROVENANCE.md](data/raw/PROVENANCE.md). To verify the complete campaign, download the archives of the [GitHub Release](https://github.com/leonardotornabene/HORMATHOS/releases/tag/hexis31-v5-evidence) and follow [results/README.md](results/README.md). The commands that produced every run are in the [handoff](docs/HANDOFF.md); rerunning the campaign or the report is done from the tag `hexis31-v5-evidence`, the code and perimeter of the published evidence.
+The SHA-256 of each input file is in [data/raw/PROVENANCE.md](data/raw/PROVENANCE.md). To verify the complete campaign, download the archives of the [GitHub Release](https://github.com/leonardotornabene/HORMATHOS/releases/tag/hormathos-v5-evidence) and follow [results/README.md](results/README.md). The commands that produced every run are in the [handoff](docs/HANDOFF.md); rerunning the campaign or the report is done from the tag `hormathos-v5-evidence` (the same commit as `hexis31-v5-evidence`), the code and perimeter of the published evidence.
 
 ## Licences
 

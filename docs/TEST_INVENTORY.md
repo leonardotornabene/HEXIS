@@ -36,13 +36,13 @@ parameter case fails acceptance.
 | T21 | V2 | Paired sensitivities |
 | T22 | V2 | Masses/supports/L_resolved |
 | T23 | V2 | R1 |
-| T24 | CODE pre-V3, EXECUTION PENDING V5 | Census of the six inventory_only (V1); the report validator regenerates every ledger from the RNG contract, so no held-out/inventory_only in training, and refuses any inventory_only scoring: code and tests in `0dc69b5`; execution on the campaign in V5 |
-| T25 | PENDING V4 | Equality of the 490/980 model/pair keys |
+| T24 | CODE pre-V3, EXECUTED V5 | Census of the six inventory_only (V1); the report validator regenerates every ledger from the RNG contract, so no held-out/inventory_only in training, and refuses any inventory_only scoring: code and tests in `0dc69b5`; executed on the campaign by the report of 25 September 2026 |
+| T25 | V4–V5 | Equality of the 490/980 model/pair keys: step 3 of the report validator, and the independent check of 25 September 2026 |
 | T26 | V2 | Atomicity/interruption, resume, corruption, duplicates and extra keys: corpus (V1) and scientific stage (V2) |
-| T27 | CODE V2, EXECUTION PENDING V5 | Reconstruction of scores/diagnostics and five figures: code and fixture tests in `559dc40`, fixes from the pre-V3 review (samples, shuffle and C0 provenance regenerated; figures readable at real cardinality) in `0dc69b5`; execution on real data in V5 |
+| T27 | CODE V2, EXECUTED V5 | Reconstruction of scores/diagnostics and five figures: code and fixture tests in `559dc40`, fixes from the pre-V3 review (samples, shuffle and C0 provenance regenerated; figures readable at real cardinality) in `0dc69b5`; executed on the campaign by the report of 25 September 2026 |
 | T28 | V0–V1 | Pipeline without candidates/inference; acceptance without skip |
-| T29 | PARTIAL V1 | Corpus identity/round trip; samples and shuffle regenerated for every pair (`0dc69b5`); CE/model reproduction PENDING V5 |
-| T30 | PENDING V5 | Complete scientific report |
+| T29 | V1, V5 | Corpus identity/round trip; samples and shuffle regenerated for every pair (`0dc69b5`); CE/model reproduction: seed-0 regeneration 70/70 identical in the report of 25 September 2026 |
+| T30 | V5 | Complete scientific report: no partial contrast; bytes, contract, key sets, R1 and denominators checked by the report of 25 September 2026 |
 
 ## What each active file proves
 
@@ -351,6 +351,7 @@ Summary: 270 non-`v31` functions at `5f1ec06` — 11 v31 in place, 22 migrated, 
 ## Remaining obligations
 
 - **V3**: executed on 24 September 2026, reviewed, re-attested under V3-005 and, after the pre-V4 review, under V3-006 in `results/hexis31/v3-seed0-v3006` (see HANDOFF): technical trial at seed 0 on six cells and seven folds (42 pairs / 84 models), resource measurements, freeze of code and environment; publication of the V2/V3 evidence in the manifest.
-- **V4**: full campaign, 490 pairs / 980 model identities, three R1, equality of the key sets (T25).
-- **V5**: report, five figures, two weightings, resume and the prescribed regeneration of seed 0 (T24, T27, T29, T30).
-- None of these obligations is covered by fixtures: executing them requires real fits, which started in V3.
+- **V4**: executed on 24 September 2026 in `results/hexis31/v3-seed0-v3006` (see HANDOFF): full campaign, 490 pairs / 980 model identities, equality of the key sets (T25); the three R1 are computed by the report.
+- **V5**: report executed on 25 September 2026 in the same directory: five figures, two weightings, three R1 and the prescribed regeneration of seed 0 (T24, T27, T29, T30).
+- PENDING: the statement of results and limits without selection of the sign (§14 V5, §16), and the README after V5 (§17.2).
+- None of the V3–V5 obligations is covered by fixtures: executing them required real fits.

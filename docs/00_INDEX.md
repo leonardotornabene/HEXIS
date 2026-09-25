@@ -7,4 +7,4 @@
 - [Active bibliography](BIBLIOGRAPHY.md); the historical register is in the archive.
 - Archive, `archive/`: v2.1, G0/G1, `candidates/`, statistical utilities, the previous proposal and the pre-audit results, with the bytes they had at `5f1ec06`; the status of each item is in [V3-002](02_DECISION_LOG.md).
 
-The archive is a record, not an executable tree and not a competing authority: each of its items runs at the commit that preserves it. The deposited plan and its attachments, and the V3-001 and V3-002 acts, keep their Italian originals, which govern. The new research proposal (§17.1) has not been deposited yet.
+The archive is a record, not an executable tree and not a competing authority: each of its items runs at the commit that preserves it. The deposited plan and its attachments, and the V3-001 and V3-002 acts, keep their Italian originals, which govern; their non-normative English companions are in [contracts/hexis-3.1-en/](contracts/hexis-3.1-en/) (V3-003). The new research proposal (§17.1) has not been deposited yet.

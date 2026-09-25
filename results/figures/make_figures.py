@@ -43,16 +43,21 @@ INK, INK2, MUTED, GRID, SURFACE = '#0b0b0b', '#52514e', '#8a8984', '#e6e5e0', '#
 BLUE, ORANGE, AQUA = '#2a78d6', '#eb6834', '#1baf7a'
 RAMP = ('#86b6ef', '#3987e5', '#1c5cab', '#0d366b')
 HEAT = LinearSegmentedColormap.from_list('blue', ('#cde2fb', '#86b6ef', '#3987e5', '#1c5cab', '#0d366b'))
-GROUP = {scores.HEX: ('Hexameter (HEX)', BLUE), scores.PROSE: ('Prose (PROSE_ALL)', ORANGE)}
-WEIGHTING = {'equal_block': ('equal block weights', BLUE),
-             'eligible_token_weighted': ('eligible-target weights', ORANGE)}
-ARM = {'original': ('attested order', BLUE), 'shuffled': ('within-sentence shuffle', ORANGE)}
-CELL = {'C0': 'C0 · main setting', 'a_total1': 'a_total1 · different prior',
-        'q_half': 'q_half · half the training data', 'D12': 'D12 · depth 12 instead of 8',
-        'oth': 'oth · other dependency labels', 'upos': 'upos · part of speech alone'}
+GROUP = {scores.HEX: ('Hexameter', BLUE), scores.PROSE: ('Prose', ORANGE)}
+WEIGHTING = {'equal_block': ('every block weighs the same', BLUE),
+             'eligible_token_weighted': ('every target weighs the same', ORANGE)}
+ARM = {'original': ('original order', BLUE), 'shuffled': ('shuffled within each sentence', ORANGE)}
+# The six settings and three annotation schemes by what they change, never by their table codes.
+CELL = {'C0': 'main setting', 'a_total1': 'weaker prior (0.01 per symbol)',
+        'q_half': 'half the training data', 'D12': 'context depth 12 instead of 8',
+        'oth': 'other relations kept as one label', 'upos': 'part of speech only'}
+VARIANT = {'ud23': 'part of speech + relation', 'ud23_oth': 'part of speech + relation, other relations kept',
+           'upos_only': 'part of speech only'}
+BITS = 'bits per target'
 README_Q = {'HOMERIC_TRADITION': 0.262, 'HESIODIC_TRADITION': 0.253, 'HERODOTUS': 0.393,
             'THUCYDIDES': 0.430, 'ATHENAEUS': 0.452, 'DIODORUS': 0.526, 'PLUTARCH': 0.543}
-MARKS = 'Large dot: mean of the seeds · small dots: single seeds · line: min–max across seeds.'
+MARKS = ('Large dot: mean over the seeds (runs repeated with different random samples) · small dots: single seeds '
+         '· line: lowest to highest seed.')
 SHOWN_SYMBOLS = 15  # larger alphabets: the leading symbols, the rest summed in one bar
 
 WIDTH, WRAP = 10.0, 126  # inches, characters: each panel spans the full reading width
@@ -81,7 +86,7 @@ def canvas(title, subtitle, source, body):
     head, main = figure.subfigures(2, 1, height_ratios=(header, body), hspace=0)
     head.text(0.015, 1 - 0.36 / header, title, fontsize=15, fontweight='bold', va='baseline')
     head.text(0.015, 1 - 0.52 / header, subtitle, fontsize=10.5, color=INK2, va='top', linespacing=1.45)
-    main.supxlabel(f'Source: {source}  ·  HORMATHOS run {RUN_ID[:12]}', x=0.985, ha='right',
+    main.supxlabel(f'Source: {source}', x=0.985, ha='right',
                    fontsize=8.5, color=MUTED)
     return figure, main.subplots()
 
@@ -154,7 +159,8 @@ def corpus(documents, contingency, variant, groups):
     body = 1.2 + 0.36 * len(frame)
     source = contingency[contingency['level'].eq('document')]
     counts = source.pivot_table(index='unit', columns='upos_raw', values='count', aggfunc='sum', fill_value=0)
-    note = f'Documents below the dashed line are inventory only: counted in the census, never trained or scored.'
+    note = ('Below the dashed line: census-only documents, counted when the symbol inventory is built but never '
+            'used for training or scoring.')
 
     def finish(axis):
         rows_axis(axis, labels)
@@ -163,13 +169,14 @@ def corpus(documents, contingency, variant, groups):
             tick.set_color(MUTED)
 
     panels = {}
-    figure, axis = canvas(f'Corpus size per document ({variant})',
-                          f'Raw tokens, tokens retained after encoding, and eligible prediction targets.\n{note}',
+    figure, axis = canvas('Corpus size per document',
+                          'Tokens (words and punctuation) in the source, tokens kept by the encoding, and targets: '
+                          'the kept tokens, from the fifth of each sentence on, that the models predict.\n' + note,
                           'results/hexis31/v1/documents.csv', body + 0.6)
     y = np.arange(len(frame))
-    for offset, (column, name, color) in enumerate((('raw', 'raw tokens', RAMP[0]),
-                                                    ('kept', 'retained tokens', RAMP[1]),
-                                                    ('eligible', 'eligible targets', RAMP[3]))):
+    for offset, (column, name, color) in enumerate((('raw', 'source tokens', RAMP[0]),
+                                                    ('kept', 'kept tokens', RAMP[1]),
+                                                    ('eligible', 'targets', RAMP[3]))):
         axis.barh(y + (offset - 1) * 0.26, frame[column], height=0.24, color=color, label=name)
     axis.set(xscale='log', xlabel='count (log scale)')
     axis.xaxis.set_major_formatter(FuncFormatter(lambda value, _: f'{value:,.0f}'))
@@ -177,27 +184,29 @@ def corpus(documents, contingency, variant, groups):
     legend(axis, None)
     panels['corpus__quantities'] = figure
 
-    figure, axis = canvas('Retention per document', f'Share of raw tokens retained by the encoding.\n{note}',
+    figure, axis = canvas('Share of tokens kept per document',
+                          'Tokens kept by the encoding as a share of the tokens in the source.\n' + note,
                           'results/hexis31/v1/documents.csv', body)
     colors = [BLUE if primary_row else MUTED for primary_row in frame['primary']]
     axis.barh(y, frame['retention'], height=0.62, color=colors)
     for index, value in enumerate(frame['retention']):
         axis.annotate(f'{value:.1%}', (value, index), xytext=(6, 0), textcoords='offset points',
                       va='center', fontsize=9.5, color=INK2)
-    axis.set(xlim=(0, 1.08), xlabel='retained / raw tokens')
+    axis.set(xlim=(0, 1.08), xlabel='kept tokens / source tokens')
     axis.xaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
     finish(axis)
-    legend(axis, [Patch(color=BLUE, label='primary'), Patch(color=MUTED, label='inventory only')])
+    legend(axis, [Patch(color=BLUE, label='scored documents'), Patch(color=MUTED, label='census only')])
     panels['corpus__retention'] = figure
 
-    figure, axis = canvas('Source PART and ADV per document',
-                          'Share of raw tokens tagged PART and ADV in the source; the encoding merges them '
-                          'into ADV_PART.\n' + note, 'results/hexis31/v1/audit_contingency.csv', body + 0.3)
-    for offset, (tag, color) in enumerate((('PART', BLUE), ('ADV', ORANGE))):
+    figure, axis = canvas('Particles and adverbs in the source annotation',
+                          'Share of source tokens tagged particle (PART) or adverb (ADV). The documents use the two '
+                          'tags differently, so the encoding merges them into one class.\n' + note,
+                          'results/hexis31/v1/audit_contingency.csv', body + 0.3)
+    for offset, (tag, name, color) in enumerate((('PART', 'particle (PART)', BLUE), ('ADV', 'adverb (ADV)', ORANGE))):
         shares = [counts.at[doc, tag] / raw if doc in counts.index and tag in counts.columns else 0.0
                   for doc, raw in zip(frame['doc_id'], frame['raw'])]
-        axis.barh(y + (offset - 0.5) * 0.36, shares, height=0.34, color=color, label=f'source {tag}')
-    axis.set(xlabel='share of raw tokens')
+        axis.barh(y + (offset - 0.5) * 0.36, shares, height=0.34, color=color, label=name)
+    axis.set(xlabel='share of source tokens')
     axis.xaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
     finish(axis)
     legend(axis, None)
@@ -230,24 +239,25 @@ def profiles(tables, documents, groups):
     q = summary[summary['level'].eq('block') & summary['metric'].eq('q')].set_index('unit')['mean']
     assert {unit: round(q[unit], 3) for unit in README_Q} == README_Q, 'README table matches seed_summaries'
 
-    metrics = {'q': ('Order advantage Q', 'Q = gain in attested order − gain under the within-sentence '
-                     'shuffle, in bits per eligible target.', 1.0, '{:.3f}', plots.BITS),
-               'g_original': ('Gain in attested order, G original', 'G = CE_root − CE_CTW: the gain of the '
-                              'trained model over the frequency baseline, attested order.', 1.0, '{:.3f}',
-                              plots.BITS),
-               'g_shuffled': ('Gain under the shuffle, G shuffled', 'The same gain after shuffling within '
-                              'each sentence: numerically near zero, shown in units of 10⁻¹⁶ bits.', 1e16,
-                              '{:.2f}', f'{plots.BITS} (× 10⁻¹⁶)')}
+    metrics = {'q': ('Order advantage Q', 'Q = gain in the original order − gain after shuffling the tokens within '
+                     'each sentence. The gain is how much better the trained model predicts each annotation than '
+                     'the symbol frequencies alone.', 1.0, '{:.3f}', BITS),
+               'g_original': ('Gain in the original order', 'How much better the trained model predicts each '
+                              'annotation than the symbol frequencies alone, with the tokens in their original '
+                              'order.', 1.0, '{:.3f}', BITS),
+               'g_shuffled': ('Gain after shuffling', 'The same gain after shuffling the tokens within each '
+                              'sentence: practically zero, so the axis is in units of 10⁻¹⁶ bits.', 1e16,
+                              '{:.2f}', f'{BITS} (× 10⁻¹⁶)')}
     levels = {'block': (blocks, block_units, [block_name(u) for u in block_units],
                         [groups[u] for u in block_units],
-                        'Each block is scored by a model trained on the other blocks.'),
+                        'Each block is scored by a model trained on the other six blocks.'),
               'document': (scored, document_units, [label[u] for u in document_units],
                            [groups[block_of[u]] for u in document_units],
-                           'Documents are scored within their held-out block; n = eligible targets per seed.')}
+                           'Each document is scored by the model of its block; n = targets scored per seed.')}
     panels = {}
     for metric, (title, meaning, scale, fmt, unit_label) in metrics.items():
         for level, (frame, units, labels, unit_groups, context) in levels.items():
-            figure, axis = canvas(f'{title} per {level} ({REF})', f'{meaning} {context}\n{MARKS}',
+            figure, axis = canvas(f'{title} per {level}, main setting', f'{meaning} {context}\n{MARKS}',
                                   'results/hexis31/v3-seed0-v3006/seed_summaries.csv',
                                   1.3 + (0.42 if level == 'block' else 0.36) * len(units))
             rows = summary[summary['level'].eq(level) & summary['metric'].eq(metric)].set_index('unit')
@@ -275,11 +285,13 @@ def sensitivities(tables, cells, groups):
     q_of = summary[summary['unit'].eq('contrast') & summary['metric'].eq('q') & summary['past_band'].eq('all')]
     panels = {}
     for name, title, subtitle, shown, level in (
-            ('contrast', 'Hexameter minus prose, D_Q, in every setting',
-             'D_Q = Q(HEX) − Q(PROSE_ALL) in bits per eligible target, under both declared weightings.',
+            ('contrast', 'Hexameter minus prose in every setting',
+             'Mean Q of the two hexameter blocks minus mean Q of the five prose blocks, averaged so that every '
+             'block weighs the same, or so that every target does.',
              cells, 'group'),
-            ('paired_difference', 'Change from C0 on the same seeds',
-             'Each setting minus C0 in D_Q, paired seed by seed (seeds 0–9), under both weightings.',
+            ('paired_difference', 'Change from the main setting',
+             'The hexameter-minus-prose difference in each setting minus the same difference in the main '
+             'setting, seed by seed on the seeds 0–9 that both share.',
              cells[1:], 'group_difference')):
         figure, axis = canvas(title, f'{subtitle}\n{MARKS}', 'results/hexis31/v3-seed0-v3006/'
                               + ('contrasts.csv' if level == 'group' else 'sensitivity_pairs.csv'),
@@ -300,16 +312,16 @@ def sensitivities(tables, cells, groups):
         rows_axis(axis, [CELL[cell] for cell in shown])
         zero_line(axis)
         axis.margins(x=0.08)
-        axis.set_xlabel(plots.BITS)
+        axis.set_xlabel(BITS)
         legend(axis, [dot(color, label) for label, color in WEIGHTING.values()])
         panels[f'sensitivities__{name}'] = figure
 
     blocks = summary[summary['level'].eq('block') & summary['metric'].eq('q')]
     units = plots._block_order(blocks['unit'].unique(), groups)
     for band, words in (('4_7', '4–7'), ('ge8', '8 or more')):
-        figure, axis = canvas(f'Block Q by setting, past band {band}',
-                              f'Mean Q of each block across its seeds (20 in C0, 10 elsewhere), on targets with '
-                              f'{words} retained predecessors in the same sentence.\nLines only join the '
+        figure, axis = canvas(f'Q of each block by setting, targets after {words} tokens',
+                              f'Mean Q of each block across its seeds (20 in the main setting, 10 in the others), on '
+                              f'targets preceded by {words} kept tokens of the same sentence.\nLines only join the '
                               f'settings of one block; the settings have no order.',
                               'results/hexis31/v3-seed0-v3006/seed_summaries.csv', 5.6)
         rows = blocks[blocks['past_band'].eq(band)].set_index(['unit', 'cell'])['mean']
@@ -322,17 +334,17 @@ def sensitivities(tables, cells, groups):
             starts.append(values[0])
         low, high = min(rows), max(rows)
         axis.set_ylim(min(0, low), high + 0.06 * (high - min(0, low)))
-        placed = spread(starts, 0.05 * np.diff(axis.get_ylim())[0])  # labelled at C0, where blocks separate
+        placed = spread(starts, 0.05 * np.diff(axis.get_ylim())[0])  # labelled at the main setting
         for unit, value, position in zip(units, starts, placed):
             axis.annotate(block_name(unit), (0, value), xytext=(-0.14, position), textcoords='data',
                           ha='right', va='center', fontsize=10, color=INK,
                           arrowprops={'arrowstyle': '-', 'color': MUTED, 'linewidth': 0.6,
                                       'shrinkA': 0, 'shrinkB': 3})
         axis.set_xlim(-1.35, len(cells) - 1 + 0.25)
-        axis.set_xticks(np.arange(len(cells)), cells)
+        axis.set_xticks(np.arange(len(cells)), [textwrap.fill(CELL[cell], 18) for cell in cells])
         axis.grid(axis='x', visible=False)
         zero_line(axis, vertical=False)
-        axis.set_ylabel(plots.BITS)
+        axis.set_ylabel(BITS)
         legend(axis, [dot(color, name) for name, color in GROUP.values()])
         panels[f'sensitivities__past_band_{band}'] = figure
     return panels
@@ -350,9 +362,10 @@ def r1(tables, variant, groups):
     matrix, names = matrix[np.ix_(order, order)], [names[i] for i in order]
     lower = matrix[1:, :-1]
     shown = np.ma.masked_where(np.triu(np.ones_like(lower, dtype=bool), k=1), lower)
-    figure, axis = canvas(f'R1: divergence between blocks ({variant}, C0)',
-                          'Jensen–Shannon divergence in bits between the smoothed annotation counts of two '
-                          'blocks.\nDescriptive only: computed from the annotation counts, not from the models.',
+    figure, axis = canvas('How different the annotation frequencies of two blocks are',
+                          'Jensen–Shannon divergence in bits between the symbol frequencies of two blocks: 0 if '
+                          f'identical, at most 1. Symbols: {VARIANT[variant]}.\nComputed from the annotations of '
+                          'the texts, not from the models.',
                           'results/hexis31/v3-seed0-v3006/jsd_pairs.csv', 6.2)
     image = axis.imshow(shown, cmap=HEAT, vmin=0.0, vmax=lower.max())
     for (row, column), value in np.ndenumerate(lower):
@@ -366,22 +379,23 @@ def r1(tables, variant, groups):
     axis.grid(visible=False)
     for side in axis.spines.values():
         side.set_visible(False)
-    figure.colorbar(image, ax=axis, label='JSD (bits)', shrink=0.8).outline.set_visible(False)
+    figure.colorbar(image, ax=axis, label='Jensen–Shannon divergence (bits)', shrink=0.8).outline.set_visible(False)
     panels[f'r1__matrix_{variant}'] = figure
 
     variants = sorted(centroids['variant'])
     alphabet = contributions.groupby('variant')['symbol_id'].nunique()
-    figure, axis = canvas('R1: hexameter against prose, by representation',
-                          'JSD in bits between the equal-block centroids of HEX and PROSE_ALL, in each of the '
-                          'three annotation\nrepresentations.',
+    figure, axis = canvas('Hexameter against prose, by annotation scheme',
+                          'Jensen–Shannon divergence in bits between the average symbol frequencies of the hexameter '
+                          'blocks and of the prose blocks, every block weighing the same, in each of the three '
+                          'annotation schemes.',
                           'results/hexis31/v3-seed0-v3006/jsd_centroids.csv', 2.4)
     values = centroids.set_index('variant').loc[variants, 'jsd']
     axis.barh(np.arange(len(variants)), values, height=0.55, color=BLUE)
     for y, value in enumerate(values):
         axis.annotate(f'{value:.4f}', (value, y), xytext=(6, 0), textcoords='offset points', va='center',
                       fontsize=10, color=INK2)
-    rows_axis(axis, [f'{v} ({alphabet[v]} symbols)' for v in variants])
-    axis.set_xlabel('JSD (bits)')
+    rows_axis(axis, [f'{VARIANT[v]} ({alphabet[v]} symbols)' for v in variants])
+    axis.set_xlabel('Jensen–Shannon divergence (bits)')
     axis.margins(x=0.1)
     panels['r1__centroids'] = figure
 
@@ -397,9 +411,9 @@ def r1(tables, variant, groups):
             labels.append(f'the other {len(rest)} symbols, summed')
             bars.append(rest['contribution'].sum())
             colors.append(MUTED)
-        figure, axis = canvas(f'R1: which symbols separate hexameter from prose ({variant_name})',
-                              f'Contribution of each symbol to the centroid JSD of {values[variant_name]:.4f} '
-                              f'bits; contributions sum to it.\n'
+        figure, axis = canvas(f'Which symbols separate hexameter from prose: {VARIANT[variant_name]}',
+                              f'Part of the hexameter–prose divergence of {values[variant_name]:.4f} bits due to '
+                              f'each symbol; the parts add up to it.\n'
                               + ('All symbols shown.' if not len(rest) else
                                  f'The {SHOWN_SYMBOLS} largest of {len(rows)} symbols; every value is in '
                                  f'jsd_contributions.csv.'),
@@ -425,10 +439,10 @@ def supports(tables):
     arms = tables['arm_diagnostics.csv']
     arms = arms[arms['cell'].eq(REF)].dropna(axis=1, how='all')
     panels = {}
-    figure, axis = canvas(f'Model supports by depth ({REF})',
-                          'Observed context-tree nodes per model (mean over models), by structural depth, '
-                          'stacked by support class.\nLeft bar of each pair: attested order; right, hatched: '
-                          'within-sentence shuffle.',
+    figure, axis = canvas('Contexts stored by the models, by depth',
+                          'Mean number of contexts seen in training (nodes of the context tree) per model, at each '
+                          'depth of the tree, split by how many times each was seen; main setting.\nLeft bar of '
+                          'each pair: original order; right, hatched: shuffled within each sentence.',
                           'results/hexis31/v3-seed0-v3006/model_diagnostics.csv', 4.8)
     top = 0.0
     for offset, (arm, frame) in zip((-0.2, 0.2), models.groupby('arm', sort=True)):
@@ -446,8 +460,10 @@ def supports(tables):
     axis.xaxis.set_major_locator(MaxNLocator(integer=True))
     axis.yaxis.set_major_formatter(FuncFormatter(lambda value, _: f'{value:,.0f}'))
     axis.grid(axis='x', visible=False)
-    axis.set(xlabel='structural depth', ylabel='observed nodes per model (mean)')
-    legend(axis, [Patch(color=color, label=f'support {name.replace("to", "–").replace("plus", "+")}')
+    axis.set(xlabel='depth in the context tree (the sentence start counts as one step)',
+             ylabel='contexts per model (mean)')
+    seen = {'1': 'seen once', '2to4': 'seen 2–4 times', '5to9': 'seen 5–9 times', '10plus': 'seen 10+ times'}
+    legend(axis, [Patch(color=color, label=seen[name])
                   for name, color in zip(plots.SUPPORT_CLASSES, RAMP)]
            + [Patch(facecolor=MUTED, hatch='////', edgecolor=SURFACE, label='shuffled')], columns=5)
     panels['supports__depth'] = figure
@@ -461,27 +477,30 @@ def supports(tables):
         counts[arm] = (int(frame['resolved_valid_count'].sum()),
                        int(frame[f'resolved_null_count_by_reason_{diagnostics.NO_RESOLVED_MASS}'].sum()))
 
-    figure, axis = canvas('Mixture mass by context length',
-                          'Mean observed probability mass per target assigned at each lexical context length ℓ, '
-                          f'{REF},\npooled over documents, bands and seeds.',
+    figure, axis = canvas('Weight given to each context length',
+                          'Mean share of each prediction that the model draws from contexts of each length (number '
+                          'of preceding symbols), main setting,\npooled over documents, targets and seeds.',
                           'results/hexis31/v3-seed0-v3006/arm_diagnostics.csv', 4.4)
     for arm, values in means.items():
         name, color = ARM[arm]
         axis.plot(np.arange(len(values['mass'])), values['mass'], color=color, linewidth=2, marker='o',
                   markersize=7, markeredgecolor=SURFACE, label=name)
     axis.xaxis.set_major_locator(MaxNLocator(integer=True))
-    axis.set(xlabel='lexical context length ℓ', ylabel='mean observed mass per target')
+    axis.set(xlabel='context length (preceding symbols; the sentence start is not counted)',
+             ylabel='mean share per target')
     legend(axis, None)
     panels['supports__mass_by_length'] = figure
 
-    arm_labels = [f'{ARM[arm][0]}\n(valid {counts[arm][0]:,}, null {counts[arm][1]:,})' for arm in means]
+    arm_labels = [f'{ARM[arm][0]}\n({counts[arm][0]:,} targets with a context length, {counts[arm][1]:,} without)'
+                  for arm in means]
     for key, name, title, subtitle, xlabel in (
-            ('unseen', 'unseen_mass', 'Mass routed to unseen branches',
-             f'Mean probability mass per target that the mixture sends to branches unseen in training, {REF}.',
-             'mean unseen mass per target'),
-            ('L', 'resolved_length', 'Resolved context length, L_resolved',
-             f'Mean L_resolved in context symbols over the valid targets, {REF} (§9.2); null targets are '
-             'counted, never zeroed.', 'mean L_resolved (context symbols)')):
+            ('unseen', 'unseen_mass', 'Weight given to contexts never seen in training',
+             'Mean share of each prediction that the model assigns to contexts it never saw in training, '
+             'main setting.', 'mean share per target'),
+            ('L', 'resolved_length', 'Average context length used',
+             'Mean length, in preceding symbols, of the contexts each prediction draws on, main setting. A target '
+             'whose prediction draws on no seen context has no length: it is counted apart, never as zero.',
+             'mean context length (preceding symbols)')):
         figure, axis = canvas(title, subtitle, 'results/hexis31/v3-seed0-v3006/arm_diagnostics.csv', 2.3)
         values = [np.nan if means[arm][key] is None else means[arm][key] for arm in means]
         axis.barh(np.arange(len(values)), values, height=0.55, color=[ARM[arm][1] for arm in means])

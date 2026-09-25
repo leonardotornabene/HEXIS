@@ -270,3 +270,17 @@ Every run extracted from the two archives passes `validate_run`.
 **Freeze perimeter and Release.** `src/hormathos`, `tests/`, `conftest.py`, `config/`, `pyproject.toml` and `uv.lock` are unchanged: the new files lie under `results/`, which the sdist list already includes. The code identity and the run ID `6aa1b719…` are unchanged. The Release `hormathos-v5-evidence`, its assets and its tags are unchanged.
 
 **Licences**, by the categories of V3-002 and V3-007: the panels derive from the corpus and are under CC BY-NC-SA 2.5; `make_figures.py` under MIT; the gallery page under CC BY 4.0, except the corpus-derived values it quotes.
+
+## V3-010 — Reader-facing texts without internal references, 2026-09-25
+
+**Status: ADOPTED.** Source of authorization: the owner's request of 25 September 2026 that a reader of the README, of the results and of the figures not meet technical terms left undefined or references internal to the project — phases, acts, sections of the plan, codes of settings, blocks and tables — and that every figure carry a short explanation beside it. The texts stay technical in register and in detail; only their vocabulary and references change. The owner authorized rewriting `docs/RESULTS.md` as one coherent text and approved the plan and its assumptions. It modifies no byte of the deposit, of the acts V3-001 to V3-009, of `archive/`, of the published runs or of the freeze perimeter, and authorizes no run.
+
+**`docs/RESULTS.md`.** This act supersedes V3-007 (e) and V3-008 for its wording. It is rewritten as one statement: definitions first, then corpus, profiles, groups, sensitivities, annotation frequencies, diagnostics, figures, conclusions and limits, checks, and a table that maps every label to the codes of the published CSV files. Its 18 numerical tables keep every numeric cell byte for byte, in the same order; only labels and headers change, and they are numbered 1–18 in place of N1–X3. Every number in its text is taken from the previous wording or from the deposited plan. The account of the two reviews leaves this document: the statement of 25 September 2026 stays word for word in `docs/HANDOFF.md` at the tag `hormathos-v5-evidence` and in the Git history, and `docs/RESULTS.md` links it.
+
+**Figures.** `results/figures/make_figures.py` changes only the texts of the panels — titles, subtitles, legends, axes — to plain names, and drops the run ID from their footer; data, drawing and the byte check of the five frozen figures are unchanged. The 22 panels are regenerated under the same names. `results/figures/README.md` opens with what is measured and gives each panel what it shows, how to read it and what to take from it.
+
+**Other documents.** The README and `results/README.md` use the same vocabulary; the README keeps the identifiers that `test_v31_docs` requires, within one sentence that explains them. In `docs/00_INDEX.md` only the row of `RESULTS.md` and the list of acts change.
+
+**Freeze perimeter and Release.** `src/hormathos`, `tests/`, `conftest.py`, `config/`, `pyproject.toml` and `uv.lock` are unchanged; the changed files are already in the sdist list. The code identity and the run ID `6aa1b719…` are unchanged. The Release `hormathos-v5-evidence`, its assets and its tags are unchanged.
+
+**Licences**, by the categories of V3-002 and V3-007: the panels derive from the corpus and are under CC BY-NC-SA 2.5; `make_figures.py` under MIT; the documents under CC BY 4.0, except the corpus-derived values they quote.

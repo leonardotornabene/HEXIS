@@ -4,10 +4,10 @@ Start from the [README](../README.md). Then, by what you need:
 
 | Document | What it is | Read it if… |
 |---|---|---|
-| [RESULTS.md](RESULTS.md) | Statement of results and limitations, every number traced to its table | you want the findings and what they do not show |
+| [RESULTS.md](RESULTS.md) | Statement of results and limitations: every term defined, every number traced to its table | you want the findings and what they do not show |
 | [../results/README.md](../results/README.md) | Guide to the published tables, figures, logs and archives | you want the data |
 | [Deposited plan 3.1, English](contracts/hexis-3.1-en/HEXIS_piano_definitivo_v3.1_2026-09-15.md) | The research design, fixed before the campaign; the [Italian original](contracts/hexis-3.1/HEXIS_piano_definitivo_v3.1_2026-09-15.md) and its JSON contracts govern, identified by [V3-001-deposit.json](V3-001-deposit.json) | you want to judge the method |
-| [02_DECISION_LOG.md](02_DECISION_LOG.md) | Every decision since the design: V3-001 adopts it, V3-002 realigns the repository and sets the licences, V3-003 names the project, V3-004–V3-006 close the reviews, V3-007 publishes the results, V3-008 extends the name HORMATHOS to the reader-facing texts and the release. V3-001 and V3-002 are in Italian, with [English companions](contracts/hexis-3.1-en/decision-log/) | you want to know why something is as it is |
+| [02_DECISION_LOG.md](02_DECISION_LOG.md) | Every decision since the design: V3-001 adopts it, V3-002 realigns the repository and sets the licences, V3-003 names the project, V3-004–V3-006 close the reviews, V3-007 publishes the results, V3-008 extends the name HORMATHOS to the reader-facing texts and the release, V3-009 adds the figures for reading, V3-010 rewrites the reader-facing texts without internal references. V3-001 and V3-002 are in Italian, with [English companions](contracts/hexis-3.1-en/decision-log/) | you want to know why something is as it is |
 | [01_MASTER_SPEC.md](01_MASTER_SPEC.md) | One-page statement of authority and perimeter | you are checking what governs what |
 | [03_ROADMAP.md](03_ROADMAP.md) | Phases V0–V5 with their commits and status | you want the timeline |
 | [HANDOFF.md](HANDOFF.md) | Technical record: runs, commands, checks, reviews, identities, dated newest first | you want to verify or reproduce a step |

@@ -719,13 +719,13 @@ as a score or complexity penalty.
 
 ### Existing figures and review boundary
 
-| Figure | Numerical companion / scope |
-|---|---|
-| [figure__corpus_annotation.svg](../results/hexis31/v3-seed0-v3006/figure__corpus_annotation.svg) | V1 documents.csv and audit_contingency.csv: quantities, retention and annotation census, including inventory_only. |
-| [figure__block_document_profiles.svg](../results/hexis31/v3-seed0-v3006/figure__block_document_profiles.svg) | P1–P4; the linked extended seed summaries contain all profile components and bands. |
-| [figure__sensitivities_two_weights.svg](../results/hexis31/v3-seed0-v3006/figure__sensitivities_two_weights.svg) | S1–S3, D1–D3; both weights and paired first-ten-seed differences. |
-| [figure__R1.svg](../results/hexis31/v3-seed0-v3006/figure__R1.svg) | R1a–R1c: three complete pair tables and centroid/contribution records. |
-| [figure__supports_mixture_masses.svg](../results/hexis31/v3-seed0-v3006/figure__supports_mixture_masses.svg) | X1–X3: model supports, assigned masses and resolved lengths with their own denominators. |
+| Figure | Numerical companion / scope | Reading version (V3-009) |
+|---|---|---|
+| [figure__corpus_annotation.svg](../results/hexis31/v3-seed0-v3006/figure__corpus_annotation.svg) | V1 documents.csv and audit_contingency.csv: quantities, retention and annotation census, including inventory_only. | [gallery §1](../results/figures/README.md#1-corpus-and-annotation) |
+| [figure__block_document_profiles.svg](../results/hexis31/v3-seed0-v3006/figure__block_document_profiles.svg) | P1–P4; the linked extended seed summaries contain all profile components and bands. | [gallery §2](../results/figures/README.md#2-block-and-document-profiles) |
+| [figure__sensitivities_two_weights.svg](../results/hexis31/v3-seed0-v3006/figure__sensitivities_two_weights.svg) | S1–S3, D1–D3; both weights and paired first-ten-seed differences. | [gallery §3](../results/figures/README.md#3-sensitivities-and-the-two-weightings) |
+| [figure__R1.svg](../results/hexis31/v3-seed0-v3006/figure__R1.svg) | R1a–R1c: three complete pair tables and centroid/contribution records. | [gallery §4](../results/figures/README.md#4-r1-descriptive-divergences-between-annotation-counts) |
+| [figure__supports_mixture_masses.svg](../results/hexis31/v3-seed0-v3006/figure__supports_mixture_masses.svg) | X1–X3: model supports, assigned masses and resolved lengths with their own denominators. | [gallery §5](../results/figures/README.md#5-model-supports-and-mixture-masses) |
 
 Byte identity of the five figures was checked during preparation. For this draft all
 five were rasterized from the published SVGs (headless browser, 2,400 px wide; scripts
@@ -738,6 +738,10 @@ figures are recorded, not corrected: in the support panel the stacked original b
 structural depth 5 exceeds the upper axis limit and is clipped; in the band panel of
 the sensitivity figure the block means are unlabelled points, so individual blocks are
 read from P2–P3. Neither affects a published number.
+
+The reading versions, added after this statement by V3-009, redraw the same published
+values one panel at a time for legibility; they are not evidence and do not replace the
+frozen figures, which remain the ones this section reviews.
 
 ### Limitations and permitted conclusions
 

@@ -18,10 +18,14 @@ Scores are in bits per eligible target. O is the attested order, R the within-se
 | [jsd_pairs.csv](hexis31/v3-seed0-v3006/jsd_pairs.csv), [jsd_centroids.csv](hexis31/v3-seed0-v3006/jsd_centroids.csv), [jsd_contributions.csv](hexis31/v3-seed0-v3006/jsd_contributions.csv) | R1: Jensen–Shannon divergences of the annotation counts, descriptive only |
 | [root_distributions.csv](hexis31/v3-seed0-v3006/root_distributions.csv) | symbol frequencies per block, the baseline of every gain |
 | [model_diagnostics.csv](hexis31/v3-seed0-v3006/model_diagnostics.csv), [arm_diagnostics.csv](hexis31/v3-seed0-v3006/arm_diagnostics.csv), [fragment_diagnostics.csv](hexis31/v3-seed0-v3006/fragment_diagnostics.csv) | model supports, masses, unseen symbols and sample fragments |
-| five `figure__*.svg` | the five figures of the design: [corpus](hexis31/v3-seed0-v3006/figure__corpus_annotation.svg), [profiles](hexis31/v3-seed0-v3006/figure__block_document_profiles.svg), [sensitivities](hexis31/v3-seed0-v3006/figure__sensitivities_two_weights.svg), [R1](hexis31/v3-seed0-v3006/figure__R1.svg), [supports and masses](hexis31/v3-seed0-v3006/figure__supports_mixture_masses.svg) |
+| five `figure__*.svg` | the five figures of the design, as the pipeline wrote them: [corpus](hexis31/v3-seed0-v3006/figure__corpus_annotation.svg), [profiles](hexis31/v3-seed0-v3006/figure__block_document_profiles.svg), [sensitivities](hexis31/v3-seed0-v3006/figure__sensitivities_two_weights.svg), [R1](hexis31/v3-seed0-v3006/figure__R1.svg), [supports and masses](hexis31/v3-seed0-v3006/figure__supports_mixture_masses.svg); to read them, use the [figure gallery](figures/README.md) |
 | `tree_validation.json`, `v31_process.json`, `v31.junit.xml` | V2 evidence: the synthetic battery and the 431-test acceptance run bound to this code |
 
 [`hexis31/v3-seed0-v3006-regeneration/`](hexis31/v3-seed0-v3006-regeneration/manifest.json) is the separately executed seed-0 regeneration: 70 of 70 compared artifacts identical.
+
+## Figures for reading: `figures/`
+
+The [figure gallery](figures/README.md) redraws the five figures one panel at a time, full width, from the published tables alone (V3-009). The frozen figures above stay the canonical ones; [`make_figures.py`](figures/make_figures.py) reproduces them byte for byte before it draws.
 
 ## Other published material
 

@@ -254,3 +254,19 @@ Every run extracted from the two archives passes `validate_run`.
 **Decisions.**
 - C1: reader-facing texts name the study HORMATHOS; HEXIS 3.1 survives once, as the working title of the deposit, and in the identifiers and paths listed above.
 - C2: a new annotated tag `hormathos-v5-evidence` on the same commit carries the Release; the tag `hexis31-v5-evidence` stays.
+
+---
+
+## V3-009 — Figures for reading, 2026-09-25
+
+**Status: ADOPTED.** Source of authorization: the owner's request of 25 September 2026 that the figures, unreadable at the width of a page, be redrawn one below the other and full width so that readers can study them, with a clear and professional design; one image per panel and a link from `docs/RESULTS.md`, as the owner chose. It modifies no byte of the deposit, of the acts V3-001 to V3-008, of `archive/`, of the published runs or of the freeze perimeter, and authorizes no run.
+
+**Published.** `results/figures/`: 22 SVG panels, the gallery `README.md` and the script `make_figures.py` that draws them. The script reads the published tables of `v3-seed0-v3006` and the delivered corpus `v1`, parsing their floats exactly (`float_precision='round_trip'`), and reuses the data preparation of the frozen `hormathos.viz.plots`, `protocols.scores` and `model.diagnostics`; it fits nothing and reads no model, ledger or sample. Before drawing, it renders the five §11.6 figures from those tables with the frozen code and stops unless all five match the published SVGs byte for byte. Its output is deterministic.
+
+**What the panels are.** A presentation of published values, not evidence: the canonical figures remain the five frozen SVGs of the run, listed with their hashes in its manifest and unchanged. Each panel draws what its frozen figure draws. The differences are of form only: one panel per image; horizontal dot plots with readable names; the block-by-band panel of the sensitivity figure split by band, with a labelled line per block; the leading 15 symbols of the 100- and 105-symbol R1 contributions drawn one by one and the rest in one summed bar, the sum checked against the centroid JSD; a nonzero mean below the displayed precision printed in scientific notation. The two presentation limits that `docs/RESULTS.md` records for the frozen figures — the clipped support bar at depth 5 and the unlabelled block means of the band panel — do not occur in the panels; the record stays as written, because it describes the frozen figures.
+
+**Documents.** The README shows the Q-per-block panel under the main result and links the gallery. `results/README.md` describes `results/figures/`. In `docs/RESULTS.md`, whose wording V3-007 (e) fixes, only the figure table of "Existing figures and review boundary" changes: it gains a column linking each figure's reading version, and one paragraph after the table states that these versions are not evidence and do not replace the frozen figures.
+
+**Freeze perimeter and Release.** `src/hormathos`, `tests/`, `conftest.py`, `config/`, `pyproject.toml` and `uv.lock` are unchanged: the new files lie under `results/`, which the sdist list already includes. The code identity and the run ID `6aa1b719…` are unchanged. The Release `hormathos-v5-evidence`, its assets and its tags are unchanged.
+
+**Licences**, by the categories of V3-002 and V3-007: the panels derive from the corpus and are under CC BY-NC-SA 2.5; `make_figures.py` under MIT; the gallery page under CC BY 4.0, except the corpus-derived values it quotes.

@@ -24,7 +24,9 @@ Each block is evaluated by a model trained on the other blocks. Q is the model's
 | Diodorus | 12,334 | 0.526 |
 | Plutarch | 6,901 | 0.543 |
 
-[Open the full-size profiles figure](results/hexis31/v3-seed0-v3006/figure__block_document_profiles.svg).
+![Q per block in C0: both hexameter blocks below every prose block](results/figures/profiles__q_block.svg)
+
+Every figure of the study, one panel at a time, is in the [figure gallery](results/figures/README.md).
 
 The two hexameter blocks have lower Q than each of the five prose blocks. In C0, the hexameter-minus-prose contrast is −0.211 bits/target with equal block weights and −0.202 with eligible-target weights; it remains negative in all six settings under both weightings.
 
@@ -45,7 +47,7 @@ This is a descriptive contrast in a finite corpus, not an attribution to metre. 
 
 The work began with a question about Homeric composition and the possibilities of information theory. It then considered a comparison between hexameter and prose, first also in Latin. Limited comparable annotated data, uneven coverage of authors and works, and too few independent units made broad claims about composition or genre difficult to support. The present design therefore asks a narrower question: how large and how consistent is the predictive advantage of attested order across the texts available, and how sensitive is it to reasonable choices in the analysis? Hexameter and prose remain a descriptive comparison within that study.
 
-The design was written, reviewed and deposited on 15 September 2026, under the working title HEXIS 3.1, before the campaign was run; results of earlier pilots were already known to the author, a limitation the results statement records. The code implements the deposited design, and every deviation from it is declared in the decision log. The project was later named **HORMATHOS**, the name it carries throughout; HEXIS survives only in the deposit, in the identifiers and paths that it and the published evidence fix, and in historical records. Earlier approaches, including the abandoned inferential design, are kept unchanged in [archive/](archive/). The [decision log](docs/02_DECISION_LOG.md) records every transition: V3-001 adopts the design, V3-002 realigns the repository and sets the licences, V3-003 gives the project its name, V3-004 to V3-006 close the reviews before the campaign, V3-007 publishes the results, and V3-008 extends the name HORMATHOS to every reader-facing text and to the release.
+The design was written, reviewed and deposited on 15 September 2026, under the working title HEXIS 3.1, before the campaign was run; results of earlier pilots were already known to the author, a limitation the results statement records. The code implements the deposited design, and every deviation from it is declared in the decision log. The project was later named **HORMATHOS**, the name it carries throughout; HEXIS survives only in the deposit, in the identifiers and paths that it and the published evidence fix, and in historical records. Earlier approaches, including the abandoned inferential design, are kept unchanged in [archive/](archive/). The [decision log](docs/02_DECISION_LOG.md) records every transition: V3-001 adopts the design, V3-002 realigns the repository and sets the licences, V3-003 gives the project its name, V3-004 to V3-006 close the reviews before the campaign, V3-007 publishes the results, V3-008 extends the name HORMATHOS to every reader-facing text and to the release, and V3-009 adds the figures for reading.
 
 ## How this project was made
 

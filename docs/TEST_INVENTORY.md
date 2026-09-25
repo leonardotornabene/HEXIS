@@ -352,6 +352,6 @@ Summary: 270 non-`v31` functions at `5f1ec06` — 11 v31 in place, 22 migrated, 
 
 - **V3**: executed on 24 September 2026, reviewed, re-attested under V3-005 and, after the pre-V4 review, under V3-006 in `results/hexis31/v3-seed0-v3006` (see HANDOFF): technical trial at seed 0 on six cells and seven folds (42 pairs / 84 models), resource measurements, freeze of code and environment; publication of the V2/V3 evidence in the manifest.
 - **V4**: executed on 24 September 2026 in `results/hexis31/v3-seed0-v3006` (see HANDOFF): full campaign, 490 pairs / 980 model identities, equality of the key sets (T25); the three R1 are computed by the report.
-- **V5**: report executed on 25 September 2026 in the same directory: five figures, two weightings, three R1 and the prescribed regeneration of seed 0 (T24, T27, T29, T30).
-- PENDING: the statement of results and limits without selection of the sign (§14 V5, §16), and the README after V5 (§17.2).
+- **V5**: report executed on 25 September 2026 in the same directory: five figures, two weightings, three R1 and the prescribed regeneration of seed 0 (T24, T27, T29, T30); completed on the same day by the statement of results and limitations without selection of the sign (§14 V5, §16) in the handoff and by the README after V5 (§17.2).
+- PENDING, outside V0–V5: the act for the publication of the C0 position vectors and other corpus derivatives (§17.3), the research proposal (§17.1) and the English companions (V3-003).
 - None of the V3–V5 obligations is covered by fixtures: executing them required real fits.

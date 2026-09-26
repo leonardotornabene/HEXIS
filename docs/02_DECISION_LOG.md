@@ -284,3 +284,27 @@ Every run extracted from the two archives passes `validate_run`.
 **Freeze perimeter and Release.** `src/hormathos`, `tests/`, `conftest.py`, `config/`, `pyproject.toml` and `uv.lock` are unchanged; the changed files are already in the sdist list. The code identity and the run ID `6aa1b719…` are unchanged. The Release `hormathos-v5-evidence`, its assets and its tags are unchanged.
 
 **Licences**, by the categories of V3-002 and V3-007: the panels derive from the corpus and are under CC BY-NC-SA 2.5; `make_figures.py` under MIT; the documents under CC BY 4.0, except the corpus-derived values they quote.
+
+## V3-011 — An introduction for every folder, 2026-09-26
+
+**Status: ADOPTED.** Source of authorization: the owner's request of 26 September 2026 that a reader who opens any folder of the repository find a short introduction there: what the folder holds, why it is there, what its files are and how to move among them. The README's list of folders was not enough, because GitHub shows only a folder's own `README` when the folder is opened. The owner approved the plan and ruled on its two questions of perimeter, recorded below. The act modifies no byte of the deposit, of the acts V3-001 to V3-010, of `archive/` or of the published runs, and authorizes no run.
+
+**New pages.** `docs/README.md`, `docs/contracts/README.md`, `docs/contracts/hexis-3.1-en/README.md`, `src/README.md`, `tests/README.md`, `config/README.md`, `data/README.md` and `results/hexis31/README.md`. Each says what the folder is, why it is there, what it contains and where to go next, and, where it applies, why its files must not change. They use the vocabulary of V3-010.
+
+**Where no page is placed.** Four places are described from outside:
+
+- `archive/`: every file there must hold the bytes of the same path at `5f1ec06` (V3-002), and its `README.md` is the project's old front page. `docs/README.md` and the README warn the reader.
+- `docs/contracts/hexis-3.1/`: it is the deposit, and the pipeline refuses a contract folder holding any file its checksums do not list. `docs/contracts/README.md` describes it.
+- The run folders under `results/hexis31/`: `validate_run` compares the files present with the manifest. `results/hexis31/README.md` describes them.
+- `src/hormathos/`: `src/README.md`, one level up, covers it.
+
+**Other documents.** In the README, the layout table links each folder to its page and warns about `archive/`. `results/README.md` names its describing pages as the only files not written by the pipeline, a check or the figure script. Before this act it said that no file there had been edited, which the figure gallery of V3-009 had already made inexact. `docs/00_INDEX.md` links `docs/README.md` and lists this act. `.gitignore` admits `results/hexis31/README.md`.
+
+**Freeze perimeter.** The owner ruled on two points:
+
+- `tests/README.md` and `config/README.md` sit in folders of the perimeter. No identity reads them: the code identity hashes the `.py` files of `src/hormathos/`, the test context hashes the `.py` files of `tests/`, `conftest.py` and `pyproject.toml`, and a run hashes its configuration file and the registry by name.
+- `pyproject.toml` changes only its sdist `only-include` list, which gains `"data/README.md"` and `"docs/README.md"`, as `test_the_sdist_ships_exactly_the_tracked_tree` requires of every tracked file.
+
+As after V3-007, the code identity and the run ID `6aa1b719…` are unchanged. The test context of `master` changes only in the hash of `pyproject.toml`, and the evidence stays fixed at the tag `hormathos-v5-evidence`. `src/hormathos`, the `.py` files of `tests/`, `conftest.py`, the configuration files and `uv.lock` are unchanged. The Release, its assets and its tags are unchanged.
+
+**Licences**, by the categories of V3-002 and V3-007: the new pages are documents, under CC BY 4.0.

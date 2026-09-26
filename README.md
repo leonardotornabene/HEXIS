@@ -54,16 +54,18 @@ HORMATHOS is an independent project by Leonardo Tornabene, a student, carried ou
 
 ## Repository layout
 
+Every folder except `archive/` opens with a short page that says what it holds, why it is there and where to start.
+
 | Path | What it is |
 |---|---|
-| [`docs/`](docs/00_INDEX.md) | statement of results, specification, decision log, roadmap, handoff, test inventory, bibliography |
-| [`docs/contracts/hexis-3.1/`](docs/contracts/hexis-3.1/) | the deposited plan and its machine-readable contracts, fixed byte for byte (Italian); English companions in [`hexis-3.1-en/`](docs/contracts/hexis-3.1-en/) |
+| [`docs/`](docs/README.md) | statement of results, specification, decision log, roadmap, handoff, test inventory, bibliography |
+| [`docs/contracts/`](docs/contracts/README.md) | the deposited plan and its machine-readable contracts, fixed byte for byte (Italian, `hexis-3.1/`), and their English companions (`hexis-3.1-en/`) |
 | [`results/`](results/README.md) | published results of the final campaign, the encoded corpus and the logs of every check |
-| [`src/hormathos/`](src/hormathos/) | the Python package: reading and encoding the corpus (`corpus`, `alphabet`), the context-tree-weighting predictor (`model/`), sampling, scores and the comparison of annotation frequencies (`protocols/`), the stages of a run (`pipeline/`), figures (`viz/`) |
-| [`tests/`](tests/) | 431 acceptance tests, all run with no skip; map in the [test inventory](docs/TEST_INVENTORY.md) |
-| [`config/`](config/) | the settings of the deposited plan, as YAML, and the registry of documents |
-| [`data/`](data/) | provenance of the pinned corpus; the raw files are not redistributed |
-| [`archive/`](archive/) | earlier designs and code, byte for byte as they were at commit `5f1ec06`; a record, not part of the active project (its own README describes that past state) |
+| [`src/`](src/README.md) | the Python package `hormathos`: reading and encoding the corpus (`corpus`, `alphabet`), the context-tree-weighting predictor (`model/`), sampling, scores and the comparison of annotation frequencies (`protocols/`), the stages of a run (`pipeline/`), figures (`viz/`) |
+| [`tests/`](tests/README.md) | 431 acceptance tests, all run with no skip; map in the [test inventory](docs/TEST_INVENTORY.md) |
+| [`config/`](config/README.md) | the settings of the deposited plan, as YAML, and the registry of documents |
+| [`data/`](data/README.md) | provenance of the pinned corpus; the raw files are not redistributed |
+| [`archive/`](archive/) | earlier designs and code, byte for byte as they were at commit `5f1ec06`; a record, not part of the active project. Nothing can be added to it, so opening it shows the project's old front page from that time, not a guide; [docs/](docs/README.md#not-here-archive) explains |
 | `CLAUDE.md`, `AGENTS.md` | instructions for the AI coding assistants (see above) |
 | `pyproject.toml`, `uv.lock`, `conftest.py` | Python 3.12 environment, locked dependencies, test enforcement |
 

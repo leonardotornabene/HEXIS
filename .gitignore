@@ -19,6 +19,7 @@ data/processed/
 # vectors, and the superseded runs, are published as archives of the GitHub Release
 # (results/README.md); a local or extracted copy stays ignored.
 /results/hexis31/*
+!/results/hexis31/README.md
 !/results/hexis31/v1/
 !/results/hexis31/v3-seed0-v3006/
 !/results/hexis31/v3-seed0-v3006-regeneration/

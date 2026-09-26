@@ -1,6 +1,6 @@
 # HORMATHOS results
 
-The finished results of the HORMATHOS study, as published in the [decision log](../docs/02_DECISION_LOG.md), entry V3-007. The [statement of results and limitations](../docs/RESULTS.md) reads them and defines every term; this page says what each file is. Every file here is byte for byte the one the pipeline or a check wrote; nothing was edited for publication.
+The finished results of the HORMATHOS study, as published in the [decision log](../docs/02_DECISION_LOG.md), entry V3-007. The [statement of results and limitations](../docs/RESULTS.md) reads them and defines every term; this page says what each file is. Apart from the pages that describe the files (this one, the [figure gallery](figures/README.md) and the [guide to the run folders](hexis31/README.md)), every file here is byte for byte the one that the pipeline, a check or the figure script wrote; nothing was edited for publication.
 
 The directory name `hexis31/` comes from HEXIS 3.1, the working title of the research plan when the data were produced; the manifests record these paths, so they are kept.
 

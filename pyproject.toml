@@ -28,10 +28,10 @@ packages = ["src/hormathos"]
 # proposal drafts in docs/proposal/, scripts/, tools' notes — never enter a distribution.
 only-include = [
     ".gitignore", "AGENTS.md", "CLAUDE.md", "LICENSE", "README.md", "archive", "config",
-    "conftest.py", "data/provenance_v31.json", "data/raw/PROVENANCE.md",
+    "conftest.py", "data/README.md", "data/provenance_v31.json", "data/raw/PROVENANCE.md",
     "docs/00_INDEX.md", "docs/01_MASTER_SPEC.md", "docs/02_DECISION_LOG.md",
     "docs/03_ROADMAP.md", "docs/04_AI_HANDOFF_PROMPT.md", "docs/BIBLIOGRAPHY.md",
-    "docs/HANDOFF.md", "docs/RESULTS.md", "docs/TEST_INVENTORY.md", "docs/V3-001-deposit.json",
+    "docs/HANDOFF.md", "docs/README.md", "docs/RESULTS.md", "docs/TEST_INVENTORY.md", "docs/V3-001-deposit.json",
     "docs/contracts",
     "pyproject.toml", "results", "src", "tests", "uv.lock",
 ]
